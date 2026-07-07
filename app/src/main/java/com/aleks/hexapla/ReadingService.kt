@@ -82,6 +82,33 @@ class ReadingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        // Settings changes apply to live playback: music volume/toggle
+        // immediately, speech rate from the next verse (TTS) or instantly
+        // (narrated player).
+        scope.launch {
+            Store.settings(this@ReadingService).collect { s ->
+                val old = settings
+                settings = s
+                if (s.musicEnabled != old.musicEnabled) {
+                    if (!s.musicEnabled) releaseMusic()
+                    else if (Playback.playing.value) startMusic()
+                } else if (s.musicVolume != old.musicVolume) {
+                    val v = s.musicVolume.coerceIn(0f, 1f)
+                    try { musicPlayer?.setVolume(v, v) } catch (_: Exception) { }
+                }
+                if (s.speechRate != old.speechRate) {
+                    try { tts?.setSpeechRate(s.speechRate) } catch (_: Exception) { }
+                    if (narrating) {
+                        try {
+                            player?.let {
+                                if (it.isPlaying) it.playbackParams =
+                                    it.playbackParams.setSpeed(s.speechRate)
+                            }
+                        } catch (_: Exception) { }
+                    }
+                }
+            }
+        }
         session = MediaSessionCompat(this, "hexapla-reading").apply {
             setCallback(object : MediaSessionCompat.Callback() {
                 override fun onPlay() = resume()

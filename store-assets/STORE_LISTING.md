@@ -70,11 +70,11 @@ Bible hors ligne : 12 traductions classiques, audio, plans de lecture.
 
 **Description complète :**
 
-Hexapla, c\'est la Bible complète — hors ligne, sans publicité, sans compte, sans collecte de données. Tout est gratuit, rien n\'est verrouillé.
+Hexapla, c'est la Bible complète — hors ligne, sans publicité, sans compte, sans collecte de données. Tout est gratuit, rien n'est verrouillé.
 
-📖 12 traductions classiques en 8 langues, dont la Bible Martin 1744, la KJV 1611, l\'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l\'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
+📖 12 traductions classiques en 8 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
 
-Tous les textes sont dans le domaine public. L\'application ne collecte rien.
+Tous les textes sont dans le domaine public. L'application ne collecte rien.
 
 ---
 

@@ -23,6 +23,27 @@ android {
         versionName = "1.1"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
+    // Two distribution channels from one codebase:
+    //  - play:    Google Play. Tips via Play Billing only; no external
+    //             payment links anywhere (payments policy).
+    //  - rustore: RuStore / direct APK. Play services absent, so the
+    //             support section shows the external donation link.
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("play") {
+            dimension = "distribution"
+            buildConfigField("boolean", "EXTERNAL_DONATIONS", "false")
+        }
+        create("rustore") {
+            dimension = "distribution"
+            buildConfigField("boolean", "EXTERNAL_DONATIONS", "true")
+        }
+    }
+
     signingConfigs {
         if (keystoreProps.isNotEmpty()) {
             create("release") {

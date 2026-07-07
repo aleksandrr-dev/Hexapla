@@ -65,6 +65,7 @@ class ReadingService : Service() {
     private var voicePrefs: Map<String, String> = emptyMap()
 
     private var sleepJob: Job? = null
+    private var rateJob: Job? = null
     private var session: MediaSessionCompat? = null
     private var focusRequest: AudioFocusRequest? = null
 
@@ -105,6 +106,14 @@ class ReadingService : Service() {
                                     it.playbackParams.setSpeed(s.speechRate)
                             }
                         } catch (_: Exception) { }
+                    } else if (Playback.playing.value) {
+                        // TTS can't change rate mid-utterance: once the slider
+                        // settles, restart the current verse at the new speed.
+                        rateJob?.cancel()
+                        rateJob = scope.launch {
+                            delay(700)
+                            if (!narrating && Playback.playing.value) speakVerse(verseIdx)
+                        }
                     }
                 }
             }

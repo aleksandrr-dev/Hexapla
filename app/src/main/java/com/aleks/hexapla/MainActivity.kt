@@ -75,19 +75,24 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch { Store.touchStreak(this@MainActivity) }
         setContent {
             val context = LocalContext.current
-            val settings by Store.settings(context).collectAsState(initial = AppSettings())
+            // No initial placeholder: composing the reader with default
+            // settings made the one-shot position restore race the real
+            // DataStore load and land on Genesis 1 after cold starts.
+            val settings by Store.settings(context).collectAsState(initial = null)
             var startRoute by remember { mutableStateOf("read") }
-            BibleTheme(settings.themeMode) {
-                if (!settings.welcomeSeen) {
-                    WelcomeScreen { route ->
+            val s = settings
+            BibleTheme(s?.themeMode ?: "system") {
+                when {
+                    s == null -> Surface(Modifier.fillMaxSize()) { }
+                    !s.welcomeSeen -> WelcomeScreen { route ->
                         startRoute = route
                         lifecycleScope.launch { Store.setWelcomeSeen(this@MainActivity) }
                     }
-                } else {
-                    AppScaffold(settings, startRoute)
+                    else -> AppScaffold(s, startRoute)
                 }
             }
         }
+        refreshWidget()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -106,6 +111,20 @@ class MainActivity : ComponentActivity() {
             intent.getIntExtra(EXTRA_VERSE, 0)
         )
         AppState.initialized.value = true
+    }
+
+    /** Keep the widget's verse and continue-reading label fresh. */
+    private fun refreshWidget() {
+        val manager = android.appwidget.AppWidgetManager.getInstance(this)
+        val ids = manager.getAppWidgetIds(
+            android.content.ComponentName(this, VerseWidget::class.java)
+        )
+        if (ids.isEmpty()) return
+        sendBroadcast(
+            Intent(this, VerseWidget::class.java)
+                .setAction(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                .putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        )
     }
 
     companion object {

@@ -20,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -68,13 +69,13 @@ fun TopicsScreen(settings: AppSettings, openReader: () -> Unit) {
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(16.dp)
         )
-        TabRow(selectedTabIndex = tab) {
+        ScrollableTabRow(selectedTabIndex = tab, edgePadding = 8.dp) {
             Tab(selected = tab == 0, onClick = { tab = 0 },
-                text = { Text(stringResource(R.string.topics_gospel)) })
+                text = { Text(stringResource(R.string.topics_gospel), maxLines = 1) })
             Tab(selected = tab == 1, onClick = { tab = 1 },
-                text = { Text(stringResource(R.string.topics_study)) })
+                text = { Text(stringResource(R.string.topics_study), maxLines = 1) })
             Tab(selected = tab == 2, onClick = { tab = 2 },
-                text = { Text(stringResource(R.string.topics_help)) })
+                text = { Text(stringResource(R.string.topics_help), maxLines = 1) })
         }
         LazyColumn(Modifier.weight(1f)) {
             if (tab == 0) {

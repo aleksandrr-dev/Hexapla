@@ -69,6 +69,11 @@ object BibleRepo {
         }
     }
 
+    // "{In: or, For}"-style translator margin notes: drop whole group. Braces
+    // without a colon mark supplied (italicized) words: keep the words.
+    private val marginNote = Regex("""\s*\{[^{}]*:[^{}]*\}""")
+    private val multiSpace = Regex("""\s+""")
+
     internal fun parseAsset(context: Context, assetFile: String): List<Book> {
         val text = context.assets.open(assetFile).readBytes()
             .toString(Charsets.UTF_8).trim().removePrefix("\uFEFF")
@@ -82,7 +87,13 @@ object BibleRepo {
                 val vArr = chArr.getJSONArray(c)
                 val verses = ArrayList<String>(vArr.length())
                 for (v in 0 until vArr.length()) {
-                    verses.add(vArr.getString(v).replace("{", "").replace("}", ""))
+                    verses.add(
+                        vArr.getString(v)
+                            .replace(marginNote, "")
+                            .replace("{", "").replace("}", "")
+                            .replace(multiSpace, " ")
+                            .trim()
+                    )
                 }
                 chapters.add(verses)
             }

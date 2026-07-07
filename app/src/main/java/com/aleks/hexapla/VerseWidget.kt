@@ -26,6 +26,9 @@ import kotlin.random.Random
 class VerseWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
+        // updatePeriodMillis is batched and not midnight-aligned; schedule our
+        // own refresh just past midnight so the verse changes with the date.
+        scheduleMidnightUpdate(context)
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -72,6 +75,29 @@ class VerseWidget : AppWidgetProvider() {
                 pending.finish()
             }
         }
+    }
+
+    private fun scheduleMidnightUpdate(context: Context) {
+        val ids = AppWidgetManager.getInstance(context)
+            .getAppWidgetIds(android.content.ComponentName(context, VerseWidget::class.java))
+        if (ids.isEmpty()) return
+        val intent = Intent(context, VerseWidget::class.java)
+            .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        val pi = PendingIntent.getBroadcast(
+            context, 7, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val midnight = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 2)
+            set(Calendar.SECOND, 0)
+        }
+        val am = context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        // Inexact, non-waking: fires when the device is next awake after
+        // midnight, which is exactly when a home-screen widget matters.
+        am.set(android.app.AlarmManager.RTC, midnight.timeInMillis, pi)
     }
 
     private fun roundedCorners(src: Bitmap, radius: Float): Bitmap {

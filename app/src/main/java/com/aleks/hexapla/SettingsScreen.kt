@@ -177,7 +177,7 @@ fun SettingsScreen(settings: AppSettings) {
             Slider(
                 value = settings.musicVolume,
                 onValueChange = { scope.launch { Store.setMusicVolume(context, it) } },
-                valueRange = 0.05f..0.6f
+                valueRange = 0.1f..1f
             )
         }
 

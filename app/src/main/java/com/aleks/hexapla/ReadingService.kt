@@ -94,7 +94,7 @@ class ReadingService : Service() {
                     if (!s.musicEnabled) releaseMusic()
                     else if (Playback.playing.value) startMusic()
                 } else if (s.musicVolume != old.musicVolume) {
-                    val v = s.musicVolume.coerceIn(0f, 1f)
+                    val v = musicVol()
                     try { musicPlayer?.setVolume(v, v) } catch (_: Exception) { }
                 }
                 if (s.speechRate != old.speechRate) {
@@ -330,6 +330,9 @@ class ReadingService : Service() {
     /* ---- Background music bed: rotates softly through the bundled tracks
        (piano, orchestral, strings, ambient) while the reading plays. ---- */
 
+    /** Perceptual volume: squaring the slider position spreads loudness evenly. */
+    private fun musicVol(): Float = settings.musicVolume.coerceIn(0f, 1f).let { it * it }
+
     private val musicTracks: List<String> by lazy {
         try {
             (assets.list("music") ?: emptyArray()).map { "music/$it" }.shuffled()
@@ -339,7 +342,7 @@ class ReadingService : Service() {
 
     private fun startMusic() {
         if (!settings.musicEnabled || musicTracks.isEmpty()) return
-        val vol = settings.musicVolume.coerceIn(0f, 1f)
+        val vol = musicVol()
         musicPlayer?.let {
             try { it.setVolume(vol, vol); if (!it.isPlaying) it.start() } catch (_: Exception) { }
             return
@@ -348,7 +351,7 @@ class ReadingService : Service() {
     }
 
     private fun playMusicTrack(index: Int) {
-        val vol = settings.musicVolume.coerceIn(0f, 1f)
+        val vol = musicVol()
         try {
             val afd = assets.openFd(musicTracks[index % musicTracks.size])
             musicPlayer = MediaPlayer().apply {

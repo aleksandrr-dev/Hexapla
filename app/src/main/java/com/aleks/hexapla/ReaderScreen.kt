@@ -65,6 +65,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -209,18 +210,25 @@ fun ReaderScreen(settings: AppSettings) {
             }
     }
 
-    // Start new chapters at the top — unless a target verse is pending.
-    LaunchedEffect(book, chapter) {
-        if (AppState.scrollToVerse.intValue < 0) listState.scrollToItem(0)
-    }
-    // Jump to a requested verse (topics, search, xrefs, deep links). Kept out
-    // of the effect above: resetting the target must not re-trigger a scroll.
+    // One collector owns all position scrolling: verse jumps (search, topics,
+    // xrefs, deep links) win over the scroll-to-top on chapter change. Split
+    // effects raced — the jump landed first, then the chapter effect saw no
+    // pending target and reset to the top.
+    var lastPosition by remember { mutableStateOf(-1 to -1) }
     LaunchedEffect(Unit) {
-        snapshotFlow { AppState.scrollToVerse.intValue }.collect { target ->
+        snapshotFlow {
+            Triple(AppState.book.intValue, AppState.chapter.intValue, AppState.scrollToVerse.intValue)
+        }.collect { (b, c, target) ->
+            val movedChapter = (b to c) != lastPosition
+            lastPosition = b to c
             if (target >= 0) {
-                val max = (listState.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)
-                listState.scrollToItem(target.coerceIn(0, max))
+                // Let the new chapter's list compose before scrolling into it.
+                withFrameNanos { }
+                withFrameNanos { }
+                listState.scrollToItem(target.coerceAtLeast(0))
                 AppState.scrollToVerse.intValue = -1
+            } else if (movedChapter) {
+                listState.scrollToItem(0)
             }
         }
     }

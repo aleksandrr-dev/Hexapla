@@ -54,7 +54,7 @@ data class AppSettings(
     // while DataStore loads; the stored value decides for real.
     val welcomeSeen: Boolean = true,
     val musicEnabled: Boolean = false,
-    val musicVolume: Float = 0.2f
+    val musicVolume: Float = 0.45f
 )
 
 object Store {
@@ -117,7 +117,7 @@ object Store {
             hideVerseNumbers = p[HIDE_NUMBERS] ?: false,
             welcomeSeen = p[WELCOME_SEEN] ?: false,
             musicEnabled = p[MUSIC_ON] ?: false,
-            musicVolume = p[MUSIC_VOL] ?: 0.2f
+            musicVolume = p[MUSIC_VOL] ?: 0.45f
         )
     }
 

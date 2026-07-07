@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -80,10 +81,10 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
                 )
             }
         }
-        TabRow(selectedTabIndex = tab) {
+        ScrollableTabRow(selectedTabIndex = tab, edgePadding = 8.dp) {
             plans.forEachIndexed { i, p ->
                 Tab(selected = tab == i, onClick = { tab = i },
-                    text = { Text(stringResource(p.titleRes)) })
+                    text = { Text(stringResource(p.titleRes), maxLines = 1) })
             }
         }
         Column(Modifier.padding(16.dp)) {

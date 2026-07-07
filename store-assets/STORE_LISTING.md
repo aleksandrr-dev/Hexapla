@@ -1,5 +1,17 @@
 # Hexapla — store listing text (RuStore / Google Play)
 
+## RuStore per-version Safety form (asked on every upload)
+
+Requested data: select nothing (0/38 — app collects no data).
+POST_NOTIFICATIONS reason:
+
+> Разрешение POST_NOTIFICATIONS используется исключительно для двух функций:
+> 1) необязательное ежедневное напоминание о чтении Библии, которое
+> пользователь сам включает в настройках (по умолчанию выключено);
+> 2) медиа-уведомление с элементами управления воспроизведением при фоновом
+> прослушивании аудио (чтение Библии вслух). Рекламные и маркетинговые
+> уведомления не отправляются.
+
 Screenshot upload order (strongest first — reused for any store):
 1) lock-screen media card with Doré art during audio, 2) red letters
 (Matthew 5), 3) split view (KJV ‖ Синодальный, Titus 1), 4) Good News tab,

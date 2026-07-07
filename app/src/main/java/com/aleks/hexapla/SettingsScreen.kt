@@ -389,7 +389,10 @@ fun SettingsScreen(settings: AppSettings) {
             onDispose { tipManager.release() }
         }
 
-        if (tipManager.available.value && tipManager.products.value.isNotEmpty()) {
+        if (tipManager.available.value) {
+            // Play services present: only ever offer Play Billing tips here.
+            // External links on a Play build would violate payments policy,
+            // so an empty product list simply shows nothing.
             Row {
                 tipManager.products.value.forEach { product ->
                     val price = product.oneTimePurchaseOfferDetails?.formattedPrice ?: ""

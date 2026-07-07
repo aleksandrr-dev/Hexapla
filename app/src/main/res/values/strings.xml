@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hexapla</string>
+
+    <!-- Navigation -->
+    <string name="nav_read">Read</string>
+    <string name="nav_plans">Plans</string>
+    <string name="nav_topics">Topics</string>
+    <string name="nav_bookmarks">Bookmarks</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Reader -->
+    <string name="select_book">Select book</string>
+    <string name="select_chapter">Select chapter</string>
+    <string name="chapter">Chapter %1$d</string>
+    <string name="old_testament">Old Testament</string>
+    <string name="new_testament">New Testament</string>
+    <string name="apocrypha">Apocrypha / Deuterocanon</string>
+    <string name="prev_chapter">Previous chapter</string>
+    <string name="next_chapter">Next chapter</string>
+    <string name="play_audio">Listen to chapter</string>
+    <string name="stop_audio">Stop audio</string>
+    <string name="bookmark_added">Bookmark added</string>
+    <string name="bookmark_removed">Bookmark removed</string>
+    <string name="tts_unavailable">Speech engine unavailable for this language</string>
+
+    <!-- Split view -->
+    <string name="split_view">Split view (two translations)</string>
+    <string name="split_orientation">Split layout</string>
+    <string name="split_horizontal">Side by side (horizontal)</string>
+    <string name="split_vertical">Stacked (vertical)</string>
+    <string name="primary_translation">Primary translation</string>
+    <string name="secondary_translation">Second translation</string>
+    <string name="show_apocrypha">Show Apocrypha / Deuterocanon</string>
+    <string name="show_apocrypha_note">Books outside the 66-book canon, shown in their own section</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="font_size">Font size</string>
+    <string name="font_serif">Serif font</string>
+    <string name="settings_reading">Reading</string>
+    <string name="settings_reminder">Daily reminder</string>
+    <string name="reminder_enable">Remind me to read</string>
+    <string name="reminder_time">Reminder time</string>
+    <string name="reminder_hour">Hour</string>
+    <string name="reminder_minute">Minute</string>
+    <string name="notification_title">Time to read the Bible</string>
+    <string name="notification_text">Open today\'s reading and continue your plan.</string>
+    <string name="notification_channel">Reading reminders</string>
+    <string name="notification_permission_needed">Allow notifications to receive reminders</string>
+
+    <!-- Plans -->
+    <string name="plans_title">Reading plans</string>
+    <string name="plan_year">Bible in 1 year</string>
+    <string name="plan_year_desc">The whole Bible in 365 days, 3–4 chapters a day</string>
+    <string name="plan_nt90">New Testament in 90 days</string>
+    <string name="plan_nt90_desc">All 260 New Testament chapters in 3 months</string>
+    <string name="day_n">Day %1$d</string>
+    <string name="days_done">%1$d of %2$d days completed</string>
+    <string name="mark_done">Mark as read</string>
+    <string name="reset_plan">Reset progress</string>
+    <string name="today">Today</string>
+
+    <!-- Topics / help -->
+    <string name="topics_title">Study &amp; Help</string>
+    <string name="topics_study">Study guides</string>
+    <string name="topics_help">Scriptures for life situations</string>
+    <string name="topic_salvation">Salvation</string>
+    <string name="topic_prayer">Prayer</string>
+    <string name="topic_faith">Faith</string>
+    <string name="topic_love">Love</string>
+    <string name="topic_forgiveness">Forgiveness</string>
+    <string name="topic_holy_spirit">The Holy Spirit</string>
+    <string name="topic_wisdom">Wisdom</string>
+    <string name="topic_hope">Hope</string>
+    <string name="help_anxiety">Anxiety and worry</string>
+    <string name="help_fear">Fear</string>
+    <string name="help_grief">Grief and loss</string>
+    <string name="help_loneliness">Loneliness</string>
+    <string name="help_anger">Anger</string>
+    <string name="help_temptation">Temptation</string>
+    <string name="help_illness">Illness</string>
+    <string name="help_finances">Financial hardship</string>
+    <string name="help_despair">Despair and depression</string>
+    <string name="help_guidance">Needing guidance</string>
+    <string name="help_marriage">Marriage and family</string>
+    <string name="help_guilt">Guilt and shame</string>
+
+    <!-- Bookmarks -->
+    <string name="support_title">Support the developer</string>
+    <string name="support_note">The app is free and complete. Nothing is unlocked by donating — this is only for those who wish to say thank you.</string>
+    <string name="bookmarks_title">Bookmarks</string>
+    <string name="no_bookmarks">No bookmarks yet. Long-press a verse while reading to save it.</string>
+    <string name="delete">Delete</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search the text…</string>
+    <string name="no_results">No results</string>
+    <string name="copy">Copy</string>
+    <string name="copied">Copied</string>
+    <string name="share">Share</string>
+    <string name="note">Note</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="keep_screen_on">Keep screen on while reading</string>
+    <string name="verse_actions">Verse</string>
+    <string name="add_bookmark">Add bookmark</string>
+    <string name="xrefs">Cross-references</string>
+    <string name="remove_bookmark">Remove bookmark</string>
+    <string name="sources_title">Text sources</string>
+    <string name="sources_text">All texts are public domain: Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Елизаветинская Библия 1757; Синодальный перевод. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Cross-references © openbible.info, CC-BY. App text data via scrollmapper, thiagobodruk and byztxt projects.</string>
+    <string name="voice_title">Reading voice</string>
+    <string name="voice_default">System default</string>
+    <string name="voice_note">Available voices depend on the speech engine installed on the device (e.g. Google Speech Services, Samsung TTS). Tap a voice to hear it.</string>
+    <string name="voice_online">online</string>
+    <string name="voice_female">Female</string>
+    <string name="voice_male">Male</string>
+    <string name="backup_title">Backup</string>
+    <string name="backup_export">Save backup…</string>
+    <string name="backup_import">Restore backup…</string>
+    <string name="backup_saved">Backup saved</string>
+    <string name="restore_done">Backup restored</string>
+    <string name="backup_failed">Something went wrong</string>
+    <string name="compare">Compare translations</string>
+    <string name="playback_channel">Audio reading</string>
+    <string name="playback_verse">Verse %1$d</string>
+    <string name="pause_audio">Pause</string>
+    <string name="speech_rate">Reading speed</string>
+    <string name="auto_continue">Continue to next chapter</string>
+    <string name="sleep_timer">Sleep timer</string>
+    <string name="sleep_off">Off</string>
+    <string name="sleep_end_of_chapter">End of chapter</string>
+    <string name="sleep_minutes">%1$d min</string>
+    <string name="listen_from_here">Listen from here</string>
+    <string name="share_image">Share as image</string>
+    <string name="streak">🔥 %1$d days</string>
+    <string name="topics_gospel">Good News</string>
+    <string name="gospel_intro">What must I do to be saved? These verses walk through God\'s plan of salvation, straight from Scripture, step by step. Tap any verse to open it in the Bible.</string>
+    <string name="gospel_step1">1 · All have sinned</string>
+    <string name="gospel_step2">2 · The penalty for sin</string>
+    <string name="gospel_step3">3 · Christ paid it all</string>
+    <string name="gospel_step4">4 · A free gift — not by works</string>
+    <string name="gospel_step5">5 · Believe on the Lord Jesus Christ</string>
+    <string name="gospel_step6">6 · Everlasting means everlasting</string>
+    <string name="gospel_step7">7 · Call upon the Lord</string>
+    <string name="widget_description">Verse of the day and quick return to your reading spot</string>
+    <string name="widget_continue">Continue reading: %1$s →</string>
+    <string name="compare_note">Choose which translations appear in the verse comparison.</string>
+    <string name="audio_title">Narrated audio (KJV)</string>
+    <string name="audio_note">Human narration from LibriVox (public domain), covering most books of the KJV. Audio is downloaded per section (a few chapters, ~10–30 MB) when you press play and kept for offline listening. Books without a recording fall back to text-to-speech, and verse highlighting is unavailable while narrating.</string>
+    <string name="audio_downloading">Downloading audio… %1$d%%</string>
+    <string name="audio_narrated">Narrated audio</string>
+    <string name="audio_storage">Downloaded audio: %1$d MB</string>
+    <string name="audio_clear">Clear</string>
+    <string name="strongs_title">Strong\'s numbers (KJV)</string>
+    <string name="strongs_note">Shows Strong\'s concordance numbers in the KJV text. Tap a number to see the original Hebrew or Greek word and its definition.</string>
+    <string name="red_letters_title">Red letters (words of Christ)</string>
+    <string name="immersive_title">Hide verse numbers</string>
+    <string name="plan_gospels">Gospels in 30 days</string>
+    <string name="plan_gospels_desc">Matthew, Mark, Luke and John in one month</string>
+    <string name="plan_proverbs">Proverbs in a month</string>
+    <string name="plan_proverbs_desc">One chapter of Proverbs a day for 31 days</string>
+    <string name="plan_psalms">Psalms in 75 days</string>
+    <string name="plan_psalms_desc">Two Psalms a day through the whole Psalter</string>
+    <string name="gospel_share">Share the Good News →</string>
+    <string name="search_all">Search all translations</string>
+    <string name="welcome_tagline">The Bible in six languages — offline, free, complete.</string>
+    <string name="welcome_gospel">New to the Bible? Start here</string>
+    <string name="welcome_plan">Build a daily reading habit</string>
+    <string name="welcome_read">Just start reading</string>
+</resources>

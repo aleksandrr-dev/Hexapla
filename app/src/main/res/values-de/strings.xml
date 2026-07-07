@@ -102,7 +102,7 @@
     <string name="xrefs">Querverweise</string>
     <string name="remove_bookmark">Lesezeichen entfernen</string>
     <string name="sources_title">Textquellen</string>
-    <string name="sources_text">Alle Texte sind gemeinfrei: Codex Leningradensis; Byzantinischer Text 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Genfer Bibel 1599; KJV mit Apokryphen; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Elisabeth-Bibel 1757; Russische Synodalübersetzung. Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Querverweise © openbible.info, CC-BY. Textdaten über die Projekte scrollmapper, thiagobodruk und byztxt.</string>
+    <string name="sources_text">Alle Texte sind gemeinfrei: Codex Leningradensis; Byzantinischer Text 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Genfer Bibel 1599; KJV mit Apokryphen; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Elisabeth-Bibel 1757; Russische Synodalübersetzung. Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Querverweise © openbible.info, CC-BY. Textdaten über die Projekte scrollmapper, thiagobodruk und byztxt. Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Vorlesestimme</string>
     <string name="voice_default">Systemstandard</string>
     <string name="voice_note">Die verfügbaren Stimmen hängen von der installierten Sprach-Engine ab. Tippe eine Stimme an, um sie zu hören.</string>
@@ -162,4 +162,6 @@
     <string name="welcome_gospel">Neu in der Bibel? Fang hier an</string>
     <string name="welcome_plan">Eine tägliche Lesegewohnheit aufbauen</string>
     <string name="welcome_read">Einfach lesen</string>
+    <string name="music_title">Hintergrundmusik beim Anhören</string>
+    <string name="music_volume">Musiklautstärke</string>
 </resources>

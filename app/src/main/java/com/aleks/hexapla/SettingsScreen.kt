@@ -166,6 +166,21 @@ fun SettingsScreen(settings: AppSettings) {
             scope.launch { Store.setAutoContinue(context, it) }
         }
 
+        SwitchRow(stringResource(R.string.music_title), settings.musicEnabled) {
+            scope.launch { Store.setMusicEnabled(context, it) }
+        }
+        if (settings.musicEnabled) {
+            Text(
+                stringResource(R.string.music_volume),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Slider(
+                value = settings.musicVolume,
+                onValueChange = { scope.launch { Store.setMusicVolume(context, it) } },
+                valueRange = 0.05f..0.6f
+            )
+        }
+
         Spacer(Modifier.height(8.dp))
         SwitchRow(stringResource(R.string.audio_title), settings.audioNarration) {
             scope.launch { Store.setAudioNarration(context, it) }

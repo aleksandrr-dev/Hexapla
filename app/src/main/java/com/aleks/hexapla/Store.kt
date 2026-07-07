@@ -52,7 +52,9 @@ data class AppSettings(
     val hideVerseNumbers: Boolean = false,
     // Defaults to true so existing sessions don't flash the welcome screen
     // while DataStore loads; the stored value decides for real.
-    val welcomeSeen: Boolean = true
+    val welcomeSeen: Boolean = true,
+    val musicEnabled: Boolean = false,
+    val musicVolume: Float = 0.2f
 )
 
 object Store {
@@ -84,6 +86,8 @@ object Store {
     private val RED_LETTERS = booleanPreferencesKey("red_letters")
     private val HIDE_NUMBERS = booleanPreferencesKey("hide_numbers")
     private val WELCOME_SEEN = booleanPreferencesKey("welcome_seen")
+    private val MUSIC_ON = booleanPreferencesKey("music_on")
+    private val MUSIC_VOL = floatPreferencesKey("music_vol")
     private val BOOKMARKS = stringSetPreferencesKey("bookmarks")
 
     fun settings(context: Context): Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -111,7 +115,9 @@ object Store {
             streak = p[STREAK] ?: 0,
             redLetters = p[RED_LETTERS] ?: true,
             hideVerseNumbers = p[HIDE_NUMBERS] ?: false,
-            welcomeSeen = p[WELCOME_SEEN] ?: false
+            welcomeSeen = p[WELCOME_SEEN] ?: false,
+            musicEnabled = p[MUSIC_ON] ?: false,
+            musicVolume = p[MUSIC_VOL] ?: 0.2f
         )
     }
 
@@ -171,6 +177,8 @@ object Store {
     suspend fun setRedLetters(c: Context, v: Boolean) = c.dataStore.edit { it[RED_LETTERS] = v }
     suspend fun setHideVerseNumbers(c: Context, v: Boolean) = c.dataStore.edit { it[HIDE_NUMBERS] = v }
     suspend fun setWelcomeSeen(c: Context) = c.dataStore.edit { it[WELCOME_SEEN] = true }
+    suspend fun setMusicEnabled(c: Context, v: Boolean) = c.dataStore.edit { it[MUSIC_ON] = v }
+    suspend fun setMusicVolume(c: Context, v: Float) = c.dataStore.edit { it[MUSIC_VOL] = v }
 
     /** Bumps the daily reading streak; call once per app open. */
     suspend fun touchStreak(c: Context) = c.dataStore.edit { p ->

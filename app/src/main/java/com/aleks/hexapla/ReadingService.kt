@@ -68,6 +68,9 @@ class ReadingService : Service() {
     private var session: MediaSessionCompat? = null
     private var focusRequest: AudioFocusRequest? = null
 
+    // Optional instrumental bed under the reading (opt-in in Settings).
+    private var musicPlayer: MediaPlayer? = null
+
     // Narrated audio (LibriVox) mode; when null/false, TTS is used.
     private var player: MediaPlayer? = null
     private var narrating = false
@@ -215,6 +218,7 @@ class ReadingService : Service() {
         narrating = true
         currentSection = sec
         downloadPercent = 0
+        startMusic()
         Playback.active.value = true
         Playback.playing.value = true
         Playback.book.intValue = bookIdx
@@ -287,6 +291,45 @@ class ReadingService : Service() {
         downloadPercent = -1
     }
 
+    /* ---- Background music bed: loops softly while the reading plays. ---- */
+
+    private fun startMusic() {
+        if (!settings.musicEnabled) return
+        val vol = settings.musicVolume.coerceIn(0f, 1f)
+        musicPlayer?.let {
+            try { it.setVolume(vol, vol); if (!it.isPlaying) it.start() } catch (_: Exception) { }
+            return
+        }
+        try {
+            val afd = assets.openFd("music/meditation01.mp3")
+            musicPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                afd.close()
+                isLooping = true
+                setVolume(vol, vol)
+                setOnPreparedListener { if (Playback.playing.value) it.start() }
+                prepareAsync()
+            }
+        } catch (_: Exception) {
+            musicPlayer = null
+        }
+    }
+
+    private fun pauseMusic() {
+        try { musicPlayer?.pause() } catch (_: Exception) { }
+    }
+
+    private fun releaseMusic() {
+        musicPlayer?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
+        musicPlayer = null
+    }
+
     private var chapterVerses: List<String> = emptyList()
 
     private fun speakVerse(i: Int) {
@@ -315,6 +358,7 @@ class ReadingService : Service() {
         if (!requestFocus()) { stopEverything(); return }
 
         engine.stop()
+        startMusic()
         val start = fromVerse.coerceIn(0, verses.size - 1)
         Playback.active.value = true
         Playback.playing.value = true
@@ -370,6 +414,7 @@ class ReadingService : Service() {
         } else {
             tts?.stop()
         }
+        pauseMusic()
         Playback.playing.value = false
         updateSessionState(playing = false)
         updateNotification()
@@ -379,6 +424,7 @@ class ReadingService : Service() {
         if (books.isEmpty()) return
         if (narrating && player != null) {
             try { player?.start() } catch (_: Exception) { startChapter(fromVerse = 0); return }
+            startMusic()
             Playback.playing.value = true
             updateSessionState(playing = true)
             updateNotification()
@@ -411,6 +457,7 @@ class ReadingService : Service() {
         sleepJob?.cancel()
         tts?.stop()
         releasePlayer()
+        releaseMusic()
         Playback.active.value = false
         Playback.playing.value = false
         Playback.verse.intValue = -1
@@ -566,6 +613,7 @@ class ReadingService : Service() {
     override fun onDestroy() {
         sleepJob?.cancel()
         releasePlayer()
+        releaseMusic()
         tts?.stop(); tts?.shutdown(); tts = null
         session?.release(); session = null
         abandonFocus()

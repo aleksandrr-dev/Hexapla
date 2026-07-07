@@ -102,7 +102,7 @@
     <string name="xrefs">Referencias cruzadas</string>
     <string name="remove_bookmark">Quitar marcador</string>
     <string name="sources_title">Fuentes de los textos</string>
-    <string name="sources_text">Todos los textos son de dominio público: Códice de Leningrado; Texto bizantino 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Biblia de Ginebra 1599; KJV con Apócrifos; Bible in Basic English; Biblia Martin 1744; Biblia de Lutero 1545; Reina-Valera 1909; Biblia isabelina 1757; Traducción sinodal rusa. Diccionario de la concordancia Strong (1890/1894) © Open Scriptures, CC-BY-SA. Referencias cruzadas © openbible.info, CC-BY. Datos de texto de los proyectos scrollmapper, thiagobodruk y byztxt.</string>
+    <string name="sources_text">Todos los textos son de dominio público: Códice de Leningrado; Texto bizantino 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Biblia de Ginebra 1599; KJV con Apócrifos; Bible in Basic English; Biblia Martin 1744; Biblia de Lutero 1545; Reina-Valera 1909; Biblia isabelina 1757; Traducción sinodal rusa. Diccionario de la concordancia Strong (1890/1894) © Open Scriptures, CC-BY-SA. Referencias cruzadas © openbible.info, CC-BY. Datos de texto de los proyectos scrollmapper, thiagobodruk y byztxt. Música de fondo: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Voz de lectura</string>
     <string name="voice_default">Predeterminada del sistema</string>
     <string name="voice_note">Las voces disponibles dependen del motor de voz instalado en el dispositivo. Toca una voz para escucharla.</string>
@@ -162,4 +162,6 @@
     <string name="welcome_gospel">¿Nuevo en la Biblia? Empieza aquí</string>
     <string name="welcome_plan">Crear el hábito de leer cada día</string>
     <string name="welcome_read">Simplemente empezar a leer</string>
+    <string name="music_title">Música de fondo al escuchar</string>
+    <string name="music_volume">Volumen de la música</string>
 </resources>

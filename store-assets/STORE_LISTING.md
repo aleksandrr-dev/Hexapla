@@ -1,8 +1,9 @@
 # Hexapla — store listing text (RuStore / Google Play)
 
-Screenshots to take (in this order): 1) reader with red letters (Matthew 5),
-2) split view (KJV ‖ Синодальный), 3) Good News tab, 4) Strong's popup,
-5) lock screen with Doré media card during audio, 6) home-screen widget.
+Screenshot upload order (strongest first — reused for any store):
+1) lock-screen media card with Doré art during audio, 2) red letters
+(Matthew 5), 3) split view (KJV ‖ Синодальный, Titus 1), 4) Good News tab,
+5) Strong's popup (H3068), 6) widget (`screenshot_widget.png` here).
 
 ---
 

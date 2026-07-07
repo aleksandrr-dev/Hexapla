@@ -1,0 +1,377 @@
+package com.aleks.hexapla
+
+import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import java.util.Locale
+
+data class Translation(
+    val id: String,
+    val assetFile: String,
+    val label: String,
+    val locale: Locale
+)
+
+data class Book(val name: String, val chapters: List<List<String>>)
+
+data class VerseRef(val book: Int, val chapter: Int, val verseStart: Int, val verseEnd: Int = verseStart)
+
+object BibleRepo {
+
+    val translations = listOf(
+        Translation("kjv", "bibles/en_kjv.json", "King James Version, 1611 (EN)", Locale.ENGLISH),
+        Translation("gen1599", "bibles/en_geneva.json", "Geneva Bible, 1599 (EN)", Locale.ENGLISH),
+        Translation("tyn", "bibles/en_tyndale.json", "Tyndale, 1525/1530 — partial (EN)", Locale.ENGLISH),
+        Translation("wyc", "bibles/enm_wycliffe.json", "Wycliffe, c. 1395 (Middle EN)", Locale.ENGLISH),
+        Translation("bbe", "bibles/en_bbe.json", "Bible in Basic English (EN)", Locale.ENGLISH),
+        Translation("mar", "bibles/fr_martin.json", "Bible Martin, 1744 (FR)", Locale.FRENCH),
+        Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
+        Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
+        Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale("ru")),
+        Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
+        Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
+        Translation("wlc", "bibles/he_wlc.json", "עברית — Westminster Leningrad Codex (HE)", Locale("he"))
+    )
+
+    fun translation(id: String): Translation =
+        translations.firstOrNull { it.id == id } ?: translations.first()
+
+    /** Pickers list the user's own language first (stable within groups). */
+    fun ordered(): List<Translation> {
+        val lang = Locale.getDefault().language
+        return translations.sortedBy { if (it.locale.language == lang) 0 else 1 }
+    }
+
+    /** Default primary translation follows the system language. */
+    fun defaultPrimaryId(): String = when (Locale.getDefault().language) {
+        "ru" -> "syn"
+        "fr" -> "mar"
+        "de" -> "lut"
+        "es" -> "rv"
+        else -> "kjv"
+    }
+
+    fun defaultSecondaryId(): String =
+        if (Locale.getDefault().language == "en") "syn" else "kjv"
+
+    private val cache = mutableMapOf<String, List<Book>>()
+    private val mutex = Mutex()
+
+    suspend fun load(context: Context, id: String): List<Book> = mutex.withLock {
+        cache[id]?.let { return it }
+        withContext(Dispatchers.IO) {
+            val books = parseAsset(context, translation(id).assetFile)
+            cache[id] = books
+            books
+        }
+    }
+
+    internal fun parseAsset(context: Context, assetFile: String): List<Book> {
+        val text = context.assets.open(assetFile).readBytes()
+            .toString(Charsets.UTF_8).trim().removePrefix("\uFEFF")
+        val arr = JSONArray(text)
+        val books = ArrayList<Book>(arr.length())
+        for (i in 0 until arr.length()) {
+            val o = arr.getJSONObject(i)
+            val chArr = o.getJSONArray("chapters")
+            val chapters = ArrayList<List<String>>(chArr.length())
+            for (c in 0 until chArr.length()) {
+                val vArr = chArr.getJSONArray(c)
+                val verses = ArrayList<String>(vArr.length())
+                for (v in 0 until vArr.length()) {
+                    verses.add(vArr.getString(v).replace("{", "").replace("}", ""))
+                }
+                chapters.add(verses)
+            }
+            books.add(Book(o.getString("name"), chapters))
+        }
+        return books
+    }
+}
+
+/* ---------------- Strong's concordance (public domain, 1890/1894) ----------------
+   Tagged KJV text ("word[H1234]") plus the Hebrew/Greek lexicon. Loaded lazily,
+   used only for display when the setting is on \u2014 TTS, search, copy and compare
+   all keep using the plain KJV. */
+
+object StrongsRepo {
+    data class Entry(val word: String, val translit: String, val pos: String, val def: String)
+
+    val tag = Regex("""\[([HG]\d+)\]""")
+
+    private var textCache: List<Book>? = null
+    private var lexCache: Map<String, Entry>? = null
+    private val strongsMutex = Mutex()
+
+    suspend fun books(context: Context): List<Book> = strongsMutex.withLock {
+        textCache ?: withContext(Dispatchers.IO) {
+            BibleRepo.parseAsset(context, "bibles/en_kjv_strongs.json")
+        }.also { textCache = it }
+    }
+
+    suspend fun entry(context: Context, id: String): Entry? = strongsMutex.withLock {
+        val lex = lexCache ?: withContext(Dispatchers.IO) {
+            val text = context.assets.open("strongs_lexicon.json").readBytes()
+                .toString(Charsets.UTF_8)
+            val o = org.json.JSONObject(text)
+            val m = HashMap<String, Entry>(o.length())
+            for (k in o.keys()) {
+                val e = o.getJSONObject(k)
+                m[k] = Entry(
+                    word = e.optString("w"),
+                    translit = e.optString("t"),
+                    pos = e.optString("p"),
+                    def = e.optString("d")
+                )
+            }
+            m
+        }.also { lexCache = it }
+        lex[id]
+    }
+}
+
+/* ---------------- Cross-references (openbible.info, CC-BY) ----------------
+   Per-verse index of the strongest community-voted cross-references,
+   top 8 per verse. Loaded lazily from assets on first use (~2 MB). */
+
+object Xrefs {
+    private var cache: Map<String, List<IntArray>>? = null
+    private val xrefMutex = Mutex()
+
+    /** Returns targets as [book, chapter, verse] triples for the given verse. */
+    suspend fun refs(context: Context, book: Int, chapter: Int, verse: Int): List<IntArray> =
+        withContext(Dispatchers.IO) {
+            val map = xrefMutex.withLock {
+                cache ?: run {
+                    val text = context.assets.open("xrefs.json").readBytes()
+                        .toString(Charsets.UTF_8)
+                    val o = org.json.JSONObject(text)
+                    val m = HashMap<String, List<IntArray>>(o.length())
+                    for (k in o.keys()) {
+                        val arr = o.getJSONArray(k)
+                        m[k] = (0 until arr.length()).map { i ->
+                            val p = arr.getString(i).split(":")
+                            intArrayOf(p[0].toInt(), p[1].toInt(), p[2].toInt())
+                        }
+                    }
+                    cache = m
+                    m
+                }
+            }
+            map["$book:$chapter:$verse"] ?: emptyList()
+        }
+}
+
+/* ---------------- Voluntary support links ----------------
+   Purely optional tips. No features are gated behind these.
+   Replace the placeholder URLs with your real pages.
+   Note: if distributing via Google Play / App Store, digital tips must go
+   through their billing systems instead — external links are for direct
+   APK / RuStore distribution. */
+
+object Donation {
+    val links = listOf(
+        "ЮMoney" to "https://yoomoney.ru/to/4100119568618191"
+    )
+}
+
+/* ---------------- Reading plans ---------------- */
+
+data class PlanDay(val day: Int, val chapters: List<Pair<Int, Int>>) // (bookIdx, chapterIdx)
+
+data class ReadingPlan(
+    val id: String,
+    val titleRes: Int,
+    val descRes: Int,
+    val days: List<PlanDay>
+)
+
+object Plans {
+    /** Distribute a flat list of chapters evenly over [totalDays]. */
+    private fun distribute(chapters: List<Pair<Int, Int>>, totalDays: Int): List<PlanDay> {
+        val days = totalDays.coerceAtMost(chapters.size).coerceAtLeast(1)
+        val result = ArrayList<PlanDay>(days)
+        var index = 0
+        for (day in 0 until days) {
+            val remainingDays = days - day
+            val remainingChapters = chapters.size - index
+            val take = (remainingChapters + remainingDays - 1) / remainingDays // ceil
+            result.add(PlanDay(day + 1, chapters.subList(index, index + take).toList()))
+            index += take
+        }
+        return result
+    }
+
+    fun build(books: List<Book>): List<ReadingPlan> {
+        val allChapters = ArrayList<Pair<Int, Int>>()
+        // Plans cover the 66-book canon; apocrypha (slots 66+) is read freely.
+        books.take(66).forEachIndexed { b, book ->
+            book.chapters.indices.forEach { c -> allChapters.add(b to c) }
+        }
+        val ntChapters = allChapters.filter { it.first >= 39 }
+        val gospelChapters = allChapters.filter { it.first in 39..42 }
+        val proverbsChapters = allChapters.filter { it.first == 19 }
+        val psalmChapters = allChapters.filter { it.first == 18 }
+        return listOf(
+            ReadingPlan("year", R.string.plan_year, R.string.plan_year_desc, distribute(allChapters, 365)),
+            ReadingPlan("nt90", R.string.plan_nt90, R.string.plan_nt90_desc, distribute(ntChapters, 90)),
+            ReadingPlan("gospels30", R.string.plan_gospels, R.string.plan_gospels_desc, distribute(gospelChapters, 30)),
+            ReadingPlan("prov31", R.string.plan_proverbs, R.string.plan_proverbs_desc, distribute(proverbsChapters, 31)),
+            ReadingPlan("ps75", R.string.plan_psalms, R.string.plan_psalms_desc, distribute(psalmChapters, 75))
+        )
+    }
+}
+
+/* ---------------- Red letters (words of Christ) ----------------
+   Verse-level index of where Christ speaks, KJV versification. */
+
+object RedLetters {
+    private var cache: Map<Int, List<Set<Int>>>? = null
+    private val redMutex = Mutex()
+
+    /** Book index → per-chapter sets of 0-based verse indexes. */
+    suspend fun load(context: Context): Map<Int, List<Set<Int>>> = redMutex.withLock {
+        cache ?: withContext(Dispatchers.IO) {
+            val o = org.json.JSONObject(
+                context.assets.open("red_letters.json").readBytes().toString(Charsets.UTF_8)
+            )
+            val m = HashMap<Int, List<Set<Int>>>()
+            for (k in o.keys()) {
+                val arr = o.getJSONArray(k)
+                m[k.toInt()] = (0 until arr.length()).map { c ->
+                    val vs = arr.getJSONArray(c)
+                    (0 until vs.length()).map { vs.getInt(it) }.toSet()
+                }
+            }
+            m
+        }.also { cache = it }
+    }
+}
+
+/* ---------------- Topical index ---------------- */
+
+data class Topic(val titleRes: Int, val refs: List<VerseRef>)
+
+object Topics {
+    // Book indices: 0=Gen 17=Job 18=Ps 19=Prov 22=Isa 23=Jer 39=Mt 40=Mk 41=Lk 42=Jn 43=Acts
+    // 44=Rom 45=1Cor 46=2Cor 47=Gal 48=Eph 49=Php 50=Col 52=2Th 54=2Tim 57=Heb 58=Jas
+    // 59=1Pet 61=1Jn 65=Rev
+    /* The Good News: God's plan of salvation, step by step, verses only.
+       Order follows the classic soul-winning presentation: sin, its penalty,
+       Christ's payment, the free gift, belief, eternal security, calling. */
+    val gospel = listOf(
+        Topic(R.string.gospel_step1, listOf(
+            VerseRef(44, 2, 22, 22), VerseRef(44, 2, 9, 9)
+        )),
+        Topic(R.string.gospel_step2, listOf(
+            VerseRef(44, 5, 22, 22), VerseRef(65, 20, 7, 7), VerseRef(65, 19, 13, 14)
+        )),
+        Topic(R.string.gospel_step3, listOf(
+            VerseRef(44, 4, 7, 7), VerseRef(42, 2, 15, 15), VerseRef(45, 14, 2, 3)
+        )),
+        Topic(R.string.gospel_step4, listOf(
+            VerseRef(48, 1, 7, 8), VerseRef(55, 2, 4, 4)
+        )),
+        Topic(R.string.gospel_step5, listOf(
+            VerseRef(43, 15, 29, 30), VerseRef(42, 2, 17, 17)
+        )),
+        Topic(R.string.gospel_step6, listOf(
+            VerseRef(42, 5, 46, 46), VerseRef(42, 9, 27, 27), VerseRef(42, 2, 35, 35)
+        )),
+        Topic(R.string.gospel_step7, listOf(
+            VerseRef(44, 9, 8, 12)
+        ))
+    )
+
+    val study = listOf(
+        // Doctrinal study for believers; the guided walk for the lost lives in
+        // the Good News tab, so these refs deliberately avoid repeating it.
+        Topic(R.string.topic_salvation, listOf(
+            VerseRef(43, 3, 11, 11), VerseRef(42, 13, 5, 5), VerseRef(46, 4, 16, 16),
+            VerseRef(46, 4, 20, 20), VerseRef(59, 0, 17, 18), VerseRef(47, 1, 15, 15),
+            VerseRef(57, 6, 24, 24)
+        )),
+        Topic(R.string.topic_prayer, listOf(
+            VerseRef(39, 5, 4, 12), VerseRef(49, 3, 5, 6), VerseRef(51, 4, 15, 17),
+            VerseRef(58, 4, 12, 15), VerseRef(41, 17, 0, 7), VerseRef(61, 4, 13, 14)
+        )),
+        Topic(R.string.topic_faith, listOf(
+            VerseRef(57, 10, 0, 5), VerseRef(44, 9, 15, 16), VerseRef(58, 1, 1, 7),
+            VerseRef(39, 16, 19, 19), VerseRef(40, 8, 22, 23), VerseRef(46, 4, 6, 6)
+        )),
+        Topic(R.string.topic_love, listOf(
+            VerseRef(45, 12, 0, 12), VerseRef(61, 3, 6, 20), VerseRef(42, 12, 33, 34),
+            VerseRef(44, 7, 37, 38), VerseRef(59, 3, 7, 7), VerseRef(21, 7, 5, 6)
+        )),
+        Topic(R.string.topic_forgiveness, listOf(
+            VerseRef(39, 5, 13, 14), VerseRef(39, 17, 20, 21), VerseRef(48, 3, 31, 31),
+            VerseRef(50, 2, 12, 13), VerseRef(61, 0, 8, 8), VerseRef(18, 102, 7, 13)
+        )),
+        Topic(R.string.topic_holy_spirit, listOf(
+            VerseRef(42, 13, 15, 16), VerseRef(42, 15, 12, 14), VerseRef(43, 0, 7, 7),
+            VerseRef(44, 7, 25, 26), VerseRef(47, 4, 21, 22), VerseRef(45, 2, 15, 16)
+        )),
+        Topic(R.string.topic_wisdom, listOf(
+            VerseRef(19, 2, 4, 6), VerseRef(58, 0, 4, 4), VerseRef(19, 8, 9, 9),
+            VerseRef(20, 11, 12, 13), VerseRef(50, 1, 1, 2), VerseRef(17, 27, 27, 27)
+        )),
+        Topic(R.string.topic_hope, listOf(
+            VerseRef(23, 28, 10, 12), VerseRef(44, 14, 12, 12), VerseRef(24, 2, 21, 25),
+            VerseRef(44, 4, 1, 4), VerseRef(59, 0, 2, 3), VerseRef(65, 20, 3, 4)
+        ))
+    )
+
+    val help = listOf(
+        Topic(R.string.help_anxiety, listOf(
+            VerseRef(49, 3, 5, 6), VerseRef(39, 5, 24, 33), VerseRef(59, 4, 6, 6),
+            VerseRef(18, 54, 21, 21), VerseRef(42, 13, 26, 26), VerseRef(22, 25, 2, 3)
+        )),
+        Topic(R.string.help_fear, listOf(
+            VerseRef(22, 40, 9, 12), VerseRef(18, 22, 0, 5), VerseRef(18, 26, 0, 2),
+            VerseRef(54, 0, 6, 6), VerseRef(61, 3, 17, 17), VerseRef(4, 30, 5, 5)
+        )),
+        Topic(R.string.help_grief, listOf(
+            VerseRef(18, 33, 17, 18), VerseRef(39, 4, 3, 3), VerseRef(65, 20, 3, 3),
+            VerseRef(51, 3, 12, 17), VerseRef(42, 10, 24, 25), VerseRef(18, 146, 2, 2)
+        )),
+        Topic(R.string.help_loneliness, listOf(
+            VerseRef(4, 30, 7, 7), VerseRef(18, 67, 4, 5), VerseRef(22, 42, 1, 1),
+            VerseRef(39, 27, 19, 19), VerseRef(57, 12, 4, 5), VerseRef(18, 138, 6, 9)
+        )),
+        Topic(R.string.help_anger, listOf(
+            VerseRef(48, 3, 25, 26), VerseRef(58, 0, 18, 19), VerseRef(19, 14, 0, 0),
+            VerseRef(19, 15, 31, 31), VerseRef(18, 36, 7, 8), VerseRef(50, 2, 7, 7)
+        )),
+        Topic(R.string.help_temptation, listOf(
+            VerseRef(45, 9, 12, 12), VerseRef(58, 0, 11, 14), VerseRef(39, 25, 40, 40),
+            VerseRef(57, 3, 14, 15), VerseRef(18, 118, 8, 10), VerseRef(47, 4, 15, 15)
+        )),
+        Topic(R.string.help_illness, listOf(
+            VerseRef(58, 4, 13, 15), VerseRef(18, 102, 1, 4), VerseRef(23, 16, 13, 13),
+            VerseRef(18, 40, 2, 2), VerseRef(59, 1, 23, 23), VerseRef(46, 11, 8, 9)
+        )),
+        Topic(R.string.help_finances, listOf(
+            VerseRef(49, 3, 18, 18), VerseRef(39, 5, 30, 32), VerseRef(19, 2, 8, 9),
+            VerseRef(57, 12, 4, 4), VerseRef(18, 36, 24, 24), VerseRef(38, 2, 9, 9)
+        )),
+        Topic(R.string.help_despair, listOf(
+            VerseRef(18, 41, 10, 10), VerseRef(18, 33, 16, 18), VerseRef(22, 60, 0, 2),
+            VerseRef(46, 3, 7, 9), VerseRef(18, 29, 4, 4), VerseRef(39, 10, 27, 29)
+        )),
+        Topic(R.string.help_guidance, listOf(
+            VerseRef(19, 2, 4, 5), VerseRef(18, 31, 7, 7), VerseRef(22, 29, 20, 20),
+            VerseRef(18, 118, 104, 104), VerseRef(58, 0, 4, 4), VerseRef(19, 15, 8, 8)
+        )),
+        Topic(R.string.help_marriage, listOf(
+            VerseRef(0, 1, 23, 23), VerseRef(48, 4, 24, 32), VerseRef(45, 12, 3, 6),
+            VerseRef(50, 2, 13, 18), VerseRef(19, 17, 21, 21), VerseRef(20, 3, 8, 11)
+        )),
+        Topic(R.string.help_guilt, listOf(
+            VerseRef(18, 31, 0, 4), VerseRef(44, 7, 0, 1), VerseRef(61, 0, 8, 8),
+            VerseRef(22, 0, 17, 17), VerseRef(18, 102, 11, 11), VerseRef(46, 4, 16, 16)
+        ))
+    )
+}

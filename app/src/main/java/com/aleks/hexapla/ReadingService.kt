@@ -318,17 +318,30 @@ class ReadingService : Service() {
         downloadPercent = -1
     }
 
-    /* ---- Background music bed: loops softly while the reading plays. ---- */
+    /* ---- Background music bed: rotates softly through the bundled tracks
+       (piano, orchestral, strings, ambient) while the reading plays. ---- */
+
+    private val musicTracks: List<String> by lazy {
+        try {
+            (assets.list("music") ?: emptyArray()).map { "music/$it" }.shuffled()
+        } catch (_: Exception) { emptyList() }
+    }
+    private var musicIndex = 0
 
     private fun startMusic() {
-        if (!settings.musicEnabled) return
+        if (!settings.musicEnabled || musicTracks.isEmpty()) return
         val vol = settings.musicVolume.coerceIn(0f, 1f)
         musicPlayer?.let {
             try { it.setVolume(vol, vol); if (!it.isPlaying) it.start() } catch (_: Exception) { }
             return
         }
+        playMusicTrack(musicIndex)
+    }
+
+    private fun playMusicTrack(index: Int) {
+        val vol = settings.musicVolume.coerceIn(0f, 1f)
         try {
-            val afd = assets.openFd("music/meditation01.mp3")
+            val afd = assets.openFd(musicTracks[index % musicTracks.size])
             musicPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
@@ -338,9 +351,16 @@ class ReadingService : Service() {
                 )
                 setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
                 afd.close()
-                isLooping = true
                 setVolume(vol, vol)
                 setOnPreparedListener { if (Playback.playing.value) it.start() }
+                setOnCompletionListener {
+                    // Rotate to the next track so long sessions don't go stale.
+                    musicIndex = (index + 1) % musicTracks.size
+                    releaseMusic()
+                    if (Playback.playing.value && settings.musicEnabled) {
+                        playMusicTrack(musicIndex)
+                    }
+                }
                 prepareAsync()
             }
         } catch (_: Exception) {

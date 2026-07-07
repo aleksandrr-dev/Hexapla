@@ -63,7 +63,7 @@ All texts are public domain. The app collects nothing.
 
 ## Français
 
-**Titre :** Hexapla — La Bible en 6 langues
+**Titre :** Hexapla — Bible en 6 langues
 
 **Description courte :**
 Bible hors ligne : 12 traductions classiques, audio, plans de lecture.
@@ -80,7 +80,7 @@ Tous les textes sont dans le domaine public. L\'application ne collecte rien.
 
 ## Deutsch
 
-**Titel:** Hexapla — Die Bibel in 6 Sprachen
+**Titel:** Hexapla — Bibel in 6 Sprachen
 
 **Kurzbeschreibung:**
 Bibel offline: 12 klassische Übersetzungen, Audio, Lesepläne, Strong.
@@ -97,7 +97,7 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
 ## Español
 
-**Título:** Hexapla — La Biblia en 6 idiomas
+**Título:** Hexapla — Biblia en 6 idiomas
 
 **Descripción corta:**
 Biblia sin conexión: 12 traducciones clásicas, audio, planes de lectura.

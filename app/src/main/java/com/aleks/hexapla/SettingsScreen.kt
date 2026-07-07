@@ -401,7 +401,7 @@ fun SettingsScreen(settings: AppSettings) {
                     }
                 }
             }
-        } else {
+        } else if (BuildConfig.EXTERNAL_DONATIONS) {
             Row {
                 Donation.links.forEach { (label, url) ->
                     ChoiceChip(label, selected = false) {

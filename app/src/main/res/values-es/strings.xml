@@ -50,6 +50,8 @@
     <string name="plans_title">Planes de lectura</string>
     <string name="plan_year">La Biblia en 1 año</string>
     <string name="plan_year_desc">Toda la Biblia en 365 días, 3–4 capítulos al día</string>
+    <string name="plan_chrono">Cronológico — 1 año</string>
+    <string name="plan_chrono_desc">La Biblia en el orden de los acontecimientos: Job junto al Génesis, los Salmos con David, los profetas con los Reyes, las epístolas a lo largo de Hechos</string>
     <string name="plan_nt90">Nuevo Testamento en 90 días</string>
     <string name="plan_nt90_desc">Los 260 capítulos del Nuevo Testamento en 3 meses</string>
     <string name="day_n">Día %1$d</string>
@@ -102,7 +104,7 @@
     <string name="xrefs">Referencias cruzadas</string>
     <string name="remove_bookmark">Quitar marcador</string>
     <string name="sources_title">Fuentes de los textos</string>
-    <string name="sources_text">Todos los textos son de dominio público: Códice de Leningrado; Texto bizantino 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Biblia de Ginebra 1599; KJV con Apócrifos; Bible in Basic English; Biblia Martin 1744; Biblia de Lutero 1545; Reina-Valera 1909; Biblia isabelina 1757; Traducción sinodal rusa. Diccionario de la concordancia Strong (1890/1894) © Open Scriptures, CC-BY-SA. Referencias cruzadas © openbible.info, CC-BY. Datos de texto de los proyectos scrollmapper, thiagobodruk y byztxt. Música de fondo: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">Todos los textos son de dominio público: Códice de Leningrado; Texto bizantino 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Biblia de Ginebra 1599; KJV con Apócrifos; Biblia Webster 1833; Bible in Basic English; Biblia Martin 1744; Biblia de Lutero 1545; Reina-Valera 1909; Biblia isabelina 1757; Traducción sinodal rusa. Diccionario de la concordancia Strong (1890/1894) © Open Scriptures, CC-BY-SA. Referencias cruzadas © openbible.info, CC-BY. Datos de texto de los proyectos scrollmapper, thiagobodruk y byztxt. Música de fondo: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Voz de lectura</string>
     <string name="voice_default">Predeterminada del sistema</string>
     <string name="voice_note">Las voces disponibles dependen del motor de voz instalado en el dispositivo. Toca una voz para escucharla.</string>

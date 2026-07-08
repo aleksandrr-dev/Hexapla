@@ -79,15 +79,17 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
 
 ## Roadmap (agreed with owner)
 
-0. **Tester requests, approved 2026-07-08 (do first):**
-   a) Webster Bible 1833 as a translation (scrollmapper has it; use
-      tools/convert_scrollmapper.py + one line in BibleRepo.translations;
-      tester said "Webster's 1828" — that's the dictionary, the Bible is
-      1833; ask tester if they also meant the 1828 Dictionary → park as
-      v1.3 tap-a-word idea).
-   b) 1-year chronological reading plan — curate our own (book,chapter)
-      ordering from public-domain chronology (do NOT copy a published
-      app's plan); Plans engine takes it as-is. Titles ×5 locales.
+0. ~~Tester requests~~ DONE 2026-07-08 (in versionCode 5, not yet released):
+   a) ~~Webster Bible 1833~~ shipped (`wbt`, en_webster.json; converter now
+      strips scrollmapper's [supplied-word] brackets; book names normalized
+      to KJV style). Still ask tester if he also meant the 1828 Dictionary
+      → park as v1.3 tap-a-word idea.
+   b) ~~1-year chronological plan~~ shipped ("chrono" in Plans; order lives
+      in ChronoOrder.kt, curated + verified by tools/build_chrono_plan.py,
+      which documents every placement decision and asserts all 1189 canon
+      chapters appear exactly once and the anchor verses say what the
+      placements assume. KJV numbering; LXX psalters remapped like
+      chapterIndexFor; Heb Joel 4 special-cased; partial texts filtered).
 1. ~~QR share screen~~ DONE (Settings → Share this app; encodes landing page).
 2. IzzyOnDroid listing (repo is public; low effort).
 3. v1.2 flagship: **original-language interlinear** (word-tagged WLC/Byz

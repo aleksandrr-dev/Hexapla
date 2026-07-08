@@ -15,7 +15,11 @@ def convert(src, dst):
             vmax = max(v["verse"] for v in ch["verses"])
             verses = [""] * vmax
             for v in ch["verses"]:
-                verses[v["verse"] - 1] = v["text"].strip()
+                # Scrollmapper marks supplied (italicized) words with [...];
+                # keep the words, drop the brackets (matches how the app
+                # renders the KJV's {...} supplied words).
+                text = v["text"].replace("[", "").replace("]", "")
+                verses[v["verse"] - 1] = text.strip()
             chapters.append(verses)
         books.append({"name": b["name"], "chapters": chapters})
     assert len(books) == 66, f"{src}: expected 66 books, got {len(books)}"

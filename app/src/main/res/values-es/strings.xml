@@ -162,6 +162,10 @@
     <string name="welcome_gospel">¿Nuevo en la Biblia? Empieza aquí</string>
     <string name="welcome_plan">Crear el hábito de leer cada día</string>
     <string name="welcome_read">Simplemente empezar a leer</string>
+    <string name="share_app_title">Compartir la aplicación</string>
+    <string name="share_app_note">Regala la Biblia a alguien: muestra el código QR o envía el enlace. Allí están todas las formas de obtener Hexapla — gratis, para siempre.</string>
+    <string name="share_app_qr">Mostrar código QR</string>
+    <string name="share_app_link">Enviar enlace</string>
     <string name="music_title">Música de fondo al escuchar</string>
     <string name="music_volume">Volumen de la música</string>
 </resources>

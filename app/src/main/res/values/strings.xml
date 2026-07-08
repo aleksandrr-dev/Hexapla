@@ -171,6 +171,10 @@
     <string name="welcome_gospel">New to the Bible? Start here</string>
     <string name="welcome_plan">Build a daily reading habit</string>
     <string name="welcome_read">Just start reading</string>
+    <string name="share_app_title">Share this app</string>
+    <string name="share_app_note">Give someone the Bible: show them the QR code to scan, or send the link. It lists every way to get Hexapla — free, forever.</string>
+    <string name="share_app_qr">Show QR code</string>
+    <string name="share_app_link">Send link</string>
     <string name="music_title">Background music while listening</string>
     <string name="music_volume">Music volume</string>
 </resources>

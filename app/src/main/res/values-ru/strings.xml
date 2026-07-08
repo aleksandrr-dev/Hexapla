@@ -164,6 +164,10 @@
     <string name="welcome_gospel">Впервые открываете Библию? Начните здесь</string>
     <string name="welcome_plan">Читать каждый день по плану</string>
     <string name="welcome_read">Просто начать читать</string>
+    <string name="share_app_title">Поделиться приложением</string>
+    <string name="share_app_note">Подарите кому-нибудь Библию: покажите QR-код или отправьте ссылку. Там все способы получить Гексаплу — бесплатно, навсегда.</string>
+    <string name="share_app_qr">Показать QR-код</string>
+    <string name="share_app_link">Отправить ссылку</string>
     <string name="music_title">Фоновая музыка при прослушивании</string>
     <string name="music_volume">Громкость музыки</string>
 </resources>

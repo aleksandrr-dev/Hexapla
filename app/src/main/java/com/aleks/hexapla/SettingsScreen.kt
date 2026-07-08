@@ -45,6 +45,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
+/** Landing page listing every way to get the app; QR codes never go stale. */
+private const val APP_LINK = "https://aleksandrr-dev.github.io/Hexapla/"
+
+private fun qrBitmap(text: String, size: Int): android.graphics.Bitmap? = try {
+    val matrix = com.google.zxing.qrcode.QRCodeWriter()
+        .encode(text, com.google.zxing.BarcodeFormat.QR_CODE, size, size)
+    val bmp = android.graphics.Bitmap.createBitmap(
+        size, size, android.graphics.Bitmap.Config.RGB_565
+    )
+    for (x in 0 until size) for (y in 0 until size) {
+        bmp.setPixel(
+            x, y,
+            if (matrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+        )
+    }
+    bmp
+} catch (_: Exception) { null }
+
 /** Picker label for a voice: region plus gender when known, e.g. "English (US) · Female". */
 @Composable
 private fun voiceLabel(name: String): String {
@@ -323,6 +341,59 @@ fun SettingsScreen(settings: AppSettings) {
                 },
                 valueRange = 0f..55f,
                 steps = 10
+            )
+        }
+        HorizontalDivider(Modifier.padding(vertical = 12.dp))
+
+        /* ---- Share the app: QR + link to the landing page listing every
+           way to get Hexapla. The page is updated as stores go live, so
+           printed/shared codes never go stale. ---- */
+        SectionHeader(stringResource(R.string.share_app_title))
+        Text(
+            stringResource(R.string.share_app_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        var showQr by remember { mutableStateOf(false) }
+        Row {
+            TextButton(onClick = { showQr = true }) {
+                Text(stringResource(R.string.share_app_qr))
+            }
+            TextButton(onClick = {
+                val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(android.content.Intent.EXTRA_TEXT, APP_LINK)
+                }
+                context.startActivity(
+                    android.content.Intent.createChooser(send, null)
+                )
+            }) {
+                Text(stringResource(R.string.share_app_link))
+            }
+        }
+        if (showQr) {
+            val qr = remember { qrBitmap(APP_LINK, 720) }
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showQr = false },
+                title = { Text(stringResource(R.string.share_app_title)) },
+                text = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        qr?.let {
+                            androidx.compose.foundation.Image(
+                                bitmap = androidx.compose.ui.graphics.asImageBitmap(it),
+                                contentDescription = APP_LINK,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Text(APP_LINK, style = MaterialTheme.typography.bodySmall)
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showQr = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
             )
         }
         HorizontalDivider(Modifier.padding(vertical = 12.dp))

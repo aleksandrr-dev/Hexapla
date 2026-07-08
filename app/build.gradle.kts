@@ -90,5 +90,6 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.2")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.media:media:1.7.0")
+    implementation("com.google.zxing:core:3.5.3")
     implementation("com.android.billingclient:billing-ktx:7.1.1")
 }

@@ -48,10 +48,11 @@ maximize reach, keep everything free, nothing locked, collect no data.
   GitHub releases/latest (`gh release create vX.Y.Z <apk>` each release).
 - Privacy policy: https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
 - Listing texts (5 languages) + screenshot order: `store-assets/STORE_LISTING.md`.
-- **Google Play note (2026-07-08)**: owner uploaded 1.1.2 (code 4) to the
-  closed track; 1.2.0 AAB is staged at `C:\Projects\Hexapla-1.2.0-play.aab`
-  — upload it as a new release to the SAME closed track (does not reset
-  the 14-day tester clock).
+- **Google Play (2026-07-08)**: closed track now has 1.2.0 (code 5),
+  uploaded same day as 1.1.2 (code 4); the 14-day tester clock
+  (started ~2026-07-07) keeps running across uploads to the same track.
+- **GitHub release v1.2.0** published (releases/latest serves the
+  1.2.0 RuStore-flavor APK for the landing page's direct-APK button).
 - **Next versionCode: 6.**
 
 ## Architecture notes (beyond README)

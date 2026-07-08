@@ -26,9 +26,16 @@ maximize reach, keep everything free, nothing locked, collect no data.
 
 ## Store status (as of 2026-07-08)
 
-- **RuStore**: LIVE — 1.1.1 (code 3) approved; 1.1.2 (code 4, adds QR share
-  screen) submitted. Every upload re-asks the Safety form — answers are at
-  the top of `store-assets/STORE_LISTING.md`. Update reviews ≈ a day.
+- **RuStore**: LIVE — 1.1.1 (code 3) published; 1.2.0 (code 5) submitted
+  for moderation 2026-07-08 (code 4 was never actually submitted there —
+  the "1.1.2" draft turned out empty). Every upload re-asks the Safety
+  form — answers at the top of `store-assets/STORE_LISTING.md`. Gotcha:
+  a new version draft does NOT inherit media — re-upload icon
+  (`store-assets/icon_512_store.png`) + 6 screenshots (5 JPGs in
+  `store-assets/rustore/`, order 120537, 120212, 120307, 120326, 120426,
+  then `screenshot_widget.png`); the browser extension cannot upload
+  local files, the owner picks them in the native dialog. Update
+  reviews ≈ a day.
 - **Google Play**: closed testing (Alpha) — personal account, so production
   needs 12 testers × 14 continuous days (started ~2026-07-07). Upload
   1.1.2 play AAB to the closed track if not yet done. IARC done (purchases
@@ -41,7 +48,11 @@ maximize reach, keep everything free, nothing locked, collect no data.
   GitHub releases/latest (`gh release create vX.Y.Z <apk>` each release).
 - Privacy policy: https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
 - Listing texts (5 languages) + screenshot order: `store-assets/STORE_LISTING.md`.
-- **Next versionCode: 5.**
+- **Google Play note (2026-07-08)**: owner uploaded 1.1.2 (code 4) to the
+  closed track; 1.2.0 AAB is staged at `C:\Projects\Hexapla-1.2.0-play.aab`
+  — upload it as a new release to the SAME closed track (does not reset
+  the 14-day tester clock).
+- **Next versionCode: 6.**
 
 ## Architecture notes (beyond README)
 

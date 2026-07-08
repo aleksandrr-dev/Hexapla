@@ -24,18 +24,24 @@ maximize reach, keep everything free, nothing locked, collect no data.
   (our key = upload key). NEVER commit keys. versionCode: next is 3;
   bump for every store update.
 
-## Store status (July 2026)
+## Store status (as of 2026-07-08)
 
-- **RuStore**: v1.1 (code 2) submitted for moderation. Listing assets in
-  `store-assets/` (rustore/ has 1080×1920 screenshots).
-- **Google Play**: closed testing (Alpha) submitted for first review.
-  Personal account → requires 12 testers / 14 continuous days before
-  production. IARC done (purchases answered NO — tip products deliberately
-  NOT created on Play so Brazil rates Livre; tips exist only in code).
-  Target audience 13+. No ads, no ad ID, no health features. Third-party
-  store syndication: publish-all.
-- Privacy policy (required URL): https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
+- **RuStore**: LIVE — 1.1.1 (code 3) approved; 1.1.2 (code 4, adds QR share
+  screen) submitted. Every upload re-asks the Safety form — answers are at
+  the top of `store-assets/STORE_LISTING.md`. Update reviews ≈ a day.
+- **Google Play**: closed testing (Alpha) — personal account, so production
+  needs 12 testers × 14 continuous days (started ~2026-07-07). Upload
+  1.1.2 play AAB to the closed track if not yet done. IARC done (purchases
+  answered NO — tip products deliberately NOT created so Brazil rates
+  Livre; tips exist only in code). Target audience 13+, no ads/ad-ID/health.
+  Third-party store syndication: publish-all. Play uses Play App Signing.
+- **Landing page** (what the in-app QR encodes, update as stores go live):
+  https://aleksandrr-dev.github.io/Hexapla/ — buttons: RuStore (live),
+  Play (marked "скоро", flip when production approves), direct APK via
+  GitHub releases/latest (`gh release create vX.Y.Z <apk>` each release).
+- Privacy policy: https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
 - Listing texts (5 languages) + screenshot order: `store-assets/STORE_LISTING.md`.
+- **Next versionCode: 5.**
 
 ## Architecture notes (beyond README)
 
@@ -73,8 +79,16 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
 
 ## Roadmap (agreed with owner)
 
-1. After a store link exists: **QR "Share this app" screen** (evangelism
-   multiplier) — owner explicitly wants this next.
+0. **Tester requests, approved 2026-07-08 (do first):**
+   a) Webster Bible 1833 as a translation (scrollmapper has it; use
+      tools/convert_scrollmapper.py + one line in BibleRepo.translations;
+      tester said "Webster's 1828" — that's the dictionary, the Bible is
+      1833; ask tester if they also meant the 1828 Dictionary → park as
+      v1.3 tap-a-word idea).
+   b) 1-year chronological reading plan — curate our own (book,chapter)
+      ordering from public-domain chronology (do NOT copy a published
+      app's plan); Plans engine takes it as-is. Titles ×5 locales.
+1. ~~QR share screen~~ DONE (Settings → Share this app; encodes landing page).
 2. IzzyOnDroid listing (repo is public; low effort).
 3. v1.2 flagship: **original-language interlinear** (word-tagged WLC/Byz
    via Open Scriptures morphology → tap word → Strong's popup).

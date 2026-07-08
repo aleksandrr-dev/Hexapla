@@ -23,6 +23,7 @@ object BibleRepo {
 
     val translations = listOf(
         Translation("kjv", "bibles/en_kjv.json", "King James Version, 1611 (EN)", Locale.ENGLISH),
+        Translation("wbt", "bibles/en_webster.json", "Webster Bible, 1833 (EN)", Locale.ENGLISH),
         Translation("gen1599", "bibles/en_geneva.json", "Geneva Bible, 1599 (EN)", Locale.ENGLISH),
         Translation("tyn", "bibles/en_tyndale.json", "Tyndale, 1525/1530 — partial (EN)", Locale.ENGLISH),
         Translation("wyc", "bibles/enm_wycliffe.json", "Wycliffe, c. 1395 (Middle EN)", Locale.ENGLISH),
@@ -228,6 +229,8 @@ object Plans {
         val psalmChapters = allChapters.filter { it.first == 18 }
         return listOf(
             ReadingPlan("year", R.string.plan_year, R.string.plan_year_desc, distribute(allChapters, 365)),
+            ReadingPlan("chrono", R.string.plan_chrono, R.string.plan_chrono_desc,
+                distribute(ChronoOrder.chapters(books), 365)),
             ReadingPlan("nt90", R.string.plan_nt90, R.string.plan_nt90_desc, distribute(ntChapters, 90)),
             ReadingPlan("gospels30", R.string.plan_gospels, R.string.plan_gospels_desc, distribute(gospelChapters, 30)),
             ReadingPlan("prov31", R.string.plan_proverbs, R.string.plan_proverbs_desc, distribute(proverbsChapters, 31)),

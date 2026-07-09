@@ -21,7 +21,7 @@ Screenshot upload order (strongest first — reused for any store):
 
 ## Русский (primary for RuStore)
 
-**Название:** Гексапла — Библия на 6 языках
+**Название:** Гексапла — параллельная Библия
 
 **Краткое описание (до 80 зн.):**
 Библия офлайн: 13 переводов, озвучка, планы чтения, симфония Стронга.
@@ -48,7 +48,7 @@ Screenshot upload order (strongest first — reused for any store):
 
 ## English
 
-**Title:** Hexapla — Bible in 6 Languages
+**Title:** Hexapla — Parallel Bible
 
 **Short description:**
 Offline Bible: 13 classic translations, audio, Strong's, reading plans.
@@ -75,7 +75,7 @@ All texts are public domain. The app collects nothing.
 
 ## Français
 
-**Titre :** Hexapla — Bible en 6 langues
+**Titre :** Hexapla — Bible parallèle
 
 **Description courte :**
 Bible hors ligne : 13 traductions classiques, audio, plans de lecture.
@@ -92,7 +92,7 @@ Tous les textes sont dans le domaine public. L'application ne collecte rien.
 
 ## Deutsch
 
-**Titel:** Hexapla — Bibel in 6 Sprachen
+**Titel:** Hexapla — Parallelbibel
 
 **Kurzbeschreibung:**
 Bibel offline: 13 klassische Übersetzungen, Audio, Lesepläne, Strong.
@@ -109,7 +109,7 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
 ## Español
 
-**Título:** Hexapla — Biblia en 6 idiomas
+**Título:** Hexapla — Biblia paralela
 
 **Descripción corta:**
 Biblia sin conexión: 13 traducciones clásicas, audio, planes de lectura.

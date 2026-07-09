@@ -46,6 +46,7 @@ data class AppSettings(
     val autoContinue: Boolean = true,
     val compareIds: Set<String> = emptySet(),  // empty = compare all translations
     val showStrongs: Boolean = false,
+    val showDictionary: Boolean = false,   // Webster 1828, tap-a-word (EN texts)
     val audioNarration: Boolean = false,
     val streak: Int = 0,
     val redLetters: Boolean = true,
@@ -79,6 +80,7 @@ object Store {
     private val AUTO_CONT = booleanPreferencesKey("auto_continue")
     private val COMPARE_IDS = stringSetPreferencesKey("compare_ids")
     private val SHOW_STRONGS = booleanPreferencesKey("show_strongs")
+    private val SHOW_DICT = booleanPreferencesKey("show_dict")
     private val AUDIO_NARR = booleanPreferencesKey("audio_narration")
     private val STREAK = intPreferencesKey("streak")
     private val STREAK_DAY = longPreferencesKey("streak_day")
@@ -111,6 +113,7 @@ object Store {
             autoContinue = p[AUTO_CONT] ?: true,
             compareIds = p[COMPARE_IDS] ?: emptySet(),
             showStrongs = p[SHOW_STRONGS] ?: false,
+            showDictionary = p[SHOW_DICT] ?: false,
             audioNarration = p[AUDIO_NARR] ?: false,
             streak = p[STREAK] ?: 0,
             redLetters = p[RED_LETTERS] ?: true,
@@ -173,6 +176,7 @@ object Store {
     suspend fun setSpeechRate(c: Context, v: Float) = c.dataStore.edit { it[SPEECH_RATE] = v }
     suspend fun setAutoContinue(c: Context, v: Boolean) = c.dataStore.edit { it[AUTO_CONT] = v }
     suspend fun setShowStrongs(c: Context, v: Boolean) = c.dataStore.edit { it[SHOW_STRONGS] = v }
+    suspend fun setShowDictionary(c: Context, v: Boolean) = c.dataStore.edit { it[SHOW_DICT] = v }
     suspend fun setAudioNarration(c: Context, v: Boolean) = c.dataStore.edit { it[AUDIO_NARR] = v }
     suspend fun setRedLetters(c: Context, v: Boolean) = c.dataStore.edit { it[RED_LETTERS] = v }
     suspend fun setHideVerseNumbers(c: Context, v: Boolean) = c.dataStore.edit { it[HIDE_NUMBERS] = v }

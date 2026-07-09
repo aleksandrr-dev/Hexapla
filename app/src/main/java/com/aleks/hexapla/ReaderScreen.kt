@@ -12,6 +12,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -197,6 +199,11 @@ fun ReaderScreen(settings: AppSettings) {
             StrongsRepo.books(context) else null
     }
     var strongsId by remember { mutableStateOf<String?>(null) }
+    var dictWord by remember { mutableStateOf<String?>(null) }
+    val dictPrimary = settings.showDictionary &&
+        BibleRepo.translation(settings.primaryId).locale.language == "en"
+    val dictSecondary = settings.showDictionary &&
+        BibleRepo.translation(settings.secondaryId).locale.language == "en"
 
     val listState = rememberLazyListState()
 
@@ -358,21 +365,22 @@ fun ReaderScreen(settings: AppSettings) {
                             val second = secondaryVerses.getOrNull(i) ?: ""
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                 }
                             } else {
-                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, red = red, showNumber = !settings.hideVerseNumbers)
+                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
                                     i + 1, second, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
+                                    onWord = if (dictSecondary) ({ dictWord = it }) else null,
                                     red = red, showNumber = !settings.hideVerseNumbers
                                 )
                             }
                         } else {
-                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, red = red, showNumber = !settings.hideVerseNumbers)
+                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                         }
                         if (noteText != null) {
                             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -504,6 +512,39 @@ fun ReaderScreen(settings: AppSettings) {
         )
     }
 
+    dictWord?.let { word ->
+        var result by remember(word) { mutableStateOf<Pair<String, String>?>(null) }
+        var loaded by remember(word) { mutableStateOf(false) }
+        LaunchedEffect(word) {
+            result = Webster1828.lookup(context, word)
+            loaded = true
+        }
+        AlertDialog(
+            onDismissRequest = { dictWord = null },
+            title = { Text(result?.first ?: word) },
+            text = {
+                when {
+                    !loaded -> Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    result == null -> Text(stringResource(R.string.dict_not_found))
+                    else -> Column(Modifier.verticalScroll(rememberScrollState())) {
+                        Text(
+                            stringResource(R.string.dict_source),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(result!!.second, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { dictWord = null }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+
     compareVerse?.let { v ->
         CompareDialog(
             book = book,
@@ -615,6 +656,26 @@ private fun PlaybackBar(context: android.content.Context) {
     }
 }
 
+private val wordRegex = Regex("""[A-Za-z]+(?:['’-][A-Za-z]+)*""")
+
+/** Append [text], wrapping each word in an invisible link when [onWord] is set. */
+private fun androidx.compose.ui.text.AnnotatedString.Builder.appendWords(
+    text: String,
+    onWord: ((String) -> Unit)?
+) {
+    if (onWord == null) { append(text); return }
+    var pos = 0
+    for (m in wordRegex.findAll(text)) {
+        append(text.substring(pos, m.range.first))
+        val word = m.value
+        withLink(
+            LinkAnnotation.Clickable("w", TextLinkStyles()) { onWord(word) }
+        ) { append(word) }
+        pos = m.range.last + 1
+    }
+    append(text.substring(pos))
+}
+
 @Composable
 private fun VerseText(
     number: Int,
@@ -626,6 +687,7 @@ private fun VerseText(
     spokenRange: IntRange? = null,
     taggedText: String? = null,
     onStrongs: ((String) -> Unit)? = null,
+    onWord: ((String) -> Unit)? = null,
     red: Boolean = false,
     showNumber: Boolean = true
 ) {
@@ -635,7 +697,7 @@ private fun VerseText(
             buildAnnotatedString {
                 var pos = 0
                 for (m in StrongsRepo.tag.findAll(taggedText)) {
-                    append(taggedText.substring(pos, m.range.first))
+                    appendWords(taggedText.substring(pos, m.range.first), onWord)
                     val id = m.groupValues[1]
                     withLink(
                         LinkAnnotation.Clickable(
@@ -651,7 +713,7 @@ private fun VerseText(
                     ) { append(id.drop(1)) }
                     pos = m.range.last + 1
                 }
-                append(taggedText.substring(pos))
+                appendWords(taggedText.substring(pos), onWord)
             }
         }
         spokenRange != null && spokenRange.first >= 0 && spokenRange.last <= text.length -> {
@@ -661,6 +723,7 @@ private fun VerseText(
                 addStyle(SpanStyle(background = mark), spokenRange.first, spokenRange.last)
             }
         }
+        onWord != null -> buildAnnotatedString { appendWords(text, onWord) }
         else -> AnnotatedString(text)
     }
     // Classic red-letter tone, adjusted for theme luminance.

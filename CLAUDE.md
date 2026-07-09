@@ -94,8 +94,14 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
 0. ~~Tester requests~~ DONE 2026-07-08 (in versionCode 5, not yet released):
    a) ~~Webster Bible 1833~~ shipped (`wbt`, en_webster.json; converter now
       strips scrollmapper's [supplied-word] brackets; book names normalized
-      to KJV style). Still ask tester if he also meant the 1828 Dictionary
-      → park as v1.3 tap-a-word idea.
+      to KJV style). Tester confirmed he also wanted the 1828 Dictionary —
+      ~~tap-a-word~~ shipped in-tree for versionCode 6: Webster1828 in
+      Bible.kt (lazy 13 MB asset, +5.5 MB APK; archaic-form lemmatizer
+      mirrored in tools/check_1828_coverage.py, 95.9% token coverage,
+      misses ≈ proper names), converter tools/convert_webster1828.py from
+      the DataWar/1828-dictionary MySQL dump (mshaffer digitization, PD).
+      Off by default; toggle under Strong's. Tap word → definition dialog
+      (word taps and Strong's superscript numbers are separate targets).
    b) ~~1-year chronological plan~~ shipped ("chrono" in Plans; order lives
       in ChronoOrder.kt, curated + verified by tools/build_chrono_plan.py,
       which documents every placement decision and asserts all 1189 canon

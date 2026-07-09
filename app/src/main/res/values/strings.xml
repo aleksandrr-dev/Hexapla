@@ -59,6 +59,10 @@
     <string name="plan_year_desc">The whole Bible in 365 days, 3–4 chapters a day</string>
     <string name="plan_chrono">Chronological — 1 year</string>
     <string name="plan_chrono_desc">The Bible in the order events happened: Job beside Genesis, Psalms with David, prophets with the Kings, epistles along Acts</string>
+    <string name="dict_title">Webster\'s 1828 Dictionary</string>
+    <string name="dict_note">Tap any word in an English translation to see what it meant in the era of the classic Bibles — Noah Webster\'s American Dictionary of the English Language, 1828.</string>
+    <string name="dict_source">Webster\'s American Dictionary, 1828</string>
+    <string name="dict_not_found">Not in the 1828 dictionary — likely a proper name.</string>
     <string name="era_beginning">The Beginning</string>
     <string name="era_patriarchs">The Patriarchs</string>
     <string name="era_exodus">Egypt and the Exodus</string>
@@ -131,7 +135,7 @@
     <string name="xrefs">Cross-references</string>
     <string name="remove_bookmark">Remove bookmark</string>
     <string name="sources_title">Text sources</string>
-    <string name="sources_text">All texts are public domain: Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Webster Bible 1833; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Елизаветинская Библия 1757; Синодальный перевод. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Cross-references © openbible.info, CC-BY. App text data via scrollmapper, thiagobodruk and byztxt projects. Background music: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">All texts are public domain: Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Webster Bible 1833; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Елизаветинская Библия 1757; Синодальный перевод. Webster\'s American Dictionary of the English Language (1828) via the 1828.mshaffer.com digitization. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Cross-references © openbible.info, CC-BY. App text data via scrollmapper, thiagobodruk and byztxt projects. Background music: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Reading voice</string>
     <string name="voice_default">System default</string>
     <string name="voice_note">Available voices depend on the speech engine installed on the device (e.g. Google Speech Services, Samsung TTS). Tap a voice to hear it.</string>

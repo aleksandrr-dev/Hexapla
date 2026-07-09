@@ -50,6 +50,43 @@ object ChronoOrder {
         "56:1 49:1-4 53:1-6 55:1-3 59:1-5 57:1-13 54:1-4 60:1-3 64:1 61:1-5 " +
         "62:1 63:1 65:1-22"
 
+    /** Historical eras: (book, 0-based chapter) where each era begins in the
+     *  order above → heading resource. None start at a Psalm, so the LXX
+     *  psalter remap never shifts a boundary. */
+    private val eras = listOf(
+        Triple(0, 0, R.string.era_beginning),      // Gen 1
+        Triple(17, 0, R.string.era_patriarchs),    // Job 1 (then Gen 12-50)
+        Triple(1, 0, R.string.era_exodus),         // Exo 1
+        Triple(3, 0, R.string.era_wilderness),     // Num 1
+        Triple(5, 0, R.string.era_conquest),       // Jos 1
+        Triple(6, 0, R.string.era_judges),         // Jdg 1 (with Ruth)
+        Triple(8, 0, R.string.era_saul),           // 1Sa 1
+        Triple(12, 9, R.string.era_david),         // 1Ch 10 (Saul falls)
+        Triple(10, 0, R.string.era_solomon),       // 1Ki 1
+        Triple(10, 11, R.string.era_divided),      // 1Ki 12
+        Triple(11, 14, R.string.era_isaiah),       // 2Ki 15 (Uzziah dies)
+        Triple(11, 20, R.string.era_last_kings),   // 2Ki 21 (Manasseh)
+        Triple(23, 25, R.string.era_fall),         // Jer 26 (Jehoiakim)
+        Triple(23, 39, R.string.era_exile),        // Jer 40 (after the fall)
+        Triple(12, 0, R.string.era_return),        // 1Ch 1 (bridge to Ezra)
+        Triple(41, 0, R.string.era_christ),        // Luk 1
+        Triple(43, 0, R.string.era_church),        // Act 1
+        Triple(65, 0, R.string.era_revelation)     // Rev 1
+    )
+
+    /** Day number → era heading, for the day containing each era's first
+     *  chapter. Eras whose chapters a partial translation lacks are skipped. */
+    fun eraByDay(days: List<PlanDay>): Map<Int, Int> {
+        val m = LinkedHashMap<Int, Int>()
+        for ((b, c, res) in eras) {
+            val day = days.firstOrNull { d ->
+                d.chapters.any { it.first == b && it.second == c }
+            } ?: continue
+            if (!m.containsKey(day.day)) m[day.day] = res
+        }
+        return m
+    }
+
     /** Expand against the loaded books. Psalm numbers are KJV; LXX psalters
      *  (151 chapters) shift Psalms 10–147 down by one (cf. chapterIndexFor),
      *  so merged psalms are deduplicated. Chapters a partial translation

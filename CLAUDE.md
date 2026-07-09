@@ -102,6 +102,8 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
       chapters appear exactly once and the anchor verses say what the
       placements assume. KJV numbering; LXX psalters remapped like
       chapterIndexFor; Heb Joel 4 special-cased; partial texts filtered).
+      Era headings (18, ×5 locales) over the chrono day list added
+      post-1.2.0 — in-tree for the NEXT release (versionCode 6).
 1. ~~QR share screen~~ DONE (Settings → Share this app; encodes landing page).
 2. IzzyOnDroid listing (repo is public; low effort).
 3. v1.2 flagship: **original-language interlinear** (word-tagged WLC/Byz

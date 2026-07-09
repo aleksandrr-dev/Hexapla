@@ -243,6 +243,16 @@ fun SettingsScreen(settings: AppSettings) {
         )
 
         Spacer(Modifier.height(8.dp))
+        SwitchRow(stringResource(R.string.dict_title), settings.showDictionary) {
+            scope.launch { Store.setShowDictionary(context, it) }
+        }
+        Text(
+            stringResource(R.string.dict_note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(Modifier.height(8.dp))
         SwitchRow(stringResource(R.string.red_letters_title), settings.redLetters) {
             scope.launch { Store.setRedLetters(context, it) }
         }

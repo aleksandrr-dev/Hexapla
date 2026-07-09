@@ -145,6 +145,128 @@ object StrongsRepo {
     }
 }
 
+/* ---------------- Webster's 1828 American Dictionary ----------------
+   Public domain. Tap-a-word definitions for English translations; shows
+   what an English word meant in the era of the classic translations.
+   Lookup chain mirrors tools/check_1828_coverage.py — keep them in sync.
+   Loaded lazily (~13 MB JSON) only when the setting is on. */
+
+object Webster1828 {
+    private var cache: Map<String, String>? = null
+    private val dictMutex = Mutex()
+
+    // KJV-frequent forms the 1828 lacks as headwords (or spells otherwise).
+    private val irregular = mapOf(
+        "HATH" to "HAVE", "DOTH" to "DO", "DOST" to "DO", "DIDST" to "DO",
+        "SAITH" to "SAY", "SAIDST" to "SAY", "SHALT" to "SHALL", "WILT" to "WILL",
+        "CANST" to "CAN", "COULDEST" to "COULD", "WOULDEST" to "WOULD",
+        "SHOULDEST" to "SHOULD", "MIGHTEST" to "MIGHT", "MAYEST" to "MAY",
+        "SHEW" to "SHOW", "SHEWED" to "SHOW", "SHEWETH" to "SHOW",
+        "SHEWN" to "SHOW", "SHEWING" to "SHOW", "SHEWBREAD" to "SHOW-BREAD",
+        "BEGAT" to "BEGET", "BEGOTTEN" to "BEGET", "SLEW" to "SLAY", "SLAIN" to "SLAY",
+        "SMOTE" to "SMITE", "SMITTEN" to "SMITE", "TRODDEN" to "TREAD", "TROD" to "TREAD",
+        "BADE" to "BID", "FORBADE" to "FORBID", "GAVEST" to "GIVE", "GAVE" to "GIVE",
+        "TOOK" to "TAKE", "TOOKEST" to "TAKE", "TAKEN" to "TAKE", "WENT" to "GO",
+        "WENTEST" to "GO", "CAME" to "COME", "CAMEST" to "COME", "SAW" to "SEE",
+        "SAWEST" to "SEE", "SEEN" to "SEE", "STOOD" to "STAND", "STOODEST" to "STAND",
+        "BROUGHT" to "BRING", "BROUGHTEST" to "BRING", "SOUGHT" to "SEEK",
+        "FOUGHT" to "FIGHT", "BOUGHT" to "BUY", "TAUGHT" to "TEACH", "CAUGHT" to "CATCH",
+        "KEPT" to "KEEP", "SLEPT" to "SLEEP", "WEPT" to "WEEP", "SWEPT" to "SWEEP",
+        "FLED" to "FLEE", "FED" to "FEED", "LED" to "LEAD", "LEDDEST" to "LEAD",
+        "MET" to "MEET", "HELD" to "HOLD", "HELDEST" to "HOLD", "TOLD" to "TELL",
+        "TOLDEST" to "TELL", "SOLD" to "SELL", "SENT" to "SEND", "SENTEST" to "SEND",
+        "SPENT" to "SPEND", "BENT" to "BEND", "LENT" to "LEND", "RENT" to "REND",
+        "BUILT" to "BUILD", "SAT" to "SIT", "SATEST" to "SIT", "LAY" to "LIE",
+        "LAIN" to "LIE", "MADE" to "MAKE", "MADEST" to "MAKE", "SPOKEN" to "SPEAK",
+        "CHOSE" to "CHOOSE", "CHOSEN" to "CHOOSE", "DROVE" to "DRIVE",
+        "DRIVEN" to "DRIVE", "RODE" to "RIDE", "RIDDEN" to "RIDE", "ROSE" to "RISE",
+        "RISEN" to "RISE", "AROSE" to "ARISE", "ARISEN" to "ARISE", "WROTE" to "WRITE",
+        "WRITTEN" to "WRITE", "SWORE" to "SWEAR", "SWORN" to "SWEAR", "TORE" to "TEAR",
+        "TORN" to "TEAR", "WORE" to "WEAR", "WORN" to "WEAR", "BORE" to "BEAR",
+        "BORNE" to "BEAR", "BORN" to "BEAR", "GRAVEN" to "GRAVE", "HEWN" to "HEW",
+        "SOWN" to "SOW", "MOWN" to "MOW", "KNOWN" to "KNOW", "KNEW" to "KNOW",
+        "KNEWEST" to "KNOW", "GREW" to "GROW", "GROWN" to "GROW", "THREW" to "THROW",
+        "THROWN" to "THROW", "BLEW" to "BLOW", "BLOWN" to "BLOW", "FLEW" to "FLY",
+        "FLOWN" to "FLY", "DREW" to "DRAW", "DRAWN" to "DRAW", "DRAWEST" to "DRAW",
+        "ATE" to "EAT", "EATEN" to "EAT", "DRANK" to "DRINK", "DRUNK" to "DRINK",
+        "DRUNKEN" to "DRINK", "SANG" to "SING", "SUNG" to "SING", "RANG" to "RING",
+        "RUNG" to "RING", "SANK" to "SINK", "SUNK" to "SINK", "SUNKEN" to "SINK",
+        "SWAM" to "SWIM", "SWUM" to "SWIM", "RAN" to "RUN", "WON" to "WIN",
+        "SHONE" to "SHINE", "STRUCK" to "STRIKE", "STRICKEN" to "STRIKE",
+        "STOLE" to "STEAL", "STOLEN" to "STEAL", "FELL" to "FALL", "FELLEST" to "FALL",
+        "FALLEN" to "FALL", "FORGAVE" to "FORGIVE", "FORGIVEN" to "FORGIVE",
+        "FORSOOK" to "FORSAKE", "FORSAKEN" to "FORSAKE", "FOUND" to "FIND",
+        "FOUNDEST" to "FIND", "GROUND" to "GRIND", "BOUND" to "BIND", "WOUND" to "WIND",
+        "HID" to "HIDE", "HIDDEN" to "HIDE", "BITTEN" to "BITE", "BIT" to "BITE",
+        "SHOT" to "SHOOT", "GOT" to "GET", "GOTTEN" to "GET", "GAT" to "GET",
+        "BESOUGHT" to "BESEECH", "WROUGHT" to "WORK", "LEFT" to "LEAVE",
+        "LOST" to "LOSE", "PAID" to "PAY", "LAID" to "LAY", "LAIDST" to "LAY",
+        "SAID" to "SAY", "HEARD" to "HEAR", "HEARDEST" to "HEAR", "MEANT" to "MEAN",
+        "FELT" to "FEEL", "DEALT" to "DEAL", "KNELT" to "KNEEL", "DWELT" to "DWELL",
+        "SPAT" to "SPIT", "CLAD" to "CLOTHE", "SHOD" to "SHOE",
+        "WAS" to "BE", "WAST" to "BE", "WERT" to "BE", "WERE" to "BE", "BEEN" to "BE",
+        "AM" to "BE", "IS" to "BE", "ARE" to "BE", "HAD" to "HAVE", "HADST" to "HAVE",
+        "HAS" to "HAVE", "HAST" to "HAVE", "HAVING" to "HAVE", "DID" to "DO",
+        "DONE" to "DO", "DOES" to "DO",
+        "MEN" to "MAN", "WOMEN" to "WOMAN", "CHILDREN" to "CHILD",
+        "BRETHREN" to "BROTHER", "KINE" to "COW", "OXEN" to "OX", "FEET" to "FOOT",
+        "TEETH" to "TOOTH", "GEESE" to "GOOSE", "MICE" to "MOUSE", "LICE" to "LOUSE",
+        "DIED" to "DIE", "DIETH" to "DIE", "DYING" to "DIE", "LIETH" to "LIE",
+        "LYING" to "LIE", "SPUE" to "SPEW", "SPUED" to "SPEW",
+        "MARISHES" to "MARSH", "MARISH" to "MARSH", "AGONE" to "AGO",
+        "STRAWED" to "STREW", "WOE" to "WO", "BEGAN" to "BEGIN", "BEGUN" to "BEGIN",
+        "YOURSELVES" to "YOURSELF", "OURSELVES" to "OURSELF",
+        "SELVES" to "SELF", "WOLVES" to "WOLF", "CALVES" to "CALF",
+        "HALVES" to "HALF", "LOAVES" to "LOAF", "LIVES" to "LIFE",
+        "WIVES" to "WIFE", "KNIVES" to "KNIFE", "THIEVES" to "THIEF",
+        "SHEAVES" to "SHEAF", "LEAVES" to "LEAF", "STAVES" to "STAFF",
+        "HOOVES" to "HOOF"
+    )
+
+    private val vowels = setOf('A', 'E', 'I', 'O', 'U')
+
+    /** Lookup candidates for a tapped word, most specific first. */
+    private fun candidates(word: String): List<String> {
+        var w = word.uppercase().replace('’', '\'').trim { !it.isLetter() }
+        val out = ArrayList<String>(8)
+        out.add(w)
+        irregular[w]?.let { out.add(it); return out }
+        if (w.endsWith("'S")) { w = w.dropLast(2); out.add(w) }
+        else if (w.endsWith("S'")) { w = w.dropLast(1); out.add(w) }
+        for (suffix in listOf("ETH", "EST", "ES", "ED", "ING", "S")) {
+            if (!w.endsWith(suffix) || w.length <= suffix.length + 1) continue
+            val stem = w.dropLast(suffix.length)
+            if (suffix != "ING" && suffix != "S" && stem.endsWith("I"))
+                out.add(stem.dropLast(1) + "Y")     // carrieth -> carry
+            out.add(stem)                            // walketh -> walk
+            out.add(stem + "E")                      // loveth -> love
+            if (stem.length > 2 && stem[stem.length - 1] == stem[stem.length - 2] &&
+                stem.last() !in vowels)
+                out.add(stem.dropLast(1))            // sitteth -> sit
+        }
+        if (w.endsWith("LY") && w.length > 4) out.add(w.dropLast(2))
+        return out
+    }
+
+    /** Returns (headword, definition) or null. */
+    suspend fun lookup(context: Context, word: String): Pair<String, String>? {
+        val dict = dictMutex.withLock {
+            cache ?: withContext(Dispatchers.IO) {
+                val text = context.assets.open("webster1828.json").readBytes()
+                    .toString(Charsets.UTF_8)
+                val o = org.json.JSONObject(text)
+                val m = HashMap<String, String>(o.length() * 4 / 3)
+                for (k in o.keys()) m[k] = o.getString(k)
+                m
+            }.also { cache = it }
+        }
+        for (c in candidates(word)) dict[c]?.let { return c to it }
+        return null
+    }
+
+    fun unload() { cache = null }
+}
+
 /* ---------------- Cross-references (openbible.info, CC-BY) ----------------
    Per-verse index of the strongest community-voted cross-references,
    top 8 per verse. Loaded lazily from assets on first use (~2 MB). */

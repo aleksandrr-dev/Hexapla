@@ -52,6 +52,10 @@
     <string name="plan_year_desc">Die ganze Bibel in 365 Tagen, 3–4 Kapitel pro Tag</string>
     <string name="plan_chrono">Chronologisch — 1 Jahr</string>
     <string name="plan_chrono_desc">Die Bibel in der Reihenfolge der Ereignisse: Hiob neben der Genesis, Psalmen bei David, Propheten bei den Königen, Briefe entlang der Apostelgeschichte</string>
+    <string name="dict_title">Websters Wörterbuch 1828</string>
+    <string name="dict_note">Tippen Sie auf ein Wort in einer englischen Übersetzung, um seine Bedeutung zur Zeit der klassischen Bibeln zu sehen — Noah Websters American Dictionary of the English Language, 1828.</string>
+    <string name="dict_source">Websters Wörterbuch, 1828 (Englisch)</string>
+    <string name="dict_not_found">Nicht im Wörterbuch von 1828 — wahrscheinlich ein Eigenname.</string>
     <string name="era_beginning">Der Anfang</string>
     <string name="era_patriarchs">Die Patriarchen</string>
     <string name="era_exodus">Ägypten und der Auszug</string>
@@ -122,7 +126,7 @@
     <string name="xrefs">Querverweise</string>
     <string name="remove_bookmark">Lesezeichen entfernen</string>
     <string name="sources_title">Textquellen</string>
-    <string name="sources_text">Alle Texte sind gemeinfrei: Codex Leningradensis; Byzantinischer Text 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Genfer Bibel 1599; KJV mit Apokryphen; Webster-Bibel 1833; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Elisabeth-Bibel 1757; Russische Synodalübersetzung. Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Querverweise © openbible.info, CC-BY. Textdaten über die Projekte scrollmapper, thiagobodruk und byztxt. Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">Alle Texte sind gemeinfrei: Codex Leningradensis; Byzantinischer Text 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Genfer Bibel 1599; KJV mit Apokryphen; Webster-Bibel 1833; Bible in Basic English; Bible Martin 1744; Lutherbibel 1545; Reina-Valera 1909; Elisabeth-Bibel 1757; Russische Synodalübersetzung. Websters Wörterbuch 1828 (Digitalisierung 1828.mshaffer.com). Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Querverweise © openbible.info, CC-BY. Textdaten über die Projekte scrollmapper, thiagobodruk und byztxt. Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Vorlesestimme</string>
     <string name="voice_default">Systemstandard</string>
     <string name="voice_note">Die verfügbaren Stimmen hängen von der installierten Sprach-Engine ab. Tippe eine Stimme an, um sie zu hören.</string>

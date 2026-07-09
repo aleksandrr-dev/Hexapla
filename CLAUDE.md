@@ -26,9 +26,10 @@ maximize reach, keep everything free, nothing locked, collect no data.
 
 ## Store status (as of 2026-07-08)
 
-- **RuStore**: LIVE — 1.1.1 (code 3) published; 1.2.0 (code 5) submitted
-  for moderation 2026-07-08 (code 4 was never actually submitted there —
-  the "1.1.2" draft turned out empty). Every upload re-asks the Safety
+- **RuStore**: LIVE — 1.2.0 (code 5) approved 2026-07-09; 1.3.0 (code 6)
+  submitted same day together with the new store title «Гексапла —
+  параллельная Библия» (code 4 was never actually submitted there — the
+  "1.1.2" draft turned out empty). Every upload re-asks the Safety
   form — answers at the top of `store-assets/STORE_LISTING.md`. Gotcha:
   a new version draft does NOT inherit media — re-upload icon
   (`store-assets/icon_512_store.png`) + 6 screenshots (5 JPGs in
@@ -53,9 +54,10 @@ maximize reach, keep everything free, nothing locked, collect no data.
   (started ~2026-07-07) keeps running across uploads to the same track.
 - **GitHub release v1.2.0** published (releases/latest serves the
   1.2.0 RuStore-flavor APK for the landing page's direct-APK button).
-- **1.3.0 (code 6) built locally 2026-07-09** (era headings + 1828
-  dictionary): `C:\Projects\Hexapla-1.3.0-rustore.apk` / `-play.aab` —
-  NOT yet uploaded anywhere; hold until 1.2.0 clears both stores.
+- **1.3.0 (code 6)** (era headings + 1828 dictionary): submitted to
+  RuStore + GitHub release v1.3.0 published 2026-07-09. Play closed
+  track still has 1.2.0; upload `C:\Projects\Hexapla-1.3.0-play.aab`
+  there when convenient (does not reset the tester clock).
 - **Next versionCode: 7.**
 
 ## Architecture notes (beyond README)

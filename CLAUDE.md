@@ -53,7 +53,10 @@ maximize reach, keep everything free, nothing locked, collect no data.
   (started ~2026-07-07) keeps running across uploads to the same track.
 - **GitHub release v1.2.0** published (releases/latest serves the
   1.2.0 RuStore-flavor APK for the landing page's direct-APK button).
-- **Next versionCode: 6.**
+- **1.3.0 (code 6) built locally 2026-07-09** (era headings + 1828
+  dictionary): `C:\Projects\Hexapla-1.3.0-rustore.apk` / `-play.aab` —
+  NOT yet uploaded anywhere; hold until 1.2.0 clears both stores.
+- **Next versionCode: 7.**
 
 ## Architecture notes (beyond README)
 

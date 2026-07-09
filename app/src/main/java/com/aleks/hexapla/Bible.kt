@@ -198,7 +198,8 @@ data class ReadingPlan(
     val id: String,
     val titleRes: Int,
     val descRes: Int,
-    val days: List<PlanDay>
+    val days: List<PlanDay>,
+    val eraByDay: Map<Int, Int> = emptyMap() // day → era heading resource
 )
 
 object Plans {
@@ -227,10 +228,11 @@ object Plans {
         val gospelChapters = allChapters.filter { it.first in 39..42 }
         val proverbsChapters = allChapters.filter { it.first == 19 }
         val psalmChapters = allChapters.filter { it.first == 18 }
+        val chronoDays = distribute(ChronoOrder.chapters(books), 365)
         return listOf(
             ReadingPlan("year", R.string.plan_year, R.string.plan_year_desc, distribute(allChapters, 365)),
             ReadingPlan("chrono", R.string.plan_chrono, R.string.plan_chrono_desc,
-                distribute(ChronoOrder.chapters(books), 365)),
+                chronoDays, ChronoOrder.eraByDay(chronoDays)),
             ReadingPlan("nt90", R.string.plan_nt90, R.string.plan_nt90_desc, distribute(ntChapters, 90)),
             ReadingPlan("gospels30", R.string.plan_gospels, R.string.plan_gospels_desc, distribute(gospelChapters, 30)),
             ReadingPlan("prov31", R.string.plan_proverbs, R.string.plan_proverbs_desc, distribute(proverbsChapters, 31)),

@@ -115,6 +115,16 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
             items(plan.days, key = { it.day }) { day ->
                 val done = progress.contains(day.day)
                 val isNext = day.day == nextDay && !done
+                Column {
+                plan.eraByDay[day.day]?.let { era ->
+                    Text(
+                        stringResource(era),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp)
+                    )
+                }
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -165,6 +175,7 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
                             }
                         )
                     }
+                }
                 }
             }
             item { Spacer(Modifier.height(24.dp)) }

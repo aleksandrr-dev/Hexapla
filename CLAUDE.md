@@ -68,15 +68,15 @@ maximize reach, keep everything free, nothing locked, collect no data.
   14-day countdown only advances on days with ≥12 opted-in testers, so
   it is effectively **not running** until 4 more testers join (via the
   closed-test opt-in link, each on their own Google account).
-- **Play store title change staged 2026-07-10 (NOT yet submitted):**
-  en-US app name changed to «Hexapla — Parallel Bible» — sits in
-  Publishing overview under "Changes not yet submitted for review".
-  Still TODO before/with submitting: the other 4 language names
-  (translations in `STORE_LISTING.md`), and the whole listing's short +
-  full descriptions in all 5 languages are STILL the stale "6 languages
-  / 12 translations" copy — the Play listing text was never refreshed
-  (only `STORE_LISTING.md` was). Edit at Grow users → Store presence →
-  Store listings → Default store listing → Edit.
+- **Play store listing refreshed + submitted for review 2026-07-10:**
+  all 5 languages — app name → the number-free «Parallel Bible» titles
+  (Hexapla — Parallel Bible / Гексапла — параллельная Библия / Biblia
+  paralela / Parallelbibel / Bible parallèle), plus short + full
+  descriptions updated to the current "13 translations" copy from
+  `STORE_LISTING.md`. Was previously the stale "6 languages / 12
+  translations" text (Play listing had never been refreshed, only the
+  repo file). Edit at Grow users → Store presence → Store listings →
+  Default store listing → Edit.
 - **Next versionCode: 7.**
 
 ## Architecture notes (beyond README)

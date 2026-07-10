@@ -24,7 +24,7 @@ maximize reach, keep everything free, nothing locked, collect no data.
   (our key = upload key). NEVER commit keys. versionCode: next is 3;
   bump for every store update.
 
-## Store status (as of 2026-07-08)
+## Store status (as of 2026-07-10)
 
 - **RuStore**: LIVE — 1.2.0 (code 5) approved 2026-07-09; 1.3.0 (code 6)
   submitted same day together with the new store title «Гексапла —
@@ -38,8 +38,9 @@ maximize reach, keep everything free, nothing locked, collect no data.
   local files, the owner picks them in the native dialog. Update
   reviews ≈ a day.
 - **Google Play**: closed testing (Alpha) — personal account, so production
-  needs 12 testers × 14 continuous days (started ~2026-07-07). Upload
-  1.1.2 play AAB to the closed track if not yet done. IARC done (purchases
+  needs 12 testers × 14 continuous days. 1.3.0 (code 6) is the current
+  closed-track release (in review as of 2026-07-10); see the detailed
+  Play notes below. IARC done (purchases
   answered NO — tip products deliberately NOT created so Brazil rates
   Livre; tips exist only in code). Target audience 13+, no ads/ad-ID/health.
   Third-party store syndication: publish-all. Play uses Play App Signing.
@@ -55,9 +56,27 @@ maximize reach, keep everything free, nothing locked, collect no data.
 - **GitHub release v1.2.0** published (releases/latest serves the
   1.2.0 RuStore-flavor APK for the landing page's direct-APK button).
 - **1.3.0 (code 6)** (era headings + 1828 dictionary): submitted to
-  RuStore + GitHub release v1.3.0 published 2026-07-09. Play closed
-  track still has 1.2.0; upload `C:\Projects\Hexapla-1.3.0-play.aab`
-  there when convenient (does not reset the tester clock).
+  RuStore + GitHub release v1.3.0 published 2026-07-09. Play: 1.3.0
+  uploaded to the closed track and **submitted for review 2026-07-10**
+  (status "In review"). Removing the auto-carried previous bundle
+  (code 2) from the release's "Previous release → Included" section was
+  needed — otherwise Play errors "APK completely shadowed by higher
+  version code". Release notes were refreshed (were still the "First
+  release / 12 translations" text).
+- **Play production gate — tester count is the blocker, not the clock:**
+  as of 2026-07-10 only **8 of 12 required testers are opted in**. The
+  14-day countdown only advances on days with ≥12 opted-in testers, so
+  it is effectively **not running** until 4 more testers join (via the
+  closed-test opt-in link, each on their own Google account).
+- **Play store title change staged 2026-07-10 (NOT yet submitted):**
+  en-US app name changed to «Hexapla — Parallel Bible» — sits in
+  Publishing overview under "Changes not yet submitted for review".
+  Still TODO before/with submitting: the other 4 language names
+  (translations in `STORE_LISTING.md`), and the whole listing's short +
+  full descriptions in all 5 languages are STILL the stale "6 languages
+  / 12 translations" copy — the Play listing text was never refreshed
+  (only `STORE_LISTING.md` was). Edit at Grow users → Store presence →
+  Store listings → Default store listing → Edit.
 - **Next versionCode: 7.**
 
 ## Architecture notes (beyond README)

@@ -52,7 +52,7 @@
     <string name="plans_title">Планы чтения</string>
     <string name="plan_year">Библия за 1 год</string>
     <string name="plan_year_desc">Вся Библия за 365 дней, 3–4 главы в день</string>
-    <string name="plan_chrono">Хронологический — 1 год</string>
+    <string name="plan_chrono">Хронологическая Библия за 1 год</string>
     <string name="plan_chrono_desc">Библия в порядке событий: Иов рядом с Бытием, псалмы — с Давидом, пророки — с книгами Царств, послания — по Деяниям</string>
     <string name="interlinear_none">Для этого стиха нет данных о словах.</string>
     <string name="dict_title">Словарь Уэбстера 1828</string>
@@ -129,7 +129,7 @@
     <string name="xrefs">Параллельные места</string>
     <string name="remove_bookmark">Удалить закладку</string>
     <string name="sources_title">Источники текстов</string>
-    <string name="sources_text">Все тексты в общественном достоянии: Ленинградский кодекс (WLC); византийский текст 2018 (Робинсон–Пирпонт); Уиклиф; Тиндейл; Женевская Библия 1599; KJV с апокрифами; Библия Уэбстера 1833; Библия Мартина 1744; Библия Лютера 1545; шведская Карла XII 1703; датская 1819; Рейна-Валера 1909; Диодати 1649/1885; Bíblia Livre (Алмейда, TR); японский 明治元訳 (Мэйдзи) 1880/87; китайский 和合本 1919; Елизаветинская Библия 1757; Синодальный перевод. Словарь Уэбстера 1828 (оцифровка 1828.mshaffer.com). Словарь Стронга (1890/1894) © Open Scriptures, CC-BY-SA. Морфология иврита © Open Scriptures (CC-BY); греческий разбор — Морис Робинсон (общественное достояние). Параллельные места © openbible.info, CC-BY. Данные — проекты scrollmapper, thiagobodruk, byztxt и Wikisource. Фоновая музыка: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">Все тексты в общественном достоянии: Ленинградский кодекс (WLC); византийский текст 2018 (Робинсон–Пирпонт); Уиклиф; Тиндейл; Женевская Библия 1599; KJV с апокрифами; Библия Уэбстера 1833; Библия Мартина 1744; Библия Лютера 1545; шведская Карла XII 1703; датская 1819/1871; Рейна-Валера 1909; Диодати 1649/1885; Bíblia Livre (Алмейда, TR); японский 明治元訳 (Мэйдзи) 1880/87; китайский 和合本 1919; Елизаветинская Библия 1757; Синодальный перевод. Словарь Уэбстера 1828 (оцифровка 1828.mshaffer.com). Словарь Стронга (1890/1894) © Open Scriptures, CC-BY-SA. Морфология иврита © Open Scriptures (CC-BY); греческий разбор — Морис Робинсон (общественное достояние). Параллельные места © openbible.info, CC-BY. Данные — проекты scrollmapper, thiagobodruk, byztxt и Wikisource. Фоновая музыка: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Голос чтения</string>
     <string name="voice_default">Системный по умолчанию</string>
     <string name="voice_note">Доступные голоса зависят от установленного синтезатора речи (Google, Samsung TTS). Нажмите на голос, чтобы прослушать.</string>
@@ -185,10 +185,11 @@
     <string name="plan_psalms_desc">По два псалма в день через всю Псалтирь</string>
     <string name="gospel_share">Поделиться Благой вестью →</string>
     <string name="search_all">Искать во всех переводах</string>
-    <string name="welcome_tagline">Библия на шести языках — офлайн, бесплатно, полностью.</string>
-    <string name="welcome_gospel">Впервые открываете Библию? Начните здесь</string>
+    <string name="welcome_tagline">Библия на 14 языках — офлайн, бесплатно, полностью.</string>
+    <string name="welcome_gospel">Новичок в Библии? Начните здесь</string>
     <string name="welcome_plan">Читать каждый день по плану</string>
     <string name="welcome_read">Просто начать читать</string>
+    <string name="welcome_read_note">Откроется Евангелие от Иоанна — рассказ очевидца об Иисусе. Дальше — куда пожелаете.</string>
     <string name="share_app_title">Поделиться приложением</string>
     <string name="share_app_note">Подарите кому-нибудь Библию: покажите QR-код или отправьте ссылку. Там все способы получить Гексаплу — бесплатно, навсегда.</string>
     <string name="share_app_qr">Показать QR-код</string>

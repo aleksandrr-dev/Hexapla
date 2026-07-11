@@ -47,6 +47,7 @@ IDS = {
     "wlc": "he_wlc", "mar": "fr_martin", "wyc": "enm_wycliffe",
     "mei": "ja_meiji", "grc": "grc_byz", "gen1599": "en_geneva",
     "alm": "pt_almeida", "cus": "zh_cuv_s", "cuv": "zh_cuv_t",
+    "san": "sa_nt",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -126,6 +127,13 @@ EXTRA = {
              (20, 37, 38, 20, 37, 37)],                             # Acts 20:37+38 merged
     },
     ("gen1599", "alm", "cus", "cuv"): {b: runs for b, runs in STD_TAIL},
+    # Sanskrit 1851 NT: continental 3 John split only. The source's
+    # Rev 12:18 is a bare "[]" placeholder (content sits in 13:1,
+    # KJV-style) — dropped by convert_sanskrit_nt.py, so Revelation
+    # needs no map.
+    ("san",): {
+        63: [(1, 14, 14, 1, 14, 15)],
+    },
     ("lut", "wlc"): {
         63: [(1, 14, 14, 1, 14, 15)],                               # (lut only; wlc lacks NT)
         65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],

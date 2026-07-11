@@ -77,10 +77,19 @@ maximize reach, keep everything free, nothing locked, collect no data.
   translations" text (Play listing had never been refreshed, only the
   repo file). Edit at Grow users → Store presence → Store listings →
   Default store listing → Edit.
-- **1.4.0 (code 7) built + staged 2026-07-11** (interlinear; +Almeida,
-  Diodati, Meiji, CUV×2 scripts; −BBE; Play empty-Support fix):
-  `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 16 translations
-  / 12 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
+- **1.4.0 (code 7) built + staged 2026-07-11, re-cut same day to add
+  the Nordics** (interlinear; +Almeida, Diodati, Meiji, CUV×2 scripts,
+  Karl XII 1703, Dansk 1819; −BBE; Play empty-Support fix):
+  `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 18 translations
+  / 14 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
+- **Translation watch list** (all deity-verse-gated, pipeline ready):
+  Guðbrandsbiblía 1584 (Icelandic) — transcription likely exists in the
+  Árnastofnun Textasafn corpus; owner to email arnastofnun@arnastofnun.is
+  (corpus editor: Þórdís Úlfarsdóttir, disa@hi.is) + hib@biblian.is
+  (Icelandic Bible Society; also has Viðeyjarbiblía 1841 as fallback ask).
+  Korean — no PD TR text exists (개역한글 fails 1 Tim 3:16 with 그는;
+  한글킹제임스/흠정역 copyrighted). LXX apocrypha — no clean-licensed
+  tagged text (CATSS restrictive).
 - **Next versionCode: 8.**
 
 ## Architecture notes (beyond README)

@@ -303,3 +303,53 @@ Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊
 🖼 桌面小工具顯示每日經文；多雷與施諾爾的經典版畫。
 
 所有經文均屬公有領域。本應用程式不收集任何資料。
+
+### Português de Portugal (pt-PT; também Angola/Moçambique)
+
+**Título:** Hexapla — Bíblia Paralela
+
+**Descrição curta (≤80):**
+Bíblia offline: 18 traduções clássicas, áudio, planos de leitura, Strong.
+
+**Descrição completa:**
+
+Hexapla — a Bíblia completa sem internet, sem anúncios, sem registo e sem recolha de dados. Tudo gratuito, nada bloqueado.
+
+📖 18 traduções clássicas em 14 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
+🔴 Palavras de Cristo em vermelho.
+🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
+📚 Números de Strong com léxico hebraico/grego completo.
+📜 Interlinear do original: toque numa palavra do texto grego ou hebraico e veja o número de Strong e a análise gramatical.
+🔀 Leia duas traduções lado a lado ou compare um versículo em todas.
+📅 Planos de leitura: Bíblia em 1 ano, plano cronológico, NT em 90 dias e mais — com progresso.
+🔍 Pesquisa sem acentos em todas as traduções.
+✏️ Marcadores, notas, destaques, referências cruzadas, cópia de segurança.
+🖼 Versículo do dia no widget; gravuras clássicas de Doré e Schnorr.
+
+Todos os textos são de domínio público. A aplicação não recolhe nenhum dado.
+
+### 繁體中文（香港）(zh-HK; 澳門亦適用)
+
+**標題:** Hexapla — 對照聖經
+
+**簡短說明 (≤80):**
+離線聖經：18部經典譯本，語音朗讀，讀經計劃，史特朗編號，原文對照。
+
+**完整說明:**
+
+Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊，不收集任何資料。完全免費，沒有任何限制。
+
+📖 14種語言、18部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
+✝️ 福音：神的救恩計劃，逐步呈現，唯獨聖經經文。
+🔴 基督的話語以紅字顯示。
+🎧 語音：真人朗讀與語音合成，逐節高亮，背景播放，定時關閉。
+📚 史特朗原文編號，附完整希伯來/希臘文詞典。
+📜 原文對照：點按希臘文或希伯來文經文中的任何詞語，即可查看史特朗編號與文法分析。
+🔀 雙譯本對照閱讀，或在所有譯本中比較同一節經文。
+📅 讀經計劃：一年讀經、按年代順序、90天新約等，附進度記錄。
+🔍 跨所有譯本的搜尋。
+✏️ 書籤、筆記、螢光標記、串珠、備份。
+🖼 桌面小工具顯示每日經文；多雷與施諾爾的經典版畫。
+
+所有經文均屬公有領域。本應用程式不收集任何資料。

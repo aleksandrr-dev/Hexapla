@@ -456,52 +456,56 @@ fun SettingsScreen(settings: AppSettings) {
 
         /* ---- Voluntary support: no features gated, purely a thank-you.
            Google Play build: consumable Play Billing tips (policy-compliant).
-           No Play services (APK / RuStore / de-Googled): external links. ---- */
-        SectionHeader(stringResource(R.string.support_title))
-        Text(
-            stringResource(R.string.support_note),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
+           No Play services (APK / RuStore / de-Googled): external links.
+           The whole section stays hidden when there is nothing to offer
+           (e.g. the Play build while no tip products exist). ---- */
         val tipManager = remember { TipManager(context) }
         DisposableEffect(Unit) {
             tipManager.connect()
             onDispose { tipManager.release() }
         }
+        // Play services present: only ever offer Play Billing tips here.
+        // External links on a Play build would violate payments policy.
+        val playTips = tipManager.available.value && tipManager.products.value.isNotEmpty()
+        val externalTips = !tipManager.available.value && BuildConfig.EXTERNAL_DONATIONS
 
-        if (tipManager.available.value) {
-            // Play services present: only ever offer Play Billing tips here.
-            // External links on a Play build would violate payments policy,
-            // so an empty product list simply shows nothing.
-            Row {
-                tipManager.products.value.forEach { product ->
-                    val price = product.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
-                    ChoiceChip(price, selected = false) {
-                        (context as? android.app.Activity)?.let { tipManager.tip(it, product) }
+        if (playTips || externalTips) {
+            SectionHeader(stringResource(R.string.support_title))
+            Text(
+                stringResource(R.string.support_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            if (playTips) {
+                Row {
+                    tipManager.products.value.forEach { product ->
+                        val price = product.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
+                        ChoiceChip(price, selected = false) {
+                            (context as? android.app.Activity)?.let { tipManager.tip(it, product) }
+                        }
                     }
                 }
-            }
-        } else if (BuildConfig.EXTERNAL_DONATIONS) {
-            Row {
-                Donation.links.forEach { (label, url) ->
-                    ChoiceChip(label, selected = false) {
-                        try {
-                            context.startActivity(
-                                android.content.Intent(
-                                    android.content.Intent.ACTION_VIEW,
-                                    android.net.Uri.parse(url)
+            } else {
+                Row {
+                    Donation.links.forEach { (label, url) ->
+                        ChoiceChip(label, selected = false) {
+                            try {
+                                context.startActivity(
+                                    android.content.Intent(
+                                        android.content.Intent.ACTION_VIEW,
+                                        android.net.Uri.parse(url)
+                                    )
                                 )
-                            )
-                        } catch (_: Exception) {
-                            // No browser available; ignore.
+                            } catch (_: Exception) {
+                                // No browser available; ignore.
+                            }
                         }
                     }
                 }
             }
+            HorizontalDivider(Modifier.padding(vertical = 12.dp))
         }
-        HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
         /* ---- Attribution (CC-BY requirement for cross-references) ---- */
         SectionHeader(stringResource(R.string.sources_title))

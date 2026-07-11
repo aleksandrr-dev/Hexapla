@@ -1,0 +1,55 @@
+"""Beblia Holy-Bible-XML-Format -> app asset format.
+
+Structure: <bible><testament><book number><chapter number><verse number>.
+Verse gaps are filled with "". Book names are supplied per translation
+below (the XML carries none).
+
+Usage: python convert_beblia.py <src.xml> <names-key> <dst.json>
+"""
+import json
+import sys
+import xml.etree.ElementTree as ET
+
+NAMES = {
+    # Diodati tradition Italian names.
+    "it": [
+        "Genesi", "Esodo", "Levitico", "Numeri", "Deuteronomio", "Giosuè",
+        "Giudici", "Rut", "1 Samuele", "2 Samuele", "1 Re", "2 Re",
+        "1 Cronache", "2 Cronache", "Esdra", "Neemia", "Ester", "Giobbe",
+        "Salmi", "Proverbi", "Ecclesiaste", "Cantico de' Cantici", "Isaia",
+        "Geremia", "Lamentazioni", "Ezechiele", "Daniele", "Osea", "Gioele",
+        "Amos", "Abdia", "Giona", "Michea", "Nahum", "Abacuc", "Sofonia",
+        "Aggeo", "Zaccaria", "Malachia",
+        "Matteo", "Marco", "Luca", "Giovanni", "Atti", "Romani",
+        "1 Corinzi", "2 Corinzi", "Galati", "Efesini", "Filippesi",
+        "Colossesi", "1 Tessalonicesi", "2 Tessalonicesi", "1 Timoteo",
+        "2 Timoteo", "Tito", "Filemone", "Ebrei", "Giacomo", "1 Pietro",
+        "2 Pietro", "1 Giovanni", "2 Giovanni", "3 Giovanni", "Giuda",
+        "Apocalisse",
+    ],
+}
+
+
+def main(src, names_key, dst):
+    names = NAMES[names_key]
+    tree = ET.parse(src)
+    raw_books = [b for t in tree.getroot() for b in t]
+    assert len(raw_books) == 66, len(raw_books)
+    books = []
+    for i, b in enumerate(raw_books):
+        chapters = []
+        for ch in sorted(b, key=lambda x: int(x.get("number"))):
+            vmax = max(int(v.get("number")) for v in ch)
+            verses = [""] * vmax
+            for v in ch:
+                verses[int(v.get("number")) - 1] = (v.text or "").strip()
+            chapters.append(verses)
+        books.append({"name": names[i], "chapters": chapters})
+    with open(dst, "w", encoding="utf-8") as f:
+        json.dump(books, f, ensure_ascii=False, separators=(",", ":"))
+    total = sum(len(c) for b in books for c in b["chapters"])
+    print(f"{dst}: 66 books, {total} verses")
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2], sys.argv[3])

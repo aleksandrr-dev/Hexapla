@@ -106,6 +106,22 @@ maximize reach, keep everything free, nothing locked, collect no data.
   the 1873 BFBS canon), credit kxii.se in sources_text ×12 locales,
   deity-litmus not applicable to apocrypha but spot-check text
   quality vs the Litteraturbanken facsimile).
+  Hindi Old Version (OV) — TARGET for the first post-Play-production
+  release (owner decision 2026-07-11: Hindi is the top reach prize;
+  wait until Play production is live since Hindi readers are a Play
+  audience). Serampore/Carey lineage, TR: 1 Tim 3:16 reads परमेश्वर
+  देह में प्रगट हुआ (litmus should pass — VERIFY on the actual
+  source). 19th-c. editions PD; vet any digitization against the
+  BSI-revision copyright. Full workup required: source vetting,
+  litmus, count survey vs KJV, versemap entry, Hindi book names,
+  values-hi UI strings (188), TTS sample, screenshots.
+  Sanskrit Bible (Serampore NT 1808, complete ~1822; Wenger revision
+  1868) — add TOGETHER WITH Hindi (owner decision): the app's Church
+  Slavonic analogue for India. No known machine-readable text; route
+  = hunt online first (archive.org, GRETIL, Wikisource sa) then
+  OCR-and-proofread the scans (Devanagari OCR + litmus + count
+  survey; expect a large proofreading effort — scope before
+  committing).
   Guðbrandsbiblía 1584 (Icelandic) — transcription likely exists in the
   Árnastofnun Textasafn corpus; owner to email arnastofnun@arnastofnun.is
   (corpus editor: Þórdís Úlfarsdóttir, disa@hi.is) + hib@biblian.is

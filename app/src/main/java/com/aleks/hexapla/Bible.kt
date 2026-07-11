@@ -31,6 +31,7 @@ object BibleRepo {
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
         Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale("pt")),
+        Translation("mei", "bibles/ja_meiji.json", "明治元訳 — Meiji Motoyaku, 1880/87 (JA)", Locale.JAPANESE),
         Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale("ru")),
         Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
         Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
@@ -53,6 +54,7 @@ object BibleRepo {
         "de" -> "lut"
         "es" -> "rv"
         "pt" -> "alm"
+        "ja" -> "mei"
         else -> "kjv"
     }
 

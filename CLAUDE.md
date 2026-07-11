@@ -141,9 +141,11 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    (Robinson for Greek, OSHM for Hebrew; decoders in Interlinear.kt).
    Data via tools/build_interlinear.py from openscriptures/morphhb
    (CC-BY) + byztxt csv-unicode (PD); per-verse text-verified alignment
-   (Greek 100%, Hebrew 99.55%, 105 qere/odd verses fail soft) and the
-   tokenizer contract is proven identical Java-vs-Python over all
-   31,061 tagged verses (scratch TokCheck). No settings toggle — always
+   with difflib recovery for split names/enlarged letters — 100% of
+   verses tagged both testaments; word-level 100% Greek, 98.0% Hebrew
+   (the rest have no Strong's number in morphhb itself). Tokenizer
+   contract proven identical Java-vs-Python over all 31,166 tagged
+   verses (scratch TokCheck). No settings toggle — always
    active on the original texts. +1.7 MB compressed in APK.
 4. v1.3: self-generated narration (Kokoro/Piper, host on archive.org) —
    fills 22 KJV books LibriVox lacks + enables Russian audio.

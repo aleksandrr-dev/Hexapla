@@ -37,6 +37,7 @@ Screenshot upload order (strongest first — reused for any store):
 🎧 Озвучка: живое чтение (LibriVox) и синтез речи с подсветкой стиха и слова, фоновое воспроизведение, таймер сна, скорость.
 📚 Номера Стронга с еврейско-греческим словарём; словарь Уэбстера 1828 — значение любого слова английских переводов по касанию.
 🔀 Параллельное чтение двух переводов стих в стих и сравнение стиха во всех переводах.
+📜 Подстрочник оригинала: коснитесь слова в греческом или еврейском тексте — номер Стронга и полный грамматический разбор.
 📅 Планы чтения: Библия за год, хронологический план (вся Библия в порядке событий), НЗ за 90 дней, Евангелия за 30 дней, Притчи, Псалтирь — с прогрессом и серией дней.
 🔍 Поиск без учёта диакритики, по всем переводам.
 ✏️ Закладки, заметки, цветные выделения, перекрёстные ссылки, резервное копирование.
@@ -64,6 +65,7 @@ Hexapla is the complete Bible — offline, ad-free, account-free, and it collect
 🎧 Audio: human narration (LibriVox) and text-to-speech with verse and word highlighting, background playback, sleep timer, speed control.
 📚 Strong's numbers with the full Hebrew/Greek lexicon; Webster's 1828 dictionary — tap any word in the English translations.
 🔀 Read two translations side by side, verse-locked, or compare a verse across all translations.
+📜 Original-language interlinear: tap a word in the Greek or Hebrew text for its Strong's number and full grammatical parsing.
 📅 Reading plans — Bible in a year, chronological year plan (the whole Bible in event order), NT in 90 days, Gospels in 30, Proverbs, Psalms — with progress and streaks.
 🔍 Diacritic-insensitive search across all translations.
 ✏️ Bookmarks, notes, colored highlights, cross-references, backup and restore.
@@ -84,7 +86,7 @@ Bible hors ligne : 16 traductions classiques, audio, plans de lecture.
 
 Hexapla, c'est la Bible complète — hors ligne, sans publicité, sans compte, sans collecte de données. Tout est gratuit, rien n'est verrouillé.
 
-📖 16 traductions classiques en 12 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique ; dictionnaire Webster 1828 pour les traductions anglaises. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
+📖 16 traductions classiques en 12 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique ; interlinéaire grec/hébreu (analyse grammaticale au toucher) ; dictionnaire Webster 1828 pour les traductions anglaises. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
 
 Tous les textes sont dans le domaine public. L'application ne collecte rien.
 
@@ -101,7 +103,7 @@ Bibel offline: 16 klassische Übersetzungen, Audio, Lesepläne, Strong.
 
 Hexapla ist die vollständige Bibel — offline, werbefrei, ohne Konto, ohne Datensammlung. Alles kostenlos, nichts gesperrt.
 
-📖 16 klassische Übersetzungen in 12 Sprachen, darunter die Lutherbibel 1545, die KJV 1611 sowie Hebräisch und Griechisch im Original. ✝️ Die Gute Nachricht: Gottes Heilsplan Schritt für Schritt, nur Schrift. 🔴 Worte Christi in Rot. 🎧 Audiowiedergabe mit Vershervorhebung. 📚 Strong-Nummern mit Lexikon; Websters Wörterbuch 1828 für die englischen Übersetzungen. 📅 Lesepläne mit Fortschritt. ✏️ Lesezeichen, Notizen, Markierungen, Sicherung.
+📖 16 klassische Übersetzungen in 12 Sprachen, darunter die Lutherbibel 1545, die KJV 1611 sowie Hebräisch und Griechisch im Original. ✝️ Die Gute Nachricht: Gottes Heilsplan Schritt für Schritt, nur Schrift. 🔴 Worte Christi in Rot. 🎧 Audiowiedergabe mit Vershervorhebung. 📚 Strong-Nummern mit Lexikon; Interlinear für Griechisch/Hebräisch (grammatische Analyse per Tipp); Websters Wörterbuch 1828 für die englischen Übersetzungen. 📅 Lesepläne mit Fortschritt. ✏️ Lesezeichen, Notizen, Markierungen, Sicherung.
 
 Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
@@ -118,6 +120,6 @@ Biblia sin conexión: 16 traducciones clásicas, audio, planes de lectura.
 
 Hexapla es la Biblia completa — sin conexión, sin anuncios, sin cuentas y sin recopilar datos. Todo es gratis y nada está bloqueado.
 
-📖 16 traducciones clásicas en 12 idiomas, incluida la Reina-Valera 1909, la KJV 1611 y los originales hebreo y griego. ✝️ Las Buenas Nuevas: el plan de salvación de Dios paso a paso, solo Escritura. 🔴 Palabras de Cristo en rojo. 🎧 Audio con resaltado de versículos. 📚 Números Strong con léxico; diccionario Webster 1828 para las traducciones inglesas. 📅 Planes de lectura con progreso. ✏️ Marcadores, notas, resaltados, copia de seguridad.
+📖 16 traducciones clásicas en 12 idiomas, incluida la Reina-Valera 1909, la KJV 1611 y los originales hebreo y griego. ✝️ Las Buenas Nuevas: el plan de salvación de Dios paso a paso, solo Escritura. 🔴 Palabras de Cristo en rojo. 🎧 Audio con resaltado de versículos. 📚 Números Strong con léxico; interlineal griego/hebreo (análisis gramatical al tocar); diccionario Webster 1828 para las traducciones inglesas. 📅 Planes de lectura con progreso. ✏️ Marcadores, notas, resaltados, copia de seguridad.
 
 Todos los textos son de dominio público. La aplicación no recopila nada.

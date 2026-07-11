@@ -77,7 +77,11 @@ maximize reach, keep everything free, nothing locked, collect no data.
   translations" text (Play listing had never been refreshed, only the
   repo file). Edit at Grow users → Store presence → Store listings →
   Default store listing → Edit.
-- **Next versionCode: 7.**
+- **1.4.0 (code 7) built + staged 2026-07-11** (interlinear; +Almeida,
+  Diodati, Meiji, CUV×2 scripts; −BBE; Play empty-Support fix):
+  `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 16 translations
+  / 12 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
+- **Next versionCode: 8.**
 
 ## Architecture notes (beyond README)
 

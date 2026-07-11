@@ -25,18 +25,27 @@ FONTS = {
     "ja": ["yumindb.ttf", "yumin.ttf", "msmincho.ttc", "meiryo.ttc"],
     "zh_cn": ["simsun.ttc", "msyh.ttc"],
     "zh_tw": ["mingliu.ttc", "msjh.ttc"],
+    "latin": ["georgia.ttf", "constan.ttf", "times.ttf"],
 }
+LATIN = {"es", "fr", "de", "pt", "it", "sv", "da"}
 
 TAGLINES = {
     "ja": ("ヘブライ語・ギリシア語・明治元訳・欽定訳", "いにしえの聖書を、並べて読む"),
     "zh_cn": ("希伯来文·希腊文·和合本·钦定本", "古老经文，并排对照"),
     "zh_tw": ("希伯來文·希臘文·和合本·欽定本", "古老經文，並排對照"),
+    "es": ("Hebreo · Griego · Reina-Valera · KJV", "textos antiguos, lado a lado"),
+    "fr": ("Hébreu · Grec · Martin · KJV", "textes anciens, côte à côte"),
+    "de": ("Hebräisch · Griechisch · Luther · KJV", "alte Texte, Seite an Seite"),
+    "pt": ("Hebraico · Grego · Almeida · KJV", "textos antigos, lado a lado"),
+    "it": ("Ebraico · Greco · Diodati · KJV", "testi antichi, fianco a fianco"),
+    "sv": ("Hebreiska · Grekiska · Karl XII · KJV", "gamla texter, sida vid sida"),
+    "da": ("Hebraisk · Græsk · Dansk 1819 · KJV", "gamle tekster, side om side"),
 }
 
 
 def load_font(lang, size):
     windir = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
-    for name in FONTS[lang]:
+    for name in FONTS["latin" if lang in LATIN else lang]:
         path = os.path.join(windir, name)
         if os.path.exists(path):
             try:

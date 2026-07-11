@@ -27,10 +27,10 @@ object BibleRepo {
         Translation("gen1599", "bibles/en_geneva.json", "Geneva Bible, 1599 (EN)", Locale.ENGLISH),
         Translation("tyn", "bibles/en_tyndale.json", "Tyndale, 1525/1530 — partial (EN)", Locale.ENGLISH),
         Translation("wyc", "bibles/enm_wycliffe.json", "Wycliffe, c. 1395 (Middle EN)", Locale.ENGLISH),
-        Translation("bbe", "bibles/en_bbe.json", "Bible in Basic English (EN)", Locale.ENGLISH),
         Translation("mar", "bibles/fr_martin.json", "Bible Martin, 1744 (FR)", Locale.FRENCH),
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
+        Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale("pt")),
         Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale("ru")),
         Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
         Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
@@ -52,6 +52,7 @@ object BibleRepo {
         "fr" -> "mar"
         "de" -> "lut"
         "es" -> "rv"
+        "pt" -> "alm"
         else -> "kjv"
     }
 

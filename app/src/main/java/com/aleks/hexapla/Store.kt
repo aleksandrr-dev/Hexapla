@@ -55,7 +55,8 @@ data class AppSettings(
     // while DataStore loads; the stored value decides for real.
     val welcomeSeen: Boolean = true,
     val musicEnabled: Boolean = false,
-    val musicVolume: Float = 0.45f
+    val musicVolume: Float = 0.45f,
+    val lastPlanId: String = ""
 )
 
 object Store {
@@ -76,6 +77,7 @@ object Store {
     private val LAST_BOOK = intPreferencesKey("last_book")
     private val LAST_CH = intPreferencesKey("last_ch")
     private val LAST_VERSE = intPreferencesKey("last_verse")
+    private val LAST_PLAN = stringPreferencesKey("last_plan")
     private val SPEECH_RATE = floatPreferencesKey("speech_rate")
     private val AUTO_CONT = booleanPreferencesKey("auto_continue")
     private val COMPARE_IDS = stringSetPreferencesKey("compare_ids")
@@ -120,7 +122,8 @@ object Store {
             hideVerseNumbers = p[HIDE_NUMBERS] ?: false,
             welcomeSeen = p[WELCOME_SEEN] ?: false,
             musicEnabled = p[MUSIC_ON] ?: false,
-            musicVolume = p[MUSIC_VOL] ?: 0.45f
+            musicVolume = p[MUSIC_VOL] ?: 0.45f,
+            lastPlanId = p[LAST_PLAN] ?: ""
         )
     }
 
@@ -258,6 +261,11 @@ object Store {
 
     suspend fun resetPlan(c: Context, planId: String) = c.dataStore.edit { p ->
         p[planKey(planId)] = emptySet()
+    }
+
+    /* Last plan the user had open, so the Plans tab returns to it. */
+    suspend fun setLastPlan(c: Context, planId: String) = c.dataStore.edit { p ->
+        p[LAST_PLAN] = planId
     }
 
     suspend fun currentSettings(c: Context): AppSettings = settings(c).first()

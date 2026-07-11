@@ -148,6 +148,11 @@ fun ReaderScreen(settings: AppSettings) {
     var book = AppState.book.intValue.coerceIn(0, books.size - 1)
     if (books[book].chapters.isEmpty()) {
         book = books.indexOfFirst { it.chapters.isNotEmpty() }.coerceAtLeast(0)
+    }
+    if (AppState.book.intValue != book) {
+        // The canon shrank under us (apocrypha toggled off, or a switch to a
+        // 66-book translation while reading slot 66+): clamp the shared state
+        // too, or navigateChapter will index past the end of the book list.
         AppState.book.intValue = book
         AppState.chapter.intValue = 0
     }
@@ -282,12 +287,20 @@ fun ReaderScreen(settings: AppSettings) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.prev_chapter))
                 }
                 TextButton(onClick = { showPicker = true }, modifier = Modifier.weight(1f)) {
+                    // Shrink instead of ellipsizing: "Cantique des cantiques 8"
+                    // must keep its chapter number visible.
+                    val title = "${books[book].name} ${chapter + 1}"
+                    var titleScale by remember(title) { mutableFloatStateOf(1f) }
                     Text(
-                        "${books[book].name} ${chapter + 1}",
+                        title,
                         style = MaterialTheme.typography.titleMedium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize * titleScale,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        onTextLayout = {
+                            if (it.hasVisualOverflow && titleScale > 0.65f) titleScale *= 0.92f
+                        },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -621,8 +634,9 @@ fun ReaderScreen(settings: AppSettings) {
 }
 
 private fun navigateChapter(books: List<Book>, delta: Int) {
-    var b = AppState.book.intValue
-    var c = AppState.chapter.intValue + delta
+    var b = AppState.book.intValue.coerceIn(0, books.size - 1)
+    var c = AppState.chapter.intValue
+        .coerceIn(0, (books[b].chapters.size - 1).coerceAtLeast(0)) + delta
     if (c < 0) {
         var nb = b - 1
         while (nb >= 0 && books[nb].chapters.isEmpty()) nb--

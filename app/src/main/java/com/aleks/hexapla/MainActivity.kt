@@ -34,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,6 +86,12 @@ class MainActivity : ComponentActivity() {
                 when {
                     s == null -> Surface(Modifier.fillMaxSize()) { }
                     !s.welcomeSeen -> WelcomeScreen { route ->
+                        if (route == "read") {
+                            // A first-time reader's "just start reading" opens
+                            // the Gospel of John, not Genesis 1.
+                            AppState.open(42, 0)
+                            AppState.initialized.value = true
+                        }
                         startRoute = route
                         lifecycleScope.launch { Store.setWelcomeSeen(this@MainActivity) }
                     }
@@ -136,6 +143,23 @@ class MainActivity : ComponentActivity() {
 
 private data class Dest(val route: String, val labelRes: Int, val icon: ImageVector)
 
+/** Nav label that shrinks instead of ellipsizing — "Einstellungen" and
+ *  friends must survive a 360dp screen split five ways. */
+@Composable
+private fun NavLabel(text: String) {
+    var scale by remember(text) { mutableFloatStateOf(1f) }
+    val base = MaterialTheme.typography.labelSmall
+    Text(
+        text,
+        style = base,
+        fontSize = base.fontSize * scale,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Ellipsis,
+        onTextLayout = { if (it.hasVisualOverflow && scale > 0.6f) scale *= 0.92f }
+    )
+}
+
 /** One-time first-run screen: language-aware entry points into the app. */
 @Composable
 private fun WelcomeScreen(onChoice: (route: String) -> Unit) {
@@ -166,16 +190,22 @@ private fun WelcomeScreen(onChoice: (route: String) -> Unit) {
             )
             Spacer(Modifier.height(40.dp))
             Button(onClick = { onChoice("topics") }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.welcome_gospel))
+                Text(stringResource(R.string.welcome_gospel), textAlign = TextAlign.Center)
             }
             Spacer(Modifier.height(12.dp))
             OutlinedButton(onClick = { onChoice("plans") }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.welcome_plan))
+                Text(stringResource(R.string.welcome_plan), textAlign = TextAlign.Center)
             }
             Spacer(Modifier.height(12.dp))
             TextButton(onClick = { onChoice("read") }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.welcome_read))
+                Text(stringResource(R.string.welcome_read), textAlign = TextAlign.Center)
             }
+            Text(
+                stringResource(R.string.welcome_read_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -207,15 +237,7 @@ private fun AppScaffold(settings: AppSettings, startRoute: String = "read") {
                             }
                         },
                         icon = { Icon(d.icon, contentDescription = null) },
-                        label = {
-                            Text(
-                                stringResource(d.labelRes),
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1,
-                                softWrap = false,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        label = { NavLabel(stringResource(d.labelRes)) }
                     )
                 }
             }

@@ -83,6 +83,19 @@ maximize reach, keep everything free, nothing locked, collect no data.
   `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 18 translations
   / 14 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
 - **Translation watch list** (all deity-verse-gated, pipeline ready):
+  Matthew Bible 1537 (John Rogers, "Thomas Matthew" — Tyndale's NT +
+  Pentateuch + prison OT (Josh–2 Chr, first printing) + Coverdale fill;
+  TR, PD; blocker: no machine-readable source — 1537 spelling is
+  facsimile/EEBO-TCP only, the modernized New Matthew Bible is ©).
+  en_tyndale.json COMPLETED 2026-07-11 (was Gen + 9 NT books): now 33
+  books, +5,961 verses via tools/complete_tyndale.py (studybible.info +
+  biblestudytools mirrors of the same PD Fedosov digitization as the
+  shipped books — those stay byte-identical; KJV-versified, all counts
+  match; litmus «God was shewed in the flesshe» ✓, Comma present in
+  Tyndale's parentheses; 4 genuinely-absent verses left empty: Ex
+  40:14, Lev 27:18, Num 7:22, Gal 5:21). Wycliffe versemap curated
+  same day (44 runs; versemap.json now 1496 runs, zero identity
+  fallbacks). Tyndale label → "1525/1531".
   Guðbrandsbiblía 1584 (Icelandic) — transcription likely exists in the
   Árnastofnun Textasafn corpus; owner to email arnastofnun@arnastofnun.is
   (corpus editor: Þórdís Úlfarsdóttir, disa@hi.is) + hib@biblian.is

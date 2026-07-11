@@ -25,7 +25,7 @@ object BibleRepo {
         Translation("kjv", "bibles/en_kjv.json", "King James Version, 1611 (EN)", Locale.ENGLISH),
         Translation("wbt", "bibles/en_webster.json", "Webster Bible, 1833 (EN)", Locale.ENGLISH),
         Translation("gen1599", "bibles/en_geneva.json", "Geneva Bible, 1599 (EN)", Locale.ENGLISH),
-        Translation("tyn", "bibles/en_tyndale.json", "Tyndale, 1525/1530 — partial (EN)", Locale.ENGLISH),
+        Translation("tyn", "bibles/en_tyndale.json", "Tyndale, 1525/1531 — partial (EN)", Locale.ENGLISH),
         Translation("wyc", "bibles/enm_wycliffe.json", "Wycliffe, c. 1395 (Middle EN)", Locale.ENGLISH),
         Translation("mar", "bibles/fr_martin.json", "Bible Martin, 1744 (FR)", Locale.FRENCH),
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),

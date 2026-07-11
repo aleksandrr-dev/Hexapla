@@ -116,7 +116,13 @@ maximize reach, keep everything free, nothing locked, collect no data.
   holybibleinhindi00alla — an OCR project if ever). TBS is making a
   fresh Hindi TR translation (only John published; will be TBS ©) —
   RE-CHECK tbsbibles.org/news/698804 yearly.
-  Sanskrit — SCOPED 2026-07-11, awaiting owner decision: the 1808
+  Sanskrit — APPROVED by owner 2026-07-11 under the Meiji precedent
+  (deity verses all pass incl. the Comma; the three Griesbach
+  deviations — Acts 8:37 omitted, Acts 20:28 "Lord", Lk 2:33 "his
+  father" — accepted with eyes open, Lk 2:33 explicitly flagged;
+  document all three in the commit). Ships in 1.4.2 — NOT in the
+  staged 1.4.1 artifacts even if the asset lands in tree first.
+  Original scoping: the 1808
   Serampore original is effectively unobtainable (no scans survive
   accessibly); its successor, the 1851 Yates/Wenger Calcutta NT, IS
   machine-readable: ebible.org id `sandev` (SanskritBible.in, CC

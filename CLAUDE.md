@@ -135,6 +135,16 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
       Era headings (18, ×5 locales) over the chrono day list added
       post-1.2.0 — in-tree for the NEXT release (versionCode 6).
 1. ~~QR share screen~~ DONE (Settings → Share this app; encodes landing page).
+1b. **Translation lineup for v1.4** (all deity-verse-tested, see commits):
+   BBE removed (Critical Text — failed every litmus verse). Added:
+   Almeida Bíblia Livre TR (pt, scrollmapper PorBLivreTR, passes all 8),
+   明治元訳 Meiji Motoyaku 1880/87 (ja, Wikisource NT scrape via
+   tools/build_meiji_nt.py + scrollmapper Meiji OT; TR-core, committee
+   omissions documented in commit), 和合本 CUV 1919 (zh, both scripts —
+   Simplified derived from the PD Traditional text via OpenCC t2s in
+   tools/convert_cuv.py, avoiding the UBS 1988 punctuation layer).
+   Now 15 translations / 11 languages; zh default picks script by
+   locale (Hant/TW/HK/MO → traditional).
 2. IzzyOnDroid listing (repo is public; low effort).
 3. ~~Original-language interlinear~~ shipped in-tree for v1.4/code 7:
    tap any word in grc/wlc → Strong's entry + decoded morphology

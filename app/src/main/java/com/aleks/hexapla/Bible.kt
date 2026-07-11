@@ -32,6 +32,8 @@ object BibleRepo {
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
         Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale("pt")),
         Translation("mei", "bibles/ja_meiji.json", "明治元訳 — Meiji Motoyaku, 1880/87 (JA)", Locale.JAPANESE),
+        Translation("cus", "bibles/zh_cuv_s.json", "和合本 — Chinese Union, 1919 (简体)", Locale.SIMPLIFIED_CHINESE),
+        Translation("cuv", "bibles/zh_cuv_t.json", "和合本 — Chinese Union, 1919 (繁體)", Locale.TRADITIONAL_CHINESE),
         Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale("ru")),
         Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
         Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
@@ -55,6 +57,9 @@ object BibleRepo {
         "es" -> "rv"
         "pt" -> "alm"
         "ja" -> "mei"
+        "zh" -> Locale.getDefault().let {
+            if (it.script == "Hant" || it.country in setOf("TW", "HK", "MO")) "cuv" else "cus"
+        }
         else -> "kjv"
     }
 

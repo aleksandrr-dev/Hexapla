@@ -95,8 +95,8 @@ maximize reach, keep everything free, nothing locked, collect no data.
   batch — 13 listing entries / 10 languages incl. pt-BR/pt-PT, es-419/
   es-US, fr-CA, zh-CN/TW/HK, ja; localized feature headers for all 10
   languages via tools/make_feature_graphic.py; CJK reader screenshots
-  via tools/make_reader_shot.py). RuStore 1.4.0 per same-day flow —
-  verify approval status next session.
+  via tools/make_reader_shot.py). RuStore 1.4.0 confirmed submitted
+  same day. GitHub release v1.4.0 published 2026-07-11.
 - **Next versionCode: 8** (planned 1.4.1: UI localization for the new
   reading languages, then automated localized screenshots).**
 

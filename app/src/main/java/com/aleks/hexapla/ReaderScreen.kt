@@ -204,6 +204,10 @@ fun ReaderScreen(settings: AppSettings) {
         BibleRepo.translation(settings.primaryId).locale.language == "en"
     val dictSecondary = settings.showDictionary &&
         BibleRepo.translation(settings.secondaryId).locale.language == "en"
+    // Interlinear: always live on the original-language texts.
+    val interPrimary = Interlinear.isOriginal(settings.primaryId)
+    val interSecondary = Interlinear.isOriginal(settings.secondaryId)
+    var interTap by remember { mutableStateOf<Triple<Int, Int, String>?>(null) } // verse, wordIdx, word
 
     val listState = rememberLazyListState()
 
@@ -365,22 +369,23 @@ fun ReaderScreen(settings: AppSettings) {
                             val second = secondaryVerses.getOrNull(i) ?: ""
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = if (interSecondary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                 }
                             } else {
-                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
                                     i + 1, second, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
+                                    onWordIndexed = if (interSecondary) ({ w, t -> interTap = Triple(i, w, t) }) else null,
                                     red = red, showNumber = !settings.hideVerseNumbers
                                 )
                             }
                         } else {
-                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                         }
                         if (noteText != null) {
                             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -545,6 +550,49 @@ fun ReaderScreen(settings: AppSettings) {
         )
     }
 
+    interTap?.let { (v, w, word) ->
+        var tag by remember(v, w) { mutableStateOf<Pair<String, String>?>(null) }
+        var entry by remember(v, w) { mutableStateOf<StrongsRepo.Entry?>(null) }
+        var loaded by remember(v, w) { mutableStateOf(false) }
+        LaunchedEffect(v, w) {
+            tag = Interlinear.word(context, book, chapter, v, w)
+            tag?.let { entry = StrongsRepo.entry(context, it.first) }
+            loaded = true
+        }
+        AlertDialog(
+            onDismissRequest = { interTap = null },
+            title = { Text(word) },
+            text = {
+                when {
+                    !loaded -> Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                    tag == null -> Text(stringResource(R.string.interlinear_none))
+                    else -> Column(Modifier.verticalScroll(rememberScrollState())) {
+                        Text(
+                            Interlinear.decode(book, tag!!.second),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        entry?.let { e ->
+                            Text(
+                                listOf(tag!!.first, e.word, e.translit)
+                                    .filter { it.isNotBlank() }.joinToString(" · "),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(e.def, style = MaterialTheme.typography.bodyMedium)
+                        } ?: Text(tag!!.first, style = MaterialTheme.typography.titleSmall)
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { interTap = null }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+
     compareVerse?.let { v ->
         CompareDialog(
             book = book,
@@ -658,6 +706,28 @@ private fun PlaybackBar(context: android.content.Context) {
 
 private val wordRegex = Regex("""[A-Za-z]+(?:['’-][A-Za-z]+)*""")
 
+/** Append [text] wrapping each interlinear token in an invisible link that
+ *  reports its word index — tokenization matches tools/build_interlinear.py. */
+private fun androidx.compose.ui.text.AnnotatedString.Builder.appendWordsIndexed(
+    text: String,
+    onWordIndexed: (Int, String) -> Unit
+) {
+    var pos = 0
+    var index = 0
+    for (m in Interlinear.token.findAll(text)) {
+        append(text.substring(pos, m.range.first))
+        val word = m.value
+        if (word.any { it.isLetter() }) {
+            val i = index++
+            withLink(
+                LinkAnnotation.Clickable("iw", TextLinkStyles()) { onWordIndexed(i, word) }
+            ) { append(word) }
+        } else append(word)
+        pos = m.range.last + 1
+    }
+    append(text.substring(pos))
+}
+
 /** Append [text], wrapping each word in an invisible link when [onWord] is set. */
 private fun androidx.compose.ui.text.AnnotatedString.Builder.appendWords(
     text: String,
@@ -688,6 +758,7 @@ private fun VerseText(
     taggedText: String? = null,
     onStrongs: ((String) -> Unit)? = null,
     onWord: ((String) -> Unit)? = null,
+    onWordIndexed: ((Int, String) -> Unit)? = null,
     red: Boolean = false,
     showNumber: Boolean = true
 ) {
@@ -723,6 +794,7 @@ private fun VerseText(
                 addStyle(SpanStyle(background = mark), spokenRange.first, spokenRange.last)
             }
         }
+        onWordIndexed != null -> buildAnnotatedString { appendWordsIndexed(text, onWordIndexed) }
         onWord != null -> buildAnnotatedString { appendWords(text, onWord) }
         else -> AnnotatedString(text)
     }

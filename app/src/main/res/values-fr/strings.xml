@@ -52,6 +52,7 @@
     <string name="plan_year_desc">Toute la Bible en 365 jours, 3–4 chapitres par jour</string>
     <string name="plan_chrono">Chronologique — 1 an</string>
     <string name="plan_chrono_desc">La Bible dans l\'ordre des événements : Job près de la Genèse, les Psaumes avec David, les prophètes avec les Rois, les épîtres au fil des Actes</string>
+    <string name="interlinear_none">Pas de données de mots pour ce verset.</string>
     <string name="dict_title">Dictionnaire Webster 1828</string>
     <string name="dict_note">Touchez un mot d\'une traduction anglaise pour voir son sens à l\'époque des Bibles classiques — American Dictionary of the English Language de Noah Webster, 1828.</string>
     <string name="dict_source">Dictionnaire Webster, 1828 (anglais)</string>
@@ -126,7 +127,7 @@
     <string name="xrefs">Références croisées</string>
     <string name="remove_bookmark">Supprimer le signet</string>
     <string name="sources_title">Sources des textes</string>
-    <string name="sources_text">Tous les textes sont dans le domaine public : Codex de Léningrad ; Texte byzantin 2018 (Robinson–Pierpont) ; Wycliffe ; Tyndale ; Bible de Genève 1599 ; KJV avec Apocryphes ; Bible Webster 1833 ; Bible in Basic English ; Bible Martin 1744 ; Bible de Luther 1545 ; Reina-Valera 1909 ; Bible élisabéthaine 1757 ; Traduction synodale russe. Dictionnaire Webster 1828 (numérisation 1828.mshaffer.com). Dictionnaire de la concordance Strong (1890/1894) © Open Scriptures, CC-BY-SA. Références croisées © openbible.info, CC-BY. Données textuelles via les projets scrollmapper, thiagobodruk et byztxt. Musique de fond : Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">Tous les textes sont dans le domaine public : Codex de Léningrad ; Texte byzantin 2018 (Robinson–Pierpont) ; Wycliffe ; Tyndale ; Bible de Genève 1599 ; KJV avec Apocryphes ; Bible Webster 1833 ; Bible in Basic English ; Bible Martin 1744 ; Bible de Luther 1545 ; Reina-Valera 1909 ; Bible élisabéthaine 1757 ; Traduction synodale russe. Dictionnaire Webster 1828 (numérisation 1828.mshaffer.com). Dictionnaire de la concordance Strong (1890/1894) © Open Scriptures, CC-BY-SA. Morphologie hébraïque © Open Scriptures (CC-BY) ; analyse grecque de Maurice Robinson (domaine public). Références croisées © openbible.info, CC-BY. Données textuelles via les projets scrollmapper, thiagobodruk et byztxt. Musique de fond : Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Voix de lecture</string>
     <string name="voice_default">Voix système par défaut</string>
     <string name="voice_note">Les voix disponibles dépendent du moteur vocal installé sur l\'appareil. Touchez une voix pour l\'écouter.</string>

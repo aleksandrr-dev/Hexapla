@@ -116,13 +116,20 @@ maximize reach, keep everything free, nothing locked, collect no data.
   holybibleinhindi00alla — an OCR project if ever). TBS is making a
   fresh Hindi TR translation (only John published; will be TBS ©) —
   RE-CHECK tbsbibles.org/news/698804 yearly.
-  Sanskrit Bible (Serampore NT 1808, complete ~1822; Wenger revision
-  1868) — add TOGETHER WITH Hindi (owner decision): the app's Church
-  Slavonic analogue for India. No known machine-readable text; route
-  = hunt online first (archive.org, GRETIL, Wikisource sa) then
-  OCR-and-proofread the scans (Devanagari OCR + litmus + count
-  survey; expect a large proofreading effort — scope before
-  committing).
+  Sanskrit — SCOPED 2026-07-11, awaiting owner decision: the 1808
+  Serampore original is effectively unobtainable (no scans survive
+  accessibly); its successor, the 1851 Yates/Wenger Calcutta NT, IS
+  machine-readable: ebible.org id `sandev` (SanskritBible.in, CC
+  BY-SA 4.0, Devanagari, USFM zip). LITMUS MIXED — TR-core with
+  Griesbach deviations: 1 Tim 3:16 «ईश्वरो मानवदेहे प्रकाशित» PASS,
+  Comma Johanneum PRESENT, Jn 3:13/Rom 9:5 pass; but Acts 8:37
+  OMITTED, Acts 20:28 "church of the Lord", Lk 2:33 "his father".
+  Meiji-precedent call for the owner. If adopted: NT-only (like grc),
+  converter MUST leave empty slots for omitted TR verses (Acts 8:37)
+  to keep KJV indexing; CC BY-SA needs license+link in sources_text.
+  OT = scans only (archive.org holybibleinsansc00gill + 02-04weng,
+  1848); OCR scoped at 400-800 proofreading hours — NOT feasible;
+  email SanskritBible.in about their OT progress instead.
   Guðbrandsbiblía 1584 (Icelandic) — transcription likely exists in the
   Árnastofnun Textasafn corpus; owner to email arnastofnun@arnastofnun.is
   (corpus editor: Þórdís Úlfarsdóttir, disa@hi.is) + hib@biblian.is

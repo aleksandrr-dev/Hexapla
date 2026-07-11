@@ -1,0 +1,30 @@
+To: kontakt@kxii.se
+Subject: Permission to reuse the kxii.se transcription (Apokryferna) in a free offline Bible app
+
+Hej!
+
+Mitt namn är Aleksandr Ratchkov. Jag utvecklar Hexapla, en gratis
+parallellbibel-app för Android utan reklam och utan datainsamling
+(https://aleksandrr-dev.github.io/Hexapla/). Appen innehåller redan
+Karl XII:s Bibel (1873 års BFBS-text, public domain), och jag skulle
+gärna vilja lägga till Apokryferna ur den äkta 1703-texten, som ni
+har digitaliserat på kxii.se.
+
+Får jag använda er transkription av Apokryferna i appen? Allt i appen
+är gratis för alla, för alltid, och källan anges tydligt i appens
+källförteckning ("Text sources"). Om ni har texten i maskinläsbart
+format (text/JSON/XML) vore det till stor hjälp, annars hämtar jag
+kapitelsidorna varsamt från webbplatsen.
+
+Tack för ert fina arbete med att bevara 1703 års text!
+
+Med vänliga hälsningar,
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+
+---
+(English summary: I build Hexapla, a free, ad-free, no-tracking
+offline parallel Bible app for Android that already carries the Karl
+XII Bible. May I include your transcription of the 1703 Apokryferna,
+with attribution in the app's source list? A machine-readable copy
+would help; otherwise I would scrape the chapter pages gently.)

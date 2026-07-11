@@ -96,6 +96,16 @@ maximize reach, keep everything free, nothing locked, collect no data.
   40:14, Lev 27:18, Num 7:22, Gal 5:21). Wycliffe versemap curated
   same day (44 runs; versemap.json now 1496 runs, zero identity
   fallbacks). Tyndale label → "1525/1531".
+  Karl XII 1703 Apokryferna — confirmed live at kxii.se (Judith,
+  Wisdom, Tobit, Sirach, Baruch, 1-2 Macc, Esther/Daniel additions;
+  per-chapter pages, no bulk download; Litteraturbanken-based, text PD
+  but transcription license unstated — draft email ready at
+  store-assets/kxii_email_draft.txt (Swedish + English), owner to send
+  from his address; WHEN THEY REPLY YES: build_meiji_nt.py-style
+  scrape into the sv asset's apocrypha slots (indexes 66+, alongside
+  the 1873 BFBS canon), credit kxii.se in sources_text ×12 locales,
+  deity-litmus not applicable to apocrypha but spot-check text
+  quality vs the Litteraturbanken facsimile).
   Guðbrandsbiblía 1584 (Icelandic) — transcription likely exists in the
   Árnastofnun Textasafn corpus; owner to email arnastofnun@arnastofnun.is
   (corpus editor: Þórdís Úlfarsdóttir, disa@hi.is) + hib@biblian.is

@@ -159,8 +159,27 @@ fun ReaderScreen(settings: AppSettings) {
     val chapter = AppState.chapter.intValue
         .coerceIn(0, (books[book].chapters.size - 1).coerceAtLeast(0))
     val verses = books[book].chapters[chapter]
-    val secondaryVerses = if (settings.splitEnabled)
-        secondaryBooks?.getOrNull(book)?.chapters?.getOrNull(chapter) else null
+    // Verse-level versification pivot (KJV backbone); identity until loaded.
+    var mapsReady by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { VerseMap.load(context); mapsReady = true }
+    // Secondary pane rows aligned to the primary through the KJV pivot:
+    // (text, secondary's own 1-based chapter/verse for interlinear taps).
+    val sBooks = secondaryBooks
+    val secondaryAligned: List<Pair<String, Pair<Int, Int>>>? =
+        if (settings.splitEnabled && sBooks != null)
+            remember(book, chapter, verses, sBooks, settings.primaryId,
+                     settings.secondaryId, mapsReady) {
+                val chs = sBooks.getOrNull(book)?.chapters
+                List(verses.size) { i ->
+                    val (kc, kv) = VerseMap.toKjv(settings.primaryId, book, chapter + 1, i + 1)
+                    val segs = VerseMap.fromKjv(settings.secondaryId, book, kc, kv)
+                    val text = segs.mapNotNull { (c2, v2) ->
+                        chs?.getOrNull(c2 - 1)?.getOrNull(v2 - 1)
+                    }.filter { it.isNotBlank() }.joinToString(" ")
+                    text to (segs.firstOrNull() ?: (chapter + 1 to i + 1))
+                }
+            }
+        else null
 
     LaunchedEffect(book, chapter) { Store.setLastPosition(context, book, chapter) }
 
@@ -352,7 +371,11 @@ fun ReaderScreen(settings: AppSettings) {
             ) {
                 itemsIndexed(verses) { i, verse ->
                     val highlighted = playbackHere && Playback.verse.intValue == i
-                    val red = redLetters?.get(book)?.getOrNull(chapter)?.contains(i) == true
+                    // red_letters.json is KJV-indexed; pivot the primary's ref.
+                    val red = redLetters?.get(book)?.let { chs ->
+                        val (kc, kv) = VerseMap.toKjv(settings.primaryId, book, chapter + 1, i + 1)
+                        chs.getOrNull(kc - 1)?.contains(kv - 1)
+                    } == true
                     val tagged = strongsBooks?.getOrNull(book)?.chapters
                         ?.getOrNull(chapter)?.getOrNull(i)
                     // Word ranges refer to the plain text; skip them when the
@@ -378,13 +401,19 @@ fun ReaderScreen(settings: AppSettings) {
                             )
                             .padding(horizontal = 16.dp, vertical = 6.dp)
                     ) {
-                        if (settings.splitEnabled && secondaryVerses != null) {
-                            val second = secondaryVerses.getOrNull(i) ?: ""
+                        if (settings.splitEnabled && secondaryAligned != null) {
+                            val (second, secondPos) = secondaryAligned.getOrNull(i)
+                                ?: ("" to (chapter + 1 to i + 1))
+                            // Interlinear taps need the secondary's OWN verse
+                            // index; disabled on the rare cross-chapter rows.
+                            val secondTap = if (interSecondary && secondPos.first == chapter + 1)
+                                ({ w: Int, t: String -> interTap = Triple(secondPos.second - 1, w, t) })
+                            else null
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
                                     VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = if (interSecondary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers)
                                 }
                             } else {
                                 VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
@@ -393,7 +422,7 @@ fun ReaderScreen(settings: AppSettings) {
                                     i + 1, second, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
-                                    onWordIndexed = if (interSecondary) ({ w, t -> interTap = Triple(i, w, t) }) else null,
+                                    onWordIndexed = secondTap,
                                     red = red, showNumber = !settings.hideVerseNumbers
                                 )
                             }
@@ -608,6 +637,7 @@ fun ReaderScreen(settings: AppSettings) {
 
     compareVerse?.let { v ->
         CompareDialog(
+            primaryId = settings.primaryId,
             book = book,
             chapter = chapter,
             verse = v,
@@ -619,6 +649,7 @@ fun ReaderScreen(settings: AppSettings) {
 
     xrefVerse?.let { v ->
         XrefsDialog(
+            primaryId = settings.primaryId,
             books = allBooks,
             book = book,
             chapter = chapter,
@@ -946,6 +977,7 @@ private fun VerseActionsDialog(
 /** The tapped verse in every translation that has it — the app's namesake view. */
 @Composable
 private fun CompareDialog(
+    primaryId: String,
     book: Int,
     chapter: Int,
     verse: Int,
@@ -956,12 +988,13 @@ private fun CompareDialog(
     val context = LocalContext.current
     var rows by remember { mutableStateOf<List<Pair<Translation, String>>?>(null) }
     LaunchedEffect(book, chapter, verse) {
+        VerseMap.load(context)
+        val (kc, kv) = VerseMap.toKjv(primaryId, book, chapter + 1, verse + 1)
         rows = BibleRepo.ordered()
             .filter { enabledIds.isEmpty() || it.id in enabledIds }
             .mapNotNull { t ->
-                val text = BibleRepo.load(context, t.id)
-                    .getOrNull(book)?.chapters?.getOrNull(chapter)?.getOrNull(verse)
-                if (text.isNullOrBlank()) null else t to text
+                val text = VerseMap.textAt(t.id, BibleRepo.load(context, t.id), book, kc, kv)
+                if (text.isBlank()) null else t to text
             }
     }
     AlertDialog(
@@ -1193,6 +1226,7 @@ fun BookChapterPicker(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun XrefsDialog(
+    primaryId: String,
     books: List<Book>,
     book: Int,
     chapter: Int,
@@ -1204,7 +1238,10 @@ private fun XrefsDialog(
     val context = LocalContext.current
     var refs by remember { mutableStateOf<List<IntArray>?>(null) }
     LaunchedEffect(book, chapter, verse) {
-        refs = Xrefs.refs(context, book, chapter, verse)
+        VerseMap.load(context)
+        // xrefs.json is KJV-indexed on both key and targets.
+        val (kc, kv) = VerseMap.toKjv(primaryId, book, chapter + 1, verse + 1)
+        refs = Xrefs.refs(context, book, kc - 1, kv - 1)
     }
 
     Dialog(onDismissRequest = onDismiss) {
@@ -1234,7 +1271,11 @@ private fun XrefsDialog(
 
                     else -> LazyColumn {
                         items(loaded) { t ->
-                            val (tb, tc, tv) = Triple(t[0], t[1], t[2])
+                            // Targets are KJV refs; show them at the primary
+                            // translation's own position.
+                            val pos = VerseMap.fromKjv(primaryId, t[0], t[1] + 1, t[2] + 1)
+                                .firstOrNull() ?: (t[1] + 1 to t[2] + 1)
+                            val (tb, tc, tv) = Triple(t[0], pos.first - 1, pos.second - 1)
                             val tBook = books.getOrNull(tb)
                             val text = tBook?.chapters?.getOrNull(tc)?.getOrNull(tv) ?: ""
                             Column(

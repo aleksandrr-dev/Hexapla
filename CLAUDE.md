@@ -101,8 +101,89 @@ maximize reach, keep everything free, nothing locked, collect no data.
   C:/Projects/Hexapla-releases/ (outside the repo tree, so they cannot
   ride along on a git add). Keep only the current release pair; every
   shipped APK is on GitHub releases, every AAB in Play artifact library.
-- **Next versionCode: 8** (planned 1.4.1: UI localization for the new
-  reading languages, then automated localized screenshots).**
+- **1.4.1 (code 8) in tree 2026-07-11, not yet built/submitted**: UI
+  localized into 7 new locales — pt, it, sv, da, ja, zh (values-zh =
+  Simplified, values-b+zh+Hant = Traditional) — 12 UI locales total,
+  each the full 187-string set (app_name falls back to "Hexapla";
+  values-ru overrides it). Terminology follows each language's classic
+  Bible (Almeida/Diodati/Karl XII/1819/明治元訳/和合本) and the Play
+  listing copy. Android 13+ per-app language picker wired up
+  (res/xml/locales_config.xml + android:localeConfig). Stale "six
+  languages" tagline → "fourteen" in all locales AND on the landing
+  page (index.html). Book names inside de_luther/es_rv/fr_martin/
+  pt_almeida assets were ENGLISH since v1 (the app shows books[i].name
+  from the asset) — localized via tools/localize_book_names.py
+  (curated per-tradition lists; verse text verified untouched;
+  he_wlc already had Hebrew OT names — its English names sit only on
+  empty NT slots). TTS voice-preview samples added for
+  pt/it/sv/da/ja/zh (SettingsScreen). Localized reader screenshots
+  (John 1) extended to pt/it/sv/da — make_reader_shot.py now
+  word-wraps Latin scripts; on those languages' Play listings lead
+  with the reader shot, then the standard order. Welcome screen: the
+  three button labels lacked textAlign=Center, so a wrapped 2nd line
+  sat left-ragged (owner noticed on RU) — fixed in MainActivity, and
+  long labels shortened so every button is single-line at 360dp
+  (measured with layoutlib Roboto/NotoCJK: ru/de/fr/it/ja labels,
+  ru tagline «на 14 языках» to stay 2-line on 320dp). Next
+  versionCode after 1.4.1 ships: 9.
+- **1.4.0/1.4.1 verification pass (2026-07-11)** — fixed in tree:
+  bottom-nav labels + reader title now shrink-to-fit instead of
+  ellipsizing (M3 label budget is ~58dp at 360dp: "Einstellungen",
+  "Impostazioni", "Cantique des cantiques N" all truncated);
+  crash fixed: switching to a 66-book translation (or toggling
+  apocrypha off) while reading an apocrypha slot ≥66 → IndexOOB in
+  navigateChapter (ReaderScreen clamps AppState now); interlinear
+  morphology decoders fixed — OSHM tails are POSITIONAL (old
+  per-char lookup showed construct state as gender "common" on
+  ~60k noun segments, Aramaic determined as "dual"), Robinson now
+  decodes person+case pronouns (P-1GS etc., ~11k words), -N/-I/-K/
+  PRI/NUI qualifiers and V-…-ATT (verified: Python port of the new
+  decoders over every distinct code in both assets → only benign
+  residue left, 7 Aramaic 'x'-placeholder segs). Lint now clean
+  (app_name has tools:ignore, deliberate).
+- **DATA DEFECTS FIXED 2026-07-11 (in tree for 1.4.1)**:
+  (a) en_kjv.json + en_kjv_strongs.json repaired via
+  tools/fix_kjv_versification.py (needs a kaiserlik/kjv clone as
+  arg): Mt 2:16 ("Herod… slew all the children"), Mt 22:1, Mt
+  26:38, Mk 4:40, Mk 7:11, Mk 8:8 were MISSING (scrollmapper AND
+  thiagobodruk share the defect — same lineage; kaiserlik +
+  Crosswire agree on authentic KJV in all 10 divergent chapters);
+  non-KJV splits merged in 1 Sam 20:42, 1 Kgs 22:43, 3 Jn 14; Rev
+  12:18 moved into 13:1. Canon now exactly 31,102 verses; the 10
+  chapters got Strong's tags for the first time (convert_strongs
+  had reverted them to plain text on count mismatch); red letters/
+  xrefs now align there. NOTE: existing users' bookmarks/highlights
+  in those 10 chapters shift by one verse.
+  (b) sv_karlxii.json re-versified in place via
+  tools/fix_sv_karlxii.py: the shipped text (= CrossWire
+  SweKarlXII1873, byte-identical to Beblia's) had ALL the text but
+  squeezed continental numbering into a KJV grid — 27 empty slots,
+  neighbors shifted, overflow merged (Job 39:30 held NINE KJV
+  verses). 15 curated splits + book re-flow; text proven
+  character-identical, only redistributed. Epistle colophons kept
+  (authentic Karl XII content, present in 6 other epistles).
+  (c) da_1819.json REBUILT from the emg OSIS pair (github.com/emg/
+  Danish-Bible-{NT-1819,OT-1871}, PD, proofread) via
+  tools/convert_emg_danish.py: native continental numbering
+  remapped to KJV (psalm-title merges, 11 repartitioned books,
+  9 curated merges/splits, Rev 12:18→13:1); recovers all 16
+  placeholder verses + Lev 6:1-7 etc. There was never an 1819 OT —
+  the OT is the 1871 authorized; label updated to "Dansk Bibel,
+  1819/1871" in Bible.kt and sources_text ×12 locales (store
+  listings still say "1819" loosely — owner may update). The 1819
+  NT prints the Johannine Comma in [brackets] (1 Jn 5:7-8) — kept
+  verbatim, Comma present. convert_beblia.py now hard-fails on
+  placeholder verses and documents the versification hazard.
+- **Plans screen remembers the last-opened plan** (Store LAST_PLAN
+  + AppSettings.lastPlanId; restores instantly, no flash) and
+  plan_chrono now reads "Chronological Bible in 1 year"-style in
+  all 12 locales (was the odd-one-out em-dash form).
+- **Welcome screen "Just start reading" now opens the Gospel of
+  John** (AppState.open(42, 0) before the reader restores last
+  position — owner's idea: a newcomer's first tap should land on
+  something gripping, not Genesis 1), with a small caption under
+  the button (welcome_read_note, ×12 locales: "an eyewitness
+  account of Jesus… jump anywhere from there").
 
 ## Architecture notes (beyond README)
 

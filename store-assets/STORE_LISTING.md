@@ -17,6 +17,11 @@ Screenshot upload order (strongest first — reused for any store):
 (Matthew 5), 3) split view (KJV ‖ Синодальный, Titus 1), 4) Good News tab,
 5) Strong's popup (H3068), 6) widget (`screenshot_widget.png` here).
 
+Localized reader screenshots (John 1 in the language's own translation,
+`screenshot_reader_{ja,zh_cn,zh_tw,pt,it,sv,da}.png`, generator
+`tools/make_reader_shot.py`): lead with the reader shot on that
+language's Play listing, then the order above.
+
 ---
 
 ## Русский (primary for RuStore)

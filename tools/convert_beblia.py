@@ -27,6 +27,24 @@ NAMES = {
         "2 Pietro", "1 Giovanni", "2 Giovanni", "3 Giovanni", "Giuda",
         "Apocalisse",
     ],
+    # Danish 1819-era names.
+    "da": [
+        "1 Mosebog", "2 Mosebog", "3 Mosebog", "4 Mosebog", "5 Mosebog",
+        "Josva", "Dommerne", "Ruth", "1 Samuelsbog", "2 Samuelsbog",
+        "1 Kongebog", "2 Kongebog", "1 Krønikebog", "2 Krønikebog", "Esra",
+        "Nehemias", "Esther", "Job", "Psalmerne", "Ordsprogene",
+        "Prædikeren", "Højsangen", "Esajas", "Jeremias", "Klagesangene",
+        "Ezekiel", "Daniel", "Hoseas", "Joel", "Amos", "Obadias", "Jonas",
+        "Mika", "Nahum", "Habakkuk", "Zefanias", "Haggaj", "Zakarias",
+        "Malakias",
+        "Matthæus", "Markus", "Lukas", "Johannes", "Apostlenes Gerninger",
+        "Romerbrevet", "1 Korinther", "2 Korinther", "Galaterne",
+        "Efeserne", "Filipperne", "Kolossenserne", "1 Thessaloniker",
+        "2 Thessaloniker", "1 Timotheus", "2 Timotheus", "Titus",
+        "Filemon", "Hebræerne", "Jakob", "1 Peter", "2 Peter",
+        "1 Johannes", "2 Johannes", "3 Johannes", "Judas",
+        "Johannes' Aabenbaring",
+    ],
 }
 
 

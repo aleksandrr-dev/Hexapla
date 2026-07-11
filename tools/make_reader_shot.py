@@ -1,9 +1,11 @@
-"""Store screenshot: the reader showing John 1 in a CJK translation,
-redrawn clean in the app's dark-theme look (same approach as
-make_widget_shot.py). Verse text is pulled from the real assets.
+"""Store screenshot: the reader showing John 1 in a localized
+translation, redrawn clean in the app's dark-theme look (same approach
+as make_widget_shot.py). Verse text is pulled from the real assets.
+CJK entries wrap per character (with simple kinsoku); Latin-script
+entries wrap on words.
 
 Usage: python make_reader_shot.py
-Writes store-assets/screenshot_reader_{ja,zh_cn,zh_tw}.png
+Writes store-assets/screenshot_reader_{ja,zh_cn,zh_tw,pt,it,sv,da}.png
 """
 import json
 import os
@@ -24,10 +26,15 @@ DIVIDER = (0x3A, 0x35, 0x2F)
 
 WIN_FONTS = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
 
+# (lang, asset, title, font candidates, cjk wrap?)
 SHOTS = [
-    ("ja", "ja_meiji.json", "約翰傳福音書 1", ["YuGothM.ttc", "MEIRYO.TTC", "msgothic.ttc"]),
-    ("zh_cn", "zh_cuv_s.json", "约翰福音 1", ["simsun.ttc", "msyh.ttc"]),
-    ("zh_tw", "zh_cuv_t.json", "約翰福音 1", ["simsun.ttc", "msjh.ttc"]),
+    ("ja", "ja_meiji.json", "約翰傳福音書 1", ["YuGothM.ttc", "MEIRYO.TTC", "msgothic.ttc"], True),
+    ("zh_cn", "zh_cuv_s.json", "约翰福音 1", ["simsun.ttc", "msyh.ttc"], True),
+    ("zh_tw", "zh_cuv_t.json", "約翰福音 1", ["simsun.ttc", "msjh.ttc"], True),
+    ("pt", "pt_almeida.json", "João 1", ["segoeui.ttf"], False),
+    ("it", "it_diodati.json", "Giovanni 1", ["segoeui.ttf"], False),
+    ("sv", "sv_karlxii.json", "Johannes 1", ["segoeui.ttf"], False),
+    ("da", "da_1819.json", "Johannes 1", ["segoeui.ttf"], False),
 ]
 
 NO_LINE_START = "、。，．」』）？！：；・"
@@ -42,6 +49,20 @@ def font_of(names, size):
             except OSError:
                 continue
     raise SystemExit(f"no font among {names}")
+
+
+def wrap_words(draw, text, font, maxw):
+    lines, cur = [], ""
+    for word in text.split():
+        t = (cur + " " + word).strip()
+        if draw.textlength(t, font=font) <= maxw:
+            cur = t
+        else:
+            lines.append(cur)
+            cur = word
+    if cur:
+        lines.append(cur)
+    return lines
 
 
 def wrap_cjk(draw, text, font, maxw):
@@ -86,7 +107,7 @@ def draw_topbar(d, title, tfont):
 
 
 def main():
-    for lang, asset, title, fonts in SHOTS:
+    for lang, asset, title, fonts, cjk in SHOTS:
         books = json.load(open(os.path.join(ASSETS, asset), encoding="utf-8"))
         verses = books[42]["chapters"][0]
 
@@ -100,10 +121,11 @@ def main():
 
         x_num, x_text, maxw = 48, 100, W - 100 - 52
         y = 300
-        line_h, verse_gap = 70, 42
+        line_h, verse_gap = (70, 42) if cjk else (62, 36)
+        wrap = wrap_cjk if cjk else wrap_words
         for i, verse in enumerate(verses):
             d.text((x_num, y + 14), str(i + 1), font=nfont, fill=NUM)
-            for line in wrap_cjk(d, verse, vfont, maxw):
+            for line in wrap(d, verse, vfont, maxw):
                 d.text((x_text, y), line, font=vfont, fill=INK)
                 y += line_h
                 if y > H:

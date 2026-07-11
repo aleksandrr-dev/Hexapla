@@ -50,7 +50,7 @@
     <string name="plans_title">Lesepläne</string>
     <string name="plan_year">Die Bibel in 1 Jahr</string>
     <string name="plan_year_desc">Die ganze Bibel in 365 Tagen, 3–4 Kapitel pro Tag</string>
-    <string name="plan_chrono">Chronologisch — 1 Jahr</string>
+    <string name="plan_chrono">Chronologische Bibel in 1 Jahr</string>
     <string name="plan_chrono_desc">Die Bibel in der Reihenfolge der Ereignisse: Hiob neben der Genesis, Psalmen bei David, Propheten bei den Königen, Briefe entlang der Apostelgeschichte</string>
     <string name="interlinear_none">Keine Wortdaten für diesen Vers.</string>
     <string name="dict_title">Websters Wörterbuch 1828</string>
@@ -127,7 +127,7 @@
     <string name="xrefs">Querverweise</string>
     <string name="remove_bookmark">Lesezeichen entfernen</string>
     <string name="sources_title">Textquellen</string>
-    <string name="sources_text">Alle Texte sind gemeinfrei: Codex Leningradensis; Byzantinischer Text 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Genfer Bibel 1599; KJV mit Apokryphen; Webster-Bibel 1833; Bible Martin 1744; Lutherbibel 1545; Karl XII:s Bibel 1703; Dänische Bibel 1819; Reina-Valera 1909; Diodati 1649/1885; Bíblia Livre (Almeida, TR); 明治元訳 Meiji Motoyaku 1880/87; 和合本 Chinese Union 1919; Elisabeth-Bibel 1757; Russische Synodalübersetzung. Websters Wörterbuch 1828 (Digitalisierung 1828.mshaffer.com). Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Hebräische Morphologie © Open Scriptures (CC-BY); griechische Analyse von Maurice Robinson (gemeinfrei). Querverweise © openbible.info, CC-BY. Textdaten über die Projekte scrollmapper, thiagobodruk, byztxt und Wikisource. Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">Alle Texte sind gemeinfrei: Codex Leningradensis; Byzantinischer Text 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Genfer Bibel 1599; KJV mit Apokryphen; Webster-Bibel 1833; Bible Martin 1744; Lutherbibel 1545; Karl XII:s Bibel 1703; Dänische Bibel 1819/1871; Reina-Valera 1909; Diodati 1649/1885; Bíblia Livre (Almeida, TR); 明治元訳 Meiji Motoyaku 1880/87; 和合本 Chinese Union 1919; Elisabeth-Bibel 1757; Russische Synodalübersetzung. Websters Wörterbuch 1828 (Digitalisierung 1828.mshaffer.com). Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Hebräische Morphologie © Open Scriptures (CC-BY); griechische Analyse von Maurice Robinson (gemeinfrei). Querverweise © openbible.info, CC-BY. Textdaten über die Projekte scrollmapper, thiagobodruk, byztxt und Wikisource. Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Vorlesestimme</string>
     <string name="voice_default">Systemstandard</string>
     <string name="voice_note">Die verfügbaren Stimmen hängen von der installierten Sprach-Engine ab. Tippe eine Stimme an, um sie zu hören.</string>
@@ -183,10 +183,11 @@
     <string name="plan_psalms_desc">Zwei Psalmen pro Tag durch den ganzen Psalter</string>
     <string name="gospel_share">Die Gute Nachricht teilen →</string>
     <string name="search_all">In allen Übersetzungen suchen</string>
-    <string name="welcome_tagline">Die Bibel in sechs Sprachen — offline, kostenlos, vollständig.</string>
+    <string name="welcome_tagline">Die Bibel in vierzehn Sprachen — offline, kostenlos, vollständig.</string>
     <string name="welcome_gospel">Neu in der Bibel? Fang hier an</string>
-    <string name="welcome_plan">Eine tägliche Lesegewohnheit aufbauen</string>
+    <string name="welcome_plan">Tägliche Lesegewohnheit aufbauen</string>
     <string name="welcome_read">Einfach lesen</string>
+    <string name="welcome_read_note">Öffnet das Johannesevangelium — einen Augenzeugenbericht über Jesus. Von dort aus geht es überallhin.</string>
     <string name="share_app_title">App weitergeben</string>
     <string name="share_app_note">Schenke jemandem die Bibel: zeige den QR-Code oder sende den Link. Dort stehen alle Wege zu Hexapla — kostenlos, für immer.</string>
     <string name="share_app_qr">QR-Code anzeigen</string>

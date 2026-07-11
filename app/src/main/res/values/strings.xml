@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Hexapla</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Latin/CJK locales keep the brand name; only ru transliterates. -->
+    <string name="app_name" tools:ignore="MissingTranslation">Hexapla</string>
 
     <!-- Navigation -->
     <string name="nav_read">Read</string>
@@ -57,7 +58,7 @@
     <string name="plans_title">Reading plans</string>
     <string name="plan_year">Bible in 1 year</string>
     <string name="plan_year_desc">The whole Bible in 365 days, 3–4 chapters a day</string>
-    <string name="plan_chrono">Chronological — 1 year</string>
+    <string name="plan_chrono">Chronological Bible in 1 year</string>
     <string name="plan_chrono_desc">The Bible in the order events happened: Job beside Genesis, Psalms with David, prophets with the Kings, epistles along Acts</string>
     <string name="interlinear_none">No word data for this verse.</string>
     <string name="dict_title">Webster\'s 1828 Dictionary</string>
@@ -136,7 +137,7 @@
     <string name="xrefs">Cross-references</string>
     <string name="remove_bookmark">Remove bookmark</string>
     <string name="sources_title">Text sources</string>
-    <string name="sources_text">All texts are public domain: Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Webster Bible 1833; Bible Martin 1744; Lutherbibel 1545; Karl XII:s Bibel 1703; Dansk Bibel 1819; Reina-Valera 1909; Diodati 1649/1885; Bíblia Livre (Almeida, TR); 明治元訳 Meiji Motoyaku 1880/87; 和合本 Chinese Union 1919; Елизаветинская Библия 1757; Синодальный перевод. Webster\'s American Dictionary of the English Language (1828) via the 1828.mshaffer.com digitization. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Hebrew morphology © Open Scriptures (CC-BY); Greek parsing by Maurice A. Robinson (public domain). Cross-references © openbible.info, CC-BY. App text data via the scrollmapper, thiagobodruk, byztxt and Wikisource projects. Background music: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">All texts are public domain: Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Webster Bible 1833; Bible Martin 1744; Lutherbibel 1545; Karl XII:s Bibel 1703; Dansk Bibel 1819/1871; Reina-Valera 1909; Diodati 1649/1885; Bíblia Livre (Almeida, TR); 明治元訳 Meiji Motoyaku 1880/87; 和合本 Chinese Union 1919; Елизаветинская Библия 1757; Синодальный перевод. Webster\'s American Dictionary of the English Language (1828) via the 1828.mshaffer.com digitization. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Hebrew morphology © Open Scriptures (CC-BY); Greek parsing by Maurice A. Robinson (public domain). Cross-references © openbible.info, CC-BY. App text data via the scrollmapper, thiagobodruk, byztxt and Wikisource projects. Background music: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Reading voice</string>
     <string name="voice_default">System default</string>
     <string name="voice_note">Available voices depend on the speech engine installed on the device (e.g. Google Speech Services, Samsung TTS). Tap a voice to hear it.</string>
@@ -192,10 +193,11 @@
     <string name="plan_psalms_desc">Two Psalms a day through the whole Psalter</string>
     <string name="gospel_share">Share the Good News →</string>
     <string name="search_all">Search all translations</string>
-    <string name="welcome_tagline">The Bible in six languages — offline, free, complete.</string>
+    <string name="welcome_tagline">The Bible in fourteen languages — offline, free, complete.</string>
     <string name="welcome_gospel">New to the Bible? Start here</string>
     <string name="welcome_plan">Build a daily reading habit</string>
     <string name="welcome_read">Just start reading</string>
+    <string name="welcome_read_note">Opens the Gospel of John — an eyewitness account of Jesus. Jump anywhere from there.</string>
     <string name="share_app_title">Share this app</string>
     <string name="share_app_note">Give someone the Bible: show them the QR code to scan, or send the link. It lists every way to get Hexapla — free, forever.</string>
     <string name="share_app_qr">Show QR code</string>

@@ -136,8 +136,15 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
       post-1.2.0 — in-tree for the NEXT release (versionCode 6).
 1. ~~QR share screen~~ DONE (Settings → Share this app; encodes landing page).
 2. IzzyOnDroid listing (repo is public; low effort).
-3. v1.2 flagship: **original-language interlinear** (word-tagged WLC/Byz
-   via Open Scriptures morphology → tap word → Strong's popup).
+3. ~~Original-language interlinear~~ shipped in-tree for v1.4/code 7:
+   tap any word in grc/wlc → Strong's entry + decoded morphology
+   (Robinson for Greek, OSHM for Hebrew; decoders in Interlinear.kt).
+   Data via tools/build_interlinear.py from openscriptures/morphhb
+   (CC-BY) + byztxt csv-unicode (PD); per-verse text-verified alignment
+   (Greek 100%, Hebrew 99.55%, 105 qere/odd verses fail soft) and the
+   tokenizer contract is proven identical Java-vs-Python over all
+   31,061 tagged verses (scratch TokCheck). No settings toggle — always
+   active on the original texts. +1.7 MB compressed in APK.
 4. v1.3: self-generated narration (Kokoro/Piper, host on archive.org) —
    fills 22 KJV books LibriVox lacks + enables Russian audio.
 5. iOS port = separate v2.0-scale project (Kotlin/Compose Multiplatform;

@@ -116,12 +116,18 @@ maximize reach, keep everything free, nothing locked, collect no data.
   holybibleinhindi00alla — an OCR project if ever). TBS is making a
   fresh Hindi TR translation (only John published; will be TBS ©) —
   RE-CHECK tbsbibles.org/news/698804 yearly.
-  Sanskrit — APPROVED by owner 2026-07-11 under the Meiji precedent
-  (deity verses all pass incl. the Comma; the three Griesbach
-  deviations — Acts 8:37 omitted, Acts 20:28 "Lord", Lk 2:33 "his
-  father" — accepted with eyes open, Lk 2:33 explicitly flagged;
-  document all three in the commit). Ships in 1.4.2 — NOT in the
-  staged 1.4.1 artifacts even if the asset lands in tree first.
+  Sanskrit — APPROVED + INTEGRATED IN TREE 2026-07-11 ("san",
+  sa_nt.json, 7,958 verses, registered in Bible.kt as «संस्कृतम् —
+  Sanskrit NT, 1851 (SA)»; CC BY-SA attribution ×12 locales;
+  versemap 13 translations/1497 runs). Ships in 1.4.2 — NOT in the
+  staged 1.4.1 artifacts. The eBible sandev edition turned out BETTER
+  than scoped: Acts 8:37 PRESENT, Lk 2:33 names Joseph (तस्य माता
+  यूषफ् च), all 260 chapters KJV-shaped (3 Jn 14/15 native split
+  mapped; source's empty-[] Rev 12:18 dropped — its 13:1 prints the
+  KJV arrangement). The ONE standing Griesbach deviation: Acts 20:28
+  "church of the Lord (प्रभु)" vs TR "of God" — owner accepted.
+  Litmus: 1 Tim 3:16 «ईश्वरो मानवदेहे प्रकाशित», Comma present,
+  Jn 1:1 स्वयमीश्वर. 1.4.2 remainder: nothing — data complete.
   Original scoping: the 1808
   Serampore original is effectively unobtainable (no scans survive
   accessibly); its successor, the 1851 Yates/Wenger Calcutta NT, IS

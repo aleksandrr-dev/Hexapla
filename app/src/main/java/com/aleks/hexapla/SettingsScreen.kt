@@ -589,6 +589,12 @@ private fun VoicePicker(settings: AppSettings) {
             "fr" -> "Au commencement était la Parole, et la Parole était avec Dieu."
             "de" -> "Im Anfang war das Wort, und das Wort war bei Gott."
             "es" -> "En el principio era el Verbo, y el Verbo era con Dios."
+            "pt" -> "No princípio era a Palavra, e a Palavra estava junto de Deus."
+            "it" -> "Nel principio la Parola era, e la Parola era appo Dio."
+            "sv" -> "I begynnelsen var Ordet, och Ordet var när Gudi."
+            "da" -> "I Begyndelsen var Ordet, og Ordet var hos Gud."
+            "ja" -> "太初に道あり、道は神と偕にあり。"
+            "zh" -> "太初有道，道与神同在。"
             else -> "In the beginning was the Word, and the Word was with God."
         }
         androidx.compose.material3.AlertDialog(

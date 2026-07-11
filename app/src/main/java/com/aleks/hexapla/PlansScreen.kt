@@ -54,7 +54,10 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
     }
 
     val plans = remember(loaded) { Plans.build(loaded) }
-    var tab by remember { mutableIntStateOf(0) }
+    // Reopen on the plan the user last had open (persisted across sessions).
+    var tab by remember(plans) {
+        mutableIntStateOf(plans.indexOfFirst { it.id == settings.lastPlanId }.coerceAtLeast(0))
+    }
     val plan = plans[tab]
     val progress by Store.planProgress(context, plan.id).collectAsState(initial = emptySet())
     val nextDay = remember(progress, plan) {
@@ -83,8 +86,10 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
         }
         ScrollableTabRow(selectedTabIndex = tab, edgePadding = 8.dp) {
             plans.forEachIndexed { i, p ->
-                Tab(selected = tab == i, onClick = { tab = i },
-                    text = { Text(stringResource(p.titleRes), maxLines = 1) })
+                Tab(selected = tab == i, onClick = {
+                    tab = i
+                    scope.launch { Store.setLastPlan(context, p.id) }
+                }, text = { Text(stringResource(p.titleRes), maxLines = 1) })
             }
         }
         Column(Modifier.padding(16.dp)) {

@@ -93,6 +93,14 @@ object Interlinear {
     )
     private val grkGender = mapOf('M' to "masculine", 'F' to "feminine", 'N' to "neuter")
     private val grkNumber = mapOf('S' to "singular", 'P' to "plural")
+    // Trailing qualifiers and indeclinable markers (PRT-N, N-PRI, A-NUI, ADV-I…)
+    private val grkQualifier = mapOf(
+        "PRI" to "proper indeclinable", "NUI" to "numeral indeclinable",
+        "LI" to "letter indeclinable", "OI" to "other indeclinable",
+        "N" to "negative", "I" to "interrogative", "K" to "crasis",
+        "S" to "superlative", "C" to "comparative", "ATT" to "Attic form",
+        "ABB" to "abbreviated", "P" to "particle attached"
+    )
 
     private fun grkCNG(s: String): String? {
         if (s.length < 2) return null
@@ -126,15 +134,21 @@ object Interlinear {
                         else -> grkCNG(p)?.let { ", $it" } ?: ""
                     }
                 } ?: ""
-                return "$pos — $tense $voice $mood$tail"
+                // 4th part is a qualifier: V-RAI-3S-ATT (Attic form) etc.
+                val extra = parts.getOrNull(3)?.let { grkQualifier[it] }?.let { ", $it" } ?: ""
+                return "$pos — $tense $voice $mood$tail$extra"
             }
         }
         val tail = parts.drop(1).mapNotNull { p ->
+            val person = when (p.getOrNull(0)) {
+                '1' -> "1st person"; '2' -> "2nd person"; '3' -> "3rd person"; else -> null
+            }
             when {
-                p.length >= 2 && p[0].isDigit() && grkNumber.containsKey(p[1]) ->
-                    (when (p[0]) { '1' -> "1st person"; '2' -> "2nd person"; else -> "3rd person" }) +
-                        " " + grkNumber[p[1]]
-                else -> grkCNG(p)
+                // person + number (3S) or person + case+number(+gender) (1GS, 3ASM)
+                person != null && p.length >= 2 && grkNumber.containsKey(p[1]) ->
+                    "$person ${grkNumber[p[1]]}"
+                person != null -> grkCNG(p.drop(1))?.let { "$person $it" }
+                else -> grkCNG(p) ?: grkQualifier[p]
             }
         }
         return if (tail.isEmpty()) "$pos ${parts.drop(1).joinToString("-")}"
@@ -167,10 +181,24 @@ object Interlinear {
     private val hebState = mapOf('a' to "absolute", 'c' to "construct", 'd' to "determined")
     private val hebPerson = mapOf('1' to "1st person", '2' to "2nd person", '3' to "3rd person")
 
-    private fun hebSuffix(s: String): String =
-        s.mapNotNull { ch ->
-            hebPerson[ch] ?: hebGender[ch] ?: hebNumber[ch] ?: hebState[ch]
-        }.joinToString(" ")
+    /* OSHM tails are positional; a per-character lookup mislabels the state
+       slot ('c' construct reads as gender "common", Aramaic 'd' determined
+       as number "dual"). */
+
+    /** gender + number + state — nouns, adjectives, participles. */
+    private fun hebGNS(s: String): String = listOfNotNull(
+        s.getOrNull(0)?.let { hebGender[it] },
+        s.getOrNull(1)?.let { hebNumber[it] },
+        s.getOrNull(2)?.let { hebState[it] }
+    ).joinToString(" ")
+
+    /** person + gender + number — pronouns, suffixes, finite verbs
+     *  (the person slot may be 'x' = unmarked, which simply drops out). */
+    private fun hebPGN(s: String): String = listOfNotNull(
+        s.getOrNull(0)?.let { hebPerson[it] },
+        s.getOrNull(1)?.let { hebGender[it] },
+        s.getOrNull(2)?.let { hebNumber[it] }
+    ).joinToString(" ")
 
     private fun decodeSegment(seg: String, aramaic: Boolean): String = when {
         seg.isEmpty() -> ""
@@ -187,7 +215,7 @@ object Interlinear {
             val kind = when (seg.getOrNull(1)) {
                 'p' -> "proper noun"; 'g' -> "gentilic noun"; else -> "noun"
             }
-            val tail = hebSuffix(seg.drop(2))
+            val tail = hebGNS(seg.drop(2))
             if (tail.isEmpty()) kind else "$kind, $tail"
         }
         seg[0] == 'A' -> {
@@ -195,7 +223,7 @@ object Interlinear {
                 'c' -> "cardinal number"; 'o' -> "ordinal number"
                 'g' -> "gentilic adjective"; else -> "adjective"
             }
-            val tail = hebSuffix(seg.drop(2))
+            val tail = hebGNS(seg.drop(2))
             if (tail.isEmpty()) kind else "$kind, $tail"
         }
         seg[0] == 'P' -> {
@@ -204,21 +232,25 @@ object Interlinear {
                 'p' -> "personal pronoun"; 'r' -> "relative pronoun"
                 'f' -> "indefinite pronoun"; else -> "pronoun"
             }
-            val tail = hebSuffix(seg.drop(2))
+            val tail = hebPGN(seg.drop(2))
             if (tail.isEmpty()) kind else "$kind, $tail"
         }
         seg[0] == 'S' -> when (seg.getOrNull(1)) {
             'd' -> "directional suffix"; 'h' -> "paragogic he"; 'n' -> "paragogic nun"
             'p' -> {
-                val tail = hebSuffix(seg.drop(2))
+                val tail = hebPGN(seg.drop(2))
                 if (tail.isEmpty()) "pronominal suffix" else "pronominal suffix, $tail"
             }
             else -> "suffix"
         }
         seg[0] == 'V' -> {
             val stem = hebStem[seg.getOrNull(1) ?: ' '] ?: "${seg.getOrNull(1)}"
-            val conj = hebConj[seg.getOrNull(2) ?: ' '] ?: ""
-            val tail = hebSuffix(seg.drop(3))
+            val conjCh = seg.getOrNull(2)
+            val conj = hebConj[conjCh ?: ' '] ?: ""
+            // Participles decline like nouns (gender-number-state);
+            // finite forms conjugate (person-gender-number).
+            val tail = if (conjCh == 'r' || conjCh == 's') hebGNS(seg.drop(3))
+                       else hebPGN(seg.drop(3))
             listOf("verb", stem, conj, tail).filter { it.isNotBlank() }.joinToString(", ")
         }
         else -> seg

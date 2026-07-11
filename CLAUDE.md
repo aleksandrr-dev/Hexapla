@@ -97,6 +97,10 @@ maximize reach, keep everything free, nothing locked, collect no data.
   languages via tools/make_feature_graphic.py; CJK reader screenshots
   via tools/make_reader_shot.py). RuStore 1.4.0 confirmed submitted
   same day. GitHub release v1.4.0 published 2026-07-11.
+- **Release artifacts convention**: stage builds in
+  C:/Projects/Hexapla-releases/ (outside the repo tree, so they cannot
+  ride along on a git add). Keep only the current release pair; every
+  shipped APK is on GitHub releases, every AAB in Play artifact library.
 - **Next versionCode: 8** (planned 1.4.1: UI localization for the new
   reading languages, then automated localized screenshots).**
 

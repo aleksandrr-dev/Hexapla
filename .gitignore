@@ -8,3 +8,5 @@ keystore.properties
 .idea/
 *.iml
 .kotlin/
+__pycache__/
+tools/.tyndale_cache/

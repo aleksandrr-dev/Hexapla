@@ -27,6 +27,7 @@ Output (assets/):
 Usage: python build_interlinear.py <morphhb-dir> <byztxt-dir>
 """
 import csv
+import difflib
 import json
 import os
 import re
@@ -91,6 +92,32 @@ def heb_strongs(lemma):
     return "H" + m.group(1) if m else ""
 
 
+def align(a_norm, s_norm, s_tags):
+    """Map asset tokens to source tags. Exact positional match fast-path;
+    otherwise difflib alignment where a source word split across several
+    asset tokens (Chedor-laomer) gives every part the same tag. Returns
+    None (verse skipped) unless >=80% of asset tokens end up tagged."""
+    if a_norm == s_norm:
+        return list(s_tags)
+    out = ["-"] * len(a_norm)
+    sm = difflib.SequenceMatcher(a=a_norm, b=s_norm, autojunk=False)
+    for op, a0, a1, b0, b1 in sm.get_opcodes():
+        if op == "equal":
+            for k in range(a1 - a0):
+                out[a0 + k] = s_tags[b0 + k]
+        elif op == "replace":
+            # one source word split across several asset tokens?
+            if b1 - b0 == 1 and "".join(a_norm[a0:a1]) == s_norm[b0]:
+                for k in range(a0, a1):
+                    out[k] = s_tags[b0]
+            # or equal counts with minor spelling variance: trust position
+            elif (a1 - a0) == (b1 - b0):
+                for k in range(a1 - a0):
+                    out[a0 + k] = s_tags[b0 + k]
+    tagged = sum(1 for t in out if t != "-")
+    return out if tagged >= 0.8 * len(out) else None
+
+
 def build_hebrew(morphhb_dir, bible):
     out = {}
     verses_total = verses_tagged = 0
@@ -108,22 +135,21 @@ def build_hebrew(morphhb_dir, bible):
                 failures.append(f"{name} {ch+1}:{vs+1} not in asset")
                 continue
             ws = list(verse.iter(OSIS_W))
-            if len(ws) != len(asset_toks):
-                failures.append(f"{name} {ch+1}:{vs+1} count {len(asset_toks)} vs {len(ws)}")
-                continue
-            # verify text: morphhb words use '/' as segment separator
-            okay = all(
-                norm(w.text.replace("/", "") if w.text else "") == norm(t)
-                for w, t in zip(ws, asset_toks)
-            )
-            if not okay:
-                failures.append(f"{name} {ch+1}:{vs+1} text mismatch")
-                continue
-            tags = []
+            # Full descendant text: enlarged/special letters sit in nested
+            # elements (e.g. the Shema's large ayin), .text alone truncates.
+            src_words = ["".join(w.itertext()).replace("/", "") for w in ws]
+            src_tags = []
             for w in ws:
                 s = heb_strongs(w.get("lemma", ""))
                 m = w.get("morph", "")
-                tags.append(f"{s}|{m}" if s else "-")
+                src_tags.append(f"{s}|{m}" if s else "-")
+            a_norm = [norm(t) for t in asset_toks]
+            s_norm = [norm(t) for t in src_words]
+            tags = align(a_norm, s_norm, src_tags)
+            if tags is None:
+                failures.append(f"{name} {ch+1}:{vs+1} unalignable "
+                                f"({len(asset_toks)} vs {len(ws)})")
+                continue
             book_out[ch][vs] = " ".join(tags)
             verses_tagged += 1
         out[str(b)] = book_out

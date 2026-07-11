@@ -178,6 +178,23 @@ maximize reach, keep everything free, nothing locked, collect no data.
   + AppSettings.lastPlanId; restores instantly, no flash) and
   plan_chrono now reads "Chronological Bible in 1 year"-style in
   all 12 locales (was the odd-one-out em-dash form).
+- **Verse-level versification map (1.4.1)**: translations keep their
+  authentic native numbering (Synodal/Elizabeth LXX psalter + Dan 3
+  Song-of-Three, Luther/WLC Masoretic bounds + title-psalms, Martin
+  merges, Meiji omissions, Byz Rom doxology at 14:24-26, 3 Jn/Rev
+  12:18 tails) and pairing features pivot through assets/versemap.json
+  (tools/build_versemap.py — 1452 runs, every curated site
+  text-verified; Wycliffe degrades to identity in 16 rough books).
+  VerseMap.kt applies it in split view (incl. secondary interlinear
+  tap indexes; taps disabled on rare cross-chapter rows), Compare,
+  xrefs (key + targets), red letters. Fixes the long-standing whole-
+  chapter split-view offset for Synodal Psalms and psalm-title
+  off-by-one vs Luther. NOT yet mapped: TopicsScreen still uses its
+  old chapterIndexFor shim (4 LXX seam psalms approximate),
+  Reminders daily-verse ref, bookmarks across translation switches.
+  Also fixed: 98 "Retournez au début" scraping-junk suffixes stripped
+  from fr_martin.json (Beblia web scrape artifact); lut 2 Kgs 15:39
+  is an empty slot in the asset (unmapped, cosmetic).
 - **Welcome screen "Just start reading" now opens the Gospel of
   John** (AppState.open(42, 0) before the reader restores last
   position — owner's idea: a newcomer's first tap should land on

@@ -90,7 +90,15 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Korean — no PD TR text exists (개역한글 fails 1 Tim 3:16 with 그는;
   한글킹제임스/흠정역 copyrighted). LXX apocrypha — no clean-licensed
   tagged text (CATSS restrictive).
-- **Next versionCode: 8.**
+- **1.4.0 submitted 2026-07-11**: owner uploaded + submitted for review
+  (Play: release to closed track + full listing localization in one
+  batch — 13 listing entries / 10 languages incl. pt-BR/pt-PT, es-419/
+  es-US, fr-CA, zh-CN/TW/HK, ja; localized feature headers for all 10
+  languages via tools/make_feature_graphic.py; CJK reader screenshots
+  via tools/make_reader_shot.py). RuStore 1.4.0 per same-day flow —
+  verify approval status next session.
+- **Next versionCode: 8** (planned 1.4.1: UI localization for the new
+  reading languages, then automated localized screenshots).**
 
 ## Architecture notes (beyond README)
 

@@ -4,6 +4,15 @@ Structure: <bible><testament><book number><chapter number><verse number>.
 Verse gaps are filled with "". Book names are supplied per translation
 below (the XML carries none).
 
+WARNING (2026-07-11): Beblia squeezes continentally-versified texts
+into a KJV-shaped grid, leaving empty slots at chapter-boundary
+divergences, shifting neighbors, and merging overflow verses — and
+some corpora carry literal "*** POSSIBLE ERROR ***" placeholders.
+That defect shipped in 1.4.0 (sv_karlxii, da_1819; repaired by
+fix_sv_karlxii.py / replaced via convert_emg_danish.py). Before
+shipping ANY Beblia-derived text: compare per-chapter verse counts
+against en_kjv.json and inspect every empty slot.
+
 Usage: python convert_beblia.py <src.xml> <names-key> <dst.json>
 """
 import json
@@ -60,7 +69,10 @@ def main(src, names_key, dst):
             vmax = max(int(v.get("number")) for v in ch)
             verses = [""] * vmax
             for v in ch:
-                verses[int(v.get("number")) - 1] = (v.text or "").strip()
+                text = (v.text or "").strip()
+                assert "POSSIBLE ERROR" not in text, \
+                    f"placeholder verse in source: book {i + 1} ch {ch.get('number')} v {v.get('number')}"
+                verses[int(v.get("number")) - 1] = text
             chapters.append(verses)
         books.append({"name": names[i], "chapters": chapters})
     with open(dst, "w", encoding="utf-8") as f:

@@ -3,6 +3,8 @@ package com.aleks.hexapla
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +19,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.ScrollableTabRow
@@ -34,26 +37,35 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     var books by remember { mutableStateOf<List<Book>?>(null) }
-    LaunchedEffect(settings.primaryId) { books = BibleRepo.load(context, settings.primaryId) }
+    LaunchedEffect(settings.primaryId) {
+        // Plan days are pinned to the canonical KJV chapter grid; the
+        // versemap pivots each chapter into the primary's native numbering
+        // for display and opening (LXX psalter −1 etc.). Loaded before
+        // `books` is set, so every row below resolves with the map ready.
+        VerseMap.load(context)
+        books = BibleRepo.load(context, settings.primaryId)
+    }
     val loaded = books
     if (loaded == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         return
     }
 
-    val plans = remember(loaded) { Plans.build(loaded) }
+    val plans = remember { Plans.build() }
     // Reopen on the plan the user last had open (persisted across sessions).
     var tab by remember(plans) {
         mutableIntStateOf(plans.indexOfFirst { it.id == settings.lastPlanId }.coerceAtLeast(0))
@@ -159,19 +171,32 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
                                     )
                                 }
                             }
-                            Text(
-                                day.chapters.joinToString("  ·  ") { (b, c) ->
-                                    "${loaded[b].name} ${c + 1}"
-                                },
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier
-                                    .clickable {
-                                        val (b, c) = day.chapters.first()
-                                        AppState.open(b, c)
-                                        openReader()
-                                    }
-                                    .padding(vertical = 4.dp)
-                            )
+                            FlowRow(Modifier.padding(vertical = 4.dp)) {
+                                day.chapters.forEachIndexed { i, (b, c) ->
+                                    // Day contents are KJV-grid chapters; show and
+                                    // open the primary's own chapter through the
+                                    // versemap pivot. Chapters the primary lacks
+                                    // (partial translations) stay in the day but
+                                    // render dimmed and non-tappable (cf. Topics).
+                                    val mapped = VerseMap
+                                        .fromKjv(settings.primaryId, b, c + 1, 1)
+                                        .firstOrNull()?.first ?: (c + 1)
+                                    val hasText = loaded.getOrNull(b)?.chapters
+                                        ?.getOrNull(mapped - 1)
+                                        ?.any { it.isNotBlank() } == true
+                                    Text(
+                                        (if (i > 0) "·  " else "") +
+                                            "${loaded.getOrNull(b)?.name ?: ""} $mapped  ",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = if (hasText) Color.Unspecified
+                                        else LocalContentColor.current.copy(alpha = 0.38f),
+                                        modifier = if (hasText) Modifier.clickable {
+                                            AppState.open(b, mapped - 1)
+                                            openReader()
+                                        } else Modifier
+                                    )
+                                }
+                            }
                         }
                         Checkbox(
                             checked = done,

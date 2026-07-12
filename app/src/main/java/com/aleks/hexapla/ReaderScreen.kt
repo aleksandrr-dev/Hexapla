@@ -194,8 +194,25 @@ fun ReaderScreen(settings: AppSettings) {
     LaunchedEffect(book, chapter) { Store.setLastPosition(context, book, chapter) }
 
     val bookmarks by Store.bookmarks(context).collectAsState(initial = emptyList())
-    val bookmarkedVerses = remember(bookmarks, book, chapter) {
-        bookmarks.filter { it.book == book && it.chapter == chapter }.map { it.verse }.toSet()
+    // Bookmarks store their SOURCE translation's own (chapter, verse); pivot each
+    // through the KJV backbone into the current primary so the highlight lands on
+    // the right verse after a translation switch. Same-translation bookmarks skip
+    // the round-trip (byte-identical to the pre-pivot behavior).
+    val bookmarkedVerses = remember(bookmarks, book, chapter, settings.primaryId, mapsReady) {
+        bookmarks.asSequence()
+            .filter { it.book == book }
+            .mapNotNull { bm ->
+                if (bm.translationId == settings.primaryId) {
+                    if (bm.chapter == chapter) bm.verse else null
+                } else {
+                    val (kc, kv) = VerseMap.toKjv(
+                        bm.translationId, bm.book, bm.chapter + 1, bm.verse + 1
+                    )
+                    VerseMap.fromKjv(settings.primaryId, bm.book, kc, kv)
+                        .firstOrNull()?.takeIf { it.first == chapter + 1 }
+                        ?.let { it.second - 1 }
+                }
+            }.toSet()
     }
     val notes by Store.notes(context).collectAsState(initial = emptyMap())
     val voicePrefs by Store.voicePrefs(context).collectAsState(initial = emptyMap())

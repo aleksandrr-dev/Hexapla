@@ -82,6 +82,22 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Karl XII 1703, Dansk 1819; −BBE; Play empty-Support fix):
   `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 18 translations
   / 14 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
+- **Interlinear localization (owner-approved 2026-07-12)**:
+  (a) 1.4.2 item — grammar labels in Interlinear.kt decoders (~60
+  terms: tenses/moods/cases/stems, assembled into sentences) are
+  hardcoded English; move to string resources and localize ×12
+  (Russian has established seminary terminology: аорист,
+  действительный залог, изъявительное наклонение…). Self-contained,
+  no licensing risk.
+  (b) WATCH LIST — localized Strong's LEXICONS (Russian first):
+  the definitions in strongs_lexicon.json are English (Open
+  Scriptures). Russian Strong's translations circulate in
+  e-Sword/MyBible modules but each translation carries its
+  translator's ©, though the 1890 base is PD — verify license
+  before any use (research task launched 2026-07-12). Architecture
+  when a clean source lands: per-locale lexicon file keyed by the
+  same H/G ids, chosen by UI locale, English fallback; same model
+  later for DE/ES/PT.
 - **Translation watch list** (all deity-verse-gated, pipeline ready):
   Matthew Bible 1537 (John Rogers, "Thomas Matthew" — Tyndale's NT +
   Pentateuch + prison OT (Josh–2 Chr, first printing) + Coverdale fill;

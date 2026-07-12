@@ -9,9 +9,13 @@ parallel Bible app for Android with no ads and no data collection
 national Bibles — the KJV 1611, Luther 1545, Karl XII:s Bibel 1703,
 the Danish 1819/1871 — and I would be honoured to include the
 Gudbrandsbiblia 1584, which you publish at
-https://biblian.is/gudbrandsbiblia/. Thordis Ulfarsdottir at
-Arnastofnun kindly pointed me to your site as the authoritative
-digital text.
+https://biblian.is/gudbrandsbiblia/.
+
+I wrote to you recently about this; since then, Thordis
+Ulfarsdottir at Arnastofnun has kindly pointed me to your site as
+the authoritative digital text (and warned me away from the flawed
+archive.org copy), so I can now ask three much more specific
+questions:
 
 Three questions:
 

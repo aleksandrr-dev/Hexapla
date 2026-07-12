@@ -350,12 +350,21 @@ fun ReaderScreen(settings: AppSettings) {
                             val item = listState.layoutInfo.visibleItemsInfo
                                 .firstOrNull { it.index == spoken }
                             if (item != null) {
-                                // Duration scales with distance (~1ms/px, 500-1200ms)
-                                // so short hops stay quick and long ones stay gentle;
-                                // LinearOutSlowIn avoids FastOutSlowIn's front-loaded
-                                // lurch landing in the busy verse-boundary frames
-                                // (highlight repaint + new utterance start).
-                                if (item.offset != 0) listState.animateScrollBy(
+                                // Read like a human, don't relocate per verse:
+                                // while the spoken verse sits comfortably in the
+                                // upper ~65% of the viewport, let the highlight
+                                // walk down the screen and DON'T scroll at all.
+                                // Only when it drops low (or is clipped) glide it
+                                // back to the top — one page-like movement every
+                                // few verses instead of a lurch on every one.
+                                val li = listState.layoutInfo
+                                val viewport = li.viewportEndOffset - li.viewportStartOffset
+                                val comfortable = item.offset >= 0 &&
+                                    item.offset + item.size <= viewport * 0.65f
+                                // Duration scales with distance (~1ms/px, 500-1200ms);
+                                // LinearOutSlowIn avoids a front-loaded lurch in the
+                                // busy verse-boundary frames.
+                                if (!comfortable && item.offset != 0) listState.animateScrollBy(
                                     item.offset.toFloat(),
                                     tween(
                                         durationMillis = kotlin.math.abs(item.offset)

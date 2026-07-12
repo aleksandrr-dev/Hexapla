@@ -93,8 +93,23 @@ maximize reach, keep everything free, nothing locked, collect no data.
   the definitions in strongs_lexicon.json are English (Open
   Scriptures). Russian Strong's translations circulate in
   e-Sword/MyBible modules but each translation carries its
-  translator's ©, though the 1890 base is PD — verify license
-  before any use (research task launched 2026-07-12). Architecture
+  translator's ©, though the 1890 base is PD. RESEARCHED 2026-07-12,
+  verdict = permission-email path: the de-facto standard text is the
+  BibleQuote lineage (github.com/BibleQuote/BibleQuote-Modules
+  Strong.zip, gloss-only, complete H1-H8674 + Greek, quality ideal
+  for tap-a-word, 0.46 MB deflated) — NO license anywhere; MyBible's
+  module credits it «с разрешения Тимофея Ха» (personal permission).
+  EMAIL Timothy Ha / BibleQuote (biblequote.org contact form,
+  jesuschrist.ru; GitHub maintainer rkazakov) — draft at
+  store-assets/biblequote_email_draft.txt: ask (1) permission for
+  the gloss-only files in a free attributed app, (2) PROVENANCE —
+  is it the 1998 Bob Jones University symphony key? (residual-rights
+  question). HARD GATE: MyBible/ph4 builds embed Dvoretsky's 1958
+  dictionary (© until ~2046) in 5,113 Greek entries — use ONLY the
+  pristine BibleQuote greek/hebrew.htm (zero Dvoretsky, verified).
+  Zhuromsky fallback is CC BY-NC-ND (ND blocks the needed edits) +
+  reputational flags — avoid. Tsygankov/azbyka = publisher ©, dead
+  end. Architecture
   when a clean source lands: per-locale lexicon file keyed by the
   same H/G ids, chosen by UI locale, English fallback; same model
   later for DE/ES/PT.

@@ -11,6 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -65,11 +67,13 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -411,23 +415,24 @@ fun ReaderScreen(settings: AppSettings) {
                             else null
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers)
+                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                                 }
                             } else {
-                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
                                     i + 1, second, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
                                     onWordIndexed = secondTap,
-                                    red = red, showNumber = !settings.hideVerseNumbers
+                                    red = red, showNumber = !settings.hideVerseNumbers,
+                                    onLongPress = { actionVerse = i }
                                 )
                             }
                         } else {
-                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers)
+                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                         }
                         if (noteText != null) {
                             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -805,7 +810,8 @@ private fun VerseText(
     onWord: ((String) -> Unit)? = null,
     onWordIndexed: ((Int, String) -> Unit)? = null,
     red: Boolean = false,
-    showNumber: Boolean = true
+    showNumber: Boolean = true,
+    onLongPress: (() -> Unit)? = null
 ) {
     val annotated = when {
         taggedText != null -> {
@@ -846,7 +852,40 @@ private fun VerseText(
     // Classic red-letter tone, adjusted for theme luminance.
     val redColor = if (MaterialTheme.colorScheme.background.luminance() < 0.5f)
         Color(0xFFEF9A9A) else Color(0xFFB71C1C)
-    Row(modifier) {
+    // Long-press must open the verse action sheet even when the press lands
+    // on a word/Strong's LinkAnnotation: the link's own handler consumes the
+    // press, so the parent Column's combinedClickable never fires. Watch the
+    // raw stream on the Initial pass (delivered to this Row before the link's
+    // Main-pass handling can consume anything); on a hold past the long-press
+    // timeout, fire the callback and eat the rest of the gesture so the link
+    // doesn't also open the dictionary on release. Short taps pass through
+    // untouched, so word/Strong's links keep working exactly as before.
+    val currentLongPress = rememberUpdatedState(onLongPress)
+    val rowModifier = if (onLongPress != null) modifier.pointerInput(Unit) {
+        awaitEachGesture {
+            val down = awaitFirstDown(pass = PointerEventPass.Initial)
+            val cancelled = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
+                var cancel = false
+                while (!cancel) {
+                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    val change = event.changes.firstOrNull { it.id == down.id }
+                    cancel = change == null || !change.pressed ||
+                        event.changes.size > 1 ||
+                        (change.position - down.position).getDistance() >
+                            viewConfiguration.touchSlop
+                }
+            } != null
+            if (!cancelled) {
+                currentLongPress.value?.invoke()
+                while (true) {
+                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    event.changes.forEach { it.consume() }
+                    if (event.changes.none { it.pressed }) break
+                }
+            }
+        }
+    } else modifier
+    Row(rowModifier) {
         if (showNumber) {
             Text(
                 "$number",

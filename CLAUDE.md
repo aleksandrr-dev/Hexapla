@@ -146,7 +146,20 @@ maximize reach, keep everything free, nothing locked, collect no data.
   OT = scans only (archive.org holybibleinsansc00gill + 02-04weng,
   1848); OCR scoped at 400-800 proofreading hours — NOT feasible;
   email SanskritBible.in about their OT progress instead.
-  Guðbrandsbiblía 1584 (Icelandic) — REPLY RECEIVED 2026-07-11 from
+  Guðbrandsbiblía 1584 (Icelandic) — PERMISSION DECLINED 2026-07-12
+  by Halldór Elías Guðmundsson (framkvæmdastjóri, Icelandic Bible
+  Society): they are building an authoritative digital text of BOTH
+  Guðbrandsbiblía and Viðeyjarbiblía with the Digital Bible Library
+  (based on Jón Hjörleifur Stefánsson's work); the current website
+  text has known flaws ("slightly flawed", editorial issues); "we
+  are not going to allow any further publication of those texts"
+  until the DBL work is finalized — low priority, "not going to
+  come out for a while". CLOSED — do NOT scrape biblian.is. Both
+  Icelandic texts blocked. RE-ASK when the DBL edition ships
+  (check dbl.bible / re-email hib@biblian.is yearly); the DBL text
+  would also be cleaner than what we'd have scraped. Earlier
+  scoping (litmus PASS, no verse numbers in prose) remains valid
+  background for that day. History:
   Þórdís (Árnastofnun): they do NOT have the digital text; it IS
   downloadable section-by-section at biblian.is/gudbrandsbiblia/
   (Icelandic Bible Society). She warns the archive.org copy is full

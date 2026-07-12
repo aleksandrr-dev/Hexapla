@@ -483,9 +483,15 @@ fun ReaderScreen(settings: AppSettings) {
             ) {
                 itemsIndexed(verses) { i, verse ->
                     val highlighted = playbackHere && Playback.verse.intValue == i
-                    // red_letters.json is KJV-indexed; pivot the primary's ref.
+                    // Red letters, notes and highlights are all keyed by the
+                    // canonical KJV reference; pivot the primary's own
+                    // (chapter, verse) once. Reading mapsReady re-runs this
+                    // item when versemap.json finishes loading.
+                    val (kc, kv) = if (mapsReady)
+                        VerseMap.toKjv(settings.primaryId, book, chapter + 1, i + 1)
+                    else chapter + 1 to i + 1
+                    val canonKey = "$book:${kc - 1}:${kv - 1}"
                     val red = redLetters?.get(book)?.let { chs ->
-                        val (kc, kv) = VerseMap.toKjv(settings.primaryId, book, chapter + 1, i + 1)
                         chs.getOrNull(kc - 1)?.contains(kv - 1)
                     } == true
                     val tagged = strongsBooks?.getOrNull(book)?.chapters
@@ -495,8 +501,8 @@ fun ReaderScreen(settings: AppSettings) {
                     val spoken = if (tagged == null && highlighted && Playback.wordStart.intValue >= 0)
                         Playback.wordStart.intValue..Playback.wordEnd.intValue else null
                     val bookmarked = bookmarkedVerses.contains(i)
-                    val noteText = notes["$book:$chapter:$i"]
-                    val userColor = liveHighlights["$book:$chapter:$i"]
+                    val noteText = notes[canonKey]
+                    val userColor = liveHighlights[canonKey]
                     val bg = when {
                         highlighted -> MaterialTheme.colorScheme.primaryContainer
                         userColor != null -> HighlightColors[userColor % HighlightColors.size]
@@ -601,10 +607,16 @@ fun ReaderScreen(settings: AppSettings) {
         }
         // Translator margin notes stripped from the displayed text, if any.
         val verseNotes = BibleRepo.notes(settings.primaryId)["$book:$chapter:$v"]
+        // Personal notes/highlights key by the canonical KJV reference (same
+        // pivot as the reader list above), so they survive translation switches.
+        val (akc, akv) = if (mapsReady)
+            VerseMap.toKjv(settings.primaryId, book, chapter + 1, v + 1)
+        else chapter + 1 to v + 1
+        val canonKey = "$book:${akc - 1}:${akv - 1}"
         VerseActionsDialog(
             refLabel = refLabel,
             bookmarked = bookmarkedVerses.contains(v),
-            existingNote = notes["$book:$chapter:$v"] ?: "",
+            existingNote = notes[canonKey] ?: "",
             onBookmark = {
                 scope.launch {
                     Store.toggleBookmark(context, Bookmark(settings.primaryId, book, chapter, v))
@@ -625,7 +637,7 @@ fun ReaderScreen(settings: AppSettings) {
                 actionVerse = null
             },
             onSaveNote = { text ->
-                scope.launch { Store.setNote(context, book, chapter, v, text) }
+                scope.launch { Store.setNote(context, book, akc - 1, akv - 1, text) }
                 actionVerse = null
             },
             onXrefs = {
@@ -653,11 +665,11 @@ fun ReaderScreen(settings: AppSettings) {
                 ShareImage.share(context, verseText, refLabel)
                 actionVerse = null
             },
-            currentHighlight = liveHighlights["$book:$chapter:$v"],
+            currentHighlight = liveHighlights[canonKey],
             onHighlight = { color ->
-                val key = "$book:$chapter:$v"
-                if (color == null) liveHighlights.remove(key) else liveHighlights[key] = color
-                scope.launch { Store.setHighlight(context, book, chapter, v, color) }
+                if (color == null) liveHighlights.remove(canonKey)
+                else liveHighlights[canonKey] = color
+                scope.launch { Store.setHighlight(context, book, akc - 1, akv - 1, color) }
                 actionVerse = null
             },
             onDismiss = { actionVerse = null }
@@ -1253,7 +1265,7 @@ private fun InterlinearWordDialog(
                 tag == null -> Text(stringResource(R.string.interlinear_none))
                 else -> Column(Modifier.verticalScroll(rememberScrollState())) {
                     Text(
-                        Interlinear.decode(book, tag!!.second),
+                        Interlinear.decode(context, book, tag!!.second),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )

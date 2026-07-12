@@ -989,7 +989,11 @@ private fun VerseText(
                 appendWords(taggedText.substring(pos), onWord)
             }
         }
-        spokenRange != null && spokenRange.first >= 0 && spokenRange.last <= text.length -> {
+        // first <= last guards a recomposition race: wordStart/wordEnd are two
+        // separate states, so a frame can pair the new word's start with the
+        // old word's end — a reversed range crashes AnnotatedString.
+        spokenRange != null && spokenRange.first >= 0 &&
+            spokenRange.first <= spokenRange.last && spokenRange.last <= text.length -> {
             val mark = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
             buildAnnotatedString {
                 append(text)

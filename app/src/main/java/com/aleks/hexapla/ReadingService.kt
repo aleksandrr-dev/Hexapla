@@ -12,6 +12,7 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.PowerManager
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.support.v4.media.MediaMetadataCompat
@@ -68,6 +69,7 @@ class ReadingService : Service() {
     private var rateJob: Job? = null
     private var session: MediaSessionCompat? = null
     private var focusRequest: AudioFocusRequest? = null
+    private var wakeLock: PowerManager.WakeLock? = null
 
     // Optional instrumental bed under the reading (opt-in in Settings).
     private var musicPlayer: MediaPlayer? = null
@@ -118,6 +120,9 @@ class ReadingService : Service() {
                 }
             }
         }
+        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager)
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "hexapla:reading")
+            .apply { setReferenceCounted(false) }
         session = MediaSessionCompat(this, "hexapla-reading").apply {
             setCallback(object : MediaSessionCompat.Callback() {
                 override fun onPlay() = resume()
@@ -251,6 +256,7 @@ class ReadingService : Service() {
         tts?.stop()
         releasePlayer()
         if (!requestFocus()) { stopEverything(); return }
+        acquireWakeLock()
         narrating = true
         currentSection = sec
         downloadPercent = 0
@@ -415,6 +421,7 @@ class ReadingService : Service() {
         }
         engine.setSpeechRate(settings.speechRate)
         if (!requestFocus()) { stopEverything(); return }
+        acquireWakeLock()
 
         engine.stop()
         startMusic()
@@ -474,6 +481,7 @@ class ReadingService : Service() {
             tts?.stop()
         }
         pauseMusic()
+        releaseWakeLock()
         Playback.playing.value = false
         updateSessionState(playing = false)
         updateNotification()
@@ -483,6 +491,7 @@ class ReadingService : Service() {
         if (books.isEmpty()) return
         if (narrating && player != null) {
             try { player?.start() } catch (_: Exception) { startChapter(fromVerse = 0); return }
+            acquireWakeLock()
             startMusic()
             Playback.playing.value = true
             updateSessionState(playing = true)
@@ -524,9 +533,25 @@ class ReadingService : Service() {
         Playback.wordEnd.intValue = -1
         Playback.sleepMinutes.intValue = 0
         updateSessionState(playing = false)
+        releaseWakeLock()
         abandonFocus()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+    }
+
+    /* ---- CPU wakelock: OEM battery managers (e.g. Samsung Freecess) freeze
+       processes whose CPU goes quiet with the screen off; holding a partial
+       lock only while actually speaking/playing keeps TTS callbacks arriving.
+       Not reference counted — acquire refreshes the timeout, release is
+       idempotent. Re-acquired at every chapter start, so the generous
+       timeout is only a lint-friendly safety net against leaks. ---- */
+
+    private fun acquireWakeLock() {
+        try { wakeLock?.acquire(WAKELOCK_TIMEOUT_MS) } catch (_: Exception) { }
+    }
+
+    private fun releaseWakeLock() {
+        try { wakeLock?.let { if (it.isHeld) it.release() } } catch (_: Exception) { }
     }
 
     /* ---- Audio focus: behave like a music app around calls and other media. ---- */
@@ -675,6 +700,8 @@ class ReadingService : Service() {
         releaseMusic()
         tts?.stop(); tts?.shutdown(); tts = null
         session?.release(); session = null
+        releaseWakeLock()
+        wakeLock = null
         abandonFocus()
         Playback.active.value = false
         Playback.playing.value = false
@@ -688,6 +715,8 @@ class ReadingService : Service() {
         private const val NOTIF_ID = 42
         // Virtual milliseconds per verse for the TTS seek bar timeline.
         private const val VERSE_MS = 15_000L
+        // Wakelock leak guard; refreshed on every chapter start (10 h).
+        private const val WAKELOCK_TIMEOUT_MS = 10 * 60 * 60 * 1000L
 
         const val ACTION_PLAY = "com.aleks.hexapla.PLAY"
         const val ACTION_PAUSE = "com.aleks.hexapla.PAUSE"

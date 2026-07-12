@@ -83,12 +83,18 @@ maximize reach, keep everything free, nothing locked, collect no data.
   `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 18 translations
   / 14 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
 - **Interlinear localization (owner-approved 2026-07-12)**:
-  (a) 1.4.2 item — grammar labels in Interlinear.kt decoders (~60
-  terms: tenses/moods/cases/stems, assembled into sentences) are
-  hardcoded English; move to string resources and localize ×12
-  (Russian has established seminary terminology: аорист,
-  действительный залог, изъявительное наклонение…). Self-contained,
-  no licensing risk.
+  (a) ~~1.4.2 item~~ DONE 2026-07-12, in tree for 1.4.2 (code 9):
+  grammar labels in Interlinear.kt decoders moved to string
+  resources — 136 morph_* strings ×12 locales, terminology table
+  curated in tools/localize_morphology.py (idempotent injector;
+  Russian seminary terms, Cyrillic binyanim; French Hebrew
+  accompli/inaccompli; CBOL vocabulary for zh, katakana stems for
+  ja; Latin binyanim kept for Latin-script locales + zh).
+  decode() now takes Context. Verified: Python port of old vs new
+  decoders over every distinct code in both assets (1055 Greek +
+  3454 Hebrew) — Greek byte-identical, Hebrew differs only in the
+  intended Tn/Ti/Tr enrichment («negative» → «negative particle»,
+  225 codes). Lint clean (47 warnings = pre-change baseline).
   (b) WATCH LIST — localized Strong's LEXICONS (Russian first):
   the definitions in strongs_lexicon.json are English (Open
   Scriptures). Russian Strong's translations circulate in
@@ -247,8 +253,8 @@ maximize reach, keep everything free, nothing locked, collect no data.
   sat left-ragged (owner noticed on RU) — fixed in MainActivity, and
   long labels shortened so every button is single-line at 360dp
   (measured with layoutlib Roboto/NotoCJK: ru/de/fr/it/ja labels,
-  ru tagline «на 14 языках» to stay 2-line on 320dp). Next
-  versionCode after 1.4.1 ships: 9.
+  ru tagline «на 14 языках» to stay 2-line on 320dp). 1.4.2
+  (code 9) is now in tree; next versionCode after it ships: 10.
 - **1.4.0/1.4.1 verification pass (2026-07-11)** — fixed in tree:
   bottom-nav labels + reader title now shrink-to-fit instead of
   ellipsizing (M3 label budget is ~58dp at 360dp: "Einstellungen",
@@ -326,12 +332,14 @@ maximize reach, keep everything free, nothing locked, collect no data.
   flavor-scoped into src/billing, no-op stub in src/foss, zero
   billingclient in foss dex/manifest; submission: IzzyOnDroid takes
   a released APK, F-Droid proper = fdroiddata MR with gradle:[foss]
-  — do either after Play production). STILL OPEN (assessed, owner
-  to decide, ~0.5-1 day each): plan days pinned to a canonical
-  KJV chapter grid (progress keys survive; Synodal drifts ≤1
-  chapter); bookmarks display-time pivot (translationId is already
-  STORED since v1, just never read — 1-2 h); notes/highlights lack
-  a translation id entirely (larger).
+  — do either after Play production). The three data-model gaps are
+  now ALL CLOSED: plan days pinned to the canonical KJV chapter grid
+  (commit 2464f04) and the bookmarks display-time pivot (845f588)
+  landed 2026-07-12; notes/highlights rekeyed to canonical KJV
+  coordinates in 1.4.2 (ReaderScreen pivots via VerseMap on write
+  AND lookup; data format unchanged so export/import untouched;
+  legacy keys read as canonical — identical for KJV-grid
+  translations, shifts only where display was already broken).
   Also fixed: 98 "Retournez au début" scraping-junk suffixes stripped
   from fr_martin.json (Beblia web scrape artifact); lut 2 Kgs 15:39
   is an empty slot in the asset (unmapped, cosmetic).

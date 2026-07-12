@@ -135,7 +135,12 @@ object Store {
     suspend fun setShowApocrypha(c: Context, v: Boolean) = c.dataStore.edit { it[APOC] = v }
     suspend fun setKeepScreenOn(c: Context, v: Boolean) = c.dataStore.edit { it[KEEP_ON] = v }
 
-    /* Personal verse notes, keyed "book:chapter:verse", stored as one JSON object. */
+    /* Personal verse notes, keyed "book:chapter:verse", stored as one JSON
+       object. Since 1.4.2 the chapter/verse are CANONICAL (KJV-grid, 0-based):
+       ReaderScreen pivots through VerseMap on both write and lookup, so notes
+       follow the verse across translation switches. Pre-1.4.2 keys were the
+       then-primary's native numbering — identical for KJV-grid translations,
+       shifted only where the old behavior was already broken (LXX psalter). */
     fun notes(c: Context): Flow<Map<String, String>> = c.dataStore.data.map { p ->
         val raw = p[NOTES] ?: return@map emptyMap()
         try {
@@ -200,7 +205,8 @@ object Store {
         p[STREAK_DAY] = today
     }
 
-    /* Verse highlights, keyed "book:chapter:verse" -> color index (0-3). */
+    /* Verse highlights, keyed "book:chapter:verse" -> color index (0-3).
+       Canonical KJV-grid keys since 1.4.2, exactly like notes above. */
     fun highlights(c: Context): Flow<Map<String, Int>> = c.dataStore.data.map { p ->
         val raw = p[HIGHLIGHTS] ?: return@map emptyMap()
         try {

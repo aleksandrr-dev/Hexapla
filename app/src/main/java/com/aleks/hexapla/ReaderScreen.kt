@@ -304,16 +304,12 @@ fun ReaderScreen(settings: AppSettings) {
             )
         }.collectLatest { (b, c, target, spoken) ->
             val movedChapter = (b to c) != lastPosition
-            // TEMP DIAGNOSTIC: one line per emission, shows which branch runs.
-            Log.d("FollowScroll", "emit b=$b c=$c target=$target spoken=$spoken " +
-                "movedChapter=$movedChapter lastSpoken=$lastSpoken dragging=$userDragging")
             when {
                 target >= 0 -> {
                     // Explicit jump: instant. Let the new chapter's list
                     // compose before scrolling into it.
                     withFrameNanos { }
                     withFrameNanos { }
-                    Log.d("FollowScroll", "JUMP scrollToItem($target)") // TEMP DIAGNOSTIC
                     listState.scrollToItem(target.coerceAtLeast(0))
                     AppState.scrollToVerse.intValue = -1
                 }
@@ -321,7 +317,6 @@ fun ReaderScreen(settings: AppSettings) {
                 // when playback is already mid-chapter (re-entering the
                 // reader, or the service advancing to the next chapter).
                 movedChapter -> {
-                    Log.d("FollowScroll", "CHAPTER scrollToItem(${if (spoken in versesNow.indices) spoken else 0})") // TEMP DIAGNOSTIC
                     listState.scrollToItem(
                         if (spoken in versesNow.indices) spoken else 0
                     )
@@ -355,7 +350,6 @@ fun ReaderScreen(settings: AppSettings) {
                             val item = listState.layoutInfo.visibleItemsInfo
                                 .firstOrNull { it.index == spoken }
                             if (item != null) {
-                                Log.d("FollowScroll", "GLIDE start v=$spoken px=${item.offset}") // TEMP DIAGNOSTIC
                                 // Duration scales with distance (~1ms/px, 500-1200ms)
                                 // so short hops stay quick and long ones stay gentle;
                                 // LinearOutSlowIn avoids FastOutSlowIn's front-loaded
@@ -370,19 +364,13 @@ fun ReaderScreen(settings: AppSettings) {
                                     )
                                 )
                             } else {
-                                Log.d("FollowScroll", "OFFSCREEN v=$spoken animateScrollToItem") // TEMP DIAGNOSTIC
                                 listState.animateScrollToItem(spoken)
                             }
                         }
-                        Log.d("FollowScroll", "complete v=$spoken") // TEMP DIAGNOSTIC
                     } catch (e: CancellationException) {
                         // Rethrow if WE were cancelled (a newer verse event);
                         // swallow if the user's drag stole the scroll mutex —
                         // never fight a finger, resume on the next verse.
-                        // TEMP DIAGNOSTIC: jobActive=true means the scroll mutex
-                        // was stolen by another scroller; false means a newer
-                        // emission cancelled this one (collectLatest).
-                        Log.d("FollowScroll", "interrupted v=$spoken jobActive=${currentCoroutineContext().isActive}")
                         currentCoroutineContext().ensureActive()
                     }
                 }

@@ -1,0 +1,38 @@
+To: hib@biblian.is
+Subject: Permission to include Gudbrandsbiblia 1584 in a free offline Bible app
+
+Dear Icelandic Bible Society,
+
+My name is Aleksandr Ratchkov. I develop Hexapla, a free offline
+parallel Bible app for Android with no ads and no data collection
+(https://aleksandrr-dev.github.io/Hexapla/). It carries classic
+national Bibles — the KJV 1611, Luther 1545, Karl XII:s Bibel 1703,
+the Danish 1819/1871 — and I would be honoured to include the
+Gudbrandsbiblia 1584, which you publish at
+https://biblian.is/gudbrandsbiblia/. Thordis Ulfarsdottir at
+Arnastofnun kindly pointed me to your site as the authoritative
+digital text.
+
+Three questions:
+
+1. May I include your transcription in the app? Everything in it is
+   free for everyone, forever, and the source would be credited in
+   the app's "Text sources" section exactly as you wish.
+
+2. The web pages present the prose in pericope paragraphs without
+   verse numbers (faithful to the 1584 printing). Do the working
+   files prepared by Jon Hjorleifur Stefansson exist in a
+   verse-tagged or otherwise structured form? A structured source
+   would let the app align the 1584 text verse-by-verse with the
+   other translations. If it is easier, I would be glad to be put in
+   touch with him directly.
+
+3. If the 1584 text proves impractical, would the same permission
+   extend to the Videyjarbiblia 1841 (biblian.is/videy/)?
+
+Thank you for making these treasures of Icelandic Christianity
+available.
+
+With kind regards,
+Aleksandr Ratchkov
+aleksratchkov@gmail.com

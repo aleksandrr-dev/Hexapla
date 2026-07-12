@@ -146,11 +146,22 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Þórdís (Árnastofnun): they do NOT have the digital text; it IS
   downloadable section-by-section at biblian.is/gudbrandsbiblia/
   (Icelandic Bible Society). She warns the archive.org copy is full
-  of scanning errors — DO NOT use archive.org for this. Next:
-  scope biblian.is (format/completeness/license — if reuse terms
-  unstated, email hib@biblian.is before building), litmus in 1584
-  Icelandic (1 Tim 3:16 must have Guð as subject), versification
-  survey. Viðeyjarbiblía 1841 remains the fallback ask.
+  of scanning errors — DO NOT use archive.org for this. SCOPED
+  2026-07-11: complete (66 + 11 apocrypha books), modernized
+  spelling, per-chapter WordPress pages (open REST API, easy
+  scrape); LITMUS: 1 Tim 3:16 «Guð er opinberaður í holdinu» PASS,
+  Comma PRESENT, Acts 8:37 present, Lk 2:33 "hans faðir" = Luther's
+  own reading (same as shipped de_luther — acceptable). TWO GATES:
+  (1) transcription is "Allur réttur áskilinn" (all rights
+  reserved) — email hib@biblian.is, draft at
+  store-assets/biblian_email_draft.txt; (2) PROSE HAS NO VERSE
+  NUMBERS (pericope paragraphs; Mt 2 = 6 paragraphs for 23 verses;
+  only Psalms/poetry are verse-per-paragraph) → 150-400+ h
+  segmentation UNLESS Jón Hjörleifur Stefánsson's working files
+  carry verse structure — ASK THIS in the permission email; a yes
+  collapses it to a normal converter. Plan B in same email:
+  Viðeyjarbiblía 1841 (biblian.is/videy/, presumably versified,
+  needs its own litmus pass).
   Korean — no PD TR text exists (개역한글 fails 1 Tim 3:16 with 그는;
   한글킹제임스/흠정역 copyrighted). LXX apocrypha — no clean-licensed
   tagged text (CATSS restrictive).

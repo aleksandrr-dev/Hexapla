@@ -142,10 +142,15 @@ maximize reach, keep everything free, nothing locked, collect no data.
   OT = scans only (archive.org holybibleinsansc00gill + 02-04weng,
   1848); OCR scoped at 400-800 proofreading hours — NOT feasible;
   email SanskritBible.in about their OT progress instead.
-  Guðbrandsbiblía 1584 (Icelandic) — transcription likely exists in the
-  Árnastofnun Textasafn corpus; owner to email arnastofnun@arnastofnun.is
-  (corpus editor: Þórdís Úlfarsdóttir, disa@hi.is) + hib@biblian.is
-  (Icelandic Bible Society; also has Viðeyjarbiblía 1841 as fallback ask).
+  Guðbrandsbiblía 1584 (Icelandic) — REPLY RECEIVED 2026-07-11 from
+  Þórdís (Árnastofnun): they do NOT have the digital text; it IS
+  downloadable section-by-section at biblian.is/gudbrandsbiblia/
+  (Icelandic Bible Society). She warns the archive.org copy is full
+  of scanning errors — DO NOT use archive.org for this. Next:
+  scope biblian.is (format/completeness/license — if reuse terms
+  unstated, email hib@biblian.is before building), litmus in 1584
+  Icelandic (1 Tim 3:16 must have Guð as subject), versification
+  survey. Viðeyjarbiblía 1841 remains the fallback ask.
   Korean — no PD TR text exists (개역한글 fails 1 Tim 3:16 with 그는;
   한글킹제임스/흠정역 copyrighted). LXX apocrypha — no clean-licensed
   tagged text (CATSS restrictive).

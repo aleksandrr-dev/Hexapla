@@ -507,13 +507,36 @@ fun SettingsScreen(settings: AppSettings) {
             HorizontalDivider(Modifier.padding(vertical = 12.dp))
         }
 
-        /* ---- Attribution (CC-BY requirement for cross-references) ---- */
+        /* ---- Attribution (CC-BY requirement for cross-references).
+           The full list (20 translations + licenses) is long, so it lives
+           in an opt-in dialog instead of inline. ---- */
         SectionHeader(stringResource(R.string.sources_title))
-        Text(
-            stringResource(R.string.sources_text),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        var showSources by remember { mutableStateOf(false) }
+        TextButton(onClick = { showSources = true }) {
+            Text(stringResource(R.string.sources_title))
+        }
+        if (showSources) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showSources = false },
+                title = { Text(stringResource(R.string.sources_title)) },
+                text = {
+                    Column(
+                        Modifier.verticalScroll(rememberScrollState())
+                    ) {
+                        Text(
+                            stringResource(R.string.sources_text),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showSources = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
+        }
         Spacer(Modifier.height(32.dp))
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -102,7 +103,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import java.text.Normalizer
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -250,35 +254,68 @@ fun ReaderScreen(settings: AppSettings) {
     }
 
     // One collector owns all position scrolling: verse jumps (search, topics,
-    // xrefs, deep links) win over the scroll-to-top on chapter change. Split
-    // effects raced — the jump landed first, then the chapter effect saw no
-    // pending target and reset to the top.
+    // xrefs, deep links) win over the scroll-to-top on chapter change, and the
+    // playback follow-scroll lives in the same collector so it can never race
+    // them. Split effects raced — the jump landed first, then the chapter
+    // effect saw no pending target and reset to the top.
+    // Jumps and chapter resets stay instant (animating across a book is
+    // janky); only the verse-to-verse playback follow animates. collectLatest
+    // makes a new verse event cancel a stale animation instead of queuing.
+    val versesNow by rememberUpdatedState(verses)
+    val userDragging by listState.interactionSource.collectIsDraggedAsState()
     var lastPosition by remember { mutableStateOf(-1 to -1) }
+    var lastSpoken by remember { mutableStateOf(-1) }
     LaunchedEffect(Unit) {
         snapshotFlow {
-            Triple(AppState.book.intValue, AppState.chapter.intValue, AppState.scrollToVerse.intValue)
-        }.collect { (b, c, target) ->
+            // Playback.verse is only read here while the service is reading
+            // the chapter on screen, so it only re-emits when following.
+            val here = Playback.active.value &&
+                Playback.book.intValue == AppState.book.intValue &&
+                Playback.chapter.intValue == AppState.chapter.intValue
+            listOf(
+                AppState.book.intValue, AppState.chapter.intValue,
+                AppState.scrollToVerse.intValue,
+                if (here) Playback.verse.intValue else -1
+            )
+        }.collectLatest { (b, c, target, spoken) ->
             val movedChapter = (b to c) != lastPosition
-            lastPosition = b to c
-            if (target >= 0) {
-                // Let the new chapter's list compose before scrolling into it.
-                withFrameNanos { }
-                withFrameNanos { }
-                listState.scrollToItem(target.coerceAtLeast(0))
-                AppState.scrollToVerse.intValue = -1
-            } else if (movedChapter) {
-                listState.scrollToItem(0)
+            when {
+                target >= 0 -> {
+                    // Explicit jump: instant. Let the new chapter's list
+                    // compose before scrolling into it.
+                    withFrameNanos { }
+                    withFrameNanos { }
+                    listState.scrollToItem(target.coerceAtLeast(0))
+                    AppState.scrollToVerse.intValue = -1
+                }
+                // Chapter reset: instant; land straight on the spoken verse
+                // when playback is already mid-chapter (re-entering the
+                // reader, or the service advancing to the next chapter).
+                movedChapter -> listState.scrollToItem(
+                    if (spoken in versesNow.indices) spoken else 0
+                )
+                spoken >= 0 && spoken != lastSpoken &&
+                    spoken in versesNow.indices && !userDragging -> {
+                    try {
+                        listState.animateScrollToItem(spoken)
+                    } catch (e: CancellationException) {
+                        // Rethrow if WE were cancelled (a newer verse event);
+                        // swallow if the user's drag stole the scroll mutex —
+                        // never fight a finger, resume on the next verse.
+                        currentCoroutineContext().ensureActive()
+                    }
+                }
             }
+            // Update AFTER the scroll: if collectLatest cancels us mid-scroll,
+            // the next emission re-evaluates and retries instead of losing it.
+            lastPosition = b to c
+            lastSpoken = spoken
         }
     }
-    // Follow the voice: when the service reads this chapter, keep the spoken
-    // verse in view; when it advances to a new chapter, follow it there.
+    // Follow the voice into a new chapter: when the service advances past the
+    // one on screen, repoint the reader (the collector above then scrolls).
     val playbackHere = Playback.active.value &&
         Playback.book.intValue == book && Playback.chapter.intValue == chapter
-    LaunchedEffect(Playback.verse.intValue, playbackHere) {
-        val v = Playback.verse.intValue
-        if (playbackHere && v in verses.indices) listState.animateScrollToItem(v)
-    }
     LaunchedEffect(Playback.book.intValue, Playback.chapter.intValue) {
         if (Playback.active.value && Playback.book.intValue >= 0 && !playbackHere) {
             AppState.open(Playback.book.intValue, Playback.chapter.intValue)

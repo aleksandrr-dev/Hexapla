@@ -43,12 +43,17 @@ fun TopicsScreen(settings: AppSettings, openReader: () -> Unit) {
     val context = LocalContext.current
     var books by remember { mutableStateOf<List<Book>?>(null) }
     var fallback by remember { mutableStateOf<List<Book>?>(null) }
+    val fallbackId = remember { BibleRepo.defaultPrimaryId() }
     LaunchedEffect(settings.primaryId) {
+        // Topic refs are KJV-indexed; the versemap pivots them into each
+        // translation's native numbering. Loaded before `books` is set, so
+        // every card below resolves with the map ready.
+        VerseMap.load(context)
         books = BibleRepo.load(context, settings.primaryId)
         // Testament-only primaries (Hebrew WLC, Greek NT, partial Tyndale) lack
         // many topic refs; show those from the system-language default text.
-        val fid = BibleRepo.defaultPrimaryId()
-        fallback = if (fid == settings.primaryId) null else BibleRepo.load(context, fid)
+        fallback = if (fallbackId == settings.primaryId) null
+        else BibleRepo.load(context, fallbackId)
     }
     val loaded = books
     if (loaded == null) {
@@ -92,7 +97,8 @@ fun TopicsScreen(settings: AppSettings, openReader: () -> Unit) {
                         onClick = {
                             val steps = Topics.gospel.map { t ->
                                 context.getString(t.titleRes) to t.refs.mapNotNull { ref ->
-                                    resolveRef(ref, loaded, fallback)
+                                    resolveRef(ref, settings.primaryId, loaded, fallbackId, fallback)
+                                        ?.let { it.label to it.text }
                                 }
                             }
                             ShareImage.shareGospel(
@@ -104,40 +110,63 @@ fun TopicsScreen(settings: AppSettings, openReader: () -> Unit) {
                 }
             }
             items(topics) { topic ->
-                TopicCard(topic, loaded, fallback, openReader)
+                TopicCard(topic, settings.primaryId, loaded, fallbackId, fallback, openReader)
             }
             item { Spacer(Modifier.height(24.dp)) }
         }
     }
 }
 
-/** LXX Psalters (151 chapters) number Psalms 10–147 one lower than Hebrew/KJV refs. */
-private fun chapterIndexFor(ref: VerseRef, bk: Book?): Int =
-    if (ref.book == 18 && (bk?.chapters?.size ?: 0) >= 151 && ref.chapter in 9..146)
-        ref.chapter - 1 else ref.chapter
+/** A KJV-indexed topic ref resolved into one translation's own numbering. */
+private class ResolvedRef(
+    val label: String,
+    val text: String,
+    val inPrimary: Boolean,
+    val chIdx: Int,      // 0-based, the shown translation's own chapter
+    val verseIdx: Int    // 0-based, the shown translation's own first verse
+)
 
-/** Resolve a ref to (label, verse text) in the primary text, falling back if absent. */
-private fun resolveRef(ref: VerseRef, books: List<Book>, fallback: List<Book>?): Pair<String, String>? {
-    var bk = books.getOrNull(ref.book)
-    var chIdx = chapterIndexFor(ref, bk)
-    var verses = bk?.chapters?.getOrNull(chIdx)
-    if (verses.isNullOrEmpty()) {
-        bk = fallback?.getOrNull(ref.book)
-        chIdx = chapterIndexFor(ref, bk)
-        verses = bk?.chapters?.getOrNull(chIdx)
-    }
-    if (bk == null || verses.isNullOrEmpty()) return null
-    val vs = ref.verseStart.coerceIn(0, verses.size - 1)
-    val ve = ref.verseEnd.coerceIn(vs, verses.size - 1)
+/** Resolve a ref in the primary text, falling back if absent there. */
+private fun resolveRef(
+    ref: VerseRef,
+    primaryId: String,
+    books: List<Book>,
+    fallbackId: String,
+    fallback: List<Book>?
+): ResolvedRef? =
+    resolveIn(ref, primaryId, books, inPrimary = true)
+        ?: fallback?.let { resolveIn(ref, fallbackId, it, inPrimary = false) }
+
+/** Pivot the KJV-indexed ref through the versemap into `id`'s numbering. */
+private fun resolveIn(ref: VerseRef, id: String, books: List<Book>, inPrimary: Boolean): ResolvedRef? {
+    val bk = books.getOrNull(ref.book) ?: return null
+    // Map both ends of the range; fromKjv is empty for verses this
+    // translation omits and identity when the book is unmapped.
+    val start = VerseMap.fromKjv(id, ref.book, ref.chapter + 1, ref.verseStart + 1)
+        .firstOrNull() ?: return null
+    val end = VerseMap.fromKjv(id, ref.book, ref.chapter + 1, ref.verseEnd + 1)
+        .lastOrNull() ?: start
+    val chIdx = start.first - 1
+    val verses = bk.chapters.getOrNull(chIdx)
+    if (verses.isNullOrEmpty()) return null
+    val vs = (start.second - 1).coerceIn(0, verses.size - 1)
+    // A range end that maps into the next chapter (rare) reads to chapter end.
+    val ve = if (end.first == start.first) (end.second - 1).coerceIn(vs, verses.size - 1)
+    else verses.size - 1
+    val text = (vs..ve).mapNotNull { verses.getOrNull(it) }
+        .filter { it.isNotBlank() }.joinToString(" ")
+    if (text.isBlank()) return null
     val label = if (vs == ve) "${bk.name} ${chIdx + 1}:${vs + 1}"
     else "${bk.name} ${chIdx + 1}:${vs + 1}–${ve + 1}"
-    return label to (vs..ve).joinToString(" ") { verses[it] }
+    return ResolvedRef(label, text, inPrimary, chIdx, vs)
 }
 
 @Composable
 private fun TopicCard(
     topic: Topic,
+    primaryId: String,
     books: List<Book>,
+    fallbackId: String,
     fallback: List<Book>?,
     openReader: () -> Unit
 ) {
@@ -169,43 +198,27 @@ private fun TopicCard(
                 Column {
                     topic.refs.forEach { ref ->
                         // Prefer the primary translation; fall back for books it lacks.
-                        var inPrimary = true
-                        var bk = books.getOrNull(ref.book)
-                        var chIdx = chapterIndexFor(ref, bk)
-                        var chapterVerses = bk?.chapters?.getOrNull(chIdx)
-                        if (chapterVerses.isNullOrEmpty()) {
-                            inPrimary = false
-                            bk = fallback?.getOrNull(ref.book)
-                            chIdx = chapterIndexFor(ref, bk)
-                            chapterVerses = bk?.chapters?.getOrNull(chIdx)
-                        }
-                        if (bk == null || chapterVerses.isNullOrEmpty()) return@forEach
-                        val vs = ref.verseStart.coerceIn(0, chapterVerses.size - 1)
-                        val ve = ref.verseEnd.coerceIn(vs, chapterVerses.size - 1)
-                        val text = (vs..ve).joinToString(" ") { chapterVerses[it] }
-                        val label = if (vs == ve)
-                            "${bk.name} ${chIdx + 1}:${vs + 1}"
-                        else
-                            "${bk.name} ${chIdx + 1}:${vs + 1}–${ve + 1}"
-                        val rowModifier = if (inPrimary)
+                        val r = resolveRef(ref, primaryId, books, fallbackId, fallback)
+                            ?: return@forEach
+                        val rowModifier = if (r.inPrimary)
                             Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    AppState.open(ref.book, chIdx, vs)
+                                    AppState.open(ref.book, r.chIdx, r.verseIdx)
                                     openReader()
                                 }
                         else Modifier.fillMaxWidth()
                         Column(rowModifier.padding(vertical = 8.dp)) {
                             Text(
-                                label,
+                                r.label,
                                 style = MaterialTheme.typography.labelLarge,
-                                color = if (inPrimary) MaterialTheme.colorScheme.primary
+                                color = if (r.inPrimary) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text,
+                                r.text,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = if (inPrimary) MaterialTheme.colorScheme.onSurface
+                                color = if (r.inPrimary) MaterialTheme.colorScheme.onSurface
                                 else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }

@@ -268,9 +268,26 @@ maximize reach, keep everything free, nothing locked, collect no data.
   tap indexes; taps disabled on rare cross-chapter rows), Compare,
   xrefs (key + targets), red letters. Fixes the long-standing whole-
   chapter split-view offset for Synodal Psalms and psalm-title
-  off-by-one vs Luther. NOT yet mapped: TopicsScreen still uses its
-  old chapterIndexFor shim (4 LXX seam psalms approximate),
-  Reminders daily-verse ref, bookmarks across translation switches.
+  off-by-one vs Luther. Topics + Reminders now pivot through the
+  versemap too (chapterIndexFor deleted — the old shim fixed only
+  the chapter, never the verse, in Synodal psalms). Late-2026-07-12
+  additions, all in 1.4.1: verse menu gained "Show original" (any
+  verse → grc/wlc via the pivot, tappable interlinear words keyed to
+  the ORIGINAL's own chapter/verse) and "Translator's notes" (KJV's
+  7,859 {x: y} margin notes retained at parse, shown on demand;
+  entry hidden when absent); follow-scroll pinned to 1x
+  MotionDurationScale (the "snap" was the system animator scale
+  zeroing animations — code was never wrong); Text sources is one
+  tap-to-open dialog row; `foss` flavor F-Droid-ready (billing
+  flavor-scoped into src/billing, no-op stub in src/foss, zero
+  billingclient in foss dex/manifest; submission: IzzyOnDroid takes
+  a released APK, F-Droid proper = fdroiddata MR with gradle:[foss]
+  — do either after Play production). STILL OPEN (assessed, owner
+  to decide, ~0.5-1 day each): plan days pinned to a canonical
+  KJV chapter grid (progress keys survive; Synodal drifts ≤1
+  chapter); bookmarks display-time pivot (translationId is already
+  STORED since v1, just never read — 1-2 h); notes/highlights lack
+  a translation id entirely (larger).
   Also fixed: 98 "Retournez au début" scraping-junk suffixes stripped
   from fr_martin.json (Beblia web scrape artifact); lut 2 Kgs 15:39
   is an empty slot in the asset (unmapped, cosmetic).

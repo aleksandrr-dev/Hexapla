@@ -480,8 +480,7 @@ fun SettingsScreen(settings: AppSettings) {
             if (playTips) {
                 Row {
                     tipManager.products.value.forEach { product ->
-                        val price = product.oneTimePurchaseOfferDetails?.formattedPrice ?: ""
-                        ChoiceChip(price, selected = false) {
+                        ChoiceChip(product.price, selected = false) {
                             (context as? android.app.Activity)?.let { tipManager.tip(it, product) }
                         }
                     }
@@ -509,8 +508,8 @@ fun SettingsScreen(settings: AppSettings) {
 
         /* ---- Attribution (CC-BY requirement for cross-references).
            The full list (20 translations + licenses) is long, so it lives
-           in an opt-in dialog instead of inline. ---- */
-        SectionHeader(stringResource(R.string.sources_title))
+           in an opt-in dialog instead of inline. A single TextButton (the
+           QR/backup row idiom) — no SectionHeader, the button IS the label. ---- */
         var showSources by remember { mutableStateOf(false) }
         TextButton(onClick = { showSources = true }) {
             Text(stringResource(R.string.sources_title))

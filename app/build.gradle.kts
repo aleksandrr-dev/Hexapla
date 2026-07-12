@@ -27,11 +27,15 @@ android {
         buildConfig = true
     }
 
-    // Two distribution channels from one codebase:
+    // Three distribution channels from one codebase:
     //  - play:    Google Play. Tips via Play Billing only; no external
     //             payment links anywhere (payments policy).
     //  - rustore: RuStore / direct APK. Play services absent, so the
     //             support section shows the external donation link.
+    //  - foss:    F-Droid. No proprietary code at all — the Play Billing
+    //             dependency is excluded (see flavor-scoped dependencies
+    //             below and the TipManager stub in src/foss); donation
+    //             links only.
     flavorDimensions += "distribution"
     productFlavors {
         create("play") {
@@ -42,6 +46,18 @@ android {
             dimension = "distribution"
             buildConfigField("boolean", "EXTERNAL_DONATIONS", "true")
         }
+        create("foss") {
+            dimension = "distribution"
+            buildConfigField("boolean", "EXTERNAL_DONATIONS", "true")
+        }
+    }
+
+    // play and rustore share the real Play Billing TipManager from
+    // src/billing; foss uses the no-op stub in src/foss instead, so
+    // src/main never imports com.android.billingclient.
+    sourceSets {
+        getByName("play") { kotlin.srcDir("src/billing/kotlin") }
+        getByName("rustore") { kotlin.srcDir("src/billing/kotlin") }
     }
 
     signingConfigs {
@@ -91,5 +107,9 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.media:media:1.7.0")
     implementation("com.google.zxing:core:3.5.3")
-    implementation("com.android.billingclient:billing-ktx:7.1.1")
+
+    // Proprietary Google Play Billing — store flavors only. The foss
+    // (F-Droid) variant must not link it; src/foss stubs TipManager.
+    "playImplementation"("com.android.billingclient:billing-ktx:7.1.1")
+    "rustoreImplementation"("com.android.billingclient:billing-ktx:7.1.1")
 }

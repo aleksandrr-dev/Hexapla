@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d分钟</string>
     <string name="listen_from_here">从这里开始收听</string>
     <string name="share_image">分享为图片</string>
+    <string name="verse_original">原文</string>
+    <string name="verse_notes">译者注</string>
     <string name="streak">🔥 %1$d天</string>
     <string name="topics_gospel">福音</string>
     <string name="gospel_intro">我当怎样行才可以得救？以下经文直接出自圣经，一步一步讲明神的救恩计划。点按任一经文即可在圣经中打开。</string>

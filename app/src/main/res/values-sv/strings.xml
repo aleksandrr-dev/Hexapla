@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d min</string>
     <string name="listen_from_here">Lyssna härifrån</string>
     <string name="share_image">Dela som bild</string>
+    <string name="verse_original">Grundtexten</string>
+    <string name="verse_notes">Översättarnas anmärkningar</string>
     <string name="streak">🔥 %1$d dagar</string>
     <string name="topics_gospel">De goda nyheterna</string>
     <string name="gospel_intro">Vad måste jag göra för att bli frälst? Dessa verser går igenom Guds frälsningsplan, steg för steg, direkt ur Skriften. Tryck på en vers för att öppna den i Bibeln.</string>

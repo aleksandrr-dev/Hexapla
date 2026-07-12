@@ -16,6 +16,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -97,6 +98,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.window.Dialog
@@ -297,7 +299,18 @@ fun ReaderScreen(settings: AppSettings) {
                 spoken >= 0 && spoken != lastSpoken &&
                     spoken in versesNow.indices && !userDragging -> {
                     try {
-                        listState.animateScrollToItem(spoken)
+                        // Follow-scroll is a functional reading aid, not a
+                        // decorative transition: run it at 1x even when the
+                        // system reports animator duration scale 0 (Developer
+                        // options "Animator duration scale: off", accessibility
+                        // "Remove animations", some battery savers). Compose's
+                        // suspend animations honor MotionDurationScale from the
+                        // effect context, so scale 0 made animateScrollToItem
+                        // finish in a single frame — the follow "snapped" no
+                        // matter which effect issued it.
+                        withContext(FollowScrollMotion) {
+                            listState.animateScrollToItem(spoken)
+                        }
                     } catch (e: CancellationException) {
                         // Rethrow if WE were cancelled (a newer verse event);
                         // swallow if the user's drag stole the scroll mutex —
@@ -327,6 +340,8 @@ fun ReaderScreen(settings: AppSettings) {
     var actionVerse by remember { mutableStateOf<Int?>(null) }
     var xrefVerse by remember { mutableStateOf<Int?>(null) }
     var compareVerse by remember { mutableStateOf<Int?>(null) }
+    var originalVerse by remember { mutableStateOf<Int?>(null) }
+    var notesVerse by remember { mutableStateOf<Int?>(null) }
     var dragTotal by remember { mutableFloatStateOf(0f) }
 
     val fontFamily = if (settings.serifFont) FontFamily.Serif else FontFamily.SansSerif
@@ -516,6 +531,20 @@ fun ReaderScreen(settings: AppSettings) {
     actionVerse?.let { v ->
         val verseText = verses.getOrNull(v) ?: ""
         val refLabel = "${books[book].name} ${chapter + 1}:${v + 1}"
+        // "Original text" needs a non-empty grc/wlc counterpart (mapped through
+        // the KJV pivot). Resolved async: BibleRepo caches, so after the first
+        // long-press this is instant; the entry appears once known available.
+        val origId = if (book < 39) "wlc" else "grc"
+        var originalAvailable by remember(book, chapter, v) { mutableStateOf(false) }
+        LaunchedEffect(book, chapter, v) {
+            if (settings.primaryId == origId) return@LaunchedEffect
+            VerseMap.load(context)
+            val (kc, kv) = VerseMap.toKjv(settings.primaryId, book, chapter + 1, v + 1)
+            originalAvailable =
+                VerseMap.textAt(origId, BibleRepo.load(context, origId), book, kc, kv).isNotBlank()
+        }
+        // Translator margin notes stripped from the displayed text, if any.
+        val verseNotes = BibleRepo.notes(settings.primaryId)["$book:$chapter:$v"]
         VerseActionsDialog(
             refLabel = refLabel,
             bookmarked = bookmarkedVerses.contains(v),
@@ -551,6 +580,14 @@ fun ReaderScreen(settings: AppSettings) {
                 compareVerse = v
                 actionVerse = null
             },
+            onShowOriginal = if (originalAvailable) ({
+                originalVerse = v
+                actionVerse = null
+            }) else null,
+            onNotes = if (!verseNotes.isNullOrEmpty()) ({
+                notesVerse = v
+                actionVerse = null
+            }) else null,
             onListen = {
                 ensureNotificationPermission()
                 ReadingService.play(context, book, chapter, v)
@@ -635,45 +672,9 @@ fun ReaderScreen(settings: AppSettings) {
     }
 
     interTap?.let { (v, w, word) ->
-        var tag by remember(v, w) { mutableStateOf<Pair<String, String>?>(null) }
-        var entry by remember(v, w) { mutableStateOf<StrongsRepo.Entry?>(null) }
-        var loaded by remember(v, w) { mutableStateOf(false) }
-        LaunchedEffect(v, w) {
-            tag = Interlinear.word(context, book, chapter, v, w)
-            tag?.let { entry = StrongsRepo.entry(context, it.first) }
-            loaded = true
-        }
-        AlertDialog(
-            onDismissRequest = { interTap = null },
-            title = { Text(word) },
-            text = {
-                when {
-                    !loaded -> Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                    tag == null -> Text(stringResource(R.string.interlinear_none))
-                    else -> Column(Modifier.verticalScroll(rememberScrollState())) {
-                        Text(
-                            Interlinear.decode(book, tag!!.second),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        entry?.let { e ->
-                            Text(
-                                listOf(tag!!.first, e.word, e.translit)
-                                    .filter { it.isNotBlank() }.joinToString(" · "),
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                            Spacer(Modifier.height(6.dp))
-                            Text(e.def, style = MaterialTheme.typography.bodyMedium)
-                        } ?: Text(tag!!.first, style = MaterialTheme.typography.titleSmall)
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { interTap = null }) { Text(stringResource(R.string.cancel)) }
-            }
+        InterlinearWordDialog(
+            book = book, chapter = chapter, verse = v, wordIndex = w, word = word,
+            onDismiss = { interTap = null }
         )
     }
 
@@ -686,6 +687,46 @@ fun ReaderScreen(settings: AppSettings) {
             refLabel = "${books[book].name} ${chapter + 1}:${v + 1}",
             enabledIds = settings.compareIds,
             onDismiss = { compareVerse = null }
+        )
+    }
+
+    originalVerse?.let { v ->
+        OriginalDialog(
+            primaryId = settings.primaryId,
+            book = book,
+            chapter = chapter,
+            verse = v,
+            fontSize = settings.fontSize,
+            fontFamily = fontFamily,
+            onDismiss = { originalVerse = null }
+        )
+    }
+
+    notesVerse?.let { v ->
+        val noteList = BibleRepo.notes(settings.primaryId)["$book:$chapter:$v"] ?: emptyList()
+        AlertDialog(
+            onDismissRequest = { notesVerse = null },
+            title = { Text("${books[book].name} ${chapter + 1}:${v + 1}") },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Text(
+                        stringResource(R.string.verse_notes),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    noteList.forEach { n ->
+                        Text(
+                            n,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 3.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { notesVerse = null }) { Text(stringResource(R.string.cancel)) }
+            }
         )
     }
 
@@ -789,6 +830,11 @@ private fun PlaybackBar(context: android.content.Context) {
             }
         )
     }
+}
+
+/** Forces 1x motion for the playback follow-scroll (see the collector above). */
+private val FollowScrollMotion = object : MotionDurationScale {
+    override val scaleFactor: Float get() = 1f
 }
 
 private val wordRegex = Regex("""[A-Za-z]+(?:['’-][A-Za-z]+)*""")
@@ -965,6 +1011,8 @@ private fun VerseActionsDialog(
     onSaveNote: (String) -> Unit,
     onXrefs: () -> Unit,
     onCompare: () -> Unit,
+    onShowOriginal: (() -> Unit)?,
+    onNotes: (() -> Unit)?,
     onListen: () -> Unit,
     onShareImage: () -> Unit,
     currentHighlight: Int?,
@@ -1027,6 +1075,16 @@ private fun VerseActionsDialog(
                     }
                     TextButton(onClick = onCompare, modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.compare))
+                    }
+                    if (onShowOriginal != null) {
+                        TextButton(onClick = onShowOriginal, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.verse_original))
+                        }
+                    }
+                    if (onNotes != null) {
+                        TextButton(onClick = onNotes, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.verse_notes))
+                        }
                     }
                     TextButton(onClick = onListen, modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.listen_from_here))
@@ -1101,6 +1159,152 @@ private fun CompareDialog(
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
     )
+}
+
+/** Strong's + decoded morphology for one tapped original-language word.
+ *  [chapter]/[verse] are 0-based positions in the grc/wlc asset's OWN
+ *  numbering — the interlinear assets are keyed to exactly those. */
+@Composable
+private fun InterlinearWordDialog(
+    book: Int,
+    chapter: Int,
+    verse: Int,
+    wordIndex: Int,
+    word: String,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    var tag by remember(chapter, verse, wordIndex) { mutableStateOf<Pair<String, String>?>(null) }
+    var entry by remember(chapter, verse, wordIndex) { mutableStateOf<StrongsRepo.Entry?>(null) }
+    var loaded by remember(chapter, verse, wordIndex) { mutableStateOf(false) }
+    LaunchedEffect(chapter, verse, wordIndex) {
+        tag = Interlinear.word(context, book, chapter, verse, wordIndex)
+        tag?.let { entry = StrongsRepo.entry(context, it.first) }
+        loaded = true
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(word) },
+        text = {
+            when {
+                !loaded -> Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+                tag == null -> Text(stringResource(R.string.interlinear_none))
+                else -> Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Text(
+                        Interlinear.decode(book, tag!!.second),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    entry?.let { e ->
+                        Text(
+                            listOf(tag!!.first, e.word, e.translit)
+                                .filter { it.isNotBlank() }.joinToString(" · "),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        Text(e.def, style = MaterialTheme.typography.bodyMedium)
+                    } ?: Text(tag!!.first, style = MaterialTheme.typography.titleSmall)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
+}
+
+/** A tapped word inside the "Original text" dialog: the original's own
+ *  0-based chapter/verse plus the interlinear word index. */
+private data class OrigWordTap(val chapter: Int, val verse: Int, val wordIndex: Int, val word: String)
+
+/** The long-pressed verse in the original language (wlc for OT, grc for NT),
+ *  resolved through the KJV pivot exactly like CompareDialog. Words tap into
+ *  the same Strong's + morphology flow as the grc/wlc reader panes. */
+@Composable
+private fun OriginalDialog(
+    primaryId: String,
+    book: Int,
+    chapter: Int,
+    verse: Int,
+    fontSize: Float,
+    fontFamily: FontFamily,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val origId = if (book < 39) "wlc" else "grc"
+    val trans = BibleRepo.translation(origId)
+    var bookName by remember { mutableStateOf("") }
+    // Mapped segments in the original's OWN 1-based numbering (usually one;
+    // several when the KJV verse spans merged verses there). The interlinear
+    // assets are keyed to these same positions, so each segment's word taps
+    // carry its own chapter/verse.
+    var segs by remember { mutableStateOf<List<Triple<Int, Int, String>>?>(null) }
+    LaunchedEffect(book, chapter, verse) {
+        VerseMap.load(context)
+        val obooks = BibleRepo.load(context, origId)
+        bookName = obooks.getOrNull(book)?.name ?: ""
+        val (kc, kv) = VerseMap.toKjv(primaryId, book, chapter + 1, verse + 1)
+        segs = VerseMap.fromKjv(origId, book, kc, kv).mapNotNull { (c, ov) ->
+            obooks.getOrNull(book)?.chapters?.getOrNull(c - 1)?.getOrNull(ov - 1)
+                ?.takeIf { it.isNotBlank() }?.let { Triple(c, ov, it) }
+        }
+    }
+    var tap by remember { mutableStateOf<OrigWordTap?>(null) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Column {
+                Text(
+                    trans.label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                val s = segs
+                if (!s.isNullOrEmpty()) {
+                    val ref = when {
+                        s.size == 1 -> "${s[0].first}:${s[0].second}"
+                        s.all { it.first == s[0].first } ->
+                            "${s[0].first}:${s.first().second}–${s.last().second}"
+                        else -> s.joinToString("; ") { "${it.first}:${it.second}" }
+                    }
+                    Text("$bookName $ref")
+                }
+            }
+        },
+        text = {
+            val loaded = segs
+            if (loaded == null) {
+                Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                SelectionContainer {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                        loaded.forEach { (c, ov, text) ->
+                            VerseText(
+                                ov, text, fontSize, fontFamily, Modifier.fillMaxWidth(),
+                                onWordIndexed = { w, t -> tap = OrigWordTap(c - 1, ov - 1, w, t) },
+                                showNumber = loaded.size > 1
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
+    tap?.let { t ->
+        InterlinearWordDialog(
+            book = book, chapter = t.chapter, verse = t.verse,
+            wordIndex = t.wordIndex, word = t.word,
+            onDismiss = { tap = null }
+        )
+    }
 }
 
 private data class SearchHit(

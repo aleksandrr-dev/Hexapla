@@ -162,6 +162,8 @@
     <string name="sleep_minutes">%1$d min</string>
     <string name="listen_from_here">Listen from here</string>
     <string name="share_image">Share as image</string>
+    <string name="verse_original">Original text</string>
+    <string name="verse_notes">Translator\'s notes</string>
     <string name="streak">🔥 %1$d days</string>
     <string name="topics_gospel">Good News</string>
     <string name="gospel_intro">What must I do to be saved? These verses walk through God\'s plan of salvation, straight from Scripture, step by step. Tap any verse to open it in the Bible.</string>

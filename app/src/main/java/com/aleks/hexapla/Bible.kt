@@ -87,14 +87,29 @@ object BibleRepo {
 
     // "{In: or, For}"-style translator margin notes: drop whole group. Braces
     // without a colon mark supplied (italicized) words: keep the words.
-    private val marginNote = Regex("""\s*\{[^{}]*:[^{}]*\}""")
+    // The group captures the note body so parseAsset can retain it for the
+    // "Translator's notes" verse action (display still gets the clean text).
+    private val marginNote = Regex("""\s*\{([^{}]*:[^{}]*)\}""")
     private val multiSpace = Regex("""\s+""")
+
+    // Stripped colon-notes per asset, keyed "book:chapter:verse" (0-based).
+    // Only the KJV asset actually has them (~7.8k notes); the map is empty
+    // for every other translation, so the memory cost is a few hundred KB.
+    private val notesByAsset =
+        java.util.concurrent.ConcurrentHashMap<String, Map<String, List<String>>>()
+
+    /** Translator margin notes for a translation ("term: alternative" strings,
+     *  exactly as stripped). Populated once the translation has been load()ed;
+     *  empty map before that or when the asset has none. */
+    fun notes(id: String): Map<String, List<String>> =
+        notesByAsset[translation(id).assetFile] ?: emptyMap()
 
     internal fun parseAsset(context: Context, assetFile: String): List<Book> {
         val text = context.assets.open(assetFile).readBytes()
             .toString(Charsets.UTF_8).trim().removePrefix("\uFEFF")
         val arr = JSONArray(text)
         val books = ArrayList<Book>(arr.length())
+        val notes = HashMap<String, List<String>>()
         for (i in 0 until arr.length()) {
             val o = arr.getJSONObject(i)
             val chArr = o.getJSONArray("chapters")
@@ -103,8 +118,14 @@ object BibleRepo {
                 val vArr = chArr.getJSONArray(c)
                 val verses = ArrayList<String>(vArr.length())
                 for (v in 0 until vArr.length()) {
+                    val raw = vArr.getString(v)
+                    if ('{' in raw) {
+                        val found = marginNote.findAll(raw)
+                            .map { it.groupValues[1].trim() }.toList()
+                        if (found.isNotEmpty()) notes["$i:$c:$v"] = found
+                    }
                     verses.add(
-                        vArr.getString(v)
+                        raw
                             .replace(marginNote, "")
                             .replace("{", "").replace("}", "")
                             .replace(multiSpace, " ")
@@ -115,6 +136,7 @@ object BibleRepo {
             }
             books.add(Book(o.getString("name"), chapters))
         }
+        notesByAsset[assetFile] = notes
         return books
     }
 }

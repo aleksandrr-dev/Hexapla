@@ -152,6 +152,8 @@
     <string name="sleep_minutes">%1$d min</string>
     <string name="listen_from_here">Écouter à partir d\'ici</string>
     <string name="share_image">Partager en image</string>
+    <string name="verse_original">Texte original</string>
+    <string name="verse_notes">Notes des traducteurs</string>
     <string name="streak">🔥 %1$d jours</string>
     <string name="topics_gospel">Bonne Nouvelle</string>
     <string name="gospel_intro">Que dois-je faire pour être sauvé ? Ces versets présentent le plan du salut de Dieu, directement tiré de l\'Écriture, étape par étape. Touchez un verset pour l\'ouvrir dans la Bible.</string>

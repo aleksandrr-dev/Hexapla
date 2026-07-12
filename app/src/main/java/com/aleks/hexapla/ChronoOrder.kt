@@ -7,8 +7,10 @@ package com.aleks.hexapla
    by tools/build_chrono_plan.py, which documents every placement decision.
 
    Tokens are "book:chapter" or "book:first-last" — book 0-based, chapters
-   1-based in KJV numbering. LXX psalters (151 chapters) are re-mapped and
-   chapters absent from partial translations are dropped at expansion. */
+   1-based in KJV numbering. Expansion is verbatim onto the canonical KJV
+   grid (Plans.KJV_CHAPTERS): plan days no longer depend on the loaded
+   translation's shape — PlansScreen pivots display and open targets
+   through VerseMap and dims chapters the primary translation lacks. */
 object ChronoOrder {
 
     private const val ORDER =
@@ -50,9 +52,8 @@ object ChronoOrder {
         "56:1 49:1-4 53:1-6 55:1-3 59:1-5 57:1-13 54:1-4 60:1-3 64:1 61:1-5 " +
         "62:1 63:1 65:1-22"
 
-    /** Historical eras: (book, 0-based chapter) where each era begins in the
-     *  order above → heading resource. None start at a Psalm, so the LXX
-     *  psalter remap never shifts a boundary. */
+    /** Historical eras: (book, 0-based KJV chapter) where each era begins
+     *  in the order above → heading resource. */
     private val eras = listOf(
         Triple(0, 0, R.string.era_beginning),      // Gen 1
         Triple(17, 0, R.string.era_patriarchs),    // Job 1 (then Gen 12-50)
@@ -75,7 +76,7 @@ object ChronoOrder {
     )
 
     /** Day number → era heading, for the day containing each era's first
-     *  chapter. Eras whose chapters a partial translation lacks are skipped. */
+     *  chapter. */
     fun eraByDay(days: List<PlanDay>): Map<Int, Int> {
         val m = LinkedHashMap<Int, Int>()
         for ((b, c, res) in eras) {
@@ -87,32 +88,25 @@ object ChronoOrder {
         return m
     }
 
-    /** Expand against the loaded books. Psalm numbers are KJV; LXX psalters
-     *  (151 chapters) shift Psalms 10–147 down by one (cf. VerseMap),
-     *  so merged psalms are deduplicated. Chapters a partial translation
-     *  lacks (Tyndale, NT-only originals) are skipped. */
-    fun chapters(books: List<Book>): List<Pair<Int, Int>> {
-        val lxxPsalter = (books.getOrNull(18)?.chapters?.size ?: 0) >= 151
+    /** Expand ORDER verbatim onto the canonical KJV grid: every canon
+     *  chapter exactly once, 1189 in all (checked — ORDER is a static
+     *  permutation verified by tools/build_chrono_plan.py). No LXX shift,
+     *  no absence filtering: those are display-time concerns now. */
+    fun chapters(): List<Pair<Int, Int>> {
         val out = ArrayList<Pair<Int, Int>>(1189)
-        val seen = HashSet<Pair<Int, Int>>()
+        val seen = HashSet<Pair<Int, Int>>(2048)
         for (token in ORDER.split(' ')) {
             val (book, range) = token.split(':')
             val b = book.toInt()
             val first = range.substringBefore('-').toInt()
             val last = range.substringAfter('-').toInt()
             for (ch in first..last) {
-                var c = ch - 1
-                if (b == 18 && lxxPsalter && c in 9..146) c -= 1
-                val pair = b to c
-                if (books.getOrNull(b)?.chapters?.getOrNull(c).isNullOrEmpty()) continue
-                if (seen.add(pair)) out.add(pair)
-                // Hebrew versification: Joel has 4 chapters (KJV Joel 3 = Heb
-                // Joel 4) — include it. (KJV Mal 4 lives inside Heb Mal 3, so
-                // skipping the absent chapter there loses nothing.)
-                if (b == 28 && ch == 3 && books[28].chapters.size == 4 &&
-                    seen.add(28 to 3)) out.add(28 to 3)
+                val pair = b to ch - 1
+                check(seen.add(pair)) { "ORDER repeats chapter $pair" }
+                out.add(pair)
             }
         }
+        check(out.size == 1189) { "ORDER expands to ${out.size} chapters, expected 1189" }
         return out
     }
 }

@@ -362,6 +362,18 @@ data class ReadingPlan(
 )
 
 object Plans {
+    /** Chapters per canon book in KJV versification (Gen 50 … Rev 22).
+     *  Derived programmatically from bibles/en_kjv.json (sums to 1189).
+     *  Plan days are pinned to this canonical grid so day contents — and
+     *  Store.planProgress day numbers — are identical for every primary
+     *  translation; PlansScreen pivots display/open through VerseMap. */
+    val KJV_CHAPTERS = intArrayOf(
+        50, 40, 27, 36, 34, 24, 21, 4, 31, 24, 22, 25, 29, 36, 10, 13, 10,
+        42, 150, 31, 12, 8, 66, 52, 5, 48, 12, 14, 3, 9, 1, 4, 7, 3, 3, 3,
+        2, 14, 4, 28, 16, 24, 21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4,
+        3, 1, 13, 5, 5, 3, 5, 1, 1, 1, 22
+    )
+
     /** Distribute a flat list of chapters evenly over [totalDays]. */
     private fun distribute(chapters: List<Pair<Int, Int>>, totalDays: Int): List<PlanDay> {
         val days = totalDays.coerceAtMost(chapters.size).coerceAtLeast(1)
@@ -377,18 +389,20 @@ object Plans {
         return result
     }
 
-    fun build(books: List<Book>): List<ReadingPlan> {
-        val allChapters = ArrayList<Pair<Int, Int>>()
+    /** Plans are pinned to the canonical KJV grid — independent of whichever
+     *  translation is loaded, so they are built once and cached. */
+    private val cached: List<ReadingPlan> by lazy {
+        val allChapters = ArrayList<Pair<Int, Int>>(1189)
         // Plans cover the 66-book canon; apocrypha (slots 66+) is read freely.
-        books.take(66).forEachIndexed { b, book ->
-            book.chapters.indices.forEach { c -> allChapters.add(b to c) }
+        KJV_CHAPTERS.forEachIndexed { b, n ->
+            for (c in 0 until n) allChapters.add(b to c)
         }
         val ntChapters = allChapters.filter { it.first >= 39 }
         val gospelChapters = allChapters.filter { it.first in 39..42 }
         val proverbsChapters = allChapters.filter { it.first == 19 }
         val psalmChapters = allChapters.filter { it.first == 18 }
-        val chronoDays = distribute(ChronoOrder.chapters(books), 365)
-        return listOf(
+        val chronoDays = distribute(ChronoOrder.chapters(), 365)
+        listOf(
             ReadingPlan("year", R.string.plan_year, R.string.plan_year_desc, distribute(allChapters, 365)),
             ReadingPlan("chrono", R.string.plan_chrono, R.string.plan_chrono_desc,
                 chronoDays, ChronoOrder.eraByDay(chronoDays)),
@@ -398,6 +412,8 @@ object Plans {
             ReadingPlan("ps75", R.string.plan_psalms, R.string.plan_psalms_desc, distribute(psalmChapters, 75))
         )
     }
+
+    fun build(): List<ReadingPlan> = cached
 }
 
 /* ---------------- Red letters (words of Christ) ----------------

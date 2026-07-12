@@ -149,6 +149,27 @@ Todos los textos son de dominio público. La aplicación no recopila nada.
 
 ## Additional Play listing languages (added 2026-07-11; paste under Store listings → Manage translations)
 
+### English (India) — en-IN (ADD ON PLAY PRODUCTION DAY, not before)
+
+**Title:** Hexapla — Parallel Bible
+
+**Short description (≤80):**
+Offline Bible: 20 classic translations incl. the Sanskrit NT, audio, Strong's.
+
+**Full description:**
+
+Hexapla is the complete Bible — offline, ad-free, account-free, and it collects no data. Everything is free and nothing is locked.
+
+📖 20 classic translations across 15 languages — including the **Sanskrit New Testament of 1851** (सत्यवेदः, Calcutta Baptist Mission, Devanagari), the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the KJV 1611 with Apocrypha, Geneva 1599, Wycliffe, Tyndale, Luther 1545, and more.
+✝️ The Good News — God's plan of salvation, step by step, Scripture only.
+🔴 Words of Christ in red.
+🎧 Audio: human narration (LibriVox) and text-to-speech with verse highlighting, background playback, sleep timer.
+📚 Strong's numbers with the full Hebrew/Greek lexicon; original-language interlinear — tap any Greek or Hebrew word for its parsing.
+🔀 Read two translations side by side, verse-locked, or compare a verse across all translations.
+📅 Reading plans with progress. 🔍 Search across all translations. ✏️ Bookmarks, notes, highlights, backup.
+
+All texts are public domain. The app collects nothing.
+
 ### Português (pt-BR, reuse for pt-PT)
 
 **Título:** Hexapla — Bíblia Paralela

@@ -119,8 +119,12 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Sanskrit — APPROVED + INTEGRATED IN TREE 2026-07-11 ("san",
   sa_nt.json, 7,958 verses, registered in Bible.kt as «संस्कृतम् —
   Sanskrit NT, 1851 (SA)»; CC BY-SA attribution ×12 locales;
-  versemap 13 translations/1497 runs). Ships in 1.4.2 — NOT in the
-  staged 1.4.1 artifacts. The eBible sandev edition turned out BETTER
+  versemap 13 translations/1497 runs). FOLDED INTO 1.4.1 (owner
+  decision 2026-07-12 while RuStore moderation queued 1.4.0):
+  artifacts re-cut, versionCode 8 verified, sa_nt.json + versemap
+  confirmed inside the APK. 1.4.1 = 20 translations / 15 languages —
+  update release notes + STORE_LISTING copy accordingly before
+  submitting. The eBible sandev edition turned out BETTER
   than scoped: Acts 8:37 PRESENT, Lk 2:33 names Joseph (तस्य माता
   यूषफ् च), all 260 chapters KJV-shaped (3 Jn 14/15 native split
   mapped; source's empty-[] Rev 12:18 dropped — its 13:1 prints the

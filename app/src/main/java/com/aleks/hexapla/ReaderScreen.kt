@@ -10,6 +10,7 @@ import android.view.WindowManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -355,9 +356,18 @@ fun ReaderScreen(settings: AppSettings) {
                                 .firstOrNull { it.index == spoken }
                             if (item != null) {
                                 Log.d("FollowScroll", "GLIDE start v=$spoken px=${item.offset}") // TEMP DIAGNOSTIC
+                                // Duration scales with distance (~1ms/px, 500-1200ms)
+                                // so short hops stay quick and long ones stay gentle;
+                                // LinearOutSlowIn avoids FastOutSlowIn's front-loaded
+                                // lurch landing in the busy verse-boundary frames
+                                // (highlight repaint + new utterance start).
                                 if (item.offset != 0) listState.animateScrollBy(
                                     item.offset.toFloat(),
-                                    tween(durationMillis = 450, easing = FastOutSlowInEasing)
+                                    tween(
+                                        durationMillis = kotlin.math.abs(item.offset)
+                                            .coerceIn(500, 1200),
+                                        easing = LinearOutSlowInEasing
+                                    )
                                 )
                             } else {
                                 Log.d("FollowScroll", "OFFSCREEN v=$spoken animateScrollToItem") // TEMP DIAGNOSTIC

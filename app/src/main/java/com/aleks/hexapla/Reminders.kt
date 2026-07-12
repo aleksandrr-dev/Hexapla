@@ -69,17 +69,24 @@ class ReminderReceiver : BroadcastReceiver() {
             var target: IntArray? = null
             val (title, text) = try {
                 val settings = Store.currentSettings(context)
+                VerseMap.load(context)
                 val books = BibleRepo.load(context, settings.primaryId)
                 val pool = (Topics.study + Topics.help).flatMap { it.refs }
                 val day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
                 val ref = pool[day % pool.size]
                 val bk = books.getOrNull(ref.book)
-                val chIdx = if (ref.book == 18 && (bk?.chapters?.size ?: 0) >= 151 &&
-                    ref.chapter in 9..146) ref.chapter - 1 else ref.chapter
-                val verse = bk?.chapters?.getOrNull(chIdx)?.getOrNull(ref.verseStart)
+                // Refs are KJV-indexed; pivot into the translation's own
+                // numbering (empty list = verse omitted there -> generic text).
+                val pos = VerseMap.fromKjv(
+                    settings.primaryId, ref.book, ref.chapter + 1, ref.verseStart + 1
+                ).firstOrNull()
+                val chIdx = (pos?.first ?: 0) - 1
+                val vIdx = (pos?.second ?: 0) - 1
+                val verse = if (pos == null) null
+                else bk?.chapters?.getOrNull(chIdx)?.getOrNull(vIdx)
                 if (bk != null && !verse.isNullOrBlank()) {
-                    target = intArrayOf(ref.book, chIdx, ref.verseStart)
-                    "${bk.name} ${chIdx + 1}:${ref.verseStart + 1}" to verse
+                    target = intArrayOf(ref.book, chIdx, vIdx)
+                    "${bk.name} ${chIdx + 1}:${vIdx + 1}" to verse
                 } else
                     context.getString(R.string.notification_title) to
                             context.getString(R.string.notification_text)

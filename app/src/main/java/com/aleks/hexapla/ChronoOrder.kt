@@ -88,7 +88,7 @@ object ChronoOrder {
     }
 
     /** Expand against the loaded books. Psalm numbers are KJV; LXX psalters
-     *  (151 chapters) shift Psalms 10–147 down by one (cf. chapterIndexFor),
+     *  (151 chapters) shift Psalms 10–147 down by one (cf. VerseMap),
      *  so merged psalms are deduplicated. Chapters a partial translation
      *  lacks (Tyndale, NT-only originals) are skipped. */
     fun chapters(books: List<Book>): List<Pair<Int, Int>> {

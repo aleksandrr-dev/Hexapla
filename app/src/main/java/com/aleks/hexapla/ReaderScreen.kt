@@ -5,12 +5,16 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -109,6 +113,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -298,21 +303,28 @@ fun ReaderScreen(settings: AppSettings) {
             )
         }.collectLatest { (b, c, target, spoken) ->
             val movedChapter = (b to c) != lastPosition
+            // TEMP DIAGNOSTIC: one line per emission, shows which branch runs.
+            Log.d("FollowScroll", "emit b=$b c=$c target=$target spoken=$spoken " +
+                "movedChapter=$movedChapter lastSpoken=$lastSpoken dragging=$userDragging")
             when {
                 target >= 0 -> {
                     // Explicit jump: instant. Let the new chapter's list
                     // compose before scrolling into it.
                     withFrameNanos { }
                     withFrameNanos { }
+                    Log.d("FollowScroll", "JUMP scrollToItem($target)") // TEMP DIAGNOSTIC
                     listState.scrollToItem(target.coerceAtLeast(0))
                     AppState.scrollToVerse.intValue = -1
                 }
                 // Chapter reset: instant; land straight on the spoken verse
                 // when playback is already mid-chapter (re-entering the
                 // reader, or the service advancing to the next chapter).
-                movedChapter -> listState.scrollToItem(
-                    if (spoken in versesNow.indices) spoken else 0
-                )
+                movedChapter -> {
+                    Log.d("FollowScroll", "CHAPTER scrollToItem(${if (spoken in versesNow.indices) spoken else 0})") // TEMP DIAGNOSTIC
+                    listState.scrollToItem(
+                        if (spoken in versesNow.indices) spoken else 0
+                    )
+                }
                 spoken >= 0 && spoken != lastSpoken &&
                     spoken in versesNow.indices && !userDragging -> {
                     try {
@@ -322,16 +334,45 @@ fun ReaderScreen(settings: AppSettings) {
                         // options "Animator duration scale: off", accessibility
                         // "Remove animations", some battery savers). Compose's
                         // suspend animations honor MotionDurationScale from the
-                        // effect context, so scale 0 made animateScrollToItem
-                        // finish in a single frame — the follow "snapped" no
-                        // matter which effect issued it.
+                        // effect context.
                         withContext(FollowScrollMotion) {
-                            listState.animateScrollToItem(spoken)
+                            // animateScrollToItem is NOT a glide: its internal
+                            // animation is the default spring() — critically
+                            // damped, StiffnessMedium (1500) — whose settle time
+                            // is distance-INDEPENDENT: half the travel lands in
+                            // the first ~40ms, ~90% by 100ms, done ~150ms
+                            // (verified in foundation 1.7.4 sources,
+                            // LazyAnimateScroll.kt + SuspendAnimation.kt). Over
+                            // a one-verse hop that reads as a snap at any
+                            // animator scale. So for the normal follow case —
+                            // target verse already composed on screen — glide
+                            // the exact pixel distance with a real tween;
+                            // item.offset is precisely what animateScrollToItem
+                            // would land (its calculateDistanceTo returns the
+                            // visible item's offset). Off-screen targets (user
+                            // flung away) keep the fast catch-up spring.
+                            val item = listState.layoutInfo.visibleItemsInfo
+                                .firstOrNull { it.index == spoken }
+                            if (item != null) {
+                                Log.d("FollowScroll", "GLIDE start v=$spoken px=${item.offset}") // TEMP DIAGNOSTIC
+                                if (item.offset != 0) listState.animateScrollBy(
+                                    item.offset.toFloat(),
+                                    tween(durationMillis = 450, easing = FastOutSlowInEasing)
+                                )
+                            } else {
+                                Log.d("FollowScroll", "OFFSCREEN v=$spoken animateScrollToItem") // TEMP DIAGNOSTIC
+                                listState.animateScrollToItem(spoken)
+                            }
                         }
+                        Log.d("FollowScroll", "complete v=$spoken") // TEMP DIAGNOSTIC
                     } catch (e: CancellationException) {
                         // Rethrow if WE were cancelled (a newer verse event);
                         // swallow if the user's drag stole the scroll mutex —
                         // never fight a finger, resume on the next verse.
+                        // TEMP DIAGNOSTIC: jobActive=true means the scroll mutex
+                        // was stolen by another scroller; false means a newer
+                        // emission cancelled this one (collectLatest).
+                        Log.d("FollowScroll", "interrupted v=$spoken jobActive=${currentCoroutineContext().isActive}")
                         currentCoroutineContext().ensureActive()
                     }
                 }

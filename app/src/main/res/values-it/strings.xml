@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d min</string>
     <string name="listen_from_here">Ascolta da qui</string>
     <string name="share_image">Condividi come immagine</string>
+    <string name="verse_original">Testo originale</string>
+    <string name="verse_notes">Note dei traduttori</string>
     <string name="streak">🔥 %1$d giorni</string>
     <string name="topics_gospel">La Buona Novella</string>
     <string name="gospel_intro">Che devo fare per essere salvato? Questi versetti percorrono passo dopo passo il piano di salvezza di Dio, direttamente dalla Scrittura. Tocca un versetto per aprirlo nella Bibbia.</string>

@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d min.</string>
     <string name="listen_from_here">Lyt herfra</string>
     <string name="share_image">Del som billede</string>
+    <string name="verse_original">Grundteksten</string>
+    <string name="verse_notes">Oversætternes noter</string>
     <string name="streak">🔥 %1$d dage</string>
     <string name="topics_gospel">Det gode budskab</string>
     <string name="gospel_intro">Hvad skal jeg gøre for at blive frelst? Disse vers gennemgår Guds frelsesplan, direkte fra Skriften, trin for trin. Tryk på et vers for at åbne det i Bibelen.</string>

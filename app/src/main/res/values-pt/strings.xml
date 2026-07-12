@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d min</string>
     <string name="listen_from_here">Ouvir a partir daqui</string>
     <string name="share_image">Compartilhar como imagem</string>
+    <string name="verse_original">Texto original</string>
+    <string name="verse_notes">Notas dos tradutores</string>
     <string name="streak">🔥 %1$d dias</string>
     <string name="topics_gospel">As Boas Novas</string>
     <string name="gospel_intro">Que devo eu fazer para ser salvo? Estes versículos percorrem o plano de salvação de Deus, direto das Escrituras, passo a passo. Toque em qualquer versículo para abri-lo na Bíblia.</string>

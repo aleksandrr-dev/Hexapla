@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d分鐘</string>
     <string name="listen_from_here">從這裡開始聆聽</string>
     <string name="share_image">以圖片分享</string>
+    <string name="verse_original">原文</string>
+    <string name="verse_notes">譯者註</string>
     <string name="streak">🔥 %1$d天</string>
     <string name="topics_gospel">福音</string>
     <string name="gospel_intro">我當怎樣行才可以得救？以下經文直接出自聖經，一步一步講明神的救恩計畫。點按任一經文即可在聖經中開啟。</string>

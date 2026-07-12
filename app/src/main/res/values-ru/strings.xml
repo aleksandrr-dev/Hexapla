@@ -154,6 +154,8 @@
     <string name="sleep_minutes">%1$d мин</string>
     <string name="listen_from_here">Слушать отсюда</string>
     <string name="share_image">Поделиться картинкой</string>
+    <string name="verse_original">Оригинал</string>
+    <string name="verse_notes">Примечания переводчиков</string>
     <string name="streak">🔥 %1$d дн.</string>
     <string name="topics_gospel">Благая весть</string>
     <string name="gospel_intro">Что мне делать, чтобы спастись? Эти стихи шаг за шагом раскрывают Божий план спасения — только Писание. Нажмите на стих, чтобы открыть его в Библии.</string>

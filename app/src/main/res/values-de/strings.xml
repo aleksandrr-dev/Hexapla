@@ -152,6 +152,8 @@
     <string name="sleep_minutes">%1$d Min.</string>
     <string name="listen_from_here">Ab hier anhören</string>
     <string name="share_image">Als Bild teilen</string>
+    <string name="verse_original">Urtext</string>
+    <string name="verse_notes">Anmerkungen der Übersetzer</string>
     <string name="streak">🔥 %1$d Tage</string>
     <string name="topics_gospel">Gute Nachricht</string>
     <string name="gospel_intro">Was muss ich tun, um errettet zu werden? Diese Verse zeigen Gottes Heilsplan Schritt für Schritt — direkt aus der Schrift. Tippe einen Vers an, um ihn in der Bibel zu öffnen.</string>

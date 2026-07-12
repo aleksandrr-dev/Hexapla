@@ -160,6 +160,8 @@
     <string name="sleep_minutes">%1$d分</string>
     <string name="listen_from_here">ここから聴く</string>
     <string name="share_image">画像として共有</string>
+    <string name="verse_original">原文</string>
+    <string name="verse_notes">翻訳者の注</string>
     <string name="streak">🔥 %1$d日</string>
     <string name="topics_gospel">福音</string>
     <string name="gospel_intro">救われるためには何をすればよいのでしょうか。これらの聖句は、聖書そのものの言葉で、神の救いの計画を一歩ずつたどります。聖句をタップすると聖書で開きます。</string>

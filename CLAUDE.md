@@ -254,7 +254,12 @@ maximize reach, keep everything free, nothing locked, collect no data.
   long labels shortened so every button is single-line at 360dp
   (measured with layoutlib Roboto/NotoCJK: ru/de/fr/it/ja labels,
   ru tagline «на 14 языках» to stay 2-line on 320dp). 1.4.2
-  (code 9) is now in tree; next versionCode after it ships: 10.
+  (code 9) built + staged 2026-07-13 (Hexapla-1.4.2-rustore.apk /
+  -play.aab; versionCode 9, 136 morph resources and signature
+  verified — same upload key as 1.4.1): interlinear grammar
+  localization, canonical notes/highlights keys, bookmarks list in
+  canonical order; release notes ×12 in STORE_LISTING.md. Upload
+  AFTER 1.4.1 clears review. Next versionCode after it ships: 10.
 - **1.4.0/1.4.1 verification pass (2026-07-11)** — fixed in tree:
   bottom-nav labels + reader title now shrink-to-fit instead of
   ellipsizing (M3 label budget is ~58dp at 360dp: "Einstellungen",

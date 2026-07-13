@@ -48,6 +48,7 @@ IDS = {
     "mei": "ja_meiji", "grc": "grc_byz", "gen1599": "en_geneva",
     "alm": "pt_almeida", "cus": "zh_cuv_s", "cuv": "zh_cuv_t",
     "san": "sa_nt",
+    "ta": "ta_irv",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -132,6 +133,13 @@ EXTRA = {
     # KJV-style) — dropped by convert_sanskrit_nt.py, so Revelation
     # needs no map.
     ("san",): {
+        63: [(1, 14, 14, 1, 14, 15)],
+    },
+    # Tamil IRV 2019: continental 3 John split only — everything else
+    # sits on the KJV grid (convert_tamil_irv.py: zero empty slots,
+    # zero other extras; the source's Rev 12:17-18 bridge prints the
+    # KJV arrangement, its vacuous 18 dropped at conversion).
+    ("ta",): {
         63: [(1, 14, 14, 1, 14, 15)],
     },
     ("lut", "wlc"): {

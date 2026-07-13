@@ -135,7 +135,7 @@
     <string name="xrefs">Korshänvisningar</string>
     <string name="remove_bookmark">Ta bort bokmärke</string>
     <string name="sources_title">Textkällor</string>
-    <string name="sources_text">Alla texter är allmän egendom (public domain): Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Sanskrit NT 1851 (Calcutta Baptist Mission); Tamil IRV 2019; Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Webster Bible 1833; Bible Martin 1744; Lutherbibel 1545; Karl XII:s Bibel 1703; Dansk Bibel 1819/1871; Reina-Valera 1909; Diodati 1649/1885; Bíblia Livre (Almeida, TR); 明治元訳 Meiji Motoyaku 1880/87; 和合本 Chinese Union 1919; Елизаветинская Библия 1757; Синодальный перевод. Webster\'s American Dictionary of the English Language (1828) via digitaliseringen på 1828.mshaffer.com. Ordboken Strong\'s Concordance (1890/1894) © Open Scriptures, CC-BY-SA. Hebreisk morfologi © Open Scriptures (CC-BY); grekisk parsning av Maurice A. Robinson (allmän egendom). Korshänvisningar © openbible.info, CC-BY. Appens textdata via projekten scrollmapper, thiagobodruk, byztxt och Wikisource. Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org). Bakgrundsmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
+    <string name="sources_text">Alla texter är allmän egendom (public domain): Westminster Leningrad Codex; Byzantine Textform 2018 (Robinson–Pierpont); Sanskrit NT 1851 (Calcutta Baptist Mission); Tamil IRV 2019; Vulgata Clementina 1592; Wycliffe; Tyndale; Geneva 1599; KJV with Apocrypha; Webster Bible 1833; Bible Martin 1744; Lutherbibel 1545; Karl XII:s Bibel 1703; Dansk Bibel 1819/1871; Reina-Valera 1909; Diodati 1649/1885; Bíblia Livre (Almeida, TR); 明治元訳 Meiji Motoyaku 1880/87; 和合本 Chinese Union 1919; Елизаветинская Библия 1757; Синодальный перевод. Webster\'s American Dictionary of the English Language (1828) via digitaliseringen på 1828.mshaffer.com. Ordboken Strong\'s Concordance (1890/1894) © Open Scriptures, CC-BY-SA. Hebreisk morfologi © Open Scriptures (CC-BY); grekisk parsning av Maurice A. Robinson (allmän egendom). Korshänvisningar © openbible.info, CC-BY. Appens textdata via projekten scrollmapper, thiagobodruk, byztxt och Wikisource. Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org). Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Bakgrundsmusik: Kevin MacLeod (incompetech.com), CC BY 4.0.</string>
     <string name="voice_title">Uppläsningsröst</string>
     <string name="voice_default">Systemstandard</string>
     <string name="voice_note">Vilka röster som finns beror på talmotorn som är installerad på enheten (t.ex. Googles taltjänster, Samsung TTS). Tryck på en röst för att höra den.</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">Två psalmer om dagen genom hela Psaltaren</string>
     <string name="gospel_share">Dela de goda nyheterna →</string>
     <string name="search_all">Sök i alla översättningar</string>
-    <string name="welcome_tagline">Bibeln på sexton språk — offline, gratis, komplett.</string>
+    <string name="welcome_tagline">Bibeln på sjutton språk — offline, gratis, komplett.</string>
     <string name="welcome_gospel">Ny med Bibeln? Börja här</string>
     <string name="welcome_plan">Bygg en daglig läsvana</string>
     <string name="welcome_read">Börja bara läsa</string>

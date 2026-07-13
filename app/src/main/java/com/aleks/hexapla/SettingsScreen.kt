@@ -618,6 +618,7 @@ private fun VoicePicker(settings: AppSettings) {
             "ja" -> "太初に道あり、道は神と偕にあり。"
             "zh" -> "太初有道，道与神同在。"
             "ta" -> "ஆரம்பத்திலே வார்த்தை இருந்தது, அந்த வார்த்தை தேவனிடம் இருந்தது."
+            "la" -> "In principio erat Verbum, et Verbum erat apud Deum."
             else -> "In the beginning was the Word, and the Word was with God."
         }
         androidx.compose.material3.AlertDialog(

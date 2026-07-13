@@ -1,0 +1,50 @@
+To: malayangbiblia@gmail.com
+Subject: Ang Malayang Biblia in a free offline Bible app — which release is stable, and a question about renderings
+
+Dear Ang Malayang Biblia team,
+
+My name is Aleksandr Ratchkov. I develop Hexapla, a free offline
+parallel Bible app for Android — no ads, no accounts, no data
+collection, nothing locked (https://aleksandrr-dev.github.io/Hexapla/).
+It carries 22 classic translations in the Textus Receptus tradition
+(KJV 1611, Luther 1545, Reina-Valera 1909, the Greek Byzantine NT, the
+Hebrew Tanakh, and others), with a tap-any-word interlinear for the
+original languages.
+
+I have been looking for a Tagalog translation in the TR tradition for
+a long time, and yours is the only one that exists: I verified the AMB
+against our usual test verses and it passes every one — 1 Timothy 3:16
+("ang Diyos ay nagpakita na nakabalot sa laman"), 1 John 5:7, Acts
+8:37, Luke 2:33, John 3:13, Romans 16:24, Acts 20:28. The word-level
+Strong's tagging is remarkable for a project of any size. Thank you
+for making it CC BY-SA — I would of course credit "Ang Malayang
+Biblia by Open Bibles" (or any wording you prefer) with the license
+and a link in the app's Text sources section.
+
+Before including it I wanted to ask three things:
+
+1. Which release do you consider stable for redistribution? I have
+   the "Ang Malayang Biblia (Bagong Testamento)" release of March
+   2025 (TheWordAMB.nt). I saw work on a revision in the repository —
+   would you rather I wait for it, or ship the current release and
+   update later?
+
+2. Hexapla's other translations are historic texts, so readers expect
+   traditional renderings. Two AMB choices stand out in that company:
+   modern currency inside the verse text (Luke 19:13, "500,000 piso")
+   and some de-transliterated vocabulary ("Kongregasyon",
+   "lublob"). Is there — or do you plan — an edition with the
+   traditional renderings (minas, iglesia, bautismo)? If not, I may
+   still include the AMB as it is, clearly presented as a modern TR
+   translation; I simply want to represent your work the way you
+   intend it.
+
+3. Anything else you would want a redistributor to know?
+
+Everything in Hexapla is free forever — the mission is simply to put
+the Scriptures in as many hands as possible.
+
+Maraming salamat po, and God bless your work,
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com

@@ -143,6 +143,55 @@ maximize reach, keep everything free, nothing locked, collect no data.
   the 1873 BFBS canon), credit kxii.se in sources_text ×12 locales,
   deity-litmus not applicable to apocrypha but spot-check text
   quality vs the Litteraturbanken facsimile).
+  Tamil — INTEGRATED IN TREE 2026-07-13 for 1.4.3 (code 10): IRV
+  Tamil 2019 (ebible.org tam2017, Bridge Connectivity Solutions,
+  CC BY-SA 4.0 — same publisher/license/pipeline as Sanskrit), the
+  21st translation / 16th language, full 66 books. LITMUS 7/7
+  (verified from the converted asset): 1 Tim 3:16 «தேவன்
+  சரீரத்திலே வெளிப்பட்டார்», Comma present, Acts 8:37 + Rom 16:24
+  present, Joseph at Lk 2:33, church of GOD at Acts 20:28. The
+  mirror case of Hindi: same IRV project, but the Tamil OV base
+  (1871 Bower/Union) predates the 1881 RV, so TR readings survived
+  the modernization. Converter tools/convert_tamil_irv.py; whole
+  text sits on the KJV grid except 3 Jn 14/15 (versemap-curated);
+  values-ta UI locale (344 strings, native Tamil grammar terms —
+  native-speaker review welcome, ask the Tamil tester); ta-IN Play
+  listing + screenshots in tree (reader shot + feature graphic via
+  tools/render_text.ps1 — WPF/DirectWrite shaping bridge, because
+  PIL cannot shape Indic scripts; reuse for any future Indic
+  language). Owner asked for it for his Tamil/Malayalam tester.
+  Malayalam — DEAD END as of 2026-07-13 (verified): the only
+  machine-readable PD/CC texts — 1910 Sathyavedapusthakam (tfbf
+  GitHub / ebible mal2015) and Malayalam IRV (ebible mal) — are
+  RV-conformed: «അവൻ» (He) at 1 Tim 3:16, no Comma, Acts 8:37 +
+  Rom 16:24 omitted, "his father" at Lk 2:33. TR-faithful Bailey
+  1843 / Gundert 1868 are facsimile-scan-only. RE-CHECK yearly:
+  Benjamin Bailey Foundation transcription; ebible.org mal* list.
+  Tagalog — OWNER DECISION PENDING (researched 2026-07-13): 1905
+  Ang Biblia is ASV/CT-based (fails litmus, verified) BUT «Ang
+  Malayang Biblia» (AMB, github.com/SalitaNgDiyos, CC BY-SA 4.0,
+  TheWordAMB.nt module) is a TR-based Tagalog NT passing 7/7 with
+  every word Strong's-tagged; exact KJV NT grid. CAVEATS for the
+  owner: modern conversational register (po/opo honorifics), Luke
+  19:13 renders minas as «500,000 piso» (pesos in the verse text),
+  iglesia→Kongresyon, bautismo→lublob (Baptist-leaning), digits for
+  numerals; living small-team translation (2017-2025), not a
+  classic. Textually clean; stylistically a Meiji-plus call.
+  Latin — OWNER DECISION PENDING (researched 2026-07-13): the
+  Clementine Vulgate, Tweedale/VulSearch edition (public domain,
+  twice-proofread, Quasimodo.zip on SourceForge = chapter:verse
+  plain text per book; UTF-8 TSV mirror
+  github.com/theunpleasantowl/vul-complete; 73 books incl.
+  deuterocanon, Gallican LXX psalter with titles as verse 1 —
+  versemap patterns all exist already). Litmus 5/7: Comma PRESENT,
+  Acts 8:37 + Rom 16:24 present, «qui est in cælo», «ecclesiam
+  Dei»; DEVIATIONS: 1 Tim 3:16 «quod manifestatum est in carne»
+  (no Deus — Jerome's own 4th-c. reading, would be the FIRST
+  primary-gate deviation ever shipped) and Lk 2:33 «pater ejus»
+  (the accepted Luther reading). Beza's TR-perfect Latin NT /
+  Junius-Tremellius: scan-only, no digitization exists (verified
+  across e-Sword/CrossWire/CCEL/GitHub; latinbible.com sells page
+  images). Nova Vulgata: Vatican © + CT, ruled out.
   Hindi — DEAD END as of 2026-07-11 (verified, like Korean): every
   machine-readable Hindi Bible FAILS the litmus — BSI OV re-edit,
   IRV 2019 (the only clean CC BY-SA text), Biblica CV all read «वह

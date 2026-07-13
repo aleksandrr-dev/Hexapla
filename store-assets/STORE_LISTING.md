@@ -22,6 +22,93 @@ Localized reader screenshots (John 1 in the language's own translation,
 `tools/make_reader_shot.py`): lead with the reader shot on that
 language's Play listing, then the order above.
 
+## 1.4.3 release notes (paste per store; 1.4.2 was never uploaded — these notes fold its changes in)
+
+**RU:** Два новых перевода: полная тамильская Библия (IRV 2019) и
+латинская Вульгата (Климентина, 1592) с второканоническими книгами —
+22 перевода на 17 языках. Подстрочник заговорил по-русски:
+грамматический разбор каждого греческого и еврейского слова — на
+языке приложения. Заметки и выделения остаются на своём стихе при
+смене перевода (старые пометки в Псалтири могли сместиться —
+выделите заново). Интерфейс на тамильском.
+
+**EN:** Two new translations: the complete Tamil Bible (IRV 2019) and
+the Latin Vulgate (Clementine, 1592) with the Deuterocanon — 22
+translations in 17 languages. The interlinear now speaks your
+language: the grammar of every Greek and Hebrew word appears in the
+app language. Notes and highlights stay on the right verse when you
+switch translations. Tamil UI added.
+
+**DE:** Zwei neue Übersetzungen: die vollständige tamilische Bibel
+(IRV 2019) und die lateinische Vulgata (Clementina, 1592) mit
+Deuterokanon — 22 Übersetzungen in 17 Sprachen. Die Interlinearansicht
+spricht jetzt Deutsch: Die Grammatik jedes griechischen und
+hebräischen Wortes erscheint in der App-Sprache. Notizen und
+Markierungen bleiben beim Übersetzungswechsel am richtigen Vers.
+
+**ES:** Dos traducciones nuevas: la Biblia tamil completa (IRV 2019) y
+la Vulgata latina (Clementina, 1592) con los deuterocanónicos — 22
+traducciones en 17 idiomas. La interlineal ahora habla español: la
+gramática de cada palabra griega y hebrea se muestra en el idioma de
+la aplicación. Las notas y los resaltados permanecen en el versículo
+correcto al cambiar de traducción.
+
+**FR:** Deux nouvelles traductions : la Bible tamoule complète (IRV
+2019) et la Vulgate latine (Clémentine, 1592) avec les
+deutérocanoniques — 22 traductions en 17 langues. L'interlinéaire
+parle désormais français : la grammaire de chaque mot grec et hébreu
+s'affiche dans la langue de l'application. Les notes et surlignages
+restent sur le bon verset lors d'un changement de traduction.
+
+**PT:** Duas novas traduções: a Bíblia tâmil completa (IRV 2019) e a
+Vulgata latina (Clementina, 1592) com os deuterocanônicos — 22
+traduções em 17 idiomas. A interlinear agora fala português: a
+gramática de cada palavra grega e hebraica aparece no idioma do
+aplicativo. As notas e os destaques permanecem no versículo certo ao
+trocar de tradução.
+
+**IT:** Due nuove traduzioni: la Bibbia tamil completa (IRV 2019) e la
+Vulgata latina (Clementina, 1592) con i deuterocanonici — 22
+traduzioni in 17 lingue. L'interlineare ora parla italiano: la
+grammatica di ogni parola greca ed ebraica appare nella lingua
+dell'app. Note ed evidenziazioni restano sul versetto giusto quando si
+cambia traduzione.
+
+**SV:** Två nya översättningar: hela tamilska Bibeln (IRV 2019) och
+latinska Vulgata (Clementina, 1592) med apokryferna — 22
+översättningar på 17 språk. Interlinjären talar nu svenska:
+grammatiken för varje grekiskt och hebreiskt ord visas på appens
+språk. Anteckningar och markeringar stannar på rätt vers när du byter
+översättning.
+
+**DA:** To nye oversættelser: hele den tamilske Bibel (IRV 2019) og
+den latinske Vulgata (Clementina, 1592) med apokryferne — 22
+oversættelser på 17 sprog. Interlineæren taler nu dansk: grammatikken
+for hvert græsk og hebraisk ord vises på appens sprog. Noter og
+fremhævninger bliver på det rigtige vers, når du skifter oversættelse.
+
+**JA:** 新しい翻訳を2つ追加：タミル語聖書全巻（IRV 2019）と第二正典付き
+ラテン語ウルガタ（クレメンティナ、1592年）— 17言語・22の翻訳に。イン
+ターリニアが日本語に対応：ギリシャ語・ヘブライ語の各単語の文法解析が
+アプリの言語で表示されます。翻訳を切り替えても、メモとハイライトが正
+しい節に残ります。
+
+**ZH-CN:** 新增两部译本：泰米尔语圣经全书（IRV 2019）和含次经的拉丁语
+武加大译本（克莱门汀，1592年）——现有17种语言、22部译本。逐字对照现在
+说中文：每个希腊文和希伯来文单词的语法分析以应用语言显示。切换译本时，
+笔记和高亮停留在正确的经节上。
+
+**ZH-TW:** 新增兩部譯本：泰米爾語聖經全書（IRV 2019）和含次經的拉丁語
+武加大譯本（克萊門汀，1592年）——現有17種語言、22部譯本。逐字對照現在
+說中文：每個希臘文和希伯來文單詞的語法分析以應用程式語言顯示。切換譯
+本時，筆記和螢光標記停留在正確的經節上。
+
+**TA:** முழுத் தமிழ் வேதாகமம் (IRV 2019) இப்போது ஹெக்ஸாப்லாவில் —
+தமிழ் இடைமுகத்துடன்! மேலும் லத்தீன் வுல்காத்தா (1592) — 17 மொழிகளில்
+22 மொழிபெயர்ப்புகள். கிரேக்க/எபிரெய வார்த்தைகளின் இலக்கண விளக்கம்
+தமிழிலேயே. மொழிபெயர்ப்பை மாற்றினாலும் குறிப்புகளும் வண்ணக்
+குறியீடுகளும் சரியான வசனத்திலேயே இருக்கும்.
+
 ## 1.4.2 release notes (paste per store; Play has all 10 listing languages — use the matching line)
 
 **RU:** Подстрочник заговорил по-русски: грамматический разбор каждого

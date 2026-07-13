@@ -49,6 +49,7 @@ IDS = {
     "alm": "pt_almeida", "cus": "zh_cuv_s", "cuv": "zh_cuv_t",
     "san": "sa_nt",
     "ta": "ta_irv",
+    "vul": "la_vulgata",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -94,11 +95,19 @@ EXTRA = {
     # verses in one), plus the Vulgate Daniel arrangement (Song of the
     # Three at 3:24-90, so KJV 3:24-30 sit at 3:91-97; Susanna/Bel in
     # ch13-14 stay unmapped, as do Esther's additions 10:4-16:24).
-    # Each run verified by reading the Middle English against the KJV.
+    # Each run verified by reading the Middle English against the KJV;
+    # shared with the Clementine Vulgate itself ("vul", added 1.4.3 —
+    # every shared run re-verified against the Latin, see the eyeball
+    # report; vul's Daniel comes from the LXX special-case below and
+    # its Rev 12:18 tail from the ("vul",) entry).
+    # Wycliffe-only: its digitization holds Gen 5:32 in wyc 6:1; the
+    # Clementine instead merges it into 5:31 (see the ("vul",) entry).
     ("wyc",): {
         0: [(5, 32, 32, 6, 1, 1), (6, 1, 1, 6, 1, 1),               # Gen 5:32 merged into wyc 6:1
             (49, 31, 32, 49, 31, 31), (49, 33, 33, 49, 32, 32),     # Vulgate has no separate 49:32
             (50, 22, 23, 50, 22, 22), (50, 24, 26, 50, 23, 25)],    # 50:22+23 merged
+    },
+    ("wyc", "vul"): {
         1: [(40, 13, 15, 40, 13, 13), (40, 16, 38, 40, 14, 36)],    # Exod 40:13-15 condensed to one
         2: [(26, 45, 46, 26, 45, 45)],                              # Lev 26:46 colophon merged into 45
         8: [(23, 29, 29, 24, 1, 1), (24, 1, 22, 24, 2, 23)],        # 23:29 = wyc 24:1 (wyc 20:43 is an empty slot)
@@ -142,6 +151,44 @@ EXTRA = {
     ("ta",): {
         63: [(1, 14, 14, 1, 14, 15)],
     },
+    # Clementine Vulgate: Rev 12:18 is a real verse ("Et stetit supra
+    # arenam maris") = KJV 13:1a, like Luther/Karl XII. Psalter (LXX),
+    # Daniel and same-total OT reflows come from the engines; the runs
+    # below are vul-specific splits ABSENT from the Wycliffe digitization
+    # (found by the count audit, each verified against the Latin):
+    # 1 Sam 20:42 "And he arose and departed" = vul 20:43 "Et surrexit
+    # David"; 1 Kgs 22:43 "Nevertheless the high places" = vul 22:44
+    # "Verumtamen excelsa"; Amos 6:10 "Hold thy tongue" tail = vul 6:11
+    # "Tace, et non recorderis"; John 6:51 "if any man eat" = vul 6:52
+    # "Si quis manducaverit".
+    # The OT books below PRE-EMPT the repartition engine: their count
+    # differences are LOCAL intra-chapter splits/merges, which flat
+    # cumulative pairing would smear across every later chapter (found
+    # by eyeballing the pair report; each run text-verified 2026-07-13).
+    ("vul",): {
+        0: [(5, 31, 32, 5, 31, 31),                                 # Gen 5:31 holds 5:32 ("Noë vero...")
+            (49, 31, 32, 49, 31, 31), (49, 33, 33, 49, 32, 32),
+            (50, 22, 23, 50, 22, 22), (50, 24, 26, 50, 23, 25)],
+        3: [(11, 34, 35, 11, 34, 34),                               # Num 11:35 tail inside vul 11:34
+            (12, 16, 16, 13, 1, 1), (13, 1, 33, 13, 2, 34),         # KJV 12:16 = vul 13:1
+            (20, 28, 28, 20, 28, 29), (20, 29, 29, 20, 30, 30),     # Aaron's death split
+            (29, 40, 40, 30, 1, 1), (30, 1, 16, 30, 2, 17)],        # KJV 29:40 = vul 30:1
+        5: [(4, 23, 23, 4, 23, 24), (4, 24, 24, 4, 25, 25),         # Josh 4:23 split ("sicut... mari Rubro")
+            (5, 14, 14, 5, 14, 15), (5, 15, 15, 5, 16, 16),         # 5:14 split ("Cecidit Josue...")
+            (21, 36, 37, 21, 36, 36), (21, 38, 39, 21, 37, 37),     # Levite city pairs merged
+            (21, 40, 45, 21, 38, 43)],
+        6: [(5, 31, 31, 5, 31, 32),                                 # "land had rest" = vul 5:32
+            (21, 24, 25, 21, 24, 24)],                              # "no king in Israel" inside 21:24
+        8: [(20, 42, 42, 20, 42, 43)],
+        10: [(22, 43, 43, 22, 43, 44), (22, 44, 53, 22, 45, 54)],
+        17: [(16, 4, 4, 16, 4, 5), (16, 5, 22, 16, 6, 23),          # Job 16:4 split
+             (40, 1, 5, 39, 31, 35), (40, 6, 24, 40, 1, 19),        # the Vulgate Job 39-41 reflow
+             (41, 1, 9, 40, 20, 28), (41, 10, 34, 41, 1, 25),
+             (42, 16, 17, 42, 16, 16)],                             # "So Job died" inside 42:16
+        29: [(6, 10, 10, 6, 10, 11), (6, 11, 14, 6, 12, 15)],
+        42: [(6, 51, 51, 6, 51, 52), (6, 52, 71, 6, 53, 72)],
+        65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
+    },
     ("lut", "wlc"): {
         63: [(1, 14, 14, 1, 14, 15)],                               # (lut only; wlc lacks NT)
         65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
@@ -167,6 +214,21 @@ EXTRA = {
         46: [(13, 12, 13, 13, 12, 12), (13, 14, 14, 13, 13, 13)],   # (lut only)
         43: [(19, 40, 41, 19, 40, 40)],                              # (lut only)
     },
+}
+
+# Vulgate psalms whose count deviation is not a leading title — each
+# verified against the Latin 2026-07-13:
+#   Ps 2: KJV 2:12 ("Kiss the Son... Blessed are all") = vul 2:12-13
+#     ("Apprehendite disciplinam..." + "Cum exarserit... beati omnes").
+#   Ps 4: v1 title; KJV 1-4 = vul 2-5; KJV 5-8 reflowed across vul 6-10
+#     (vul 6 = KJV 5 + 6a "Multi dicunt", vul 8 = KJV 7b "A fructu
+#     frumenti", vul 9-10 split KJV 8) — kept as one block.
+#   Ps 16: title inside vul 15:1; KJV 16:10-11 merged in vul 15:10
+#     ("...videre corruptionem. Notas mihi fecisti vias vitæ...").
+VUL_PSALTER = {
+    2: [(2, 12, 12, 2, 12, 13)],
+    4: [(4, 1, 1, 4, 1, 2), (4, 2, 4, 4, 3, 5), (4, 5, 8, 4, 6, 10)],
+    16: [(16, 10, 11, 15, 10, 10)],
 }
 
 
@@ -205,14 +267,19 @@ def psalm_title_runs(ci, tn, kn):
             (ci + 1, 2, kn, ci + 1, 2 + extra, tn)]
 
 
-def lxx_psalter_runs(trans, kjv):
-    """151-psalm LXX psalter -> KJV 150, with seams + per-psalm titles."""
+def lxx_psalter_runs(trans, kjv, overrides=None):
+    """151-psalm LXX psalter -> KJV 150, with seams + per-psalm titles.
+    overrides: {kjv psalm: [runs]} for psalms whose surplus/deficit is
+    NOT a leading title (Vulgate Ps 2/4/16) — text-verified curation."""
     t = [len(c) for c in trans[18]["chapters"]]
     k = [len(c) for c in kjv[18]["chapters"]]
     runs = []
 
     def straight(kc, tc):
         """One KJV psalm onto one LXX psalm (title offset 0/+1/+2)."""
+        if overrides and kc in overrides:
+            runs.extend(overrides[kc])
+            return
         extra = t[tc - 1] - k[kc - 1]
         assert extra in (0, 1, 2), ("psalm", kc, tc, extra)
         if extra == 0 and kc == tc:
@@ -276,7 +343,7 @@ def main():
             kcounts = counts(kjv, bi)
             if not any(tcounts):
                 continue
-            if tid in ("syn", "csl") and bi == 26:
+            if tid in ("syn", "csl", "vul") and bi == 26:
                 continue  # LXX Daniel handled below
             if bi in curated:
                 runs = list(curated[bi])
@@ -290,7 +357,8 @@ def main():
             if bi == 18 and tcounts[8] >= kcounts[8] + kcounts[9]:
                 # LXX/Vulgate psalter arrangement (Ps 9 = MT 9+10 ...)
                 try:
-                    books[bi] = lxx_psalter_runs(trans, kjv)
+                    books[bi] = lxx_psalter_runs(
+                        trans, kjv, VUL_PSALTER if tid == "vul" else None)
                 except AssertionError as e:
                     if tid != "wyc":
                         raise
@@ -322,7 +390,7 @@ def main():
         # counterpart; ch3 carries the Song of the Three (3:24-90) so
         # KJV 3:24-30 sit at 3:91-97 and KJV 4:1-3 at 3:98-100, with
         # ch4 holding KJV 4:4-37 as 4:1-34.
-        if tid in ("syn", "csl"):
+        if tid in ("syn", "csl", "vul"):
             tdan, kdan = counts(trans, 26), counts(kjv, 26)
             for ci in range(12):
                 if ci in (2, 3):

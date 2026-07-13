@@ -177,21 +177,39 @@ maximize reach, keep everything free, nothing locked, collect no data.
   iglesia→Kongresyon, bautismo→lublob (Baptist-leaning), digits for
   numerals; living small-team translation (2017-2025), not a
   classic. Textually clean; stylistically a Meiji-plus call.
-  Latin — OWNER DECISION PENDING (researched 2026-07-13): the
-  Clementine Vulgate, Tweedale/VulSearch edition (public domain,
-  twice-proofread, Quasimodo.zip on SourceForge = chapter:verse
-  plain text per book; UTF-8 TSV mirror
-  github.com/theunpleasantowl/vul-complete; 73 books incl.
-  deuterocanon, Gallican LXX psalter with titles as verse 1 —
-  versemap patterns all exist already). Litmus 5/7: Comma PRESENT,
-  Acts 8:37 + Rom 16:24 present, «qui est in cælo», «ecclesiam
-  Dei»; DEVIATIONS: 1 Tim 3:16 «quod manifestatum est in carne»
-  (no Deus — Jerome's own 4th-c. reading, would be the FIRST
-  primary-gate deviation ever shipped) and Lk 2:33 «pater ejus»
-  (the accepted Luther reading). Beza's TR-perfect Latin NT /
+  Latin — APPROVED + INTEGRATED IN TREE 2026-07-13 for 1.4.3
+  ("vul", la_vulgata.json, 73 books incl. deuterocanon in the
+  apocrypha slots, 35,811 verses, «Vulgata Clementina, 1592 (LA)»):
+  the Clementine Vulgate, Tweedale/VulSearch edition (PUBLIC DOMAIN
+  with acknowledgment request — honored in sources_text ×13;
+  Quasimodo.zip source archive, converter
+  tools/convert_vulgate.py strips the /-linebreak and \\-paragraph
+  markers, Latin-1 → UTF-8). 22nd translation / 17th language.
+  Litmus: Comma PRESENT, Acts 8:37 + Rom 16:24 PRESENT, ecclesiam
+  Dei, qui est in cælo; accepted deviations: 1 Tim 3:16 «quod
+  manifestatum est» and Lk 2:33 «pater ejus» — owner approved
+  after establishing the shipped WYCLIFFE (translated FROM the
+  Vulgate) already carries BOTH readings («that thing that was
+  schewid in fleisch»; «his fadir and his modir»), so no new
+  doctrinal exposure; the litmus's purpose (block post-1881
+  critical-text intrusion) is untouched — Jerome predates the
+  TR/CT split by 11 centuries. Versemap: Gallican LXX psalter
+  via the existing engine + VUL_PSALTER overrides (Ps 2/4/16,
+  text-verified); Daniel via the syn/csl LXX special-case;
+  Esther 10:4-16:24 + Dan 13-14 unmapped additions (Wycliffe
+  precedent); wyc-shared Vulgate-tradition curation (Gen split
+  out — Clementine merges 5:32 into 5:31 where wyc holds it in
+  6:1); vul-specific curated books 0/3/5/6/8/10/17/29/42/65
+  pre-empt the repartition engine (its flat cumulative pairing
+  SMEARED local intra-chapter splits across whole books — caught
+  by the pair-report eyeball pass; every curated run text-verified
+  against the Latin, incl. the Vulgate Job 39-41 reflow). 1792
+  runs / 15 mapped translations. Beza's TR-perfect Latin NT /
   Junius-Tremellius: scan-only, no digitization exists (verified
   across e-Sword/CrossWire/CCEL/GitHub; latinbible.com sells page
-  images). Nova Vulgata: Vatican © + CT, ruled out.
+  images) — the OCR-project idea remains on the far watch list.
+  Nova Vulgata: Vatican © + CT, ruled out. No Play listing for
+  Latin (Play has no Latin listing language); no UI locale.
   Hindi — DEAD END as of 2026-07-11 (verified, like Korean): every
   machine-readable Hindi Bible FAILS the litmus — BSI OV re-edit,
   IRV 2019 (the only clean CC BY-SA text), Biblica CV all read «वह

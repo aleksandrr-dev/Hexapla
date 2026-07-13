@@ -71,8 +71,20 @@ fun BookmarksScreen(settings: AppSettings, openReader: () -> Unit) {
                 )
             }
         } else {
+            // Store.bookmarks sorts by the STORED native coordinates; re-sort by
+            // the canonical KJV position so bookmarks from different translations
+            // list in true verse order (Synodal psalter etc.). Safe here: the
+            // versemap is loaded before `books` is set above.
+            val ordered = remember(bookmarks) {
+                bookmarks.sortedWith(compareBy({ it.book }, {
+                    val (kc, kv) = VerseMap.toKjv(
+                        it.translationId, it.book, it.chapter + 1, it.verse + 1
+                    )
+                    kc * 1000 + kv
+                }))
+            }
             LazyColumn(Modifier.weight(1f)) {
-                items(bookmarks, key = { it.encode() }) { bm ->
+                items(ordered, key = { it.encode() }) { bm ->
                     val book = loaded.getOrNull(bm.book)
                     // Display-time pivot: the bookmark stores its SOURCE translation's
                     // own (chapter, verse); map into the current primary through the

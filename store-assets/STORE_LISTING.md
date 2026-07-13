@@ -22,6 +22,67 @@ Localized reader screenshots (John 1 in the language's own translation,
 `tools/make_reader_shot.py`): lead with the reader shot on that
 language's Play listing, then the order above.
 
+## 1.4.2 release notes (paste per store; Play has all 10 listing languages — use the matching line)
+
+**RU:** Подстрочник заговорил по-русски: грамматический разбор каждого
+греческого и еврейского слова теперь на языке приложения. Заметки и
+выделения остаются на своём стихе при смене перевода (старые пометки
+в Псалтири могли сместиться на стих — просто выделите заново).
+Закладки в списке упорядочены точно по тексту.
+
+**EN:** The interlinear now speaks your language: the grammar of every
+Greek and Hebrew word appears in the app language. Notes and highlights
+now stay on the right verse when you switch translations. Bookmarks
+list in true verse order.
+
+**DE:** Die Interlinearansicht spricht jetzt Deutsch: Die Grammatik
+jedes griechischen und hebräischen Wortes erscheint in der App-Sprache.
+Notizen und Markierungen bleiben beim Übersetzungswechsel jetzt am
+richtigen Vers. Lesezeichen erscheinen in echter Versreihenfolge.
+
+**ES:** La interlineal ahora habla español: la gramática de cada
+palabra griega y hebrea se muestra en el idioma de la aplicación. Las
+notas y los resaltados ahora permanecen en el versículo correcto al
+cambiar de traducción. Los marcadores se ordenan por su lugar real.
+
+**FR:** L'interlinéaire parle désormais français : la grammaire de
+chaque mot grec et hébreu s'affiche dans la langue de l'application.
+Les notes et les surlignages restent désormais sur le bon verset lors
+d'un changement de traduction. Les signets suivent l'ordre réel des
+versets.
+
+**PT:** A interlinear agora fala português: a gramática de cada palavra
+grega e hebraica aparece no idioma do aplicativo. As notas e os
+destaques agora permanecem no versículo certo ao trocar de tradução.
+Os marcadores seguem a ordem real dos versículos.
+
+**IT:** L'interlineare ora parla italiano: la grammatica di ogni parola
+greca ed ebraica appare nella lingua dell'app. Note ed evidenziazioni
+ora restano sul versetto giusto quando si cambia traduzione. I
+segnalibri seguono l'ordine reale dei versetti.
+
+**SV:** Interlinjären talar nu svenska: grammatiken för varje grekiskt
+och hebreiskt ord visas på appens språk. Anteckningar och markeringar
+stannar nu på rätt vers när du byter översättning. Bokmärken listas i
+äkta versordning.
+
+**DA:** Interlineæren taler nu dansk: grammatikken for hvert græsk og
+hebraisk ord vises på appens sprog. Noter og fremhævninger bliver nu
+på det rigtige vers, når du skifter oversættelse. Bogmærker vises i
+ægte versrækkefølge.
+
+**JA:** インターリニアが日本語に対応：ギリシャ語・ヘブライ語の各単語の
+文法解析がアプリの言語で表示されます。翻訳を切り替えても、メモとハイ
+ライトが正しい節に残るようになりました。しおりは正確な節順に並びます。
+
+**ZH-CN:** 逐字对照现在说中文：每个希腊文和希伯来文单词的语法分析以
+应用语言显示。切换译本时，笔记和高亮现在会停留在正确的经节上。书签
+按真实经节顺序排列。
+
+**ZH-TW:** 逐字對照現在說中文：每個希臘文和希伯來文單詞的語法分析以
+應用程式語言顯示。切換譯本時，筆記和螢光標記現在會停留在正確的經節
+上。書籤按真實經節順序排列。
+
 ## 1.4.1 release notes (paste per store)
 
 **RU:** Новое: санскритский Новый Завет 1851 года (20-й перевод);

@@ -136,9 +136,9 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Karl XII 1703 Apokryferna — confirmed live at kxii.se (Judith,
   Wisdom, Tobit, Sirach, Baruch, 1-2 Macc, Esther/Daniel additions;
   per-chapter pages, no bulk download; Litteraturbanken-based, text PD
-  but transcription license unstated — draft email ready at
-  store-assets/kxii_email_draft.txt (Swedish + English), owner to send
-  from his address; WHEN THEY REPLY YES: build_meiji_nt.py-style
+  but transcription license unstated — permission email
+  (store-assets/kxii_email_draft.txt, Swedish + English) SENT by
+  owner (confirmed 2026-07-13) — awaiting reply; WHEN THEY REPLY YES: build_meiji_nt.py-style
   scrape into the sv asset's apocrypha slots (indexes 66+, alongside
   the 1873 BFBS canon), credit kxii.se in sources_text ×12 locales,
   deity-litmus not applicable to apocrypha but spot-check text
@@ -177,10 +177,10 @@ maximize reach, keep everything free, nothing locked, collect no data.
   iglesia→Kongresyon, bautismo→lublob (Baptist-leaning), digits for
   numerals; living small-team translation (2017-2025), not a
   classic. Textually clean; stylistically a Meiji-plus call.
-  Owner decided 2026-07-13: DON'T ship yet — email the team first
-  (draft at store-assets/amb_email_draft.txt: which release is
-  stable; is a traditional-renderings edition planned; attribution
-  wording). Decide when they reply.
+  Owner decided 2026-07-13: DON'T ship yet — ask the team first
+  (store-assets/amb_email_draft.txt: which release is stable; is a
+  traditional-renderings edition planned; attribution wording).
+  Email SENT by owner 2026-07-13 — decide when they reply.
   Latin — APPROVED + INTEGRATED IN TREE 2026-07-13 for 1.4.3
   ("vul", la_vulgata.json, 73 books incl. deuterocanon in the
   apocrypha slots, 35,811 verses, «Vulgata Clementina, 1592 (LA)»):

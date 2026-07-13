@@ -10,6 +10,7 @@
     <locale android:name="pt" />
     <locale android:name="ru" />
     <locale android:name="sv" />
+    <locale android:name="ta" />
     <locale android:name="zh-Hans" />
     <locale android:name="zh-Hant" />
 </locale-config>

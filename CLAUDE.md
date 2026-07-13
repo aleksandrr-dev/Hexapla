@@ -325,12 +325,21 @@ maximize reach, keep everything free, nothing locked, collect no data.
   long labels shortened so every button is single-line at 360dp
   (measured with layoutlib Roboto/NotoCJK: ru/de/fr/it/ja labels,
   ru tagline «на 14 языках» to stay 2-line on 320dp). 1.4.2
-  (code 9) built + staged 2026-07-13 (Hexapla-1.4.2-rustore.apk /
-  -play.aab; versionCode 9, 136 morph resources and signature
-  verified — same upload key as 1.4.1): interlinear grammar
-  localization, canonical notes/highlights keys, bookmarks list in
-  canonical order; release notes ×12 in STORE_LISTING.md. Upload
-  AFTER 1.4.1 clears review. Next versionCode after it ships: 10.
+  (code 9) built + staged 2026-07-13 but NEVER UPLOADED — superseded
+  the same day by 1.4.3 when RuStore approved 1.4.1 (owner decision:
+  one review cycle instead of two; delete the 1.4.2 pair from
+  Hexapla-releases once 1.4.3 is up). 1.4.3 (code 10) built + staged
+  2026-07-13: Hexapla-1.4.3-rustore.apk / -play.aab (59.6 MB APK;
+  versionCode 10, ta_irv/la_vulgata/versemap assets and signature
+  verified — same upload key). Contents = 1.4.2 items (interlinear
+  grammar ×13, canonical notes/highlights, bookmark order) + Tamil
+  IRV + values-ta + Vulgate. Release notes ×13 in STORE_LISTING.md
+  under "1.4.3". GATE before upload: owner's on-device pass
+  (Vulgate apocrypha + Psalmi split view, Tamil UI + interlinear
+  labels, note/highlight across translation switch) and ideally the
+  Tamil tester's terminology review. Play: wait for 1.4.1 to clear
+  there, then upload 1.4.3 + the ta-IN listing/screenshots batch.
+  Next versionCode after 1.4.3 ships: 11.
 - **1.4.0/1.4.1 verification pass (2026-07-11)** — fixed in tree:
   bottom-nav labels + reader title now shrink-to-fit instead of
   ellipsizing (M3 label budget is ~58dp at 360dp: "Einstellungen",

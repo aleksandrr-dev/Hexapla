@@ -8,7 +8,10 @@ survives. Tagline color is sampled from the underline itself.
 
 Usage: python make_feature_graphic.py  (writes feature_1024x500_<lang>.png)
 """
+import json
 import os
+import subprocess
+import tempfile
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -25,9 +28,13 @@ FONTS = {
     "ja": ["yumindb.ttf", "yumin.ttf", "msmincho.ttc", "meiryo.ttc"],
     "zh_cn": ["simsun.ttc", "msyh.ttc"],
     "zh_tw": ["mingliu.ttc", "msjh.ttc"],
+    "ta": ["Nirmala.ttf", "latha.ttf"],
     "latin": ["georgia.ttf", "constan.ttf", "times.ttf"],
 }
 LATIN = {"es", "fr", "de", "pt", "it", "sv", "da"}
+# Indic scripts PIL cannot shape -> WPF family names (render_text.ps1).
+COMPLEX = {"ta": "Nirmala UI"}
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 TAGLINES = {
     "ja": ("ヘブライ語・ギリシア語・明治元訳・欽定訳", "いにしえの聖書を、並べて読む"),
@@ -40,6 +47,7 @@ TAGLINES = {
     "it": ("Ebraico · Greco · Diodati · KJV", "testi antichi, fianco a fianco"),
     "sv": ("Hebreiska · Grekiska · Karl XII · KJV", "gamla texter, sida vid sida"),
     "da": ("Hebraisk · Græsk · Dansk 1819 · KJV", "gamle tekster, side om side"),
+    "ta": ("எபிரெயம் · கிரேக்கம் · தமிழ் IRV · KJV", "பழைமையான வேத உரைகள், அருகருகே"),
 }
 
 
@@ -76,14 +84,34 @@ def main():
         draw = ImageDraw.Draw(img)
         cx = (X0 + X1) // 2
         max_w = (X1 - X0) - 30
-        for text, y in ((line1, 312), (line2, 356)):
-            size = 34
-            font = load_font(lang, size)
-            while draw.textlength(text, font=font) > max_w and size > 20:
-                size -= 2
+        if lang in COMPLEX:
+            # PIL cannot shape Indic scripts; render the two lines via
+            # tools/render_text.ps1 (WPF/DirectWrite) and paste them.
+            tmp = tempfile.gettempdir()
+            outs = [os.path.join(tmp, f"hex_feat_{lang}_{i}.png") for i in (1, 2)]
+            items = [{"text": t, "font": COMPLEX[lang], "size": 34,
+                      "color": "#%02X%02X%02X" % gold, "wrap": False,
+                      "maxwidth": max_w, "out": o}
+                     for t, o in zip((line1, line2), outs)]
+            mf = os.path.join(tmp, "hex_feat_manifest.json")
+            with open(mf, "w", encoding="utf-8") as f:
+                json.dump(items, f, ensure_ascii=False)
+            subprocess.run(
+                ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+                 "-File", os.path.join(HERE, "render_text.ps1"), "-Manifest", mf],
+                check=True, stdout=subprocess.DEVNULL)
+            for o, y in zip(outs, (306, 354)):
+                png = Image.open(o)
+                img.paste(png, (cx - png.width // 2, y), png)
+        else:
+            for text, y in ((line1, 312), (line2, 356)):
+                size = 34
                 font = load_font(lang, size)
-            w = draw.textlength(text, font=font)
-            draw.text((cx - w / 2, y), text, font=font, fill=gold)
+                while draw.textlength(text, font=font) > max_w and size > 20:
+                    size -= 2
+                    font = load_font(lang, size)
+                w = draw.textlength(text, font=font)
+                draw.text((cx - w / 2, y), text, font=font, fill=gold)
 
         out = os.path.join(ASSETS, f"feature_1024x500_{lang}.png")
         img.save(out)

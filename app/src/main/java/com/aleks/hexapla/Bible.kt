@@ -41,7 +41,8 @@ object BibleRepo {
         Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
         Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
         Translation("wlc", "bibles/he_wlc.json", "עברית — Westminster Leningrad Codex (HE)", Locale("he")),
-        Translation("san", "bibles/sa_nt.json", "संस्कृतम् — Sanskrit NT, 1851 (SA)", Locale("sa"))
+        Translation("san", "bibles/sa_nt.json", "संस्कृतम् — Sanskrit NT, 1851 (SA)", Locale("sa")),
+        Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale("ta"))
     )
 
     fun translation(id: String): Translation =
@@ -64,6 +65,7 @@ object BibleRepo {
         "sv" -> "kxii"
         "da", "nb", "nn", "no" -> "da19"  // Norway's classical scripture was the Danish Bible
         "ja" -> "mei"
+        "ta" -> "ta"
         "zh" -> Locale.getDefault().let {
             if (it.script == "Hant" || it.country in setOf("TW", "HK", "MO")) "cuv" else "cus"
         }

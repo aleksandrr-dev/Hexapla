@@ -177,6 +177,10 @@ maximize reach, keep everything free, nothing locked, collect no data.
   iglesia→Kongresyon, bautismo→lublob (Baptist-leaning), digits for
   numerals; living small-team translation (2017-2025), not a
   classic. Textually clean; stylistically a Meiji-plus call.
+  Owner decided 2026-07-13: DON'T ship yet — email the team first
+  (draft at store-assets/amb_email_draft.txt: which release is
+  stable; is a traditional-renderings edition planned; attribution
+  wording). Decide when they reply.
   Latin — APPROVED + INTEGRATED IN TREE 2026-07-13 for 1.4.3
   ("vul", la_vulgata.json, 73 books incl. deuterocanon in the
   apocrypha slots, 35,811 verses, «Vulgata Clementina, 1592 (LA)»):

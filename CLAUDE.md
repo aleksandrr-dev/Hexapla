@@ -334,11 +334,11 @@ maximize reach, keep everything free, nothing locked, collect no data.
   verified — same upload key). Contents = 1.4.2 items (interlinear
   grammar ×13, canonical notes/highlights, bookmark order) + Tamil
   IRV + values-ta + Vulgate. Release notes ×13 in STORE_LISTING.md
-  under "1.4.3". GATE before upload: owner's on-device pass
-  (Vulgate apocrypha + Psalmi split view, Tamil UI + interlinear
-  labels, note/highlight across translation switch) and ideally the
-  Tamil tester's terminology review. Play: wait for 1.4.1 to clear
-  there, then upload 1.4.3 + the ta-IN listing/screenshots batch.
+  under "1.4.3". SUBMITTED by owner 2026-07-13 after his on-device
+  pass (Vulgate Daniel 3 split-view behavior confirmed by-design:
+  primary drives the verse grid, same as Synodal) — both stores in
+  review, listings refreshed to 22/17 incl. the new ta-IN entry.
+  Tamil tester's terminology review still welcome (values-ta).
   Next versionCode after 1.4.3 ships: 11.
 - **1.4.0/1.4.1 verification pass (2026-07-11)** — fixed in tree:
   bottom-nav labels + reader title now shrink-to-fit instead of

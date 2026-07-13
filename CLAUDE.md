@@ -110,7 +110,7 @@ maximize reach, keep everything free, nothing locked, collect no data.
   store-assets/biblequote_email_draft.txt: ask (1) permission for
   the gloss-only files in a free attributed app, (2) PROVENANCE —
   is it the 1998 Bob Jones University symphony key? (residual-rights
-  question). HARD GATE: MyBible/ph4 builds embed Dvoretsky's 1958
+  question). SENT by owner 2026-07-12 — awaiting reply. HARD GATE: MyBible/ph4 builds embed Dvoretsky's 1958
   dictionary (© until ~2046) in 5,113 Greek entries — use ONLY the
   pristine BibleQuote greek/hebrew.htm (zero Dvoretsky, verified).
   Zhuromsky fallback is CC BY-NC-ND (ND blocks the needed edits) +

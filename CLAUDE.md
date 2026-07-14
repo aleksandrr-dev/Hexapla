@@ -513,8 +513,12 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    contract proven identical Java-vs-Python over all 31,166 tagged
    verses (scratch TokCheck). No settings toggle — always
    active on the original texts. +1.7 MB compressed in APK.
-4. v1.3: self-generated narration (Kokoro/Piper, host on archive.org) —
-   fills 22 KJV books LibriVox lacks + enables Russian audio.
+4. Self-generated narration (Kokoro for EN, Piper-or-newer for RU,
+   host on archive.org) — fills 22 KJV books LibriVox lacks + enables
+   Russian audio. FULL EXECUTION PLAN: tools/NARRATION_PLAN.md
+   (written 2026-07-13, self-contained for a cheaper-model session;
+   honor its ⚠ GATE markers — voice licensing, owner voice pick,
+   stress-dictionary quality, ReadingService diff review).
 5. iOS port = separate v2.0-scale project (Kotlin/Compose Multiplatform;
    Swift needed for audio/TTS/widget/notifications; Mac + Apple $99/yr).
 6. Maybe: fonts (Literata/EB Garamond), music download-on-demand

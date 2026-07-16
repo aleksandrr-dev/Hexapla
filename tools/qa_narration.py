@@ -220,7 +220,7 @@ def check_chapter(lang, books, cfg, book_idx, ch_idx):
         t = narrate.strip_kjv_notes(v) if cfg["strip_notes"] else v
         texts.append(narrate.normalize_text(t, cfg["normalizer"]))
 
-    if lang == "ru":
+    if lang in ("ru", "cu"):
         for i, t in enumerate(texts):
             if t and re.search(r"\d", t):
                 fail(f"verse {i+1} still contains a digit — will be spoken "

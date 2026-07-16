@@ -192,6 +192,24 @@ LANG_CONFIG = {
         # ru_stress task is therefore MOOT, not merely deferred.
         "normalizer": "ru_variants",
     },
+    "cu": {
+        "asset": "cu_elizabeth.json",
+        "engine": "cosyvoice3",
+        # Same voice and delivery as ru. The owner approved the Пс 22 ear test
+        # 2026-07-16: CosyVoice reads civil-script Slavonic the way a modern
+        # Russian reader would (akanye, guessed archaic stress — accepted).
+        "voice": str(OUTPUT / "myvoice_take1.wav"),
+        # Book indexes and names are identical to ru_synodal (verified
+        # 2026-07-16: 83 books, name lists byte-identical), so the Russian
+        # style map and the «1 Царств»→«Первая Царств» speller apply
+        # unchanged. Books 67 and 77-82 are empty in the asset and render
+        # nothing.
+        "styles": RU_STYLES,
+        "book_styles": RU_BOOK_STYLES,
+        "strip_notes": False,
+        "default_books": None,
+        "normalizer": "cu_digits",
+    },
 }
 
 BOOK_NAMES = [
@@ -287,7 +305,9 @@ def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None)
     announced as «Первая Царств» — the wrong book, confidently, for 22
     chapters. The asset already carries the correct Synodal names.
     """
-    if lang == "ru":
+    if lang in ("ru", "cu"):
+        # cu shares everything here: cu_elizabeth's book names are identical
+        # to ru_synodal's, and the headers are announced in Russian either way.
         book = book_name or (BOOK_NAMES_RU[book_idx]
                              if book_idx < len(BOOK_NAMES_RU) else None)
         if not book:
@@ -379,12 +399,33 @@ def strip_ru_variant_numbers(text):
     return re.sub(r"\s*\[\d+\]", "", text)
 
 
+def normalize_cu_digits(text):
+    """Keep digits out of the Slavonic text — CosyVoice reads them in English.
+
+    The whole 83-book cu_elizabeth asset has exactly TWO digit-bearing verses
+    (audited 2026-07-16):
+      * Пс 151:1 — the restored superscription reads «вне числа 150 псалмов»;
+        the 150 is spelled out in genitive case.
+      * 3 Царств 2:35 — the CrossWire module flattened the LXX's lettered
+        additions (2:35a-o) into one long verse with bare digit markers
+        between sentences. Those are apparatus, not scripture — dropped.
+    qa_narration's digit check covers cu like ru, so any digit a future asset
+    edit introduces fails QA instead of shipping in English.
+    """
+    text = text.replace("вне числа 150 псалмов",
+                        "вне числа ста пятидесяти псалмов")
+    text = re.sub(r"(^|(?<=\s))\d+(?=\s|$)", "", text)
+    return re.sub(r"\s{2,}", " ", text).strip()
+
+
 def normalize_text(text, normalizer_name):
     """Apply language-specific text normalization for TTS."""
     if normalizer_name is None:
         return text
     if normalizer_name == "ru_variants":
         return strip_ru_variant_numbers(strip_ru_markup(text))
+    if normalizer_name == "cu_digits":
+        return normalize_cu_digits(text)
     if normalizer_name == "ru_stress":
         # ⚠ CORRUPTS TEXT — see the note in LANG_CONFIG["ru"] and
         # tools/audit_ru_stress.py. Do not use until the table is rebuilt.
@@ -1189,7 +1230,7 @@ def main():
                   "  tools\\.cosyvoice_venv\\Scripts\\python.exe tools/narrate.py "
                   f"--lang {args.lang}", file=sys.stderr)
             sys.exit(1)
-        styles = sorted({RU_BOOK_STYLES.get(b, RU_DEFAULT_STYLE)
+        styles = sorted({cfg.get("book_styles", {}).get(b, RU_DEFAULT_STYLE)
                          for b in range(len(load_bible(args.lang)))})
         print(f"CosyVoice3 | voice: {Path(cfg['voice']).name} | styles: {', '.join(styles)}")
 

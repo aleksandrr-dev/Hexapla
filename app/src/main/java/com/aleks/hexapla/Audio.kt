@@ -10,9 +10,10 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Narrated KJV audio (LibriVox, public domain), streamed from archive.org and
- * cached on device. Recordings are per *section* — one MP3 covering one or a
- * few chapters — so playback is section-aligned, not verse-aligned.
+ * Narrated KJV audio streamed from archive.org and cached on device.
+ * LibriVox (public domain) for 44 books; Kokoro TTS (am_adam, Apache 2.0)
+ * for the remaining 22. Recordings are per *section* — one file covering
+ * one or a few chapters.
  */
 object AudioRepo {
 

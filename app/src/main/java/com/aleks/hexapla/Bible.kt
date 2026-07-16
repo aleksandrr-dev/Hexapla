@@ -31,6 +31,7 @@ object BibleRepo {
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
         Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703 (SV)", Locale("sv")),
         Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale("da")),
+        Translation("svv", "bibles/nl_staten.json", "Statenvertaling, 1637/1888 (NL)", Locale("nl")),
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
         Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale("pt")),
         Translation("dio", "bibles/it_diodati.json", "Diodati, 1649/1885 (IT)", Locale.ITALIAN),
@@ -65,6 +66,7 @@ object BibleRepo {
         "it" -> "dio"
         "sv" -> "kxii"
         "da", "nb", "nn", "no" -> "da19"  // Norway's classical scripture was the Danish Bible
+        "nl" -> "svv"
         "ja" -> "mei"
         "ta" -> "ta"
         "la" -> "vul"

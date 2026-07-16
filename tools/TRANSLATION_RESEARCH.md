@@ -97,7 +97,7 @@ nearest template); open questions. Flag anything UNVERIFIED explicitly.
 9. **Welsh — William Morgan 1588/1620**. Digitization quality unknown —
    this pass is mostly a source hunt. Leads: CrossWire? bible.com has ©
    editions (unusable); beibl.net is a MODERN translation (not Morgan).
-10. **Ukrainian — Kulish 1871/1903**. CrossWire UkrKulish. Litmus-first.
+10. ~~Ukrainian — Kulish~~ EXCLUDED by the owner 2026-07-16. Do not research.
 11. **Bulgarian — Tsarigrad 1871**. Source hunt + litmus. Later "1940
     revision" digitizations are a different, possibly CT-touched text.
 12. **Serbian — Karadžić NT 1847 / Daničić OT**. Translated via Slavonic/

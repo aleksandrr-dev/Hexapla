@@ -172,9 +172,43 @@ maximize reach, keep everything free, nothing locked, collect no data.
   use"). Follow-up path documented in the research report §6. The
   Isidore-Guild CC0 base module (Strong's-tagged, kanttekeningen) is a
   future Dutch-interlinear lead — needs an encoding audit first.
-  Arabic Van Dyck research pass running as of 2026-07-16; remaining
-  candidates (Károli, Gdańska, Kralická, Biblia 1776, Vamvas, YLT,
-  Morgan, Tsarigrad, Karadžić) queued — owner approved researching all.
+  Arabic — INTEGRATED IN TREE 2026-07-16 ("vd", ar_vandyck.json, 24th
+  translation / 19th language): Smith-Van Dyck 1865 from eBible.org
+  arb-vd (explicitly PD; their catalog marks two OTHER Arabic Bibles ©,
+  so the label is deliberate). LITMUS 7/7 verified on the converted
+  asset by direct inspection («ٱللهُ ظَهَرَ فِي ٱلْجَسَدِ», Comma with
+  Father/Word/Holy Spirit, Acts 8:37, Rom 16:24, Joseph, church of God,
+  who-is-in-heaven). Converter tools/convert_vandyck.py: 120 \d psalm
+  superscriptions PREPENDED inline (KJV convention; 4 psalms carry
+  TWO-line titles — concatenated, the overwrite bug was caught by a
+  census-vs-prepend count mismatch); \qa Ps-119 acrostic letters dropped
+  (la_vulgata precedent); 31,104 verses = KJV grid + exactly 2
+  text-verified native splits, curated in versemap (1 Tim 6:21->21+22
+  grace-benediction; 3 Jn 14/15). defaultPrimaryId ar->vd. NO
+  sources_text entry (PD policy). ⚠ OPEN QUESTION tracked: vocalization
+  (tashkeel) lineage — CrossWire's AraSVD module is NC because ITS
+  tashkeel came from Arabic Bible Outreach Ministry; eBible's PD
+  declaration trusted (owner decision 2026-07-16), provenance email
+  drafted at store-assets/ebible_arabic_email_draft.txt for the owner
+  to send. Two Door43 orgs republish the byte-identical text CC BY-SA.
+  ⚠ TAMIL PSALM TITLES REPAIRED 2026-07-16: convert_tamil_irv.py had
+  DROPPED all 137 \d superscriptions since integration (its comment
+  falsely claimed the KJV asset drops titles too) — found while writing
+  the Arabic converter. Same defect class as the ru/cu psalter repair.
+  Converter fixed (prepend, two-line-title-safe), asset REGENERATED from
+  tam2017; diff-proven: exactly 137 changed verses, all Psalms, old text
+  a strict suffix of new, everything else byte-identical (litmus
+  unchanged). Backup: asset-backups/ta_irv.json.pretitles.bak.
+  Research verdicts so far (reports in Hexapla-releases/research/):
+  Dutch SHIPPED, Arabic SHIPPED, YLT SHIP-CANDIDATE (exact KJV grid,
+  convert_scrollmapper works unmodified), Vamvas SHIP-CANDIDATE (7/7,
+  KJV grid, monotonic; pairs with grc), Kralická OWNER-DECISION
+  (6/7 — Lk 2:33 "Otec" = Luther-class pre-1881 reading; continental
+  versification, Danish-1819-scale work), Karadžić OWNER-DECISION
+  (6/7 — Acts 20:28 "Lord and God" conflate = SAME reading already
+  shipped in cu/syn; ekavian/ijekavian + script choice; Job 39-41
+  reflow). Still running: Károli, Gdańska, Biblia 1776, Morgan,
+  Tsarigrad.
 - **Translation watch list** (all deity-verse-gated, pipeline ready):
   Matthew Bible 1537 (John Rogers, "Thomas Matthew" — Tyndale's NT +
   Pentateuch + prison OT (Josh–2 Chr, first printing) + Coverdale fill;

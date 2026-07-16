@@ -16,9 +16,17 @@ file 74); books are placed by their \\id code.
 
 Structure handled (per the 2026-07-13 survey of the zip):
   * skipped whole-line markers: book intros (is1/ip/io1/iot), section
-    heads (s1), parallel refs (r), chapter labels (cl), psalm titles
-    (d — unnumbered, like the KJV asset which also drops them),
-    running heads (h/toc*/mt1);
+    heads (s1), parallel refs (r), chapter labels (cl), running heads
+    (h/toc*/mt1);
+  * psalm titles (\\d, 137 in Psalms) are PREPENDED to the following
+    verse 1, matching the KJV asset's inline-title convention.
+    ⚠ Until 2026-07-16 this converter DROPPED them, on the false claim
+    that the KJV asset drops titles too (it carries them inline —
+    "[A Psalm of David...] LORD, how..."). That was the same
+    missing-superscriptions defect class repaired in ru_synodal and
+    cu_elizabeth; found while writing convert_vandyck.py, whose source
+    uses the same \\d convention. Asset regenerated same day; diff
+    verified to touch ONLY the 137 title verses.
   * continuation markers (q1/q2/q3/m/p/pi1/b) append their text to
     the current verse (poetry lines);
   * inline: \\f...\\f* footnotes removed wholesale (incl. fr/ft/fq/fp
@@ -59,8 +67,9 @@ APOC_NAMES = [
 ]
 
 SKIP = {"h", "toc1", "toc2", "toc3", "mt1", "cl", "is1", "ip", "io1",
-        "iot", "s1", "r", "d", "fp", "rem", "sts"}
+        "iot", "s1", "r", "fp", "rem", "sts"}
 CONT = {"q1", "q2", "q3", "m", "p", "pi1", "b", "nb", "li1"}
+TERMINAL = tuple(".!?…»)")
 
 
 def clean(text):
@@ -76,6 +85,7 @@ def parse_usfm(raw, path):
     code = name = None
     chapters, cur, cur_verse = {}, None, None
     bridges = []
+    pending_title = None
     for line in raw.splitlines():
         line = line.strip()
         if not line:
@@ -87,6 +97,12 @@ def parse_usfm(raw, path):
             code = rest.split()[0]
         elif marker == "toc1":
             name = rest
+        elif marker == "d":
+            t = clean(rest)
+            if t:
+                t = t if t.endswith(TERMINAL) else t + "."
+                pending_title = (pending_title + " " + t) if pending_title else t
+            cur_verse = None
         elif marker in SKIP:
             cur_verse = None          # heading breaks verse continuation
         elif marker == "c":
@@ -94,6 +110,7 @@ def parse_usfm(raw, path):
             assert cur not in chapters, (path, cur)
             chapters[cur] = {}
             cur_verse = None
+            pending_title = None
         elif marker == "v":
             vn, _, text = rest.partition(" ")
             if "-" in vn:             # bridged verses: text at first, rest empty
@@ -105,7 +122,11 @@ def parse_usfm(raw, path):
             else:
                 vn = int(vn)
             assert vn not in chapters[cur], (path, cur, vn)
-            chapters[cur][vn] = clean(text)
+            text = clean(text)
+            if pending_title is not None:
+                text = (pending_title + " " + text).strip()
+                pending_title = None
+            chapters[cur][vn] = text
             cur_verse = vn
         elif marker in CONT:
             if rest and cur_verse is not None:

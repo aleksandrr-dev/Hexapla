@@ -1,0 +1,45 @@
+To: Fr. Aleksandr Andreev (Ponomar Project maintainer — GitHub @typiconman;
+    contact via ponomar.net / the address listed in the repo)
+Subject: Permission question — Elizabeth Bible psalm superscriptions in a free Bible app
+
+Dear Father Aleksandr,
+
+Christ is in our midst!
+
+I am the developer of Hexapla, a free offline parallel-Bible app for Android
+(https://aleksandrr-dev.github.io/Hexapla/). It exists for evangelism: no ads,
+no analytics, nothing paid or locked, all texts public domain or permissively
+licensed with attribution.
+
+The app ships the 1751 Elizabeth Bible in modernized (civil) spelling, derived
+from the CrossWire CSlElizabeth module. That digitization is missing most of
+the psalm superscriptions (надписания) — Ps 22 «Псалом Давиду», the «Песнь
+степеней» of Ps 119-133, and so on. Your Ponomar Project's Psalter
+(Ponomar/languages/cu/bible/elis/Psalm.text) is the only machine-readable
+Elizabeth text I have found that preserves them completely, and I would be very
+glad to restore them from it.
+
+My questions:
+
+1. The ponomar repository is licensed GPL-3.0. May the BIBLE TEXT files —
+   specifically the psalm superscriptions, transliterated into the civil
+   orthography our asset already uses (which removes the accentuation layer) —
+   be used in a free, non-GPL app, with credit to the Ponomar Project in the
+   app's text-sources section? I want to honor your terms exactly, so I am
+   asking rather than relying on my own reading of how the GPL applies to
+   1751 text data.
+
+2. If it is simpler, would you consider an explicit statement (public domain
+   or CC0/CC-BY) covering the Bible-text data files, as distinct from the
+   Ponomar software?
+
+The app would credit the Ponomar Project by name with a link, in all interface
+languages, alongside our other source attributions.
+
+Thank you for the enormous service Ponomar renders to the Church — and for
+your time.
+
+With gratitude in Christ,
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

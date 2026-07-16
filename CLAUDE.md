@@ -110,12 +110,41 @@ maximize reach, keep everything free, nothing locked, collect no data.
   store-assets/biblequote_email_draft.txt: ask (1) permission for
   the gloss-only files in a free attributed app, (2) PROVENANCE —
   is it the 1998 Bob Jones University symphony key? (residual-rights
-  question). SENT by owner 2026-07-12 — awaiting reply. HARD GATE: MyBible/ph4 builds embed Dvoretsky's 1958
-  dictionary (© until ~2046) in 5,113 Greek entries — use ONLY the
-  pristine BibleQuote greek/hebrew.htm (zero Dvoretsky, verified).
-  Zhuromsky fallback is CC BY-NC-ND (ND blocks the needed edits) +
-  reputational flags — avoid. Tsygankov/azbyka = publisher ©, dead
-  end. Architecture
+  question). SENT by owner 2026-07-12 — awaiting reply.
+  ⚠ READ THE REPLY WITH THIS IN MIND (audit 2026-07-15): one
+  (low-quality, UNVERIFIED) Russian source claims «Тимофей Ха не
+  является владельцем прав на публикацию словаря Стронга» — if Ha is
+  NOT the rights holder, his permission does not clear the rights and
+  a "yes" is not legally load-bearing. Question (2) PROVENANCE
+  therefore matters MORE than question (1) permission. Audit
+  confirmed BJU's 1998 «Библейская симфония с ключом к еврейским и
+  греческим словам» is real (ru.wikipedia, Конкорданция Стронга) BUT
+  it is a SYMPHONY/KEY (Strong's numbers → Synodal word occurrences)
+  — a DIFFERENT copyrightable layer from a gloss-only H1-H8674
+  dictionary. Whether Strong.zip's glosses descend from it remains
+  UNVERIFIED. Repo re-checked 2026-07-15: still license: None, no
+  LICENSE file, Strong.zip = 611,637 bytes, last push 2022-02-25.
+  HARD GATE: MyBible/ph4 builds embed Dvoretsky's 1958
+  dictionary in 5,113 Greek entries — use ONLY the pristine
+  BibleQuote greek/hebrew.htm (zero Dvoretsky, verified — the gate is
+  real: Dvoretsky-merged files circulate under BibleQuote-looking
+  names, e.g. a «Греческий лексикон Стронга - словарь Дворецкого»
+  module). ⚠ DATE CORRECTED 2026-07-15: the old note read «© until
+  ~2046» — WRONG, and wrong in the UNSAFE direction. Dvoretsky died
+  3 Jan 1979 (not 1963); ГК РФ ст. 1281 = life+70 counted from 1 Jan
+  of the following year → © until end of 2049, PD 1 Jan 2050. If the
+  WWII +4 extension applies (ru.wikipedia's biography is explicitly
+  incomplete on his wartime activity — UNVERIFIED) → end of 2053.
+  Where "2046" came from is unknown. Do not unblock before 2050.
+  Zhuromsky fallback is CC BY-NC-ND — BOTH the NC and the ND
+  disqualify (re-verified 2026-07-15 at igr.bible, his own site:
+  «© 2026, Виктор Р. Журомский. Все права защищены лицензией
+  CC BY-NC-ND 4.0» — actively asserted; earlier note cited only the
+  ND) + reputational flags — avoid. Tsygankov/azbyka = publisher ©
+  (re-verified 2026-07-15: azbyka's own record, «сост. Цыганков
+  Ю. А.», СПб.: Библия для всех, 2005, ISBN 5-7454-0933-9; the
+  1890 Strong's base is PD but Tsygankov's compilation+commentary is
+  a modern authored work), dead end. Architecture
   when a clean source lands: per-locale lexicon file keyed by the
   same H/G ids, chosen by UI locale, English fallback; same model
   later for DE/ES/PT.
@@ -288,8 +317,42 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Viðeyjarbiblía 1841 (biblian.is/videy/, presumably versified,
   needs its own litmus pass).
   Korean — no PD TR text exists (개역한글 fails 1 Tim 3:16 with 그는;
-  한글킹제임스/흠정역 copyrighted). LXX apocrypha — no clean-licensed
-  tagged text (CATSS restrictive).
+  한글킹제임스/흠정역 copyrighted).
+  LXX apocrypha — ⚠ RE-SCOPED 2026-07-15, the old note («no
+  clean-licensed tagged text (CATSS restrictive)») was OVERBROAD and
+  read in practice as "LXX apocrypha can't ship". The truth: it CAN
+  ship, just WITHOUT interlinear. The restriction was never on the
+  LXX text — only on CATSS's MORPHOLOGY layer. Split the two:
+  (a) TEXT — SHIPPABLE TODAY: github.com/nathans/lxx-swete, "The
+      Greek text and its annotations in the data directory are
+      published under the terms of the Creative Commons
+      Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+      license" — same license family + attribution pipeline as the
+      shipped Tamil IRV and Sanskrit assets. Swete (1909) via the
+      Open Greek and Latin First1KGreek digitization, ZERO CATSS
+      dependency. Full apocrypha set verified present (Esdras A,
+      Judith, Tobit, 1-4 Macc, Odae, Wisdom, Sirach, Psalms of
+      Solomon, Baruch, Ep. Jeremiah, Susanna, Bel, both Daniel
+      recensions). ALREADY VERSIFIED — one token per line prefixed
+      book.chapter.verse (e.g. «21.1.1 BΙBΛΟΣ / 21.1.1 λόγων»;
+      Sirach prologue at 34.0.0), so it is converter-ready, NOT a
+      segmentation project (contrast the Guðbrandsbiblía prose trap).
+      Deity-litmus n/a for apocrypha (same as the Karl XII note).
+      ⚠ OWNER DECISION: whether a Greek LXX apocrypha belongs in the
+      app at all, and if so where (grc is currently NT-only).
+  (b) INTERLINEAR on it — still genuinely blocked: every mainstream
+      TAGGED LXX inherits CATSS ("not to be used for commercial
+      purposes without prior written consent", signed User
+      Declaration): eliranwong/LXX-Rahlfs-1935 is CC BY-NC-SA AND
+      CATSS-derived; CenterBLC/LXX derives from it; openscriptures/
+      GreekResources CC BY 4.0 covers only their lemma corrections,
+      text still comes from CCAT. RE-CHECK YEARLY: STEPBible TAGOT
+      would be CC BY 4.0 and covers apocrypha, but its morphology is
+      "based on CCAT" and it is still unposted ("Datasets coming…").
+  Also worth recording: RAHLFS 1935 IS PUBLIC DOMAIN — Rahlfs died
+  8 Apr 1935, German life+70 → PD since 1 Jan 2006. The © people
+  associate with "Rahlfs" attaches to Rahlfs-Hanhart (2006), a
+  different, later revision by the German Bible Society.
 - **1.4.0 submitted 2026-07-11**: owner uploaded + submitted for review
   (Play: release to closed track + full listing localization in one
   batch — 13 listing entries / 10 languages incl. pt-BR/pt-PT, es-419/
@@ -434,6 +497,184 @@ maximize reach, keep everything free, nothing locked, collect no data.
   something gripping, not Genesis 1), with a small caption under
   the button (welcome_read_note, ×12 locales: "an eyewitness
   account of Jesus… jump anywhere from there").
+
+## ⚠ ASSET DEFECTS FIXED 2026-07-15 (owner-approved; NOT yet rebuilt/shipped)
+
+Both rewrite SHIPPED assets. `.json.bak` backups sit beside each. Next build
+must include them; owner should spot-check on-device before submitting.
+
+- **de_luther.json was 75.9% CORRUPTED and had been since v1.1.** Not markup —
+  destroyed characters. It is an unproofread OCR of the Bolsinger/
+  luther-bibel-1545.de digitization. Census over 4,010,960 chars of German:
+  **ä = 0** (master: 11,719), ö = 1, Ä/Ö/Ü = 0. Zero ä in a four-million-char
+  German Bible is impossible. 23,508 of 30,964 comparable verses damaged, all
+  66 books, none below 50%. über→uber (1,553), soll→soil (1,499), König→Konig
+  (1,201), Salomo→Saiomo, daß→dafi/dad/daü. **The deity litmus verse itself
+  shipped broken: 1 Tim 3:16 read «Und kundlich GRAFT ist das gottselige
+  Geheimnis» (groß → graft).**
+  REPAIRED via tools/fix_de_luther.py from the SAME digitization's clean
+  upstream — Zefania SF_2009-01-20_GER_LUTH1545 (sourceforge.net/projects/
+  zefania-sharp; CrossWire ships it as GerLut1545). Since the app already
+  ships this transcription, the clean upstream adds ZERO new licensing
+  exposure. Litmus re-run on the master before use: 1 Tim 3:16 «GOtt ist
+  offenbaret im Fleisch» PASS, Comma present, Acts 8:37 present, Rom 16:24
+  present, Jn 1:1 PASS — same edition, same readings, pure character repair.
+  RESULT: 25,915 verses repaired, ä 0→11,688, accented 3.56→14.14 per 1000,
+  book/verse counts unchanged (66 / 31,164).
+  ⚠ 78 verses deliberately NOT repaired: genuine German-native-vs-KJV-grid
+  numbering offsets (all of 2. Samuel 19 is shifted by +1 — our 19:1 IS the
+  master's 19:2). Repairing those by coordinate would OVERWRITE SCRIPTURE with
+  the neighbouring verse. The audit agent misreported these as the ONLY issue
+  and called the other 122 low-ratio verses "offsets" too — they were the
+  worst-DAMAGED verses. Both errors sat in the same bucket; the discriminator
+  is "does a neighbour match better?", NOT a similarity threshold and NOT
+  length (2. Sam 19:7's offset pair has a length ratio of 1.06).
+- **la_vulgata.json shipped 194 editorial markers in v1.4.3** (2026-07-13) as
+  literal angle brackets: «Alleluja. <Aleph>Beati immaculati in via». 29
+  distinct — Hebrew acrostic letters <Aleph>..<Thau> in Psalmi 118 (=119) and
+  Lamentationes 1-4; Canticum speaker rubrics <Sponsa> x19, <Sponsus> x14,
+  <Chorus>; <Prologus>. tools/convert_vulgate.py never stripped them.
+  STRIPPED via tools/fix_vulgate_markers.py (owner chose this 2026-07-15 over
+  surfacing them as headings, which needs UI work).
+  ⚠ THIS DISCARDED REAL INFORMATION, reversibly: <Sponsa>/<Sponsus> identify
+  WHO IS SPEAKING in Song of Songs and print Clementine editions carry them as
+  rubrics. The markers are still in the source archive — a later version can
+  reinstate them as structure.
+- ru_synodal.json: 3 verses carry escaped OSIS (&lt;note&gt; wrapping a ~600-
+  char LXX variant at Иов 2:9; a constellations note at Иов 9:9; a stray
+  &lt;title type="psalm"&gt; at Псалтирь 143:15). OWNER CONFIRMED the app
+  RENDERS this markup to readers. narrate.py keeps it out of the audio
+  (strip_ru_markup) but **THE ASSET IS STILL UNFIXED** — BibleRepo.parseAsset
+  strips {x:y} notes and knows nothing about escaped tags. Still to do.
+- **⚠ ~HALF THE PSALTER IS MISSING ITS TITLES — ru_synodal AND cu_elizabeth.**
+  Found 2026-07-15 while fixing the Psalm 144 stray title; NOT yet fixed, needs
+  a source and an owner decision. Measured against the app's own Clementine
+  Vulgate (same LXX psalter, kept all its titles):
+      Vulgate has a title in 144 of 150 psalms
+        title is its OWN verse : 46  -> CU missing 5,  SYN missing 7
+        title INLINE with text : 98  -> CU missing 73, SYN missing 74
+  THE RULE IS EXACT: a title that occupied its own verse SURVIVED; a title
+  sharing verse 1 with content was DROPPED by the converter. Examples are not
+  obscure — Ps 22 (the Shepherd Psalm) opens «Господь - Пастырь мой» with no
+  «Псалом Давида.»; Ps 26 and Ps 16 likewise. The Psalm 144 title that was
+  merely MISPLACED (onto 143:15, now fixed) was a survivor of the same bug.
+  NOT a versification defect: the titles were inline in v1, so no verse counts
+  changed — versemap/bookmarks/notes/highlights are unaffected. It is a text-
+  completeness defect only.
+  ⚠ The ~74 figure is HEURISTIC (per-language title-prefix matching); direction
+  and scale are solid, the exact count is not. tools/ scratch analysis compared
+  vul/cu/syn verse 1 across all 150.
+  ✅ SYNODAL REPAIR DONE 2026-07-16 (owner-approved): 56 titles restored via
+  tools/fix_ru_psalm_titles.py — title-prefix-only prepends to v1, every edit
+  body-gated at ratio 1.00 against the source, verse counts unchanged (2,533).
+  Vulgate census: inline-missing 74 -> 28 (residual ≈ the ~15 genuinely absent
+  from both PD digitizations + census-regex blind spots). Backup:
+  asset-backups/ru_synodal.json.pretitles.bak. TWO GATES CAUGHT IN DRY-RUN:
+  Пс 139 skipped — its v1 IS an own-verse title and rst carries a stray extra
+  «Псалом.» that would have been doubled onto it (own-verse-title guard now in
+  the script); Пс 151 RESOLVED 2026-07-16: stays UNTITLED. The module's «на
+  единоборстов с Голиафом» is a typo'd editorial paraphrase of the LXX
+  heading, NOT a Synodal superscription — azbyka's Synodal prints no title
+  there, only the footnote «У Евреев этого псалма нет…», and rst has no
+  Ps 151. One typo'd witness vs a contradicting second = do not add.
+  The Slavonic (cu_elizabeth) remains OPEN — see (c) below.
+  SOURCE RESEARCH DONE 2026-07-15 (Opus agent, byte-level verification):
+  (a) ru_synodal.json PROVENANCE SOLVED: it was converted from the CrossWire
+      SWORD module **RusSynodal** (crosswire.org rawzip). Proven byte-level:
+      the module itself carries our two escaped-markup leaks VERBATIM (the
+      Ps 143:15 «&lt;title type="psalm"&gt;Хвала Давида.» and the Job 2:9
+      &lt;note&gt; are literal escaped text IN THE MODULE — a module data bug);
+      the converter stripped all real <title> elements (the title-dropping
+      defect) and only those two escaped ones passed through. The 83-book
+      canon incl. «Лаодикийцам» = SWORD Synodal versification, ditto.
+  (b) RECOVERY (Synodal): module has clean <title type="psalm"> for 31
+      psalms, all 31 currently missing (list in the research transcript);
+      lowercase «псалом» needs normalizing to «Псалом». The ascent/hallelujah
+      superscriptions the module lacks (Песнь восхождения, Аллилуия) are in
+      gratis-bible/bible ru/rst.xml (same Fedosov PD digitization, titles
+      inline behind a "(N:N)" prefix; en-dash vs hyphen in bodies). Union =
+      verified floor of 58 recoverable titles; ~15 (incl. Аллилуия at Ps
+      148-150) are absent from BOTH PD digitizations — not recoverable there.
+      LICENSES QUOTED: RusSynodal.conf "DistributionLicense=Public Domain";
+      rst.xml <rights> "…Sergej A. Fedosov's Slavic Bible for Windows…Public
+      Domain". Repair shape: mirror fix_de_luther.py — coordinate-anchored,
+      TITLE-PREFIX-ONLY prepend to v1, body-match gate
+      (SequenceMatcher autojunk=False), verse counts asserted unchanged,
+      backup outside assets/.
+  (c) cu_elizabeth.json: PROVENANCE = CrossWire **CSlElizabeth** (verified,
+      matches our asset exactly) — the module has ZERO <title> elements; our
+      asset is a FAITHFUL copy of a source that never had the надписания.
+      SOURCE HUNT DONE 2026-07-16 (Opus agent, verbatim-quoted evidence):
+      ★ **Ponomar Project** (github.com/typiconman/ponomar,
+        Ponomar/languages/cu/bible/elis/Psalm.text) is THE source: complete
+        Elizabeth psalter, **135 надписания / 151 psalms** as structured
+        verse-0 fields (Ps 22 «Ѱало́мъ дв҃дꙋ,», Ps 119 «Пѣ́снь степе́ней,»).
+        PROVEN: our asset is a civil transliteration of EXACTLY this text
+        (Ps 22:1/143:1/144:1 reduce perfectly under the asset's own
+        convention). TWO GATES, both owner calls:
+        (1) ORTHOGRAPHY — Ponomar is full CS (titlos, ѣ ѡ ѧ); titles need
+            transliteration to civil spelling = an EDITORIAL ACT (nomina
+            sacra expansion гдⷭ҇ь→Господь, terminal-ъ elision, ѣ→е etc.).
+            Tractable: the missing titles are a small formulaic set — a
+            hand-curated table like the project's other curated converters.
+        (2) LICENSE — OWNER DECISION 2026-07-16: PROCEED WITHOUT the email,
+            on the PD reasoning (1751 text PD by age; transliteration strips
+            the accentuation, the only arguably-© layer; the extracted titles
+            are short formulaic PD liturgical phrases). This is a deliberate,
+            documented deviation from the usual ask-first pattern — owner:
+            "skip the email for now. if we get feedback on it, we can act on
+            it then." The draft stays at store-assets/ponomar_email_draft.txt
+            in case feedback arrives. Ponomar should still be CREDITED in
+            sources_text ×13 locales before the titles ship in a release
+            (TODO — not yet done).
+      ⚠ PARTIAL RESTORATION DONE 2026-07-16 via tools/fix_cu_psalm_titles.py:
+      **14 titles applied** — only those whose every word is attested in the
+      ~2,400-verse-pair parallel corpus between Ponomar (full CS) and our
+      asset (civil), the transliteration LEARNED from that corpus rather than
+      hand-written (the ru_stress lesson). Gates, all passing: reliable-word
+      accuracy 99.93% case-folded; hold-one-out reconstruction of the 58
+      KNOWN titles = 31 exact + 26 flagged-unknown (safe) + 1 punctuation
+      variance + **0 silent-wrong** (the gate that matters). Bugs the gates
+      caught on the way: reverential-capitalization splits («его»/«Его»)
+      disqualifying common words; Ponomar's parenthesized Alleluia titles
+      losing their lead paren; NFD accent-stripping destroying й (breve) in
+      suggestions.
+      ✅ ALL 69 CU TITLES APPLIED (14 corpus-proven + 55 via owner-delegated
+      review, 2026-07-16). The owner's review notes were RUSSIAN-SYNODAL
+      renderings («Псалом Давида», «Песнь восхождения») of the Slavonic
+      entries; the CU titles were kept SLAVONIC («Псалом Давиду», «Песнь
+      степеней», «Аллилуиа») because the asset's own shipped text uses those
+      forms (Пс 3:1 «Псалом Давиду, внегда отбегаше…» since v1) — Russian
+      titles would clash with Slavonic bodies. Flagged to the owner with an
+      easy override; his notes were applied as CONTENT decisions (Пс 151
+      titled, proper names capitalized, ѱ→пс charmap gap fixed). Final list:
+      C:/Projects/Hexapla-releases/cu_titles_final.txt. Backups:
+      asset-backups/cu_elizabeth.json.{pretitles,prereview}.bak.
+      SYNODAL follow-ups from the same review (tools/fix_ru_titles_owner.py):
+      Пс 133 «Песнь восхождения.» — a GAP THE OWNER CAUGHT, the automated
+      pass covered only 119-132. Пс 151 was briefly titled per owner
+      dictation, then REVERTED when he re-delegated («go with what you think
+      is right for the text»): the Synodal edition prints NO superscription
+      at Ps 151 (azbyka witness, footnote only) — SYNODAL 151 STAYS
+      UNTITLED while the SLAVONIC keeps its long title, because the two
+      EDITIONS genuinely differ there. Per-edition fidelity, final.
+      FALLBACK: my-bible.info has a complete CIVIL-script CS psalter (no
+      transliteration needed) but NO stated license and murky provenance —
+      strictly weaker. DEAD ENDS (verified): rusbible.ru IS the gap (drops
+      unnumbered titles, keeps numbered ones — explains the 73/98 vs 5/46
+      pattern exactly); Wikisource has no CS psalter transcription; azbyka/
+      bible-center are publisher-© and JS-rendered; orthlib.ru is legacy
+      "HIP"-encoded .rar service books. CrossWire has exactly one cu module.
+- en_kjv stray `</title>` (Additions to Esther 10:4) and zh_cuv_s/t `<WAHb>` x2
+  (Joshua 24:14, upstream-Traditional defect) — FIXED 2026-07-15 via
+  tools/fix_remaining_markup.py, owner-approved. audit_asset_markup.py now
+  reports ALL 23 ASSETS CLEAN.
+- TOOLS: tools/audit_asset_markup.py scans every asset for this class of
+  leakage. Run it before any release. It found 6 of 23 assets dirty.
+  ⚠ A MARKUP REGEX CANNOT SEE SILENT CORRUPTION: it found 20 de_luther verses;
+  the real number was 23,508 — an undercount of ~1,175x, because 13,781 verses
+  differ only by stripped umlauts with no markup to match. Silent damage needs
+  a REFERENCE TEXT, not a pattern.
 
 ## Architecture notes (beyond README)
 

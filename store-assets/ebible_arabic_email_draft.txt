@@ -20,6 +20,13 @@ otherwise cleared for the Public Domain designation? I ask only so my
 app's licensing records are complete; the 1865 text itself is of course
 PD by age.
 
+While I have you, one small catalog question on another title: your
+translations.csv marks srp1868 (Serbian, Daničić/Karadžić, Cyrillic)
+as Redistributable=False, while its own copyright page says Public
+Domain — and srp1865 (the Latin-script edition of the same translation)
+is Redistributable=True. Is the srp1868 flag a catalog artifact, or a
+real restriction?
+
 Hexapla is free in every sense and will stay so. Thank you for the
 extraordinary service eBible.org provides.
 

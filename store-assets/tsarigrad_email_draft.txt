@@ -1,0 +1,45 @@
+To: Ventsislav Stoykov <ven_stoikov@mail.bg>
+    (named as the rights contact in CrossWire's BulCarigradNT module .conf;
+    the module's license line reads "Copyrighted; Permission to distribute
+    granted to CrossWire")
+Subject: Цариградски превод (1871) — разрешение за безплатно библейско
+         приложение / permission for a free Bible app
+
+[EN below]
+
+Здравейте,
+
+Разработвам Hexapla — безплатно офлайн приложение за паралелно четене на
+Библията (без реклами, без събиране на данни, нищо платено;
+https://aleksandrr-dev.github.io/Hexapla/). Приложението предлага само
+класически преводи от традицията на Textus Receptus — Цариградският
+превод от 1871 г. би бил българският текст в него.
+
+Видях, че дигитализацията на Новия Завет (модулът BulCarigradNT в
+CrossWire) е с разрешение, дадено поименно на CrossWire. Бихте ли
+разрешили същият текст да бъде включен и в Hexapla, с посочване на
+източника? И втори въпрос: съществува ли машинночетима дигитализация на
+СТАРИЯ Завет от изданието от 1871 г., или се работи по такава?
+
+Благодаря за труда по опазването на този превод!
+
+---
+
+Hello,
+
+I develop Hexapla, a free offline parallel-Bible app (no ads, no data
+collection, nothing paid; https://aleksandrr-dev.github.io/Hexapla/). It
+ships only classical Textus-Receptus-tradition translations — the 1871
+Tsarigrad (Constantinople) translation would be its Bulgarian text.
+
+The NT digitization (CrossWire's BulCarigradNT module) carries permission
+granted to CrossWire by name. Would you grant permission for the same text
+to be included in Hexapla, with credit? Second question: does a
+machine-readable digitization of the 1871 OLD Testament exist anywhere,
+or is one in progress?
+
+Thank you for preserving this translation!
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

@@ -199,16 +199,77 @@ maximize reach, keep everything free, nothing locked, collect no data.
   tam2017; diff-proven: exactly 137 changed verses, all Psalms, old text
   a strict suffix of new, everything else byte-identical (litmus
   unchanged). Backup: asset-backups/ta_irv.json.pretitles.bak.
-  Research verdicts so far (reports in Hexapla-releases/research/):
-  Dutch SHIPPED, Arabic SHIPPED, YLT SHIP-CANDIDATE (exact KJV grid,
-  convert_scrollmapper works unmodified), Vamvas SHIP-CANDIDATE (7/7,
-  KJV grid, monotonic; pairs with grc), Kralická OWNER-DECISION
-  (6/7 — Lk 2:33 "Otec" = Luther-class pre-1881 reading; continental
-  versification, Danish-1819-scale work), Karadžić OWNER-DECISION
-  (6/7 — Acts 20:28 "Lord and God" conflate = SAME reading already
-  shipped in cu/syn; ekavian/ijekavian + script choice; Job 39-41
-  reflow). Still running: Károli, Gdańska, Biblia 1776, Morgan,
-  Tsarigrad.
+  YLT + Vamvas — INTEGRATED IN TREE 2026-07-16 (owner delegated the
+  add decision; both were mechanical):
+    "ylt" en_ylt.json «Young's Literal Translation, 1898 (EN)» — 6th
+    English; scrollmapper source (= CrossWire compile, PD ×4 sources),
+    convert_scrollmapper.py unmodified, EXACT 31,102 KJV grid (zero
+    mismatches/empties verified), litmus 7/7 + identity quirks («In the
+    beginning of God's preparing», Jehovah). No versemap entries.
+    "vam" el_vamvas.json «Η Αγία Γραφή — Βάμβας, 1850 (EL)» — the 25th
+    translation / 20th language; modern-Greek companion to grc (Synodal:
+    Slavonic :: Vamvas: Byzantine). CrossWire GreVamvas via scrollmapper
+    (byte-identical, PD .conf), exact KJV grid incl. 3 Jn 14 + KJV-shaped
+    Rev 12 (zero mismatches/empties), litmus 7/7 by inspection, monotonic
+    (vs grc's polytonic — deliberate), psalm titles inline in «» (kept,
+    edition-authentic). Book names were ENGLISH in the source (the v1
+    de_luther defect class) — Greek names curated in
+    tools/fix_vamvas_book_names.py (monotonic mirror of grc's style;
+    RE-RUN it after any regeneration). defaultPrimaryId el->vam.
+    Neither gets sources_text (PD policy). No UI locales for nl/ar/el
+    yet — translations only; Play listings for those languages = release
+    prep TODO if desired.
+  Research verdicts (reports in Hexapla-releases/research/), the
+  dedicated-session integration QUEUE — all textually approved by the
+  owner's delegation 2026-07-16, roughly by effort:
+    1. Biblia 1776 (fi) SHIP-CANDIDATE 7/7 — near-clean grid (3 Jn +
+       Rev 12 seams only); MUST patch 1 Sam 23:29 (literal "[]" empty
+       in the module, both mirrors) from a second source + strip
+       "(H N:N)" native apparatus in Ps/Job 38-41/1 Sam 24; exclude its
+       broken apocrypha (5 of 17 books empty). finbible.fi is OFFLINE
+       (OVH placeholder) — CrossWire FinBiblia is the source.
+    2. Gdańska (pl) SHIP-CANDIDATE 6/7 (Lk 2:33 "his father" =
+       Luther-class, owner-approved by delegation) — gratis-bible
+       poland.xml (OSIS, PD, 95% KJV-pre-aligned with inline markers)
+       BUT its 1-2 Chronicles is structurally BROKEN — patch those two
+       books from CrossWire PolGdanska (convert_vulgate curated-override
+       pattern). ⚠ UBG (modernized Gdańska) is BLOCKED twice over:
+       eBible says CC BY-ND, CrossWire says NC — never use it.
+    3. Karadžić Serbian 6/7 (Acts 20:28 "Lord and God" conflate = the
+       reading ALREADY SHIPPED in cu/syn) — choice: eBible srp1865
+       (Latin ekavian, Redistributable=True) vs srp1868 (Cyrillic,
+       page says PD but CSV says Redistributable=False — QUESTION ADDED
+       to the eBible email draft) vs CrossWire ijekavian Cyrillic (PD).
+       17 divergent chapters + Job 39-41 reflow.
+    4. Károli (hu) SHIP-CANDIDATE 7/7 — convert from the RAW OSIS
+       (github.com/krisek/HunKar) ONLY: the compiled SWORD module (and
+       scrollmapper's re-export) silently pads 44 fake empty verses and
+       blobs Job 41 (Versification=Calvin mismatch). 3 genuine content
+       gaps to patch from a second source (Jn 21:1, Acts 12:6, Acts
+       15:18). Continental psalm titles (62 psalms, 4 two-verse) —
+       convert_emg_danish.py is the template. eBible has no Károli.
+    5. Kralická (cs) 6/7 (Lk 2:33 "Otec", Luther-class) — real
+       continental versification: 91 divergent chapters, Job 39-41 +
+       Dan 3-4 reflows; eBible ces1613 is the source (PD, PGP-signed).
+       Danish-1819-scale; the heaviest approved item.
+  BLOCKED: Tsarigrad Bulgarian 1871 — litmus 7/7 but the ONLY true-1871
+  digitization (CrossWire BulCarigradNT, NT-only) is "Permission granted
+  to CrossWire" by name; permission email drafted (BG+EN) at
+  store-assets/tsarigrad_email_draft.txt (contact from the .conf:
+  Ventsislav Stoykov). BulVeren claims 1871 but FAILS 3/7 (CT pattern) +
+  NC; bibliata/beblia "Tsarigrad" is actively © despite find.bible
+  calling it PD (aggregator-mislabel trap — remember for future
+  candidates). No 1871 OT digitization exists anywhere.
+  Welsh Morgan — DECLINED for now (2026-07-16, via the owner's
+  delegation): the ONLY live source is Welsh Wikisource's «Beibl (1620)»
+  (CC BY-SA, litmus 7/7, KJV grid, full canon + apocrypha) but just
+  14.2% of its 1,198 scan pages are proofread and spot-checks found real
+  OCR corruption in the rest — the de_luther lesson says a mostly
+  unproofread OCR source ships silent damage. WATCH LIST: re-check the
+  proofread percentage yearly; template when ready = build_meiji_nt.py
+  (Wikisource scrape). No CrossWire/eBible/gratis/scrollmapper Morgan
+  exists; Bible.com's two Morgan editions are BFBS-claimed.
+  All 9 research passes COMPLETE 2026-07-16.
 - **Translation watch list** (all deity-verse-gated, pipeline ready):
   Matthew Bible 1537 (John Rogers, "Thomas Matthew" — Tyndale's NT +
   Pentateuch + prison OT (Josh–2 Chr, first printing) + Coverdale fill;

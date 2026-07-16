@@ -27,6 +27,7 @@ object BibleRepo {
         Translation("gen1599", "bibles/en_geneva.json", "Geneva Bible, 1599 (EN)", Locale.ENGLISH),
         Translation("tyn", "bibles/en_tyndale.json", "Tyndale, 1525/1531 — partial (EN)", Locale.ENGLISH),
         Translation("wyc", "bibles/enm_wycliffe.json", "Wycliffe, c. 1395 (Middle EN)", Locale.ENGLISH),
+        Translation("ylt", "bibles/en_ylt.json", "Young's Literal Translation, 1898 (EN)", Locale.ENGLISH),
         Translation("mar", "bibles/fr_martin.json", "Bible Martin, 1744 (FR)", Locale.FRENCH),
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
         Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703 (SV)", Locale("sv")),
@@ -41,6 +42,7 @@ object BibleRepo {
         Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale("ru")),
         Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
         Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
+        Translation("vam", "bibles/el_vamvas.json", "Η Αγία Γραφή — Βάμβας, 1850 (EL)", Locale("el")),
         Translation("wlc", "bibles/he_wlc.json", "עברית — Westminster Leningrad Codex (HE)", Locale("he")),
         Translation("san", "bibles/sa_nt.json", "संस्कृतम् — Sanskrit NT, 1851 (SA)", Locale("sa")),
         Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale("ta")),
@@ -69,6 +71,8 @@ object BibleRepo {
         "da", "nb", "nn", "no" -> "da19"  // Norway's classical scripture was the Danish Bible
         "nl" -> "svv"
         "ar" -> "vd"
+        // Modern Greek reads Vamvas; grc stays the study/original text.
+        "el" -> "vam"
         "ja" -> "mei"
         "ta" -> "ta"
         "la" -> "vul"

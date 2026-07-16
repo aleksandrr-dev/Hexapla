@@ -50,6 +50,7 @@ IDS = {
     "san": "sa_nt",
     "ta": "ta_irv",
     "vul": "la_vulgata",
+    "vd": "ar_vandyck",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -148,6 +149,14 @@ EXTRA = {
     # sits on the KJV grid (convert_tamil_irv.py: zero empty slots,
     # zero other extras; the source's Rev 12:17-18 bridge prints the
     # KJV arrangement, its vacuous 18 dropped at conversion).
+    # Van Dyck Arabic: exact KJV grid except two text-verified native
+    # splits — 1 Tim 6:21 -> 21+22 (the grace-benediction «اَلنِّعْمَةُ
+    # مَعَكَ. آمِينَ» numbered as its own v22) and the continental
+    # 3 John 14/15. Rev 12/13 is KJV-shaped (no Rev entry needed).
+    ("vd",): {
+        53: [(6, 21, 21, 6, 21, 22)],
+        63: [(1, 14, 14, 1, 14, 15)],
+    },
     ("ta",): {
         63: [(1, 14, 14, 1, 14, 15)],
     },

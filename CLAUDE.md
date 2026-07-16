@@ -651,9 +651,8 @@ must include them; owner should spot-check on-device before submitting.
             documented deviation from the usual ask-first pattern — owner:
             "skip the email for now. if we get feedback on it, we can act on
             it then." The draft stays at store-assets/ponomar_email_draft.txt
-            in case feedback arrives. Ponomar should still be CREDITED in
-            sources_text ×13 locales before the titles ship in a release
-            (TODO — not yet done).
+            in case feedback arrives. Ponomar credit in sources_text ×13:
+            ✅ DONE 2026-07-16 (added during the sources_text trim).
       ⚠ PARTIAL RESTORATION DONE 2026-07-16 via tools/fix_cu_psalm_titles.py:
       **14 titles applied** — only those whose every word is attested in the
       ~2,400-verse-pair parallel corpus between Ponomar (full CS) and our
@@ -796,7 +795,15 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
 
 - KJV/TR textual tradition only — no Critical Text translations, ever.
 - All content must be legally clean: public domain or CC with attribution
-  (attribution lives in `sources_text` strings, all 5 locales).
+  (attribution lives in `sources_text` strings, all 13 locales).
+- sources_text policy (owner, 2026-07-16): REQUIRED + PROMISED credits only —
+  CC-licensed data (Open Scriptures ×2, openbible.info, SanskritBible.in,
+  Bridge Connectivity/Tamil, MacLeod music) plus the two honored requests
+  (Tweedale Vulgate acknowledgment, Ponomar). PD courtesy credits
+  (translation enumeration, mshaffer 1828, Robinson, scrollmapper/
+  thiagobodruk/byztxt/Wikisource) were deliberately removed — do not
+  re-add them, and do NOT extend the translation list there when new PD
+  translations ship; only new CC/promised credits go in.
 - Voice cloning of real people / game characters: refused once (Joshua
   Graham), keep refusing; owner accepted reasoning.
 - Tests changes on his physical phone and reports bugs precisely —

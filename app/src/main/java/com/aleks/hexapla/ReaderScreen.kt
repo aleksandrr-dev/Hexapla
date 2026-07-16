@@ -52,6 +52,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -577,6 +578,11 @@ fun ReaderScreen(settings: AppSettings) {
     if (showPicker) {
         BookChapterPicker(
             books = books,
+            currentBook = book,
+            currentChapter = chapter,
+            splitEnabled = settings.splitEnabled,
+            primaryId = settings.primaryId,
+            secondaryId = settings.secondaryId,
             onDismiss = { showPicker = false },
             onSelect = { b, c -> AppState.open(b, c); showPicker = false }
         )
@@ -1509,10 +1515,22 @@ private fun SearchDialog(
 @Composable
 fun BookChapterPicker(
     books: List<Book>,
+    currentBook: Int,
+    currentChapter: Int,
+    splitEnabled: Boolean,
+    primaryId: String,
+    secondaryId: String,
     onDismiss: () -> Unit,
     onSelect: (book: Int, chapter: Int) -> Unit
 ) {
-    var pickedBook by remember { mutableStateOf<Int?>(null) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    // Opens straight into the CURRENT book's chapter grid — jumping from
+    // Psalm 130 to Psalm 20 must not require re-finding Psalms in the book
+    // list first. The back arrow reaches the full list.
+    var pickedBook by remember { mutableStateOf<Int?>(currentBook) }
+    // null = navigating; 0 = choosing primary; 1 = choosing secondary.
+    var pickTranslation by remember { mutableStateOf<Int?>(null) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -1520,52 +1538,127 @@ fun BookChapterPicker(
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 4.dp
         ) {
-            val picked = pickedBook
-            if (picked == null) {
-                LazyColumn(Modifier.padding(vertical = 8.dp)) {
-                    itemsIndexed(books) { i, b ->
-                        if (i == 0 || i == 39 || i == 66) {
-                            Text(
-                                stringResource(
-                                    when (i) {
-                                        0 -> R.string.old_testament
-                                        39 -> R.string.new_testament
-                                        else -> R.string.apocrypha
-                                    }
-                                ),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
-                            )
+            // A translation switch can shrink the canon (66 vs 83 books) or
+            // land on an empty book — fall back to the book list rather than
+            // indexing out of bounds.
+            val picked = pickedBook?.takeIf { it < books.size && books[it].chapters.isNotEmpty() }
+            val choosing = pickTranslation
+            if (choosing != null) {
+                Column(Modifier.padding(vertical = 8.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { pickTranslation = null }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cancel))
                         }
-                        TextButton(
-                            onClick = { pickedBook = i },
-                            enabled = b.chapters.isNotEmpty(),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                b.name,
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                                textAlign = TextAlign.Start
-                            )
+                        Text(
+                            stringResource(
+                                if (choosing == 0) R.string.primary_translation
+                                else R.string.secondary_translation
+                            ),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    LazyColumn {
+                        item {
+                            Column(Modifier.padding(horizontal = 16.dp)) {
+                                TranslationPicker(
+                                    selectedIds = setOf(if (choosing == 0) primaryId else secondaryId),
+                                    multiSelect = false
+                                ) { id ->
+                                    scope.launch {
+                                        if (choosing == 0) Store.setPrimary(context, id)
+                                        else Store.setSecondary(context, id)
+                                    }
+                                    pickTranslation = null
+                                }
+                            }
                         }
                     }
                 }
-            } else {
-                Column(Modifier.padding(16.dp)) {
-                    Text(
-                        books[picked].name,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(bottom = 12.dp)
+            } else Column(Modifier.padding(vertical = 8.dp)) {
+                // Current translation(s) — switchable without leaving the
+                // navigation dialog.
+                Row(
+                    Modifier.padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    AssistChip(
+                        onClick = { pickTranslation = 0 },
+                        label = { Text(TranslationGroups.shortTag(BibleRepo.translation(primaryId))) }
                     )
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(5),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items((1..books[picked].chapters.size).toList()) { ch ->
-                            TextButton(onClick = { onSelect(picked, ch - 1) }) {
-                                Text("$ch")
+                    if (splitEnabled) AssistChip(
+                        onClick = { pickTranslation = 1 },
+                        label = { Text("+ " + TranslationGroups.shortTag(BibleRepo.translation(secondaryId))) }
+                    )
+                }
+                if (picked == null) {
+                    // Land the list on the current book, not Genesis.
+                    val listState = rememberLazyListState(
+                        initialFirstVisibleItemIndex = maxOf(0, currentBook - 2)
+                    )
+                    LazyColumn(state = listState) {
+                        itemsIndexed(books) { i, b ->
+                            if (i == 0 || i == 39 || i == 66) {
+                                Text(
+                                    stringResource(
+                                        when (i) {
+                                            0 -> R.string.old_testament
+                                            39 -> R.string.new_testament
+                                            else -> R.string.apocrypha
+                                        }
+                                    ),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                                )
+                            }
+                            TextButton(
+                                onClick = { pickedBook = i },
+                                enabled = b.chapters.isNotEmpty(),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    b.name,
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                                    textAlign = TextAlign.Start,
+                                    color = if (i == currentBook) MaterialTheme.colorScheme.primary
+                                    else Color.Unspecified,
+                                    fontWeight = if (i == currentBook) FontWeight.Bold else null
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            IconButton(onClick = { pickedBook = null }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cancel))
+                            }
+                            Text(
+                                books[picked].name,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable { pickedBook = null }
+                            )
+                        }
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(5),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items((1..books[picked].chapters.size).toList()) { ch ->
+                                val isCurrent = picked == currentBook && ch - 1 == currentChapter
+                                TextButton(onClick = { onSelect(picked, ch - 1) }) {
+                                    Text(
+                                        "$ch",
+                                        color = if (isCurrent) MaterialTheme.colorScheme.primary
+                                        else Color.Unspecified,
+                                        fontWeight = if (isCurrent) FontWeight.Bold else null
+                                    )
+                                }
                             }
                         }
                     }

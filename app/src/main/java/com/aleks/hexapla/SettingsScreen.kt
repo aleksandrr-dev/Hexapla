@@ -138,13 +138,10 @@ fun SettingsScreen(settings: AppSettings) {
         SectionHeader(stringResource(R.string.settings_reading))
 
         Text(stringResource(R.string.primary_translation), style = MaterialTheme.typography.titleSmall)
-        Column {
-            BibleRepo.ordered().forEach { t ->
-                ChoiceChip(t.label, settings.primaryId == t.id) {
-                    scope.launch { Store.setPrimary(context, t.id) }
-                }
-            }
-        }
+        TranslationPicker(
+            selectedIds = setOf(settings.primaryId),
+            multiSelect = false
+        ) { id -> scope.launch { Store.setPrimary(context, id) } }
 
         Spacer(Modifier.height(8.dp))
         SectionHeader(stringResource(R.string.compare))
@@ -153,14 +150,13 @@ fun SettingsScreen(settings: AppSettings) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Column {
-            val enabled = settings.compareIds
-            BibleRepo.ordered().forEach { t ->
-                ChoiceChip(t.label, enabled.isEmpty() || t.id in enabled) {
-                    scope.launch { Store.toggleCompareId(context, t.id) }
-                }
-            }
-        }
+        // Store convention: an empty compare set means "all enabled".
+        TranslationPicker(
+            selectedIds = settings.compareIds.ifEmpty {
+                BibleRepo.translations.map { it.id }.toSet()
+            },
+            multiSelect = true
+        ) { id -> scope.launch { Store.toggleCompareId(context, id) } }
 
         Spacer(Modifier.height(8.dp))
         SwitchRow(stringResource(R.string.keep_screen_on), settings.keepScreenOn) {
@@ -277,13 +273,10 @@ fun SettingsScreen(settings: AppSettings) {
 
         if (settings.splitEnabled) {
             Text(stringResource(R.string.secondary_translation), style = MaterialTheme.typography.titleSmall)
-            Column {
-                BibleRepo.ordered().forEach { t ->
-                    ChoiceChip(t.label, settings.secondaryId == t.id) {
-                        scope.launch { Store.setSecondary(context, t.id) }
-                    }
-                }
-            }
+            TranslationPicker(
+                selectedIds = setOf(settings.secondaryId),
+                multiSelect = false
+            ) { id -> scope.launch { Store.setSecondary(context, id) } }
             Spacer(Modifier.height(8.dp))
             Text(stringResource(R.string.split_orientation), style = MaterialTheme.typography.titleSmall)
             Row(Modifier.padding(vertical = 4.dp)) {

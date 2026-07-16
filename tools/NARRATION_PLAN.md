@@ -50,6 +50,81 @@ ends must not be re-walked. What was actually decided:
   and disclosing the AI-generated voice is **contractual** (Enterprise AI Code
   of Conduct), though no attribution is required.
 
+## Language roadmap for the remaining translations (drafted 2026-07-16)
+
+TIER 1 — engines already in the pipeline support these natively; each is a
+LANG_CONFIG entry + a header-numbers check + an owner ear-test of ONE chapter
+before committing days of GPU:
+  - de_luther    -> CosyVoice3 (German is in its 9) — owner's voice,
+                    cross-lingual. NOTE Kokoro has NO German.
+  - es_rv        -> CosyVoice3 (Spanish) or Kokoro es (faster; VERIFY voice)
+  - fr_martin    -> CosyVoice3 (French) or Kokoro fr
+  - it_diodati   -> CosyVoice3 (Italian) or Kokoro it
+  - pt_almeida   -> Kokoro pt-BR (Apache; VERIFY voice quality) —
+                    Portuguese is NOT in CosyVoice3's list.
+  - zh_cuv_s/t   -> CosyVoice3 native (its home language). NARRATE ONCE:
+                    both scripts are the same text — one audio set can serve
+                    both translations (halves the cost).
+  - en gnv/tyn/wyc -> Kokoro + archaic_english.py normalizer (already
+                    planned; wyc reads as modernized pronunciation).
+
+TIER 2 — RESOLVED 2026-07-16 (Opus agent, raw-fetched license quotes):
+  ★ **Chatterbox Multilingual (ResembleAI/chatterbox) — MIT, code AND
+    weights VERIFIED** — a second workhorse engine alongside CosyVoice3.
+    Zero-shot cloning from a ~10s reference clip, NO transcript needed
+    (easier than CosyVoice). 22 languages incl. **sv, da, el, he, no, hi,
+    ar, fi, nl, pl, tr** — none of which CosyVoice3 has. 500M params, fits
+    the 8 GB GPU. Own training data (no F5/Emilia NC lineage). NOTE: output
+    carries Resemble's inaudible Perth provenance watermark — no license
+    restriction, but disclose alongside the AI-voice notice.
+    => sv_karlxii AND da_1819 can be narrated in a NATIVE FRIEND'S VOICE;
+    grc_byz via Chatterbox Greek (Reuchlinian = living church practice);
+    he_wlc MAY unblock via Chatterbox Hebrew (modern Israeli pronunciation
+    of pointed text — ear-test question, was Tier 4). Per-language ear
+    tests required before committing GPU days; quality vs CosyVoice unknown.
+  - Tamil -> **AI4Bharat IndicF5**: weights labelled MIT (VERIFIED), Tamil
+    covered, same ref+transcript recipe as CosyVoice, ~330M, fits the GPU.
+    ⚠ ONE GATE: the IndicF5 paper says it FINE-TUNED "the 100K-hour
+    English-pretrained F5 checkpoint" — plausibly the CC-BY-NC Emilia one,
+    which would put the MIT label in tension with an NC upstream.
+    UNVERIFIED either way; ask AI4Bharat before shipping (draft at
+    store-assets/indicf5_question_draft.txt). Repo is gated (click-through).
+    Fallback (no cloning): Indic Parler-TTS, Apache-2.0, described voice.
+  - Piper sv_SE-nst confirmed **CC0** (MODEL_CARD raw) — stock-voice
+    fallback only; Piper cannot clone.
+  BLOCKED, for the ledger: MMS Tamil CC-BY-NC; EkhoCollective f5-tts-swedish
+  CC-BY-NC (fine-tuned the Emilia base — the exact F5 trap); XTTS CPML;
+  community swedish-kokoro (trained on Chatterbox output, non-cloning).
+
+TIER 3 — plausible one-test hacks, ear-gated:
+  - cu_elizabeth -> CosyVoice3 reading civil-script Slavonic AS RUSSIAN.
+                    Risks: akanye (no окающее чтение), guessed stress on
+                    archaic forms (внегда́, до́ндеже). Owner's ear on one
+                    psalm decides; ~10-min test.
+  - la_vulgata   -> CosyVoice3 Italian voice reading Latin: ecclesiastical
+                    pronunciation IS Italianate, so this may just work.
+  - grc_byz      -> modern-Greek TTS (Piper el_GR, VERIFY license) reading
+                    Byzantine text = Reuchlinian pronunciation = how the
+                    Greek church reads it today. Legitimate, ear-gated.
+  - ja_meiji     -> CosyVoice3/Kokoro have Japanese BUT the 明治元訳's
+                    archaic kanji/kana needs a reading-conversion step
+                    (CosyVoice docs: Japanese must be kana-ized). A real
+                    preprocessing project — defer.
+
+TIER 4 — no clean-licensed engine today (documented, re-check yearly):
+  - he_wlc, sa_nt -> Meta MMS covers both but is CC-BY-NC (blocked).
+  - ta_irv        -> research AI4Bharat Indic-TTS licensing (possibly MIT;
+                    UNVERIFIED) — the one Tier-4 entry with a plausible path.
+
+SEQUENCING (one 8 GB GPU; CosyVoice ~RTF 2 => ~9-10 days per full Bible;
+Kokoro is much faster and CPU-heavy rather than GPU-bound):
+  now: syn (~8d left) + wbt (parallel). then gnv/tyn/wyc (Kokoro).
+  Mission-value order for the GPU after that: zh (one render, two
+  translations, largest reach), es, de, fr/it/pt, then the Tier-3 tests.
+  Full queue is MONTHS of machine time — if more than 2-3 languages get
+  green-lit, evaluate a cloud GPU spot instance (~tens of dollars per
+  Bible) before serializing a season of laptop time.
+
 ## Engines (verify before building — field moves fast)
 
 - ENGLISH: Kokoro-82M (Apache 2.0). Quality reference point.

@@ -1,0 +1,30 @@
+To: AI4Bharat (as a Discussion on huggingface.co/ai4bharat/IndicF5, or the
+    contact address on ai4bharat.iitm.ac.in)
+Subject: IndicF5 license provenance — base checkpoint question
+
+Hello, and thank you for IndicF5 — it is the only permissively-licensed
+voice-cloning TTS we have found that covers Tamil.
+
+I develop Hexapla, a free offline Bible app (no ads, no analytics, nothing
+paid; https://aleksandrr-dev.github.io/Hexapla/). We would like to use
+IndicF5 to generate Tamil narration (IRV 2019, CC BY-SA text) in a native
+speaker's voice, with the generated audio redistributed inside the app, and
+AI4Bharat credited in the app's text/audio sources section.
+
+The model card lists the weights as MIT, which is wonderful. One question
+before we rely on it: the "Phir Hera Fairy" paper (arXiv 2505.20693, §2.2)
+describes IN-F5 as fine-tuned from "the 100K-hour English-pretrained F5
+checkpoint". The official SWivid/F5-TTS checkpoint of that description is
+CC-BY-NC (due to the Emilia dataset).
+
+Could you clarify: was IndicF5 initialized from that CC-BY-NC checkpoint, or
+from an in-house pretrain? And in either case, does the MIT license on your
+released weights apply cleanly to redistribution of generated audio in a
+free (but store-distributed) app?
+
+Thank you for the extraordinary work AI4Bharat does for Indian-language
+technology.
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

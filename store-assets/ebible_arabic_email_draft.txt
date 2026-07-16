@@ -1,0 +1,28 @@
+To: editors@eBible.org (Michael Johnson — the address given on eBible.org's
+    contact page; confirm before sending)
+Subject: arb-vd (Smith & Van Dyck 1865) — provenance of the vocalization?
+
+Hello, and thank you for eBible.org — Hexapla, my free offline parallel
+Bible app (https://aleksandrr-dev.github.io/Hexapla/; no ads, no
+analytics, nothing paid), already ships your Tamil IRV and Dutch 1917
+texts, and I am now integrating your arb-vd Smith & Van Dyck.
+
+One due-diligence question. Your copyright page marks arb-vd as Public
+Domain, and I rely on that. However, CrossWire's AraSVD SWORD module of
+the same translation is marked "Copyrighted; Permission granted to
+distribute non-commercially in SWORD format", reportedly because its
+tashkeel (vocalization) layer came from Arabic Bible Outreach Ministry
+under non-commercial terms. Your arb-vd text is also fully vocalized.
+
+Could you confirm the provenance of the vocalization in arb-vd — is it
+independent of the ABOM pointing (e.g. typed from a print edition), or
+otherwise cleared for the Public Domain designation? I ask only so my
+app's licensing records are complete; the 1865 text itself is of course
+PD by age.
+
+Hexapla is free in every sense and will stay so. Thank you for the
+extraordinary service eBible.org provides.
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

@@ -44,6 +44,7 @@ object BibleRepo {
         Translation("wlc", "bibles/he_wlc.json", "עברית — Westminster Leningrad Codex (HE)", Locale("he")),
         Translation("san", "bibles/sa_nt.json", "संस्कृतम् — Sanskrit NT, 1851 (SA)", Locale("sa")),
         Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale("ta")),
+        Translation("vd", "bibles/ar_vandyck.json", "الكتاب المقدس — Van Dyck, 1865 (AR)", Locale("ar")),
         Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la"))
     )
 
@@ -67,6 +68,7 @@ object BibleRepo {
         "sv" -> "kxii"
         "da", "nb", "nn", "no" -> "da19"  // Norway's classical scripture was the Danish Bible
         "nl" -> "svv"
+        "ar" -> "vd"
         "ja" -> "mei"
         "ta" -> "ta"
         "la" -> "vul"

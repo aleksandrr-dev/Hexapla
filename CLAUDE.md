@@ -148,6 +148,33 @@ maximize reach, keep everything free, nothing locked, collect no data.
   when a clean source lands: per-locale lexicon file keyed by the
   same H/G ids, chosen by UI locale, English fallback; same model
   later for DE/ES/PT.
+- **Candidate research pipeline (2026-07-16)**: tools/TRANSLATION_RESEARCH.md
+  is a self-contained brief (litmus table + license gates + report format)
+  for agent research passes; verdict reports land in
+  C:/Projects/Hexapla-releases/research/. Ukrainian Kulish excluded by owner.
+  Dutch — INTEGRATED IN TREE 2026-07-16 for the next release ("svv",
+  nl_staten.json, 23rd translation / 18th language): Statenvertaling
+  1637 in the 1888 Jongbloed spelling, from eBible.org nld_usfm.zip
+  ("De Heilige Schrift 1917", explicitly PD). LITMUS 7/7 verified on the
+  converted asset (God is geopenbaard in het vlees; Comma; Acts 8:37;
+  Rom 16:24; Jozef at Lk 2:33; Gemeente Gods; Die in den hemel is).
+  Converter tools/convert_statenvertaling.py: perfect KJV grid — 31,102
+  verses exactly, zero empty/extra slots, NO versemap entries needed
+  (identity fallback); 1,397 embedded "(N:N)" native-reference markers
+  stripped under a census-match assertion (all other digit-parens are
+  real parenthesized passages — do NOT widen that regex). Book names are
+  the source's own Dutch (incl. "Richtere" for Judges — edition-faithful).
+  sources_text ×13 updated; defaultPrimaryId nl->svv. ⚠ APOCRYPHA HELD
+  BACK deliberately: the 1637 included them (with warning preface) but
+  the only machine-readable carriers are CrossWire DutSVV (proven psalm
+  title-squeeze verse-merging — the sv_karlxii defect class) and
+  Isidore-Guild's CC0 module (its own README: apocrypha "not ready for
+  use"). Follow-up path documented in the research report §6. The
+  Isidore-Guild CC0 base module (Strong's-tagged, kanttekeningen) is a
+  future Dutch-interlinear lead — needs an encoding audit first.
+  Arabic Van Dyck research pass running as of 2026-07-16; remaining
+  candidates (Károli, Gdańska, Kralická, Biblia 1776, Vamvas, YLT,
+  Morgan, Tsarigrad, Karadžić) queued — owner approved researching all.
 - **Translation watch list** (all deity-verse-gated, pipeline ready):
   Matthew Bible 1537 (John Rogers, "Thomas Matthew" — Tyndale's NT +
   Pentateuch + prison OT (Josh–2 Chr, first printing) + Coverdale fill;

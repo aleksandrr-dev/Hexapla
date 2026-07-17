@@ -298,10 +298,22 @@ maximize reach, keep everything free, nothing locked, collect no data.
        Lk 23:56 split, Jn 1:38 split, Job = Luther arrangement except
        ch41 identity, plus the usual Exod/Prov/Num/Sam/Kgs seams.
        defaultPrimaryId hu->kar.
-    5. Kralická (cs) 6/7 (Lk 2:33 "Otec", Luther-class) — real
-       continental versification: 91 divergent chapters, Job 39-41 +
-       Dan 3-4 reflows; eBible ces1613 is the source (PD, PGP-signed).
-       Danish-1819-scale; the heaviest approved item.
+    5. ~~Kralická (cs)~~ INTEGRATED IN TREE 2026-07-17 ("bkr",
+       cs_kralicka.json, 30th translation / 25th language, litmus 6/7 —
+       Lk 2:33 «Otec», the accepted class): eBible ces1613 (PD,
+       PGP-signed), the cleanest USFM in the project (7 marker types).
+       tools/convert_kralicka.py keeps native numbering; 62 title-
+       psalms mechanical; 29 curated chapters ALL text-verified in
+       build_versemap.py — notable: Exod 2:11+12 merge (slaying clause
+       verified in the tail), Job keeps the lion verses IN ch 38
+       (KJV 40:1-5 = bkr 39:31-35, unlike Luther/Serbian), Eccl
+       straddles KJV 8:1 across bkr 7:30+8:1, Haggai 1:15=2:1 Hebrew
+       seam, John 1:38 split (same as Károli). Book names from toc2
+       («1 Mojžíšova», «Žalmy»). defaultPrimaryId cs+sk->bkr (the
+       Kralická was historically the Slovak Protestant Bible).
+       QUEUE (owner 2026-07-17): next Latvian 1689 (the CC BY-SA
+       original-orthography source), then Western Armenian NT 1853;
+       Georgian proceeds when TITUS permission arrives (draft ready).
   BLOCKED: Tsarigrad Bulgarian 1871 — litmus 7/7 but the ONLY true-1871
   digitization (CrossWire BulCarigradNT, NT-only) is "Permission granted
   to CrossWire" by name; permission email drafted (BG+EN) at

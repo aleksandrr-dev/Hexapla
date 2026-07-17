@@ -222,19 +222,45 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Research verdicts (reports in Hexapla-releases/research/), the
   dedicated-session integration QUEUE — all textually approved by the
   owner's delegation 2026-07-16, roughly by effort:
-    1. Biblia 1776 (fi) SHIP-CANDIDATE 7/7 — near-clean grid (3 Jn +
-       Rev 12 seams only); MUST patch 1 Sam 23:29 (literal "[]" empty
-       in the module, both mirrors) from a second source + strip
-       "(H N:N)" native apparatus in Ps/Job 38-41/1 Sam 24; exclude its
-       broken apocrypha (5 of 17 books empty). finbible.fi is OFFLINE
-       (OVH placeholder) — CrossWire FinBiblia is the source.
-    2. Gdańska (pl) SHIP-CANDIDATE 6/7 (Lk 2:33 "his father" =
-       Luther-class, owner-approved by delegation) — gratis-bible
-       poland.xml (OSIS, PD, 95% KJV-pre-aligned with inline markers)
-       BUT its 1-2 Chronicles is structurally BROKEN — patch those two
-       books from CrossWire PolGdanska (convert_vulgate curated-override
-       pattern). ⚠ UBG (modernized Gdańska) is BLOCKED twice over:
-       eBible says CC BY-ND, CrossWire says NC — never use it.
+    1. ~~Biblia 1776 (fi)~~ INTEGRATED IN TREE 2026-07-16 ("fi76",
+       fi_biblia1776.json, 26th translation / 21st language, litmus 7/7
+       on the asset): scrollmapper FinBiblia (= CrossWire compile, PD);
+       tools/convert_biblia1776.py strips the 229 "(H n:m)" apparatus
+       fragments (census-asserted, exactly 1 Sam 22/Job 91/Ps 116) and
+       BACKFILLS the module's dropped 1 Sam 23:29 with the same
+       digitization's own text recovered from finbible.fi via the
+       Wayback Machine (kooste page, snapshot 20210226133437 — «Ja David
+       meni sieltä ylös ja asui EnGedin linnoissa», asserted against the
+       "[]" placeholder so an upstream fix can't be clobbered). Finnish
+       book names curated in the converter. Apocrypha excluded (5 of 17
+       books empty in the module). versemap: 3 Jn + Rev 12:18 tails.
+       defaultPrimaryId fi->fi76.
+    2. ~~Gdańska (pl)~~ INTEGRATED IN TREE 2026-07-16 ("gda",
+       pl_gdanska.json, 27th translation / 22nd language, litmus 6/7 —
+       Lk 2:33 "ojciec", the accepted Luther-class reading):
+       tools/convert_gdanska.py, the most forensic converter yet. poland
+       .xml (OSIS, PD) primary + CrossWire module (PD) for repairs, both
+       the same 1881-lineage wording. Handled: the div after 2 Kgs is a
+       2Chr/1Chr per-chapter UNION (2 Chr shadows 1 Chr at shared
+       coordinates) — 2 Chr taken from the next (complete) div, 1 Chr
+       assembled from the trailing fragment (chs 1-15; it cuts MID-VERSE
+       at 16:5) + module (ch 16+), cross-verified against 114 surviving
+       poland overflow witnesses at ratio ≥0.9 plus byte-equal boundary
+       verses; the module's OWN 1 Chr 7 squeeze defect (empty 7:40,
+       shifted content) dodged by taking ch 7 from the fragment. FOUR
+       proven content DROPS repaired by whole-chapter module overrides
+       (Deut 5 [KJV v22 missing], Ps 105 [v15 "Touch not mine anointed"],
+       Ps 107 [KJV 28-29 missing + 30/31 swapped], Ezek 17 [v1 missing])
+       — drops distinguished from native merges by module-alignment
+       ratio (1.0 = native merge -> versemap; low = drop -> repair).
+       Ps 42's gapped verse ids dense-repacked. 1,335 inline "N.N"
+       native markers stripped (census); 8 stray "&gt;" entities
+       dropped. 14 native-divergent chapters curated in versemap
+       (Ps 51/52/54/60 superscriptions as own verse 1, like Synodal;
+       6 text-verified merges; Lev 24/1 Sam 20 splits; Num 29/30 seam).
+       Gdańska-tradition book names (Żydów, Jakób, 1 Mojżeszowa).
+       defaultPrimaryId pl->gda. ⚠ UBG (modernized Gdańska) BLOCKED
+       twice over: eBible says CC BY-ND, CrossWire says NC — never use.
     3. Karadžić Serbian 6/7 (Acts 20:28 "Lord and God" conflate = the
        reading ALREADY SHIPPED in cu/syn) — choice: eBible srp1865
        (Latin ekavian, Redistributable=True) vs srp1868 (Cyrillic,

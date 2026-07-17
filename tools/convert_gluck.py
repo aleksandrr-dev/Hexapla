@@ -123,9 +123,18 @@ def join_wrap(parts):
     #  * 215 word{word} = the transcription's TRUE{PRINTED} correction
     #    notation inside verse text — keep the corrected form, drop the
     #    braced print reading;
-    #  * 462 "*" + one "|" = print footnote/reference anchors — drop.
+    #  * 462 "*" + one "|" = print footnote/reference anchors — drop;
+    #  * 88,802 "/" virgules — the 17th-century comma, preserved
+    #    diplomatically by SENIE. Every other period asset in the app
+    #    (Karl XII, Luther 1545, Geneva, Wycliffe, Biblia 1776) ships
+    #    its digitization's modernized commas, so the virgule becomes
+    #    a comma here too (owner review of Mt 1, 2026-07-17). The
+    #    reverential capitals (JESUS, KUNGS) stay — the de_luther
+    #    JEsus/GOtt precedent.
     out = re.sub(r"\{[^}]*\}", "", out)
     out = out.replace("*", " ").replace("|", " ")
+    out = re.sub(r"\s*/\s*", ", ", out)
+    out = re.sub(r",\s+([.:;!?,])", r"\1", out)
     return re.sub(r"\s+", " ", out).strip()
 
 

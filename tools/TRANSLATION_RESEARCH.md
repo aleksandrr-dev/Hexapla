@@ -104,9 +104,42 @@ nearest template); open questions. Flag anything UNVERIFIED explicitly.
     Luther lineage; litmus decides. CrossWire SrKDIjekav (check script:
     Cyrillic vs Latin, ijekavian).
 
-Deferred idea (owner-decision scale, not a research pass): Syriac Peshitta
-and classical Armenian via the Vulgate precedent — ancient-version canon
-gaps (Peshitta lacks Rev, 2 Pet, 2-3 Jn, Jude) make these bigger calls.
+Second wave (added 2026-07-17, owner-requested):
+
+13. **Latvian — Glück Bible 1689** (Ernst Glück; the Latvian classic,
+    TR-era). Leads: CrossWire Latvian modules (check names/conf); eBible
+    lav entries (which edition? the 1965 revision is a different text);
+    gratis-bible lv directory (a prior listing showed 'lv' EXISTS —
+    check its edition + <rights>); scrollmapper. Trap: modern "1965
+    revised" Glück is a later reworking — identify editions precisely.
+14. **Estonian — Piibel 1739** (Anton Thor Helle; the Estonian classic,
+    TR-era). Leads: eBible est entries; CrossWire; the Estonian Bible
+    Society's digitizations of the 1739 (piibel.net hosts multiple
+    editions — find the license for their transcriptions); scrollmapper.
+15. **Lithuanian — the 1735 Bible** (Kvedlinburg/Quandt edition; also
+    Chylinski 1660s partial as background). Primarily a SOURCE HUNT —
+    machine-readable old Lithuanian scripture may not exist. Also assess
+    the 1897-1902 Šventasis Raštas lineage if encountered. A BLOCKED
+    verdict with re-check leads is a valid outcome.
+16. **Armenian — ancient version** (5th c.; standard edition = Zohrab
+    1805, classical Armenian/Grabar). Rides the VULGATE PRECEDENT
+    (predates the TR/CT split — Jerome reasoning applies), so the
+    litmus is informational, not pass/fail; note readings anyway.
+    Leads: digilib.aua.am, arak29, TITUS (titus.uni-frankfurt.de —
+    scholarly digitizations, CHECK THEIR LICENSE TERMS, often
+    restrictive), CrossWire, eBible hy entries (which are likely the
+    MODERN Ararat 1896 Eastern / 1853 Western translations — evaluate
+    those separately: 19th-c. missionary-era, litmus applies).
+    Canon: Armenian tradition includes deuterocanon — report the shape.
+17. **Georgian — ancient version** (5th c.; Mtskheta/Giorgi recensions;
+    also the 1743 Moscow/Bakar Bible). Same Vulgate-precedent framing
+    as Armenian. Leads: TITUS Georgian corpus (license!), CrossWire,
+    eBible kat/geo entries (the 1989 Patriarchate translation is © —
+    do not confuse). Likely hard; honest BLOCKED is fine.
+
+Deferred idea (owner-decision scale, not a research pass): Syriac
+Peshitta via the Vulgate precedent — its canon gaps (no Rev, 2 Pet,
+2-3 Jn, Jude) make it a bigger call.
 
 ## What done looks like for the whole effort
 

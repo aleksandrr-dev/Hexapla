@@ -1591,6 +1591,20 @@ fun BookChapterPicker(
                     )
                 }
                 if (picked == null) {
+                    // Back to the current book's chapter grid — without
+                    // this the list view had no way back (owner report).
+                    if (currentBook < books.size && books[currentBook].chapters.isNotEmpty()) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = { pickedBook = currentBook }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cancel))
+                            }
+                            Text(
+                                books[currentBook].name,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                     // Land the list on the current book, not Genesis.
                     val listState = rememberLazyListState(
                         initialFirstVisibleItemIndex = maxOf(0, currentBook - 2)

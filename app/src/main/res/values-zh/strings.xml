@@ -135,7 +135,7 @@
     <string name="xrefs">串珠</string>
     <string name="remove_bookmark">删除书签</string>
     <string name="sources_title">文本来源</string>
-    <string name="sources_text">所有圣经文本均为公有领域，以下除外： Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. 斯特朗汇编（Strong\'s Concordance，1890/1894）词典 © Open Scriptures，CC-BY-SA。 希伯来语词法 © Open Scriptures（CC-BY）。 串珠 © openbible.info，CC-BY。 Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). 背景音乐：Kevin MacLeod（incompetech.com），CC BY 4.0。</string>
+    <string name="sources_text">所有圣经文本均为公有领域，以下除外： Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Glück 1685/1689 Latvian text © University of Latvia, SENIE/CLARIN-LV corpus, CC BY-SA 4.0. 斯特朗汇编（Strong\'s Concordance，1890/1894）词典 © Open Scriptures，CC-BY-SA。 希伯来语词法 © Open Scriptures（CC-BY）。 串珠 © openbible.info，CC-BY。 Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). 背景音乐：Kevin MacLeod（incompetech.com），CC BY 4.0。</string>
     <string name="voice_title">朗读语音</string>
     <string name="voice_default">系统默认</string>
     <string name="voice_note">可用语音取决于设备上安装的语音引擎（如 Google 语音服务、三星 TTS）。点按语音即可试听。</string>

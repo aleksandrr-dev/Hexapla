@@ -32,6 +32,7 @@ object BibleRepo {
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
         Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703 (SV)", Locale("sv")),
         Translation("fi76", "bibles/fi_biblia1776.json", "Biblia — Vanha kirkkoraamattu, 1776 (FI)", Locale("fi")),
+        Translation("glk", "bibles/lv_gluck.json", "Glika Bībele, 1685/1689 (LV)", Locale("lv")),
         Translation("gda", "bibles/pl_gdanska.json", "Biblia Gdańska, 1632 (PL)", Locale("pl")),
         Translation("srb", "bibles/sr_karadzic.json", "Sveto pismo — Karadžić/Daničić, 1847/1865 (SR)", Locale("sr")),
         Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale("da")),
@@ -84,6 +85,7 @@ object BibleRepo {
         // Kralická was historically the Slovak Protestant Bible too.
         "cs", "sk" -> "bkr"
         "hy" -> "arm"
+        "lv" -> "glk"
         // Modern Greek reads Vamvas; grc stays the study/original text.
         "el" -> "vam"
         "ja" -> "mei"

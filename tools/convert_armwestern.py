@@ -1,33 +1,45 @@
 # -*- coding: utf-8 -*-
-"""⚠ WORK IN PROGRESS — NOT YET PRODUCING AN ASSET (2026-07-17).
-BLOCKED ON: the module's "Versification=KJV" is a FORCE-FIT hiding 10
-squeeze sites (the DutSVV defect class; the research pass verified the
-scheme's structure, not content alignment). Scan results (scratchpad
-arm_empty.py): empty slots at Mt 17:27, Mk 9:50, Acts 7:60, Acts 14:28,
-Acts 19:41, 2 Cor 2:1, 2 Cor 6:1, 2 Cor 13:14, 1 Thess 4:18, Heb 13:25 —
-each chapter's TAIL content is shifted (e.g. the fish-coin verse KJV
-Mt 17:27 sits at label 26), i.e. the 1853's native numbering was
-squeezed into KJV slots with a trailing empty. RESUME PLAN: for each of
-the 10 chapters, locate the true native merge/seam by reading the
-Armenian against the KJV, restore NATIVE numbering (dense, no empties),
-and curate versemap runs — the srb/kar/bkr discipline. ~10 sites, one
-careful session. No asset shipped from this converter yet.
-
-CrossWire ArmWestern SWORD module (Western Armenian NT, 1853) -> app asset.
+"""CrossWire ArmWestern SWORD module (Western Armenian NT, 1853) -> app asset.
 
 Source: https://www.crosswire.org/ftpmirror/pub/sword/packages/rawzip/
-ArmWestern.zip — .conf DistributionLicense=Public Domain (quoted in the
-research report). The 1853 Constantinople Western Armenian New
-Testament; litmus 7/7 with zero deviations, and zero versification
-mismatches against the KJV grid across all 260 NT chapters (both
-verified in the research pass and re-asserted here). Research report:
-Hexapla-releases/research/armenian_report.md.
+ArmWestern.zip — .conf DistributionLicense=Public Domain. Litmus 7/7
+with zero deviations (research report:
+Hexapla-releases/research/armenian_report.md; re-verified on the
+converted asset). NT-only (grc/sa_nt precedent): OT and apocrypha slots
+empty. Read via pysword (MIT, dev-only dependency).
 
-NT-only (grc/sa_nt precedent): OT slots 0-38 stay empty with English
-names, apocrypha slots 66-82 empty. NT book names in classical Armenian
-forms appropriate to the 1853 edition.
+⚠ The module's "Versification=KJV" is a FORCE-FIT. The full seam
+analysis (2026-07-17 session; scripts arm_*.py in the session
+scratchpad) found and resolved:
 
-Read via pysword (MIT, dev-only dependency — not bundled with the app).
+  * NATIVE MERGES (the 1853's own numbering, kept + versemap-curated):
+    Mt 17:14=KJV 14+15 (native ch = 26); Acts 7:55=KJV 55+56 and
+    7:59=KJV 60+8:1a (classical Armenian chapter seam; native ch = 59);
+    Acts 14:6=KJV 6+7; Acts 19:40=KJV 40+41; 2 Cor 13:12=KJV 12+13;
+    1 Thess 4:11=KJV 11+12; Heb 13:24=KJV 24+25; Lk 4:44=KJV 43+44
+    (native also SPLITS KJV 4:38 across 38/39 — count-preserving, the
+    module carries it faithfully); Jn 6:71=KJV 70+71 (native splits
+    KJV 6:51 across 51/52); Jn 10:42=KJV 41b+42.
+    The trailing EMPTY slots the force-fit left (Mt 17:27, Mk 9:50,
+    Acts 7:60/14:28/19:41, 2 Cor 13:14, 1 Th 4:18, Heb 13:25) are
+    dropped — native chapters are shorter.
+  * ONE MODULE SQUEEZE restored by splitting: native Mk 8 has 39 verses
+    (its v39 = KJV 9:1, the classical chapter boundary) but the KJV
+    scheme caps Mk 8 at 38, so the compile fused 38+39. Split here at
+    the unambiguous sentence boundary («...հրեշտակներուն հետ»: ||
+    Եւ ըսաւ անոնց...), verified against KJV 8:38/9:1.
+  * FIVE self-duplicated verses (module data bug — text repeated
+    verbatim): Acts 7:59, 14:6, 19:40, 1 Th 4:11, Heb 13:24. Deduped
+    under an exact-half assertion.
+  * TWO verses ABSENT from the module entirely: 2 Cor 2:1 and 6:1
+    (whole-NT phrase sweep confirmed). PATCHED with the 1853 edition's
+    own wording (PD by age), transcribed from the WARMB digitization of
+    the 1853 (bible.com/versions/1987; an archive.org scan of the print
+    exists: TheHolyBibleInArmenianWestern1853NT). Content matches KJV
+    exactly. NOTE: the patches carry the 1853's classic register
+    («Վասն զի») while the module's language reads more modernized —
+    an open observation about the module's true edition, recorded here
+    and in CLAUDE.md for future review.
 
 Usage: python convert_armwestern.py <ArmWestern.zip> <dst.json>
 """
@@ -67,9 +79,25 @@ APOC_NAMES = [
     "Prayer of Azariah", "Susanna", "Bel and the Dragon", "Laodiceans",
 ]
 
+# module book name -> (canon index, expected KJV-slot squeeze empties)
+DEDUPE = {("Acts", 7, 59), ("Acts", 14, 6), ("Acts", 19, 40),
+          ("I Thessalonians", 4, 11), ("Hebrews", 13, 24)}
+DROP_EMPTY_TAIL = {("Matthew", 17), ("Mark", 9), ("Acts", 7), ("Acts", 14),
+                   ("Acts", 19), ("II Corinthians", 13),
+                   ("I Thessalonians", 4), ("Hebrews", 13)}
+# 2 Cor 2:1 and 6:1 — absent from the module; the 1853's own wording.
+PATCHES = {
+    ("II Corinthians", 2, 1):
+        "Սակայն ես ինծմէ որոշեցի, որ նորէն տրտմութիւնով չգամ ձեզի։",
+    ("II Corinthians", 6, 1):
+        "Ուստի մենք ալ գործակից ըլլալով՝ կաղաչենք որ Աստուծոյ շնորհքը "
+        "պարապ տեղ ընդունած չըլլաք։",
+}
+MK8_SPLIT = "Եւ ըսաւ անոնց"     # native Mk 8:39 (= KJV 9:1) begins here
+
 
 def clean(text):
-    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"<[^>]+>", " ", text or "")
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
@@ -84,40 +112,58 @@ def convert(src_zip, dst):
     found = modules.parse_modules()
     assert "ArmWestern" in found, found.keys()
     bible = modules.get_bible_from_module("ArmWestern")
-    structure = bible.get_structure()
-    nt_books = structure.get_books()["nt"]
+    nt_books = bible.get_structure().get_books()["nt"]
     assert len(nt_books) == 27, len(nt_books)
 
+    deduped, patched, split_done = 0, 0, False
     books = [{"name": n, "chapters": []} for n in OT_NAMES]
     total = 0
     for i, book in enumerate(nt_books):
         bi = 39 + i
         kch = kjv[bi]["chapters"]
-        assert book.num_chapters == len(kch), (book.name, book.num_chapters, len(kch))
+        assert book.num_chapters == len(kch), (book.name, book.num_chapters)
         chapters = []
         for c in range(1, book.num_chapters + 1):
             kn = len(kch[c - 1])
             verses = []
             for v in range(1, kn + 1):
                 t = clean(bible.get(books=[book.name], chapters=[c], verses=[v]))
-                assert t, (book.name, c, v, "empty verse")
+                if (book.name, c, v) in DEDUPE:
+                    h = len(t) // 2
+                    a, b = t[:h].strip(), t[h:].strip()
+                    if a != b:  # odd-length middle char
+                        a, b = t[:h + 1].strip(), t[h + 1:].strip()
+                    assert a == b, (book.name, c, v, "not an exact duplication")
+                    t = a
+                    deduped += 1
+                if not t and (book.name, c, v) in PATCHES:
+                    t = PATCHES[(book.name, c, v)]
+                    patched += 1
+                if not t:
+                    assert (book.name, c) in DROP_EMPTY_TAIL and v == kn, \
+                        (book.name, c, v, "unexpected empty")
+                    continue    # native chapter is shorter — drop the slot
                 verses.append(t)
-            # the module must not have MORE verses than the KJV grid
-            try:
-                extra = bible.get(books=[book.name], chapters=[c], verses=[kn + 1])
-            except Exception:
-                extra = ""
-            assert not clean(extra or ""), (book.name, c, "extra verse beyond KJV")
-            total += kn
+            if book.name == "Mark" and c == 8:
+                last = verses[-1]
+                idx = last.rindex(MK8_SPLIT)
+                assert idx > 0, "Mk 8:38/39 split anchor missing"
+                verses[-1] = last[:idx].strip()
+                verses.append(last[idx:].strip())
+                split_done = True
+            total += len(verses)
             chapters.append(verses)
         books.append({"name": NT_NAMES_HY[i], "chapters": chapters})
+    assert deduped == 5 and patched == 2 and split_done, (deduped, patched, split_done)
     books += [{"name": n, "chapters": []} for n in APOC_NAMES]
     assert len(books) == 83
+    assert all(v for b in books for ch in b["chapters"] for v in ch)
 
     with open(dst, "w", encoding="utf-8") as f:
         json.dump(books, f, ensure_ascii=False, separators=(",", ":"))
-    out.write(f"{dst}: 83 book slots (27 NT filled), {total} verses, "
-              f"{os.path.getsize(dst)} bytes\n")
+    out.write(f"{dst}: 83 book slots (27 NT filled), {total} verses "
+              f"(native numbering, versemap pivots), {os.path.getsize(dst)} bytes\n")
+    out.write(f"deduped: {deduped}, patched: {patched}, Mk 8:38/39 split: {split_done}\n")
 
 
 if __name__ == "__main__":

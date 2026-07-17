@@ -337,10 +337,23 @@ maximize reach, keep everything free, nothing locked, collect no data.
       (arak29 = no license stated; TITUS = permission-required;
       litmus informational: Vulgate-family readings incl. «որ» at
       1 Tim 3:16, no Comma, LXX psalm numbering, 9-book deuterocanon).
-      ★ Western Armenian NT 1853 (CrossWire ArmWestern) =
-      SHIP-CANDIDATE 7/7, PD .conf, EXACT KJV grid across all 260 NT
-      chapters — mechanical NT-only add (grc/san precedent) whenever
-      wanted. ArmEastern is PD but only ~21% complete — blocked.
+      ★ ~~Western Armenian NT 1853~~ INTEGRATED IN TREE 2026-07-17
+      ("arm", hy_west1853.json, 31st translation / 26th language,
+      litmus 7/7 on the asset). ⚠ The module's "exact KJV grid" claim
+      was FALSE — a force-fit hiding: 10 squeeze-empty tails, one
+      chapter-boundary fusion (native Mk 8:39 = KJV 9:1, restored by a
+      verified split), 5 self-duplicated verses (deduped), and TWO
+      verses ABSENT outright (2 Cor 2:1, 6:1 — patched with the 1853's
+      own wording from the WARMB digitization; an archive.org scan of
+      the print exists for deeper provenance if wanted). All native
+      merges seam-read against the KJV and curated in versemap
+      (convert_armwestern.py's docstring = the full map; 7,950 verses =
+      KJV 7,957 minus exactly the 7 net merges). OPEN OBSERVATION: the
+      module's language reads more modernized than the 1853's classic
+      register («Որովհետեւ» vs the print's «Վասն զի») — its true
+      edition lineage deserves a future look; the label follows the
+      module's own 1853 claim. defaultPrimaryId hy->arm.
+      ArmEastern is PD but only ~21% complete — blocked.
     Georgian — OWNER-DECISION: the ONLY verse-structured source
       anywhere is TITUS's 1743 Moscow (Bakar) Bible (litmus mostly
       TR-consistent; Comma present but 7/8 swapped; Acts 20:28 "Lord

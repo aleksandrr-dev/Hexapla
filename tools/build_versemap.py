@@ -56,6 +56,7 @@ IDS = {
     "srb": "sr_karadzic",
     "kar": "hu_karoli",
     "bkr": "cs_kralicka",
+    "arm": "hy_west1853",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -168,6 +169,28 @@ EXTRA = {
     ("fi76",): {
         63: [(1, 14, 14, 1, 14, 15)],
         65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
+    },
+    # Western Armenian NT 1853: every seam read against the KJV
+    # 2026-07-17 (session scripts arm_*.py; convert_armwestern.py's
+    # docstring has the full map). Native merges incl. the classical
+    # Acts 7/8 and Mark 8/9 chapter boundaries (KJV 9:1 = arm 8:39,
+    # restored from the module's squeeze by a verified split); Luke
+    # splits KJV 4:38, John splits KJV 6:51; KJV Jn 10:41 spans arm
+    # 41-42.
+    ("arm",): {
+        39: [(17, 14, 15, 17, 14, 14), (17, 16, 27, 17, 15, 26)],
+        40: [(9, 1, 1, 8, 39, 39), (9, 2, 50, 9, 1, 49)],
+        41: [(4, 38, 38, 4, 38, 39), (4, 39, 42, 4, 40, 43),
+             (4, 43, 44, 4, 44, 44)],
+        42: [(6, 51, 51, 6, 51, 52), (6, 52, 69, 6, 53, 70),
+             (6, 70, 71, 6, 71, 71), (10, 41, 41, 10, 41, 42)],
+        43: [(7, 55, 56, 7, 55, 55), (7, 57, 60, 7, 56, 59),
+             (8, 1, 1, 7, 59, 59), (8, 1, 1, 8, 1, 1),
+             (14, 6, 7, 14, 6, 6), (14, 8, 28, 14, 7, 27),
+             (19, 40, 41, 19, 40, 40)],
+        46: [(13, 12, 13, 13, 12, 12), (13, 14, 14, 13, 13, 13)],
+        51: [(4, 11, 12, 4, 11, 11), (4, 13, 18, 4, 12, 17)],
+        57: [(13, 24, 25, 13, 24, 24)],
     },
     # Bible kralická 1613: 29 non-psalm native chapters, every seam
     # text-verified 2026-07-17 (62 title-psalms are mechanical). Notable

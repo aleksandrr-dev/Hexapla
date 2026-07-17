@@ -31,6 +31,8 @@ object BibleRepo {
         Translation("mar", "bibles/fr_martin.json", "Bible Martin, 1744 (FR)", Locale.FRENCH),
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
         Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703 (SV)", Locale("sv")),
+        Translation("fi76", "bibles/fi_biblia1776.json", "Biblia — Vanha kirkkoraamattu, 1776 (FI)", Locale("fi")),
+        Translation("gda", "bibles/pl_gdanska.json", "Biblia Gdańska, 1632 (PL)", Locale("pl")),
         Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale("da")),
         Translation("svv", "bibles/nl_staten.json", "Statenvertaling, 1637/1888 (NL)", Locale("nl")),
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
@@ -71,6 +73,8 @@ object BibleRepo {
         "da", "nb", "nn", "no" -> "da19"  // Norway's classical scripture was the Danish Bible
         "nl" -> "svv"
         "ar" -> "vd"
+        "fi" -> "fi76"
+        "pl" -> "gda"
         // Modern Greek reads Vamvas; grc stays the study/original text.
         "el" -> "vam"
         "ja" -> "mei"

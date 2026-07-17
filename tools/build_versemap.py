@@ -51,6 +51,8 @@ IDS = {
     "ta": "ta_irv",
     "vul": "la_vulgata",
     "vd": "ar_vandyck",
+    "fi76": "fi_biblia1776",
+    "gda": "pl_gdanska",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -156,6 +158,33 @@ EXTRA = {
     ("vd",): {
         53: [(6, 21, 21, 6, 21, 22)],
         63: [(1, 14, 14, 1, 14, 15)],
+    },
+    # Biblia 1776: exact KJV grid except the two standard continental
+    # tails — 3 Jn 14/15 and a real Rev 12:18 («Ja minä seisoin meren
+    # sannalla») pairing with KJV 13:1. Both text-verified 2026-07-16.
+    ("fi76",): {
+        63: [(1, 14, 14, 1, 14, 15)],
+        65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
+    },
+    # Biblia Gdańska: every run below text-verified 2026-07-16 against the
+    # CrossWire module (same wording, KJV-shaped) via SequenceMatcher
+    # alignment — the 1.0-ratio merges are the source's own native
+    # numbering, NOT drops (the four proven drops were repaired at
+    # conversion instead; see convert_gdanska.py). 3 Jn 14/15 and
+    # Rev 12:18 arrive pre-merged to the KJV grid — no runs needed.
+    ("gda",): {
+        2: [(24, 23, 23, 24, 23, 24)],                              # Lev 24:23 split
+        3: [(29, 40, 40, 30, 1, 1), (30, 1, 16, 30, 2, 17)],        # Num 29:40 = gda 30:1
+        8: [(20, 42, 42, 20, 42, 43)],                              # 1 Sam 20:42 split
+        18: [(51, 1, 1, 51, 1, 2), (51, 2, 19, 51, 3, 20),          # double superscriptions
+             (52, 1, 1, 52, 1, 2), (52, 2, 9, 52, 3, 10),           # as their own verse 1
+             (54, 1, 1, 54, 1, 2), (54, 2, 7, 54, 3, 8),            # (like the Synodal)
+             (60, 1, 1, 60, 1, 2), (60, 2, 12, 60, 3, 13),
+             (146, 1, 2, 146, 1, 1), (146, 3, 10, 146, 2, 9)],      # Ps 146:1-2 merged
+        23: [(29, 31, 32, 29, 31, 31)],                             # Jer 29 tail merge
+        43: [(19, 40, 41, 19, 40, 40)],                             # Acts 19:40+41 (as syn/mar)
+        46: [(11, 32, 33, 11, 32, 32), (13, 13, 14, 13, 13, 13)],   # 2 Cor merges
+        47: [(1, 23, 24, 1, 23, 23)],                               # Gal 1 tail merge
     },
     ("ta",): {
         63: [(1, 14, 14, 1, 14, 15)],

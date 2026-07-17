@@ -39,6 +39,7 @@ object BibleRepo {
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
         Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale("pt")),
         Translation("dio", "bibles/it_diodati.json", "Diodati, 1649/1885 (IT)", Locale.ITALIAN),
+        Translation("kar", "bibles/hu_karoli.json", "Károli Biblia, 1590/1908 (HU)", Locale("hu")),
         Translation("mei", "bibles/ja_meiji.json", "明治元訳 — Meiji Motoyaku, 1880/87 (JA)", Locale.JAPANESE),
         Translation("cus", "bibles/zh_cuv_s.json", "和合本 — Chinese Union, 1919 (简体)", Locale.SIMPLIFIED_CHINESE),
         Translation("cuv", "bibles/zh_cuv_t.json", "和合本 — Chinese Union, 1919 (繁體)", Locale.TRADITIONAL_CHINESE),
@@ -77,6 +78,7 @@ object BibleRepo {
         "fi" -> "fi76"
         "pl" -> "gda"
         "sr", "bs", "hr" -> "srb"
+        "hu" -> "kar"
         // Modern Greek reads Vamvas; grc stays the study/original text.
         "el" -> "vam"
         "ja" -> "mei"

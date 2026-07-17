@@ -280,13 +280,24 @@ maximize reach, keep everything free, nothing locked, collect no data.
        Psalter native-numbered with vacuous trailing empty slots, its
        own Job reflow) — integrable later as a second-script Serbian
        (zh two-script precedent).
-    4. Károli (hu) SHIP-CANDIDATE 7/7 — convert from the RAW OSIS
-       (github.com/krisek/HunKar) ONLY: the compiled SWORD module (and
-       scrollmapper's re-export) silently pads 44 fake empty verses and
-       blobs Job 41 (Versification=Calvin mismatch). 3 genuine content
-       gaps to patch from a second source (Jn 21:1, Acts 12:6, Acts
-       15:18). Continental psalm titles (62 psalms, 4 two-verse) —
-       convert_emg_danish.py is the template. eBible has no Károli.
+    4. ~~Károli (hu)~~ INTEGRATED IN TREE 2026-07-17 ("kar",
+       hu_karoli.json, 29th translation / 24th language, litmus 7/7 on
+       the asset): krisek/HunKar RAW OSIS (PD; NEVER the compiled
+       module — it pads 44 fake verses and blobs Job 41).
+       tools/convert_karoli.py patches the raw OSIS's 3 genuine gaps
+       (Jn 21:1, Acts 12:6, Acts 15:18) from the gratis-bible hun.xml
+       witness — which DOES have them (the report's uncertainty
+       resolved); its degraded Latin-1 õ/û normalized to ő/ű; witness
+       lineage cross-checked at ratio 0.994. NATIVE Calvin numbering
+       kept: 62 title-psalms handled by the mechanical
+       psalm_title_runs engine; 176 versemap runs total, curated
+       seam-by-seam with text verified — Eccl is a book-long cascade
+       of 5 shifts (KJV 1:18=kar 2:1, 8:16-17=kar 9:1-2, 10:1-3=kar
+       9:21-23, 11:9-10=kar 12:1-2), Isa 2:22=kar 3:1 + 4:1=kar 3:28,
+       Dan 4:1-3=kar 3:31-33, Hos 2:1=kar 1:12 + 13:16=kar 14:1,
+       Lk 23:56 split, Jn 1:38 split, Job = Luther arrangement except
+       ch41 identity, plus the usual Exod/Prov/Num/Sam/Kgs seams.
+       defaultPrimaryId hu->kar.
     5. Kralická (cs) 6/7 (Lk 2:33 "Otec", Luther-class) — real
        continental versification: 91 divergent chapters, Job 39-41 +
        Dan 3-4 reflows; eBible ces1613 is the source (PD, PGP-signed).

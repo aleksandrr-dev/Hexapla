@@ -1,0 +1,34 @@
+To: Eesti Keele Instituut (contact via eki.ee — the 1739 Piibel corpus
+    lives at arhiiv.eki.ee/piibel; piibel.net mirrors it. Find the
+    current corpus-contact address on the project page before sending.)
+Subject: Luba küsimine — 1739. a Piibli tekst tasuta piiblirakenduses /
+         permission request for a free Bible app
+
+Lugupeetud Eesti Keele Instituut,
+
+arendan Hexaplat — tasuta piiblirakendust Android-telefonidele (ilma
+reklaamideta, ilma andmekogumiseta, kõik tasuta;
+https://aleksandrr-dev.github.io/Hexapla/). Rakendus esitab kõrvuti
+klassikalisi piiblitõlkeid — praegu 29 tõlget 24 keeles.
+
+Teie 1739. aasta Piibli (Anton Thor Helle) digiteeritud tekst
+(arhiiv.eki.ee/piibel) on ainus masinloetav vana eesti Piibel, mille
+olen leidnud. Kuna kasutustingimusi lehel ei ole märgitud, küsin otse:
+kas lubaksite selle teksti (ilma teadusliku aparaadita) lisada sellesse
+tasuta rakendusse, viidates EKI-le ja projektile rakenduse allikate
+jaotises?
+
+Kui luba on võimalik tingimustega (kindel viide, märge), järgin neid
+hea meelega. Tänan teid selle teksti säilitamise eest!
+
+[EN summary: I develop a free offline Bible app (29 classical
+translations / 24 languages, all PD or CC, credited in-app). Your
+digitization of the 1739 Piibel is the only machine-readable old
+Estonian Bible I have found; no usage terms are stated on the project
+pages, so I am asking directly: may the text (without the scholarly
+apparatus) be included in this free app, with EKI credited? Happy to
+follow any conditions.]
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

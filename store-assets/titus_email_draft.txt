@@ -1,0 +1,36 @@
+To: titus@em.uni-frankfurt.de (Prof. Jost Gippert, TITUS project,
+    Goethe-Universität Frankfurt)
+Subject: Permission request — Zohrab Armenian Bible and 1743 Georgian
+         (Bakar) Bible texts in a free Bible app
+
+Dear Professor Gippert,
+
+I develop Hexapla, a free offline parallel-Bible app for Android (no ads,
+no analytics, nothing paid; https://aleksandrr-dev.github.io/Hexapla/).
+It pairs classical Bible translations across languages — currently 29
+translations in 24 languages, all public domain or CC-licensed, each
+credited in the app.
+
+TITUS hosts the only machine-readable, verse-structured digitizations I
+have found of two texts I would dearly like to offer readers:
+
+  1. the Zohrab Bible (classical Armenian, Venice 1805), and
+  2. the 1743 Moscow ("Bakar") Georgian Bible.
+
+Your pages state that no parts may be republished without prior
+permission by the copyright holder — so I am writing to ask exactly that
+permission: to convert the plain verse text (without your apparatus or
+markup) into the app's format and distribute it inside this free app,
+with TITUS and the project credited in the app's sources section in all
+its interface languages.
+
+If permission depends on conditions (specific credit wording, a notice,
+a restriction to the plain text), I will gladly follow them. And if the
+answer is no, I fully respect that — thank you in any case for the
+extraordinary service TITUS has done for these texts.
+
+With respect and appreciation,
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

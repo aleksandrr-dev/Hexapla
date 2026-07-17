@@ -310,6 +310,52 @@ maximize reach, keep everything free, nothing locked, collect no data.
   NC; bibliata/beblia "Tsarigrad" is actively © despite find.bible
   calling it PD (aggregator-mislabel trap — remember for future
   candidates). No 1871 OT digitization exists anywhere.
+  SECOND WAVE verdicts (2026-07-17, reports in Hexapla-releases/research/):
+    Latvian Glück — SHIP-CANDIDATE 7/7, OWNER CHOICE between sources:
+      original 1685/1689 orthography (University of Latvia SENIE/
+      CLARIN-LV corpus, explicit CC BY-SA 4.0, incl. 13-book apocrypha;
+      needs an orthography-era converter + 4 unresolved NT chapter
+      diffs + OT not yet verse-diffed) vs CrossWire LvGluck8 (1898
+      modernized spelling, EXACT KJV grid 0/1189, but its PD claim has
+      an unresolved tension with its source site's rights footer).
+      ⚠ TRAP CONFIRMED: the plain "Latvian" module/gratis lv = a modern
+      revision that FAILS the litmus (1 Tim 3:16 "Tas", Lk 2:33
+      "father") — never use it.
+    Armenian — TWO tracks: classical Zohrab BLOCKED on licenses
+      (arak29 = no license stated; TITUS = permission-required;
+      litmus informational: Vulgate-family readings incl. «որ» at
+      1 Tim 3:16, no Comma, LXX psalm numbering, 9-book deuterocanon).
+      ★ Western Armenian NT 1853 (CrossWire ArmWestern) =
+      SHIP-CANDIDATE 7/7, PD .conf, EXACT KJV grid across all 260 NT
+      chapters — mechanical NT-only add (grc/san precedent) whenever
+      wanted. ArmEastern is PD but only ~21% complete — blocked.
+    Georgian — OWNER-DECISION: the ONLY verse-structured source
+      anywhere is TITUS's 1743 Moscow (Bakar) Bible (litmus mostly
+      TR-consistent; Comma present but 7/8 swapped; Acts 20:28 "Lord
+      God" conflate; LXX psalter, pre-1868 orthography incl. archaic
+      letters, 3 Macc in canon) — permission-required.
+      ⚠ ONE EMAIL COVERS BOTH: store-assets/titus_email_draft.txt asks
+      Prof. Jost Gippert (titus@em.uni-frankfurt.de) for the Zohrab AND
+      the Bakar. eBible/CrossWire/gratis/scrollmapper have ZERO
+      Armenian-classical or Georgian entries (verified).
+    Lithuanian — BLOCKED (license): the 1735 Bible has NO machine-
+      readable digitization anywhere (exhaustive hunt). Two gated
+      witnesses found: LKI seniejirastai.lki.lt diplomatic
+      transcriptions of Bitneris 1701 NT (litmus 6/7, Lk 2:33
+      Luther-class) + Ruigys 1727 NT — "all rights reserved"; and
+      Vilnius University's Chylinski 1657-60 NT (litmus 7/7 CLEAN,
+      Joseph present!) — "scholarly and educational purposes" only.
+      Permission drafts: store-assets/lithuanian_emails_draft.txt.
+    Estonian — BLOCKED (permission): the 1739 Piibel text itself is a
+      CLEAN 7/7 (Comma intact, Joseph, Jn 3:13 clause) via EKI's
+      academic corpus (arhiiv.eki.ee/piibel) + piibel.net mirror, but
+      NO redistribution terms stated anywhere — email draft at
+      store-assets/eki_estonian_email_draft.txt. ⚠ TRAP CONFIRMED:
+      CrossWire's "Est" module (+ scrollmapper re-export) is the 1968
+      revision — FAILS 3/7 (no Comma, no Jn 3:13 clause, "father") and
+      its .conf says "Copyright status unknown" — never mistake it for
+      the 1739. Canon incl. apocrypha; continental versification
+      (title-psalms own verse, 3 Jn 15, Rev 12:18).
   Welsh Morgan — DECLINED for now (2026-07-16, via the owner's
   delegation): the ONLY live source is Welsh Wikisource's «Beibl (1620)»
   (CC BY-SA, litmus 7/7, KJV grid, full canon + apocrypha) but just

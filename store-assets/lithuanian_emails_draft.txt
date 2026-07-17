@@ -1,0 +1,70 @@
+TWO drafts — Lithuanian permission requests (verdict + contacts in
+Hexapla-releases/research/lithuanian_report.md; exact addresses were
+identified there — confirm before sending).
+
+=====================================================================
+DRAFT 1 — Lietuvių kalbos institutas (seniejirastai.lki.lt), for the
+Bitneris 1701 NT and Ruigys 1727 NT diplomatic transcriptions
+=====================================================================
+Subject: Leidimo prašymas — 1701/1727 NT tekstai nemokamoje Biblijos
+         programėlėje / permission request for a free Bible app
+
+Gerbiamieji,
+
+kuriu Hexapla — nemokamą Biblijos programėlę Android telefonams (be
+reklamų, be duomenų rinkimo, viskas nemokama;
+https://aleksandrr-dev.github.io/Hexapla/). Joje greta pateikiami
+klasikiniai įvairių kalbų Biblijos vertimai — šiuo metu 29 vertimai
+24 kalbomis.
+
+Jūsų svetainėje seniejirastai.lki.lt paskelbtos Samuelio Bitnerio 1701 m.
+ir Pilypo Ruigio 1727 m. Naujojo Testamento transkripcijos — vienintelės
+man žinomos mašininiu būdu skaitomos senosios lietuviškos Biblijos
+versijos. Svetainės taisyklės nurodo, kad platinti be raštiško leidimo
+negalima, todėl klausiu būtent tokio leidimo: ar galėčiau įtraukti
+teksto dalį (be mokslinio aparato) į šią nemokamą programėlę, nurodant
+Institutą ir svetainę kaip šaltinį?
+
+Jei leidimas įmanomas su sąlygomis (konkreti nuoroda, žyma), mielai jų
+laikysiuos. Dėkoju už jūsų darbą saugant senuosius raštus!
+
+[EN summary: I develop a free Bible app (29 translations / 24
+languages, all PD/CC, credited). Your 1701 and 1727 NT transcriptions
+are the only machine-readable old Lithuanian scripture I have found.
+Your terms require written permission to redistribute — may I include
+the text (without the scholarly apparatus) in this free app, with
+credit? Happy to follow any conditions.]
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev
+
+=====================================================================
+DRAFT 2 — Vilnius University Chylinski Bible project
+(chylinskibible.flf.vu.lt), for the 1657-1660 NT (litmus 7/7)
+=====================================================================
+Subject: Permission request — Chylinski NT text in a free Bible app
+
+Dear colleagues,
+
+I develop Hexapla, a free offline parallel-Bible app for Android (no
+ads, no analytics, nothing paid;
+https://aleksandrr-dev.github.io/Hexapla/) — 29 classical translations
+in 24 languages, each credited in the app.
+
+Your edition of Chylinski's New Testament is a remarkable resource, and
+the only complete machine-readable early Lithuanian NT I have found.
+Your site licenses it for scholarly and educational purposes; a free
+evangelistic app sits outside that grant, so I am writing to ask
+whether you would permit the plain verse text (without your editorial
+apparatus) to be included in this free app, with the project and
+Vilnius University credited in the app's sources section.
+
+If permission is possible under conditions, I will follow them
+gladly. Thank you for the care this edition so clearly embodies.
+
+With respect,
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://github.com/aleksandrr-dev

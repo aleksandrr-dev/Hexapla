@@ -261,12 +261,25 @@ maximize reach, keep everything free, nothing locked, collect no data.
        Gdańska-tradition book names (Żydów, Jakób, 1 Mojżeszowa).
        defaultPrimaryId pl->gda. ⚠ UBG (modernized Gdańska) BLOCKED
        twice over: eBible says CC BY-ND, CrossWire says NC — never use.
-    3. Karadžić Serbian 6/7 (Acts 20:28 "Lord and God" conflate = the
-       reading ALREADY SHIPPED in cu/syn) — choice: eBible srp1865
-       (Latin ekavian, Redistributable=True) vs srp1868 (Cyrillic,
-       page says PD but CSV says Redistributable=False — QUESTION ADDED
-       to the eBible email draft) vs CrossWire ijekavian Cyrillic (PD).
-       17 divergent chapters + Job 39-41 reflow.
+    3. ~~Karadžić Serbian~~ INTEGRATED IN TREE 2026-07-17 ("srb",
+       sr_karadzic.json, 28th translation / 23rd language, litmus 6/7 —
+       Acts 20:28 «crkvu Gospoda i Boga» = the conflate ALREADY SHIPPED
+       in cu/syn): eBible srp1865 (LATIN script, ekavian,
+       Redistributable=True, PD). tools/convert_serbian.py: 126 \d psalm
+       titles prepended; ⚠ eBible's KJV-slot seam duplicates carry
+       MODERN-Serbian paraphrases (not 1865 wording) — 6 slots replaced
+       with the native slot's authentic text (Num 12:16, 29:40, 1 Sam
+       23:29, Job 38:39-41); 17 native-divergent chapters curated in
+       versemap incl. the Luther-arrangement Job reflow (srp 39 = KJV
+       38:39-40:5 etc., every boundary text-verified). Book names from
+       \toc2 («1. Mojsijeva», «Psalmi»). defaultPrimaryId sr/bs/hr->srb.
+       UPGRADE PATHS documented: srp1868 (Cyrillic ekavian) pending
+       eBible's answer on its Redistributable=False catalog flag (in the
+       email draft); CrossWire SrKDIjekav (Cyrillic, Karadžić's authentic
+       ijekavian, PD) surveyed 2026-07-17 — 94 divergent chapters (whole
+       Psalter native-numbered with vacuous trailing empty slots, its
+       own Job reflow) — integrable later as a second-script Serbian
+       (zh two-script precedent).
     4. Károli (hu) SHIP-CANDIDATE 7/7 — convert from the RAW OSIS
        (github.com/krisek/HunKar) ONLY: the compiled SWORD module (and
        scrollmapper's re-export) silently pads 44 fake empty verses and

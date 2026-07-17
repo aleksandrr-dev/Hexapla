@@ -53,6 +53,7 @@ IDS = {
     "vd": "ar_vandyck",
     "fi76": "fi_biblia1776",
     "gda": "pl_gdanska",
+    "srb": "sr_karadzic",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -165,6 +166,27 @@ EXTRA = {
     ("fi76",): {
         63: [(1, 14, 14, 1, 14, 15)],
         65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
+    },
+    # Karadžić/Daničić Serbian (eBible srp1865): 17 native-divergent
+    # chapters, every seam text-verified 2026-07-17 (research report +
+    # session notes). Mostly Hebrew/German chapter boundaries; the Job
+    # reflow is Luther's arrangement, verified at every boundary (srp
+    # 39:1 = KJV 38:39 lion-hunt, srp 39:38 = KJV 40:5 "once have I
+    # spoken", srp 40:28 = KJV 41:9, srp 41:25 = KJV 41:34).
+    ("srb",): {
+        3: [(12, 16, 16, 13, 1, 1), (13, 1, 33, 13, 2, 34),
+            (29, 40, 40, 30, 1, 1), (30, 1, 16, 30, 2, 17)],
+        8: [(20, 42, 42, 20, 42, 43),
+            (23, 29, 29, 24, 1, 1), (24, 1, 22, 24, 2, 23)],
+        10: [(22, 43, 43, 22, 43, 44), (22, 44, 53, 22, 45, 54)],
+        17: [(38, 39, 41, 39, 1, 3), (39, 1, 30, 39, 4, 33),
+             (40, 1, 5, 39, 34, 38), (40, 6, 24, 40, 1, 19),
+             (41, 1, 9, 40, 20, 28), (41, 10, 34, 41, 1, 25)],
+        21: [(6, 1, 1, 5, 17, 17), (6, 2, 13, 6, 1, 12)],
+        25: [(20, 45, 49, 21, 1, 5), (21, 1, 32, 21, 6, 37)],
+        27: [(11, 12, 12, 12, 1, 1), (12, 1, 14, 12, 2, 15)],
+        31: [(1, 17, 17, 2, 1, 1), (2, 1, 10, 2, 2, 11)],
+        63: [(1, 14, 14, 1, 14, 15)],
     },
     # Biblia Gdańska: every run below text-verified 2026-07-16 against the
     # CrossWire module (same wording, KJV-shaped) via SequenceMatcher

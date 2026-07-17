@@ -33,6 +33,7 @@ object BibleRepo {
         Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703 (SV)", Locale("sv")),
         Translation("fi76", "bibles/fi_biblia1776.json", "Biblia — Vanha kirkkoraamattu, 1776 (FI)", Locale("fi")),
         Translation("gda", "bibles/pl_gdanska.json", "Biblia Gdańska, 1632 (PL)", Locale("pl")),
+        Translation("srb", "bibles/sr_karadzic.json", "Sveto pismo — Karadžić/Daničić, 1847/1865 (SR)", Locale("sr")),
         Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale("da")),
         Translation("svv", "bibles/nl_staten.json", "Statenvertaling, 1637/1888 (NL)", Locale("nl")),
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
@@ -75,6 +76,7 @@ object BibleRepo {
         "ar" -> "vd"
         "fi" -> "fi76"
         "pl" -> "gda"
+        "sr", "bs", "hr" -> "srb"
         // Modern Greek reads Vamvas; grc stays the study/original text.
         "el" -> "vam"
         "ja" -> "mei"

@@ -1,43 +1,48 @@
 # -*- coding: utf-8 -*-
-"""⚠ WORK IN PROGRESS — NOT YET PRODUCING AN ASSET (2026-07-17).
-The NT parsing works (label-typo repair, correction notation, dotless
-labels — see below). BLOCKED ON: the OT's chapter structure. 1 Chr 5
-carries print labels 24-44 — Glück follows a Luther-tradition chapter
-division with CONTINUOUS native verse numbers across chapter seams that
-differ from both the KJV and the @n markers' placement. The whole OT
-needs a structural survey (which books, which arrangement, how the @n
-markers relate to the print's own numbers) before any position-based
-assumption is safe. The research report explicitly never verse-diffed
-the OT; this is that missing assessment. Resume with a fresh survey of
-every OT book's label sequences; do NOT position-renumber non-dense
-chapters. The partial lv_gluck.json this produced was DELETED from
-assets (0-verse first, then aborted runs).
-
-SENIE/CLARIN-LV corpus (Glück Bible: JT1685 NT + VD1689_94 OT) -> app asset.
+"""SENIE/CLARIN-LV corpus (Glück Bible: JT1685 NT + VD1689_94 OT) -> app asset.
 
 Source: Senie-DSL-plaintext.zip from the CLARIN-LV repository
 (repository.clarin.lv handle 20.500.12574/141) — the University of
-Latvia's SENIE corpus of old written Latvian, license CC BY-SA 4.0
-(quoted in the research report; attribution added to sources_text).
-Ernst Glück's own 1685 New Testament and 1689 Old Testament in the
-ORIGINAL 17th-century orthography (long-s ſ/ẜ, w for v, uh/ee digraphs,
-virgule / as punctuation) — shipped as printed, per the house precedent
-(Karl XII 1703, Luther 1545, Wycliffe c.1395). Litmus 7/7 verified
-2026-07-17 — research report: Hexapla-releases/research/gluck_report.md.
+Latvia's SENIE corpus of old written Latvian, CC BY-SA 4.0 (attribution
+in sources_text ×13). Ernst Glück's own 1685 New Testament and 1689 Old
+Testament in the ORIGINAL 17th-century orthography (ſ/ẜ, w for v,
+virgule /) — shipped as printed, per the house precedent (Karl XII,
+Luther 1545, Wycliffe). Litmus 7/7 (research report:
+Hexapla-releases/research/gluck_report.md; re-verified on the asset).
 
-Format (custom @-code DSL, one file per book):
-  @a/@z author/collection, @g book code, @k running heads, @n{N} chapter,
-  @t{...} cross-reference footnotes, @l{...} print marks — all dropped;
-  verses are "  N. text" lines wrapped with print line-break hyphens
-  (joined here: a line ending in "-" continues the word). Verse 0 in
-  every chapter is a Reformation-style chapter ARGUMENT (summary blurb),
-  not scripture — dropped. Psalm superscriptions occupy their own
-  numbered verse 1 (native numbering, kept; build_versemap.py's
-  mechanical title engine pivots them).
-
-The Apokr1689 apocrypha (same edition, same license) is NOT converted
-yet — its versification against the KJV apocrypha grid is unassessed;
-follow-up recorded in CLAUDE.md.
+STRUCTURE (full survey + seam-reading, 2026-07-17 session; scripts
+lv_*.py in the session scratchpad):
+  * DSL: @a/@z/@g/@k/@t/@l codes dropped (keep @n{N} chapters!); verse
+    lines "  N. text" with print line-wrap hyphens joined; verse 0 =
+    Reformation chapter ARGUMENT, dropped (Jes 37's argument spills
+    into a second paragraph mislabeled "1." — special-cased).
+  * "12{13}." = the transcription's TRUE{PRINTED} typo-correction
+    notation; dotless labels accepted only at the expected position;
+    remaining print-label typos repaired by POSITION (each logged,
+    ≤2/chapter, e.g. Ezek 40's "9." where v2 belongs).
+  * NATIVE CHAPTER DIVISIONS kept and versemap-curated: 1 Chr has 30
+    chapters (KJV 4 split at the Simeonites, 4:23/24, print numbering
+    continuing 24-44 across the seam; chapters 6-30 = KJV 5-29);
+    Habakkuk has 4 (KJV 2 split at 2:4/5, labels continuing 5-20);
+    1 Sam 3:22 = KJV 4:1a; Eccl uses Hebrew boundaries at 4/5 AND 6/7;
+    Hos 13:16=14:1, Jonah 1:17=2:1, Hag 1:15=2:1, Dan 3/4 Hebrew seam;
+    Job = the Luther arrangement (identical to the Serbian runs);
+    the usual Num 12/13+29/30, 1 Sam 20/23-24, 1 Kgs 22:43 seams;
+    Isa 53:2 split; Ezek 19:10+11 merged; Lev 15:22+23 and Num 6:22+23
+    merged; Ezra 6:22 split; John 1:38 split; Acts 19:40+41 and
+    2 Cor 13:12+13 merged; 3 Jn 15; Rev 12:18. Every seam text-read
+    against the KJV before curation.
+  * INLINE-MARKER MERGES SPLIT (the print merged two verses but kept
+    the second number inline — exact anchors): 1 Chr 6:25 («26,»),
+    1 Chr 12:3 («..4.») and 12:6 («..7.»), 2 Chr 32:19 («20.»).
+  * ONE GENUINE OMISSION: Ezek 5:9 is absent from the print (its
+    ch 5 labels skip 9; the surrounding verses are complete). Kept as
+    a versemap omission, not padded.
+  * Psalm superscriptions occupy their own numbered verse(s) — native,
+    handled by build_versemap.py's mechanical title engine (62+ psalms,
+    +1/+2 incl. the double-title 51/52/54/60).
+The Apokr1689 apocrypha (same edition/license) is NOT converted yet —
+versification unassessed; follow-up in CLAUDE.md.
 
 Usage: python convert_gluck.py <senie_dir> <dst.json>
 """
@@ -47,7 +52,6 @@ import os
 import re
 import sys
 
-# SENIE book-code -> canon index 0..65
 NT = {"Mt": 39, "Mk": 40, "Lk": 41, "Jn": 42, "Apd": 43, "Rm": 44,
       "1Kor": 45, "2Kor": 46, "Gal": 47, "Ef": 48, "Fil": 49, "Kol": 50,
       "1Tes": 51, "2Tes": 52, "1Tim": 53, "2Tim": 54, "Tit": 55,
@@ -86,23 +90,21 @@ APOC_NAMES = [
     "Prayer of Azariah", "Susanna", "Bel and the Dragon", "Laodiceans",
 ]
 
-CODE_LINE = re.compile(r"^@([a-z])\{")
-# "12{13}." = the transcription's own print-typo correction notation:
-# the FIRST number is the true verse, the braced one is what the 1685/89
-# print mislabeled (39 instances corpus-wide, verified at Mark 15:12).
-# The dot itself is missing in a handful of prints (Lev 4:32) — a
-# dotless leading number is accepted as a verse start ONLY when it
-# equals the expected next verse; otherwise it is text.
 VERSE_LINE = re.compile(r"^\s+(\d+)(?:\{\d+\})?(\.)?\s+(.*)$")
 
-# Print-label fixes, each verified against the raw lines and the KJV
-# (research report + integration session 2026-07-17): the SECOND
-# occurrence of a duplicated printed verse number is really the next
-# verse, or a skipped label. (book code, chapter, occurrence-to-renumber)
-# applied while parsing: when a duplicate verse number appears, it is
-# accepted as (previous number + 1) IF that slot is empty — every such
-# event is reported and must be in EXPECTED_RELABELS.
-EXPECTED_RELABELS = set()
+# (code, chapter, position-label): split the verse at the inline marker.
+INLINE_SPLITS = {
+    ("1L", 6, 25): r"\s*26[,.]\s*",
+    ("1L", 12, 3): r"\s*\.*\s*4\.\s*",
+    ("1L", 12, 6): r"\s*\.*\s*7\.\s*",
+    ("2L", 32, 19): r"\s+20\.\s*",
+}
+# (code, chapter): labels legitimately skip these — either a genuine
+# print omission (Ezek 5:9) or the number rides INLINE in the previous
+# verse (the 1 Chr 12 merges, split back below).
+OMISSION_SKIPS = {("Ech", 5): {9}, ("1L", 12): {4, 7}, ("2L", 32): {20}}
+# native chapter-count expectations that differ from KJV
+NATIVE_CHAPTERS = {"1L": 30, "Hab": 4}
 
 
 def join_wrap(parts):
@@ -117,90 +119,142 @@ def join_wrap(parts):
             out += " " + p
         else:
             out = p
-    return out
+    # Text-level cleanup (surveyed on a full conversion 2026-07-17):
+    #  * 215 word{word} = the transcription's TRUE{PRINTED} correction
+    #    notation inside verse text — keep the corrected form, drop the
+    #    braced print reading;
+    #  * 462 "*" + one "|" = print footnote/reference anchors — drop.
+    out = re.sub(r"\{[^}]*\}", "", out)
+    out = out.replace("*", " ").replace("|", " ")
+    return re.sub(r"\s+", " ", out).strip()
 
 
-def parse_book(path, relabels):
-    chapters = {}
-    cur_ch = None
-    cur_verse = None
-    buf = {}
-    skipping = False   # inside verse 0 (chapter argument)
+def strip_codes(raw):
+    """Remove @x{...} blocks (all except @n) with a depth counter — the
+    footnote blocks can contain NESTED {corrections}, which a regex's
+    [^}]* stops at, leaking the tail into verse text (56 instances on
+    the first full conversion)."""
+    out = []
+    i = 0
+    n = len(raw)
+    while i < n:
+        m = re.match(r"@(?!n\{)[a-z]\{", raw[i:])
+        if m:
+            j = i + m.end()
+            depth = 1
+            while j < n and depth:
+                if raw[j] == "{":
+                    depth += 1
+                elif raw[j] == "}":
+                    depth -= 1
+                j += 1
+            i = j
+        else:
+            out.append(raw[i])
+            i += 1
+    return "".join(out)
+
+
+def parse_book(coll_path, code, relabels):
+    path = os.path.join(coll_path, code, f"{code}_Unicode.txt")
     raw = open(path, encoding="utf-8-sig").read()
-    # drop multi-line @t{...}/@k{...} etc. blocks wholesale — but keep
-    # @n{...} chapter markers (the first version of this line ate them
-    # and produced a 0-verse asset; the empty-chapter assert was vacuous)
-    raw = re.sub(r"@(?!n\{)[a-z]\{[^}]*\}", "", raw)
+    raw = strip_codes(raw)
+    chapters = {}
+    cur = None
+    cur_verse = None       # position index within chapter (1-based)
+    base_label = None
+    buf = {}
+    skipping = False
     for line in raw.splitlines():
-        if not line.strip():
-            continue
         m = re.match(r"@n\{(\d+)\}", line.strip())
         if m:
-            cur_ch = int(m.group(1))
-            assert cur_ch not in chapters, (path, cur_ch)
-            chapters[cur_ch] = {}
-            buf = {}
+            cur = int(m.group(1))
+            assert cur not in chapters, (code, cur)
+            chapters[cur] = buf = {}
             cur_verse = None
+            base_label = None
             skipping = False
             continue
-        if line.strip().startswith("@"):
+        if line.strip().startswith("@") or not line.strip():
             continue
         vm = VERSE_LINE.match(line)
-        if vm and cur_ch is not None and (
-                vm.group(2) or int(vm.group(1)) == (cur_verse or 0) + 1):
+        is_verse = vm is not None and cur is not None and (
+            vm.group(2) or (base_label is not None and
+                            int(vm.group(1)) == base_label + len(buf)))
+        if is_verse:
             vn, text = int(vm.group(1)), vm.group(3)
             if vn == 0:
                 skipping = True
                 cur_verse = None
                 continue
+            # Jes 37: the chapter argument spills into a 2nd paragraph
+            # mislabeled "1." — the REAL v1 is the next lbl-1 line.
+            if code == "Jes" and cur == 37 and vn == 1 and buf and len(buf) == 1:
+                relabels.append(f"{code} ch 37: argument paragraph mislabeled 1. dropped")
+                buf.clear()
             skipping = False
-            # Print-label typos exist (Luke 8 prints two "25."s and no
-            # "24."; 1 Cor 9 prints "6." where v8 belongs). POSITION in
-            # sequence is authoritative: every verse line is prev+1, the
-            # printed label is decoration. Mismatches are logged for
-            # eyeball review; more than 2 in one chapter aborts (that
-            # would mean a parser bug, not a print typo), and the final
-            # whole-grid diff against the KJV validates globally.
-            expected = (cur_verse or 0) + 1
+            if base_label is None:
+                base_label = vn      # 1L 5 starts at 24, Hab 3 at 5
+                if vn != 1:
+                    relabels.append(f"{code} ch {cur}: labels start at {vn} (native)")
+            expected = base_label + len(buf)
             if vn != expected:
-                relabels.append(f"{os.path.basename(path)} ch {cur_ch}: "
-                                f"printed {vn}. accepted as {expected}.")
-                per_ch = sum(1 for r in relabels
-                             if r.startswith(f"{os.path.basename(path)} ch {cur_ch}:"))
-                assert per_ch <= 2, (path, cur_ch, "too many label anomalies")
-                vn = expected
-            buf[vn] = [text]
-            cur_verse = vn
-        elif not skipping and cur_verse is not None and cur_ch is not None:
+                if vn == expected + 1 and expected in OMISSION_SKIPS.get((code, cur), ()):
+                    base_label += 1   # genuine print omission — shift window
+                    relabels.append(f"{code} ch {cur}: label {expected} omitted by the print")
+                else:
+                    relabels.append(f"{code} ch {cur}: printed {vn}. accepted as {expected}.")
+                    per = sum(1 for r in relabels
+                              if r.startswith(f"{code} ch {cur}: printed"))
+                    assert per <= 2, (code, cur, "too many label anomalies")
+                    vn = expected
+            pos = len(buf) + 1
+            buf[pos] = [text]
+            cur_verse = pos
+        elif not skipping and cur_verse is not None and cur is not None:
             buf[cur_verse].append(line)
-        if cur_ch is not None:
-            chapters[cur_ch] = buf
     out = {}
     for c, vs in chapters.items():
-        out[c] = {v: join_wrap(parts) for v, parts in vs.items()}
+        verses = [join_wrap(vs[p]) for p in sorted(vs)]
+        # inline-marker splits
+        for (sc, sch, slabel), anchor in INLINE_SPLITS.items():
+            if sc == code and sch == c:
+                i = slabel - 1 if code != "1L" or c != 6 else slabel - 1
+                # position == label here (all four sites are label==position)
+                t = verses[i]
+                m2 = re.search(anchor, t)
+                assert m2, (code, c, slabel, "inline split anchor missing")
+                verses[i:i + 1] = [t[:m2.start()].strip(), t[m2.end():].strip()]
+        assert all(verses), (code, c)
+        out[c] = verses
     return out
 
 
 def convert(senie_dir, dst):
     out = io.open(1, "w", encoding="utf-8", closefd=False)
+    kjv = json.load(open(os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "..", "app", "src", "main", "assets", "bibles", "en_kjv.json"),
+        encoding="utf-8"))
     books = [None] * 66
     relabels = []
+    divergent = []
     for coll, table in (("JT1685", NT), ("VD1689_94", OT)):
+        cp = os.path.join(senie_dir, coll)
         for code, bi in table.items():
-            path = os.path.join(senie_dir, coll, code, f"{code}_Unicode.txt")
-            assert os.path.exists(path), path
-            chapters = parse_book(path, relabels)
-            assert chapters, (code, "no chapters parsed")
-            assert sorted(chapters) == list(range(1, len(chapters) + 1)), (code, sorted(chapters)[-3:])
-            out_chapters = []
-            for c in range(1, len(chapters) + 1):
-                vs = chapters[c]
-                assert vs, (code, c, "empty chapter")
-                assert sorted(vs) == list(range(1, max(vs) + 1)), (code, c, sorted(vs)[:3], sorted(vs)[-3:])
-                assert all(vs[v].strip() for v in vs), (code, c)
-                out_chapters.append([vs[v] for v in range(1, max(vs) + 1)])
+            chapters = parse_book(cp, code, relabels)
+            assert chapters, (code, "no chapters")
+            assert sorted(chapters) == list(range(1, len(chapters) + 1)), code
+            want_ch = NATIVE_CHAPTERS.get(code, len(kjv[bi]["chapters"]))
+            assert len(chapters) == want_ch, (code, len(chapters), want_ch)
+            out_chapters = [chapters[c] for c in range(1, len(chapters) + 1)]
+            for ci, vs in enumerate(out_chapters):
+                kch = kjv[bi]["chapters"]
+                kn = len(kch[ci]) if ci < len(kch) else -1
+                if len(vs) != kn:
+                    divergent.append(f"{code} {ci+1}: {len(vs)} vs KJV {kn}")
             books[bi] = {"name": NAMES_LV[bi], "chapters": out_chapters}
-    assert all(books), [i for i, b in enumerate(books) if not b]
+    assert all(books)
     books += [{"name": n, "chapters": []} for n in APOC_NAMES]
 
     with open(dst, "w", encoding="utf-8") as f:
@@ -208,9 +262,13 @@ def convert(senie_dir, dst):
     total = sum(len(c) for b in books for c in b["chapters"])
     out.write(f"{dst}: 83 book slots (66 canon), {total} verses (native "
               f"numbering + original orthography), {os.path.getsize(dst)} bytes\n")
-    out.write(f"duplicate-label relabels ({len(relabels)}):\n")
+    out.write(f"label events ({len(relabels)}):\n")
     for r in relabels:
         out.write("  " + r + "\n")
+    out.write(f"native-divergent chapters ({len(divergent)}, all versemap-curated "
+              f"or mechanical title-psalms):\n")
+    for d in divergent:
+        out.write("  " + d + "\n")
 
 
 if __name__ == "__main__":

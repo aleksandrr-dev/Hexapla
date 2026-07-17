@@ -135,7 +135,7 @@
     <string name="xrefs">引照</string>
     <string name="remove_bookmark">しおりを削除</string>
     <string name="sources_title">本文の出典</string>
-    <string name="sources_text">聖書本文はすべてパブリックドメインです。例外: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Strong\'s Concordance（1890/1894年）の辞書 © Open Scriptures、CC-BY-SA。 ヘブライ語の形態論データ © Open Scriptures（CC-BY）。 引照 © openbible.info、CC-BY。 Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). 背景音楽: Kevin MacLeod (incompetech.com)、CC BY 4.0。</string>
+    <string name="sources_text">聖書本文はすべてパブリックドメインです。例外: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Glück 1685/1689 Latvian text © University of Latvia, SENIE/CLARIN-LV corpus, CC BY-SA 4.0. Strong\'s Concordance（1890/1894年）の辞書 © Open Scriptures、CC-BY-SA。 ヘブライ語の形態論データ © Open Scriptures（CC-BY）。 引照 © openbible.info、CC-BY。 Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). 背景音楽: Kevin MacLeod (incompetech.com)、CC BY 4.0。</string>
     <string name="voice_title">読み上げの声</string>
     <string name="voice_default">システム標準</string>
     <string name="voice_note">利用できる声は、端末にインストールされている音声エンジン（Google 音声サービス、Samsung TTS など）によって異なります。声をタップすると試聴できます。</string>

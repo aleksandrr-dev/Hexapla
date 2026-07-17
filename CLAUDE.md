@@ -323,7 +323,29 @@ maximize reach, keep everything free, nothing locked, collect no data.
   calling it PD (aggregator-mislabel trap — remember for future
   candidates). No 1871 OT digitization exists anywhere.
   SECOND WAVE verdicts (2026-07-17, reports in Hexapla-releases/research/):
-    Latvian Glück — SHIP-CANDIDATE 7/7, OWNER CHOICE between sources:
+    ~~Latvian Glück~~ INTEGRATED IN TREE 2026-07-17 ("glk",
+      lv_gluck.json, 32nd translation / 27th language, litmus 7/7 on
+      the asset — Joseph at Lk 2:33!, «Deews irr parahdihts Meeẜâ»):
+      the ORIGINAL 1685/1689 orthography from the SENIE/CLARIN-LV
+      corpus (CC BY-SA 4.0 — attribution added to sources_text ×13),
+      per the oldest-faithful-spelling precedent. Full OT+NT structural
+      survey + seam-reading (convert_gluck.py's docstring = the map):
+      1 Chr = THIRTY native chapters (KJV 4 split at the Simeonites
+      with print numbering continuing 24-44 across the seam; 6-30 =
+      KJV 5-29), Habakkuk = FOUR (split at 2:4/5), Job = Luther
+      arrangement, Eccl Hebrew boundaries at 4/5 + 6/7, Isa 53:2 split,
+      Ezek 5:9 = genuine print omission (versemap tv0>tv1), four
+      inline-marker merges split at their own printed anchors
+      (1 Chr 6:25 «26,», 12:3 «..4.», 12:6 «..7.», 2 Chr 32:19 «20.»),
+      17 print-label typos position-repaired (incl. the TRUE{PRINTED}
+      correction notation + dotless labels), 215 in-text corrections +
+      463 footnote anchors cleaned (the @-code stripper needed a DEPTH
+      COUNTER — footnotes nest {corrections} and a regex leaks tails).
+      206 versemap runs incl. the 26-run 1 Chr chapter map. Psalms
+      mechanical. defaultPrimaryId lv->glk. Apokr1689 (13 books, same
+      license) NOT converted yet — versification unassessed, follow-up.
+      The old note below records the original source choice:
+    Latvian Glück — was SHIP-CANDIDATE 7/7, OWNER CHOICE between sources:
       original 1685/1689 orthography (University of Latvia SENIE/
       CLARIN-LV corpus, explicit CC BY-SA 4.0, incl. 13-book apocrypha;
       needs an orthography-era converter + 4 unresolved NT chapter

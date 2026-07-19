@@ -28,22 +28,38 @@ DIVIDER = (0x3A, 0x35, 0x2F)
 
 WIN_FONTS = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
 
-# (lang, asset, title, font candidates, cjk wrap?)
+# (lang, asset, book index, title, font candidates, cjk wrap?)
+# book index 42 = John (all shipped NT-bearing translations); 0 = Genesis,
+# used only for he_wlc.json, which is Old-Testament-only (no John 1 exists).
 SHOTS = [
-    ("ja", "ja_meiji.json", "約翰傳福音書 1", ["YuGothM.ttc", "MEIRYO.TTC", "msgothic.ttc"], True),
-    ("zh_cn", "zh_cuv_s.json", "约翰福音 1", ["simsun.ttc", "msyh.ttc"], True),
-    ("zh_tw", "zh_cuv_t.json", "約翰福音 1", ["simsun.ttc", "msjh.ttc"], True),
-    ("pt", "pt_almeida.json", "João 1", ["segoeui.ttf"], False),
-    ("it", "it_diodati.json", "Giovanni 1", ["segoeui.ttf"], False),
-    ("sv", "sv_karlxii.json", "Johannes 1", ["segoeui.ttf"], False),
-    ("da", "da_1819.json", "Johannes 1", ["segoeui.ttf"], False),
-    ("ta", "ta_irv.json", "யோவான் 1", ["Nirmala.ttf"], False),
+    ("ja", "ja_meiji.json", 42, "約翰傳福音書 1", ["YuGothM.ttc", "MEIRYO.TTC", "msgothic.ttc"], True),
+    ("zh_cn", "zh_cuv_s.json", 42, "约翰福音 1", ["simsun.ttc", "msyh.ttc"], True),
+    ("zh_tw", "zh_cuv_t.json", 42, "約翰福音 1", ["simsun.ttc", "msjh.ttc"], True),
+    ("pt", "pt_almeida.json", 42, "João 1", ["segoeui.ttf"], False),
+    ("it", "it_diodati.json", 42, "Giovanni 1", ["segoeui.ttf"], False),
+    ("sv", "sv_karlxii.json", 42, "Johannes 1", ["segoeui.ttf"], False),
+    ("da", "da_1819.json", 42, "Johannes 1", ["segoeui.ttf"], False),
+    ("ta", "ta_irv.json", 42, "யோவான் 1", ["Nirmala.ttf"], False),
+    ("cs", "cs_kralicka.json", 42, "Jan 1", ["segoeui.ttf"], False),
+    ("el", "el_vamvas.json", 42, "Κατά Ιωάννην 1", ["segoeui.ttf"], False),
+    ("fi", "fi_biblia1776.json", 42, "Johannes 1", ["segoeui.ttf"], False),
+    ("hu", "hu_karoli.json", 42, "János 1", ["segoeui.ttf"], False),
+    ("hy", "hy_west1853.json", 42, "Յովհաննէս 1", ["sylfaen.ttf", "segoeui.ttf"], False),
+    ("lv", "lv_gluck.json", 42, "Jāņa evaņģēlijs 1", ["segoeui.ttf"], False),
+    ("nl", "nl_staten.json", 42, "Johannes 1", ["segoeui.ttf"], False),
+    ("pl", "pl_gdanska.json", 42, "Jan 1", ["segoeui.ttf"], False),
+    ("sr", "sr_karadzic.json", 42, "Jovan 1", ["segoeui.ttf"], False),
+    ("ar", "ar_vandyck.json", 42, "إنجيل يوحنا 1", ["segoeui.ttf"], False),
+    # he_wlc.json has no New Testament — John 1 doesn't exist there, so this
+    # shot uses Genesis 1 (book index 0) instead.
+    ("he", "he_wlc.json", 0, "בראשית א", ["segoeui.ttf"], False),
 ]
 
-# Scripts PIL cannot shape (Indic reordering needs Raqm, absent from the
-# Windows wheels): text is rendered by tools/render_text.ps1 (WPF /
-# DirectWrite) into transparent PNGs and pasted. Font = WPF family name.
-COMPLEX = {"ta": "Nirmala UI"}
+# Scripts PIL cannot shape correctly (Indic reordering, Arabic contextual
+# letterforms, Hebrew/Arabic bidi): text is rendered by tools/render_text.ps1
+# (WPF/DirectWrite) into transparent PNGs and pasted. Font = WPF family name.
+COMPLEX = {"ta": "Nirmala UI", "ar": "Segoe UI", "he": "Segoe UI"}
+RTL = {"ar", "he"}
 
 
 def render_via_wpf(items):
@@ -130,15 +146,20 @@ def hexc(rgb):
 
 
 def main():
-    for lang, asset, title, fonts, cjk in SHOTS:
+    for lang, asset, book_idx, title, fonts, cjk in SHOTS:
         books = json.load(open(os.path.join(ASSETS, asset), encoding="utf-8"))
-        verses = books[42]["chapters"][0]
+        verses = books[book_idx]["chapters"][0]
+        rtl = lang in RTL
 
         img = Image.new("RGB", (W, H), BG)
         d = ImageDraw.Draw(img)
         nfont = font_of(["segoeui.ttf"], 28) if lang in COMPLEX else font_of(fonts, 28)
 
         x_num, x_text, maxw = 48, 100, W - 100 - 52
+        # RTL: verse number sits on the right, text block right-anchored —
+        # mirrors how the app itself lays out Arabic/Hebrew (see the
+        # ReaderScreen.kt swipe-direction fix for the same reasoning).
+        x_num_rtl = W - 52 - 28
         y = 300
         if lang in COMPLEX:
             # Shape title + verse blocks in WPF, paste; icons/numbers by PIL.
@@ -149,18 +170,22 @@ def main():
             ]
             items = [{"text": title, "font": family, "size": 48,
                       "color": hexc(GOLD), "wrap": False, "maxwidth": 0,
-                      "out": outs[0]}]
+                      "out": outs[0], "rtl": rtl}]
             items += [{"text": v, "font": family, "size": 46,
                        "color": hexc(INK), "wrap": True, "maxwidth": maxw,
-                       "out": outs[1 + i]} for i, v in enumerate(verses)]
+                       "out": outs[1 + i], "rtl": rtl} for i, v in enumerate(verses)]
             render_via_wpf(items)
             draw_topbar(d, None, None)
             tpng = Image.open(outs[0])
             img.paste(tpng, ((W - tpng.width) // 2 - 60, 165 - tpng.height // 2), tpng)
             for i in range(len(verses)):
                 vpng = Image.open(outs[1 + i])
-                d.text((x_num, y + 14), str(i + 1), font=nfont, fill=NUM)
-                img.paste(vpng, (x_text, y), vpng)
+                if rtl:
+                    d.text((x_num_rtl, y + 14), str(i + 1), font=nfont, fill=NUM, anchor="ra")
+                    img.paste(vpng, (W - 52 - vpng.width, y), vpng)
+                else:
+                    d.text((x_num, y + 14), str(i + 1), font=nfont, fill=NUM)
+                    img.paste(vpng, (x_text, y), vpng)
                 y += vpng.height + 36
                 if y > H:
                     break

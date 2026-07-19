@@ -54,7 +54,8 @@ object BibleRepo {
         Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale("ta")),
         Translation("vd", "bibles/ar_vandyck.json", "الكتاب المقدس — Van Dyck, 1865 (AR)", Locale("ar")),
         Translation("arm", "bibles/hy_west1853.json", "Նոր Կտակարան — արեւմտահայերէն NT, 1853 (HY)", Locale("hy")),
-        Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la"))
+        Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la")),
+        Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale("be"))
     )
 
     fun translation(id: String): Translation =
@@ -91,6 +92,7 @@ object BibleRepo {
         "ja" -> "mei"
         "ta" -> "ta"
         "la" -> "vul"
+        "be" -> "dzm"
         "zh" -> Locale.getDefault().let {
             if (it.script == "Hant" || it.country in setOf("TW", "HK", "MO")) "cuv" else "cus"
         }

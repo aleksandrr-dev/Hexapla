@@ -30,10 +30,16 @@ FONTS = {
     "zh_tw": ["mingliu.ttc", "msjh.ttc"],
     "ta": ["Nirmala.ttf", "latha.ttf"],
     "latin": ["georgia.ttf", "constan.ttf", "times.ttf"],
+    # Georgia/Constantia (the "latin" stack) have no Greek or Armenian
+    # glyphs; Segoe UI/Sylfaen cover both (same choice as make_reader_shot.py).
+    "el": ["segoeui.ttf"],
+    "hy": ["sylfaen.ttf", "segoeui.ttf"],
 }
-LATIN = {"es", "fr", "de", "pt", "it", "sv", "da"}
-# Indic scripts PIL cannot shape -> WPF family names (render_text.ps1).
-COMPLEX = {"ta": "Nirmala UI"}
+LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl", "pl", "sr"}
+# Scripts PIL cannot shape (Indic reordering, Arabic/Hebrew RTL+shaping) ->
+# WPF family names (render_text.ps1).
+COMPLEX = {"ta": "Nirmala UI", "ar": "Segoe UI", "he": "Segoe UI"}
+RTL = {"ar", "he"}
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 TAGLINES = {
@@ -48,6 +54,23 @@ TAGLINES = {
     "sv": ("Hebreiska · Grekiska · Karl XII · KJV", "gamla texter, sida vid sida"),
     "da": ("Hebraisk · Græsk · Dansk 1819 · KJV", "gamle tekster, side om side"),
     "ta": ("எபிரெயம் · கிரேக்கம் · தமிழ் IRV · KJV", "பழைமையான வேத உரைகள், அருகருகே"),
+    "cs": ("Hebrejština · Řečtina · Kralická · KJV", "starověké texty vedle sebe"),
+    "el": ("Εβραϊκά · Ελληνικά · Βάμβας · KJV", "αρχαία κείμενα, δίπλα-δίπλα"),
+    "fi": ("Heprea · Kreikka · Biblia 1776 · KJV", "muinaisia tekstejä rinnakkain"),
+    "hu": ("Héber · Görög · Károli · KJV", "ősi szövegek egymás mellett"),
+    "lv": ("Ebreju · Grieķu · Glika Bībele · KJV", "senie teksti — blakām"),
+    "nl": ("Hebreeuws · Grieks · Statenvertaling · KJV", "oude teksten naast elkaar"),
+    "pl": ("Hebrajski · Grecki · Gdańska · KJV", "starożytne teksty obok siebie"),
+    "sr": ("Hebrejski · Grčki · Karadžić · KJV", "drevni tekstovi, jedan pored drugog"),
+    "ar": ("العبرية · اليونانية · فان دايك · KJV", "نصوص قديمة، جنبًا إلى جنب"),
+    # he_wlc.json IS the Hebrew original (not a translation into Hebrew) and
+    # is OT-only, so the usual "Hebrew · Greek · local translation · KJV"
+    # 4-part pattern doesn't fit — adapted to 3 parts. Best-effort, not yet
+    # native-reviewed (same open item as the Armenian listing text).
+    "he": ("עברית מקורית · יוונית · KJV", "טקסטים עתיקים, זה לצד זה"),
+    # Best-effort classical-orthography Armenian, consistent with the
+    # already-flagged listing text — same pending native review applies here.
+    "hy": ("Եբրայերէն · Յունարէն · 1853 · KJV", "հին տեքստեր՝ կողք կողքի"),
 }
 
 
@@ -91,7 +114,7 @@ def main():
             outs = [os.path.join(tmp, f"hex_feat_{lang}_{i}.png") for i in (1, 2)]
             items = [{"text": t, "font": COMPLEX[lang], "size": 34,
                       "color": "#%02X%02X%02X" % gold, "wrap": False,
-                      "maxwidth": max_w, "out": o}
+                      "maxwidth": max_w, "out": o, "rtl": lang in RTL}
                      for t, o in zip((line1, line2), outs)]
             mf = os.path.join(tmp, "hex_feat_manifest.json")
             with open(mf, "w", encoding="utf-8") as f:

@@ -85,6 +85,8 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -400,6 +402,7 @@ fun ReaderScreen(settings: AppSettings) {
     var originalVerse by remember { mutableStateOf<Int?>(null) }
     var notesVerse by remember { mutableStateOf<Int?>(null) }
     var dragTotal by remember { mutableFloatStateOf(0f) }
+    val layoutDirection = LocalLayoutDirection.current
 
     val fontFamily = if (settings.serifFont) FontFamily.Serif else FontFamily.SansSerif
     val ttsError = stringResource(R.string.tts_unavailable)
@@ -476,8 +479,14 @@ fun ReaderScreen(settings: AppSettings) {
                             onDragStart = { dragTotal = 0f },
                             onHorizontalDrag = { _, amount -> dragTotal += amount },
                             onDragEnd = {
-                                if (dragTotal < -160f) navigateChapter(books, +1)
-                                else if (dragTotal > 160f) navigateChapter(books, -1)
+                                // Physical drag direction is fixed; flip it for RTL locales
+                                // so "swipe toward the reading direction" still means "next
+                                // chapter" regardless of script.
+                                val effective =
+                                    if (layoutDirection == LayoutDirection.Rtl) -dragTotal
+                                    else dragTotal
+                                if (effective < -160f) navigateChapter(books, +1)
+                                else if (effective > 160f) navigateChapter(books, -1)
                             }
                         )
                     }

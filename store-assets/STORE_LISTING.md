@@ -22,6 +22,172 @@ Localized reader screenshots (John 1 in the language's own translation,
 `tools/make_reader_shot.py`): lead with the reader shot on that
 language's Play listing, then the order above.
 
+## 1.5.0 release notes (paste per store)
+
+**RU:** Одиннадцать новых переводов: нидерландский Statenvertaling, арабский
+Ван Дейк, английский Young's Literal Translation, новогреческий Вамвас,
+финская Библия 1776 года, польская Гданьская Библия, сербский перевод
+Караджича/Даничича (читают и боснийские, и хорватские пользователи),
+венгерская Библия Кароли, чешская Кралицкая Библия, западноармянский Новый
+Завет 1853 года и латышская Библия Глюка — теперь 32 перевода на 27 языках.
+Интерфейс пополнился одиннадцатью языками (арабский, чешский, греческий,
+иврит, венгерский, армянский, латышский, нидерландский, польский, сербский,
+финский) — итого 24 языка интерфейса; для арабского и иврита добавлена
+поддержка письма справа налево, включая перелистывание глав в правильном
+направлении. Латышская Библия Глюка получила 12 из 13 второканонических
+книг, а Елизаветинская церковнославянская Библия — обе ранее отсутствовавшие
+книги (3-я Ездры и 3-я Маккавейская). Также восстановлены 137 надписаний
+псалмов в тамильском переводе, утерянных при конвертации.
+
+**EN:** Eleven new translations — Dutch (Statenvertaling), Arabic (Van
+Dyck), English (Young's Literal Translation), Modern Greek (Vamvas), Finnish
+(Biblia 1776), Polish (Gdańska), Serbian (Karadžić/Daničić, also read by
+Bosnian and Croatian speakers), Hungarian (Károli), Czech (Kralická),
+Western Armenian NT (1853), and Latvian (Glück) — bring the total to 32
+translations in 27 languages. Eleven new interface languages (Arabic, Czech,
+Greek, Hebrew, Hungarian, Armenian, Latvian, Dutch, Polish, Serbian,
+Finnish) bring the UI to 24 languages total, with right-to-left support for
+Arabic and Hebrew, including a fix so the chapter-swipe gesture follows the
+reading direction. The Latvian Glück Bible gained 12 of its 13 Apocrypha
+books, and the Church Slavonic Elizabeth Bible gained its two previously
+missing books (2 Esdras and 3 Maccabees). Also: 137 psalm titles restored in
+the Tamil translation that a converter had dropped.
+
+**DE:** Elf neue Übersetzungen (Niederländisch, Arabisch, Englisch — Young's
+Literal Translation, Neugriechisch, Finnisch, Polnisch, Serbisch,
+Ungarisch, Tschechisch, Armenisch und Lettisch) erhöhen die Gesamtzahl auf
+32 Übersetzungen in 27 Sprachen. Elf neue Oberflächensprachen (Arabisch,
+Tschechisch, Griechisch, Hebräisch, Ungarisch, Armenisch, Lettisch,
+Niederländisch, Polnisch, Serbisch, Finnisch) bringen die App-Sprache auf
+insgesamt 24 Sprachen — mit Rechts-nach-links-Unterstützung für Arabisch
+und Hebräisch, inklusive einer Korrektur, damit das Wischen zum
+Kapitelwechsel der Leserichtung folgt. Die lettische Glück-Bibel erhielt 12
+ihrer 13 Apokryphen-Bücher, die kirchenslawische Elisabeth-Bibel ihre beiden
+zuvor fehlenden Bücher; außerdem wurden 137 verlorene Psalmüberschriften in
+der tamilischen Übersetzung wiederhergestellt.
+
+**ES:** Once traducciones nuevas (neerlandés, árabe, inglés — Young's
+Literal Translation, griego moderno, finés, polaco, serbio, húngaro, checo,
+armenio y letón) elevan el total a 32 traducciones en 27 idiomas. Once
+idiomas nuevos de interfaz (árabe, checo, griego, hebreo, húngaro, armenio,
+letón, neerlandés, polaco, serbio, finés) llevan la interfaz a 24 idiomas en
+total, con soporte de derecha a izquierda para árabe y hebreo, incluida una
+corrección para que el gesto de deslizar capítulos siga el sentido de
+lectura. La Biblia letona de Glück recibió 12 de sus 13 libros apócrifos, y
+la Biblia eslava eclesiástica de Isabel sus dos libros que faltaban; además
+se restauraron 137 títulos de salmos perdidos en la traducción tamil.
+
+**FR:** Onze nouvelles traductions (néerlandais, arabe, anglais — Young's
+Literal Translation, grec moderne, finnois, polonais, serbe, hongrois,
+tchèque, arménien et letton) portent le total à 32 traductions en 27
+langues. Onze nouvelles langues d'interface (arabe, tchèque, grec, hébreu,
+hongrois, arménien, letton, néerlandais, polonais, serbe, finnois) portent
+l'interface à 24 langues au total, avec la prise en charge de l'écriture de
+droite à gauche pour l'arabe et l'hébreu, y compris une correction du
+balayage de chapitre pour suivre le sens de lecture. La Bible lettone de
+Glück a reçu 12 de ses 13 livres apocryphes, et la Bible slavonne
+d'Élisabeth ses deux livres manquants ; 137 titres de psaumes perdus ont
+aussi été restaurés dans la traduction tamoule.
+
+**PT:** Onze novas traduções (holandês, árabe, inglês — Young's Literal
+Translation, grego moderno, finlandês, polonês, sérvio, húngaro, tcheco,
+armênio e letão) elevam o total a 32 traduções em 27 idiomas. Onze novos
+idiomas de interface (árabe, tcheco, grego, hebraico, húngaro, armênio,
+letão, holandês, polonês, sérvio, finlandês) levam a interface a 24 idiomas
+no total, com suporte da direita para a esquerda no árabe e no hebraico,
+incluindo uma correção para que o gesto de deslizar capítulos siga o
+sentido de leitura. A Bíblia letã de Glück recebeu 12 de seus 13 livros
+apócrifos, e a Bíblia eslava eclesiástica de Isabel seus dois livros que
+faltavam; também foram restaurados 137 títulos de salmos perdidos na
+tradução tâmil.
+
+**IT:** Undici nuove traduzioni (olandese, arabo, inglese — Young's Literal
+Translation, greco moderno, finlandese, polacco, serbo, ungherese, ceco,
+armeno e lettone) portano il totale a 32 traduzioni in 27 lingue. Undici
+nuove lingue dell'interfaccia (arabo, ceco, greco, ebraico, ungherese,
+armeno, lettone, olandese, polacco, serbo, finlandese) portano l'interfaccia
+a 24 lingue totali, con supporto da destra a sinistra per arabo ed ebraico,
+inclusa una correzione per far seguire allo scorrimento tra i capitoli il
+verso di lettura. La Bibbia lettone di Glück ha ricevuto 12 dei suoi 13
+libri apocrifi, e la Bibbia slava ecclesiastica di Elisabetta i suoi due
+libri mancanti; sono stati inoltre ripristinati 137 titoli dei salmi perduti
+nella traduzione tamil.
+
+**SV:** Elva nya översättningar (nederländska, arabiska, engelska —
+Young's Literal Translation, nygrekiska, finska, polska, serbiska,
+ungerska, tjeckiska, armeniska och lettiska) höjer totalen till 32
+översättningar på 27 språk. Elva nya gränssnittsspråk (arabiska, tjeckiska,
+grekiska, hebreiska, ungerska, armeniska, lettiska, nederländska, polska,
+serbiska, finska) tar gränssnittet till 24 språk totalt, med stöd för
+höger-till-vänster-skrift för arabiska och hebreiska, inklusive en fix så
+att kapitelbyte med svep följer läsriktningen. Den lettiska Glück-bibeln
+fick 12 av sina 13 apokryfiska böcker, och den kyrkoslaviska
+Elisabetbibeln sina två saknade böcker; dessutom återställdes 137 förlorade
+psalmrubriker i den tamilska översättningen.
+
+**DA:** Elleve nye oversættelser (hollandsk, arabisk, engelsk — Young's
+Literal Translation, nygræsk, finsk, polsk, serbisk, ungarsk, tjekkisk,
+armensk og lettisk) bringer totalen op på 32 oversættelser på 27 sprog.
+Elleve nye sprog i brugerfladen (arabisk, tjekkisk, græsk, hebraisk,
+ungarsk, armensk, lettisk, hollandsk, polsk, serbisk, finsk) bringer
+brugerfladen op på i alt 24 sprog, med understøttelse af
+højre-til-venstre-skrift for arabisk og hebraisk, inklusive en rettelse så
+kapitelswipe følger læseretningen. Den lettiske Glück-bibel fik 12 af sine
+13 apokryfe bøger, og den kirkeslaviske Elisabeth-bibel sine to manglende
+bøger; desuden blev 137 mistede salmeoverskrifter genskabt i den tamilske
+oversættelse.
+
+**JA:** 新しい翻訳を11件追加（オランダ語のスターテン訳、アラビア語のヴァ
+ンダイク訳、英語のYoung's Literal Translation、現代ギリシャ語のヴァンヴァ
+ス訳、フィンランド語の1776年訳、ポーランド語のグダニスク聖書、セルビア語
+のカラジッチ/ダニチッチ訳、ハンガリー語のカーロリ訳、チェコ語のクラリツ
+ェ聖書、1853年の西アルメニア語新約聖書、ラトビア語のグリュック聖書）—
+27言語・32の翻訳になりました。インターフェース言語も11言語追加（アラビ
+ア語、チェコ語、ギリシャ語、ヘブライ語、ハンガリー語、アルメニア語、ラト
+ビア語、オランダ語、ポーランド語、セルビア語、フィンランド語）され、合計
+24言語に。アラビア語・ヘブライ語では右から左に読む表示に対応し、章送り
+のスワイプ操作も読む方向に合わせて修正しました。ラトビア語グリュック聖書
+に外典13巻中12巻を追加、教会スラヴ語エリザベス聖書には欠けていた2巻（エ
+ズラ記第二・マカバイ記第三）を追加。タミル語訳では失われていた詩篇の表題
+137件も復元しました。
+
+**ZH-CN:** 新增11部译本（荷兰语司泰顿译本、阿拉伯语范戴克译本、英语
+Young's Literal Translation、现代希腊语瓦姆瓦斯译本、芬兰语1776年圣经、
+波兰语格但斯克圣经、塞尔维亚语卡拉季奇/达尼契奇译本、匈牙利语卡罗利译
+本、捷克语克拉利采圣经、1853年西亚美尼亚语新约、拉脱维亚语格吕克圣经）
+——现有27种语言、32部译本。界面新增11种语言（阿拉伯语、捷克语、希腊语、
+希伯来语、匈牙利语、亚美尼亚语、拉脱维亚语、荷兰语、波兰语、塞尔维亚语、
+芬兰语），界面语言总数达到24种；阿拉伯语和希伯来语现已支持从右到左显示，
+章节滑动手势也已按阅读方向修正。拉脱维亚语格吕克圣经新增13卷次经中的12
+卷，教会斯拉夫语伊丽莎白圣经补全了此前缺失的两卷（以斯拉记下、马加比三
+书）；泰米尔语译本中丢失的137个诗篇标题也已恢复。
+
+**ZH-TW:** 新增11部譯本（荷蘭語司泰頓譯本、阿拉伯語范戴克譯本、英語
+Young's Literal Translation、現代希臘語瓦姆瓦斯譯本、芬蘭語1776年聖經、
+波蘭語格但斯克聖經、塞爾維亞語卡拉季奇/達尼契奇譯本、匈牙利語卡羅利譯
+本、捷克語克拉利采聖經、1853年西亞美尼亞語新約、拉脫維亞語格呂克聖經）
+——現有27種語言、32部譯本。介面新增11種語言（阿拉伯語、捷克語、希臘語、
+希伯來語、匈牙利語、亞美尼亞語、拉脫維亞語、荷蘭語、波蘭語、塞爾維亞語、
+芬蘭語），介面語言總數達到24種；阿拉伯語和希伯來語現已支援從右到左顯示，
+章節滑動手勢也已依閱讀方向修正。拉脫維亞語格呂克聖經新增13卷次經中的12
+卷，教會斯拉夫語伊麗莎白聖經補全了先前缺失的兩卷（以斯拉記下、馬加比三
+書）；泰米爾語譯本中遺失的137個詩篇標題也已恢復。
+
+**TA:** 11 புதிய மொழிபெயர்ப்புகள் (டச்சு Statenvertaling, அரபு Van Dyck,
+ஆங்கிலம் Young's Literal Translation, நவீன கிரேக்கம் Vamvas, பின்னிஷ்
+Biblia 1776, போலிஷ் Gdańska, செர்பியன் Karadžić/Daničić, ஹங்கேரியன்
+Károli, செக் Kralická, 1853 மேற்கு அர்மேனிய புதிய ஏற்பாடு, லாட்வியன் Glück)
+சேர்க்கப்பட்டு — இப்போது 27 மொழிகளில் 32 மொழிபெயர்ப்புகள். இடைமுகத்திலும்
+11 புதிய மொழிகள் (அரபு, செக், கிரேக்கம், ஹீப்ரு, ஹங்கேரியன், அர்மேனியன்,
+லாட்வியன், டச்சு, போலிஷ், செர்பியன், பின்னிஷ்) சேர்க்கப்பட்டு மொத்தம் 24
+இடைமுகி மொழிகள் ஆகின்றன; அரபு மற்றும் ஹீப்ருவிற்கு வலமிருந்து இடமாகப்
+படிக்கும் திசைக்கு ஏற்ப காட்சியும் அத்தியாய ஸ்வைப் திசையும்
+திருத்தப்பட்டன. தமிழ் மொழிபெயர்ப்பில் மாற்றியமைப்பின்போது இழந்த 137
+சங்கீத தலைப்புகள் மீட்டெடுக்கப்பட்டன; லாட்வியன் க்ளூக் பைபிளுக்கு
+அபோக்ரிபாவின் 13 புத்தகங்களில் 12 சேர்க்கப்பட்டன, மேலும் சர்ச் ஸ்லாவோனிக்
+எலிசபெத் பைபிளில் விடுபட்டிருந்த இரு புத்தகங்களும் (2 எஸ்றா, 3 மக்கபேயர்)
+சேர்க்கப்பட்டன.
+
 ## 1.4.3 release notes (paste per store; 1.4.2 was never uploaded — these notes fold its changes in)
 
 **RU:** Два новых перевода: полная тамильская Библия (IRV 2019) и
@@ -563,3 +729,304 @@ Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊
 🖼 桌面小工具顯示每日經文；多雷與施諾爾的經典版畫。
 
 所有經文均屬公有領域。本應用程式不收集任何資料。
+
+## Missing-listing gap: 11 shipped translations with no Play listing (audited 2026-07-19)
+
+Below are draft listings for the 11 languages that have a real, shipped Bible
+translation in `app/src/main/assets/bibles/` and a `Translation` entry in
+`Bible.kt`, but never got a Play Store listing entry (the listing was last
+updated for 1.4.3, submitted 2026-07-13; these translations landed
+2026-07-16/17). Current totals used below — **32 translations across 27
+languages** — come from the `translations` list in
+`app/src/main/java/com/aleks/hexapla/Bible.kt` (33 `Translation`
+registrations; the Simplified/Traditional Chinese Union Version pair, `cus`
+and `cuv`, is one translation in two scripts, netting 32) cross-checked
+against the commit trail (`git log`: `c8c7fc6 Glika Bibele 1685/1689 (glk):
+32 translations, 27 languages` — the most recent translation-adding commit as
+of 2026-07-19; nothing since has added a new translation). All 11 of these
+are NOT yet in a submitted build, **except Hebrew** — `he_wlc` (Westminster
+Leningrad Codex) has been live since v1.4/code 7 (submitted 2026-07-11); its
+listing gap is a pure oversight, independent of the other 10, and can go out
+any time. The other 10 should go out with whatever release next includes
+`ar_vandyck.json`, `cs_kralicka.json`, `el_vamvas.json`, `fi_biblia1776.json`,
+`hu_karoli.json`, `hy_west1853.json`, `lv_gluck.json`, `nl_staten.json`,
+`pl_gdanska.json`, `sr_karadzic.json`.
+
+### العربية — Arabic (ar) (ADD WITH THE NEXT RELEASE — ar_vandyck.json is in tree since 2026-07-16, not yet in a submitted build)
+
+**العنوان:** Hexapla — الكتاب المقدس المتوازي
+
+**الوصف القصير (≤80):**
+الكتاب المقدس دون إنترنت: 32 ترجمة، صوت، خطط قراءة، أرقام سترونغ.
+
+**الوصف الكامل:**
+
+هكسابلا هو الكتاب المقدس الكامل — دون إنترنت، دون إعلانات، دون حساب، ودون جمع أي بيانات. كل شيء مجاني ولا شيء مقفل.
+
+📖 32 ترجمة كلاسيكية في 27 لغة: ترجمة فان دايك 1865 (العربية)، الملك جيمس KJV 1611 مع الأسفار القانونية الثانية، وبستر 1833، جنيف 1599، ديوداتي 1649، رينا-فاليرا 1909، لوثر 1545، مارتن 1744، كارل الثاني عشر 1703، السينودسية الروسية، السلافية الكنسية، المييجي اليابانية، والنسخة الصينية الموحدة (和合本)، إضافة إلى النصين الأصليين العبري واليوناني.
+✝️ البشارة — خطة الله للخلاص، خطوة بخطوة، من الكتاب المقدس فقط.
+🔴 كلام المسيح باللون الأحمر.
+🎧 صوت: تلاوة وتحويل نص إلى كلام مع تمييز الآية، تشغيل في الخلفية، مؤقت نوم.
+📚 أرقام سترونغ مع المعجم العبري واليوناني الكامل.
+📜 التفسير البيني للنص الأصلي: اضغط على أي كلمة في النص اليوناني أو العبري لرؤية رقم سترونغ والتحليل النحوي الكامل.
+🔀 اقرأ ترجمتين جنبًا إلى جنب، آية بآية، أو قارن آية واحدة عبر كل الترجمات.
+📅 خطط قراءة: الكتاب المقدس في سنة، خطة زمنية، العهد الجديد في 90 يومًا وأكثر — مع تتبع التقدم.
+🔍 بحث لا يتأثر بالتشكيل عبر جميع الترجمات.
+✏️ إشارات مرجعية، ملاحظات، تظليل، مراجع متقاطعة، نسخ احتياطي.
+🖼 آية اليوم على الودجت؛ لوحات كلاسيكية لدوريه وشنور.
+
+جميع النصوص ملك عام. التطبيق لا يجمع أي بيانات.
+
+### Čeština — Czech (cs) (ADD WITH THE NEXT RELEASE — cs_kralicka.json is in tree since 2026-07-17, not yet in a submitted build)
+
+**Název:** Hexapla — Paralelní Bible
+
+**Krátký popis (≤80):**
+Bible offline: 32 klasických překladů, zvuk, plány čtení, Strong.
+
+**Úplný popis:**
+
+Hexapla je kompletní Bible — offline, bez reklam, bez účtu a bez sběru dat. Vše zdarma, nic není uzamčeno.
+
+📖 32 klasických překladů ve 27 jazycích: Bible kralická 1613, KJV 1611 s apokryfy, Webster 1833, Ženevská bible 1599, Diodati 1649, Reina-Valera 1909, Lutherova bible 1545, Martin 1744, Karel XII. 1703, ruský synodální překlad, církevní slovanština, japonský Meidži, čínský Union Version (和合本), a hebrejský i řecký původní text.
+✝️ Dobrá zpráva — Boží plán spásy krok za krokem, pouze biblický text.
+🔴 Slova Kristova červeně.
+🎧 Zvuk: namluvené čtení a syntéza řeči se zvýrazněním verše, přehrávání na pozadí, časovač usínání.
+📚 Strongova čísla s úplným hebrejsko-řeckým slovníkem.
+📜 Interlineární původní text: klepnutím na slovo v řeckém nebo hebrejském textu zobrazíte Strongovo číslo a úplný gramatický rozbor.
+🔀 Čtěte dva překlady vedle sebe, verš po verši, nebo porovnejte verš napříč všemi překlady.
+📅 Plány čtení: Bible za rok, chronologický plán, NZ za 90 dní a další — se sledováním postupu.
+🔍 Vyhledávání necitlivé na diakritiku napříč všemi překlady.
+✏️ Záložky, poznámky, zvýraznění, křížové odkazy, záloha.
+🖼 Verš dne na widgetu; klasické rytiny Dorého a Schnorra.
+
+Všechny texty jsou volným dílem. Aplikace neshromažďuje žádná data.
+
+### Ελληνικά — Greek (el) (ADD WITH THE NEXT RELEASE — el_vamvas.json is in tree since 2026-07-16, not yet in a submitted build)
+
+**Τίτλος:** Hexapla — Παράλληλη Βίβλος
+
+**Σύντομη περιγραφή (≤80):**
+Βίβλος offline: 32 κλασικές μεταφράσεις, ήχος, προγράμματα ανάγνωσης, Strong.
+
+**Πλήρης περιγραφή:**
+
+Το Hexapla είναι η πλήρης Βίβλος — χωρίς σύνδεση στο διαδίκτυο, χωρίς διαφημίσεις, χωρίς λογαριασμό και χωρίς συλλογή δεδομένων. Όλα δωρεάν, τίποτα κλειδωμένο.
+
+📖 32 κλασικές μεταφράσεις σε 27 γλώσσες: η μετάφραση Βάμβα 1850, η KJV 1611 με τα Απόκρυφα, η Webster 1833, η Γενεύη 1599, η Diodati 1649, η Reina-Valera 1909, η Βίβλος του Λούθηρου 1545, η Martin 1744, ο Κάρολος ΙΒ' 1703, η Ρωσική Συνοδική, η Εκκλησιαστική Σλαβονική, η ιαπωνική Meiji, η κινεζική Union Version (和合本), καθώς και τα πρωτότυπα εβραϊκά και ελληνικά κείμενα.
+✝️ Τα Καλά Νέα — το σχέδιο σωτηρίας του Θεού, βήμα προς βήμα, μόνο από τη Γραφή.
+🔴 Τα λόγια του Χριστού με κόκκινο.
+🎧 Ήχος: αφήγηση και σύνθεση ομιλίας με επισήμανση εδαφίου, αναπαραγωγή στο παρασκήνιο, χρονοδιακόπτης ύπνου.
+📚 Αριθμοί Strong με πλήρες εβραϊκό/ελληνικό λεξικό.
+📜 Διαγράμμιση πρωτότυπου κειμένου: πατήστε μια λέξη στο ελληνικό ή εβραϊκό κείμενο για τον αριθμό Strong και την πλήρη γραμματική ανάλυση.
+🔀 Διαβάστε δύο μεταφράσεις παράλληλα, εδάφιο προς εδάφιο, ή συγκρίνετε ένα εδάφιο σε όλες τις μεταφράσεις.
+📅 Προγράμματα ανάγνωσης: η Βίβλος σε 1 χρόνο, χρονολογικό πρόγραμμα, η Κ.Δ. σε 90 ημέρες και άλλα — με παρακολούθηση προόδου.
+🔍 Αναζήτηση χωρίς ευαισθησία σε τονισμό σε όλες τις μεταφράσεις.
+✏️ Σελιδοδείκτες, σημειώσεις, επισημάνσεις, παραπομπές, αντίγραφο ασφαλείας.
+🖼 Εδάφιο της ημέρας στο γουίτζετ· κλασικές χαλκογραφίες των Doré και Schnorr.
+
+Όλα τα κείμενα είναι κοινό κτήμα. Η εφαρμογή δεν συλλέγει κανένα δεδομένο.
+
+### Suomi — Finnish (fi) (ADD WITH THE NEXT RELEASE — fi_biblia1776.json is in tree since 2026-07-16, not yet in a submitted build)
+
+**Nimi:** Hexapla — Rinnakkainen Raamattu
+
+**Lyhyt kuvaus (≤80):**
+Raamattu offline: 32 klassista käännöstä, ääni, lukusuunnitelmat, Strong.
+
+**Täydellinen kuvaus:**
+
+Hexapla on koko Raamattu — ilman internetiä, ilman mainoksia, ilman tiliä ja ilman tiedonkeruuta. Kaikki on ilmaista, mikään ei ole lukittu.
+
+📖 32 klassista käännöstä 27 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
+✝️ Hyvä sanoma — Jumalan pelastussuunnitelma askel askeleelta, pelkkää Raamattua.
+🔴 Kristuksen sanat punaisella.
+🎧 Ääni: ihmisääninen luenta ja tekstistä puheeksi -toiminto jakeen korostuksella, taustatoisto, uniajastin.
+📚 Strongin numerot täydellisen heprean/kreikan sanakirjan kanssa.
+📜 Alkukielen interlineaari: kosketa sanaa kreikan- tai hepreankielisessä tekstissä nähdäksesi Strongin numeron ja täyden kieliopillisen analyysin.
+🔀 Lue kaksi käännöstä rinnakkain, jae jakeelta, tai vertaa jaetta kaikissa käännöksissä.
+📅 Lukusuunnitelmat: Raamattu vuodessa, kronologinen suunnitelma, UT 90 päivässä ja muita — edistymisen seurannalla.
+🔍 Diakriittisille merkeille herkkäämätön haku kaikista käännöksistä.
+✏️ Kirjanmerkit, muistiinpanot, korostukset, ristiviittaukset, varmuuskopiointi.
+🖼 Päivän jae widgetissä; Dorén ja Schnorrin klassiset kaiverrukset.
+
+Kaikki tekstit ovat vapaasti käytettävissä (public domain). Sovellus ei kerää mitään tietoja.
+
+### עברית — Hebrew (locale code: verify iw vs he at upload time — see report) (ADD ANY TIME — he_wlc.json has shipped since v1.4/code 7, submitted 2026-07-11; this is a pure listing oversight, not gated on the next release)
+
+**שם:** Hexapla — כתבי הקודש במקביל
+
+**תיאור קצר (עד 80 תווים):**
+כתבי קודש ללא אינטרנט: 32 תרגומים קלאסיים, שמע, תוכניות קריאה, מספרי סטרונג.
+
+**תיאור מלא:**
+
+Hexapla הוא אוסף כתבי הקודש המלא — ללא אינטרנט, ללא פרסומות, ללא צורך בחשבון וללא איסוף נתונים. הכול חינם וכלום אינו נעול.
+
+📖 32 תרגומים קלאסיים ב-27 שפות: הנוסח העברי של התנ"ך לפי כתב היד של לנינגרד (Westminster Leningrad Codex), ה-KJV משנת 1611 עם הספרים החיצוניים, וובסטר 1833, ג'נבה 1599, דיודאטי 1649, ריינה-ולרה 1909, תרגום לותר 1545, מרטין 1744, קרל ה-12 משנת 1703, הנוסח הסינודלי הרוסי, הסלאבית הכנסייתית, מייג'י היפני, התרגום הסיני 和合本, וכן הטקסט היווני של הברית החדשה.
+✝️ הבשורה הטובה — תוכנית הישועה של אלוהים, צעד אחר צעד, מתוך הכתובים בלבד.
+🔴 דברי ישוע מודגשים באדום (בתרגומים הנוצריים).
+🎧 שמע: קריינות אנושית והמרת טקסט לדיבור עם הדגשת הפסוק, נגינה ברקע, טיימר שינה.
+📚 מספרי סטרונג עם מילון עברי-יווני מלא.
+📜 בין-שיטין בשפת המקור: הקישו על מילה בטקסט העברי או היווני לצפייה במספר סטרונג ובניתוח דקדוקי מלא.
+🔀 קראו שני תרגומים זה לצד זה, פסוק מול פסוק, או השוו פסוק בכל התרגומים.
+📅 תוכניות קריאה: התנ"ך בשנה, תוכנית כרונולוגית, הברית החדשה ב-90 יום ועוד — עם מעקב התקדמות.
+🔍 חיפוש שאינו רגיש לניקוד בכל התרגומים.
+✏️ סימניות, הערות, סימון בצבע, הפניות צולבות, גיבוי.
+🖼 פסוק היום בווידג'ט; תחריטים קלאסיים של דורה ושנור.
+
+כל הטקסטים הם נחלת הכלל. האפליקציה אינה אוספת שום נתון.
+
+*Note: he_wlc is the Leningrad Codex — Old Testament / Tanakh only, no New Testament. The description above says so honestly by naming it "התנ"ך" (Tanakh), the same convention the shipped RU/EN listings already use for grc (Greek NT, testament named explicitly) and for the Sanskrit NT — never claims a full Bible for the Hebrew text itself, while the app as a whole (via other translations) still offers the complete Bible in parallel.*
+
+### Magyar — Hungarian (hu) (ADD WITH THE NEXT RELEASE — hu_karoli.json is in tree since 2026-07-17, not yet in a submitted build)
+
+**Cím:** Hexapla — Párhuzamos Biblia
+
+**Rövid leírás (≤80):**
+Biblia internet nélkül: 32 klasszikus fordítás, hang, olvasási tervek, Strong.
+
+**Teljes leírás:**
+
+A Hexapla a teljes Biblia — internet nélkül, hirdetések nélkül, regisztráció nélkül és adatgyűjtés nélkül. Minden ingyenes, semmi sincs lezárva.
+
+📖 32 klasszikus fordítás 27 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
+✝️ A jó hír — Isten üdvtervének lépései, kizárólag Szentírás alapján.
+🔴 Krisztus szavai piros betűkkel.
+🎧 Hang: felolvasás és szövegfelolvasás versenkénti kiemeléssel, háttérben lejátszás, elalváskapcsoló.
+📚 Strong-számok a teljes héber-görög szótárral.
+📜 Eredeti nyelvű sorközi fordítás: érintsen meg egy szót a görög vagy héber szövegben a Strong-szám és a teljes nyelvtani elemzés megjelenítéséhez.
+🔀 Olvasson két fordítást egymás mellett, versről versre, vagy hasonlítson össze egy verset az összes fordításban.
+📅 Olvasási tervek: Biblia egy év alatt, kronologikus terv, Újszövetség 90 nap alatt és más tervek — haladáskövetéssel.
+🔍 Ékezetre nem érzékeny keresés az összes fordításban.
+✏️ Könyvjelzők, jegyzetek, kiemelések, kereszthivatkozások, biztonsági mentés.
+🖼 A nap verse a widgeten; Doré és Schnorr klasszikus metszetei.
+
+Minden szöveg közkincs. Az alkalmazás semmilyen adatot nem gyűjt.
+
+### Հայերեն — Armenian (hy-AM) (ADD WITH THE NEXT RELEASE — hy_west1853.json is in tree since 2026-07-17, not yet in a submitted build)
+
+**Վերնագիր:** Hexapla — Զուգահեռ Աստվածաշունչ
+
+**Համառոտ նկարագրություն (≤80):**
+Աստվածաշունչը առցանց չկապված. 32 թարգմանություն, ձայն, ընթերցման ծրագրեր, Strong.
+
+**Ամբողջական նկարագրություն:**
+
+Hexapla-ն ամբողջական Աստվածաշունչն է՝ առանց ինտերնետի, առանց գովազդի, առանց հաշվի և առանց տվյալների հավաքման։ Ամեն ինչ անվճար է, ոչինչ փակված չէ։
+
+📖 32 դասական թարգմանություն 27 լեզուներով՝ Արևմտահայերեն Նոր Կտակարանը (1853), KJV 1611-ը՝ ապոկրիֆներով, Webster 1833, Ժնևի Աստվածաշունչը 1599, Diodati 1649, Reina-Valera 1909, Լյութերի Աստվածաշունչը 1545, Martin 1744, Կարլոս XII-ի Աստվածաշունչը 1703, ռուսական սինոդալ թարգմանությունը, եկեղեցասլավոներենը, ճապոներեն Մեիջին, չինական Union տարբերակը (和合本), ինչպես նաև եբրայերեն և հունարեն բնագրերը։
+✝️ Բարի լուրը — Աստծո փրկության ծրագիրը քայլ առ քայլ, միայն Սուրբ Գրքից։
+🔴 Քրիստոսի խոսքերը՝ կարմիրով։
+🎧 Ձայն՝ կենդանի ընթերցում և տեքստից խոսք փոխակերպում՝ համարի ընդգծմամբ, ֆոնային նվագարկում, քնի ժամաչափ։
+📚 Strong-ի համարներ՝ ամբողջական եբրայերեն-հունարեն բառարանով։
+📜 Բնագրի միջտողային վերլուծություն. հպեք հունարեն կամ եբրայերեն տեքստի ցանկացած բառին՝ տեսնելու Strong-ի համարը և ամբողջական քերականական վերլուծությունը։
+🔀 Կարդացեք երկու թարգմանություն կողք կողքի՝ համար առ համար, կամ համեմատեք մեկ համարը բոլոր թարգմանություններում։
+📅 Ընթերցման ծրագրեր՝ Աստվածաշունչը մեկ տարում, ժամանակագրական ծրագիր, Նոր Կտակարանը 90 օրում և ուրիշներ՝ առաջընթացի հետևմամբ։
+🔍 Փնտրում՝ անկախ շեշտադրումից, բոլոր թարգմանություններում։
+✏️ Էջանիշեր, նշումներ, գունանշումներ, հղումներ, պահուստավորում։
+🖼 Օրվա համարը վիջեթի վրա. Doré-ի և Schnorr-ի դասական փորագրանկարներ։
+
+Բոլոր տեքստերը հանրային սեփականություն են։ Հավելվածը որևէ տվյալ չի հավաքում։
+
+*Note: hy_west1853 is a New Testament-only translation (Western Armenian, 1853) — named explicitly above ("Նոր Կտակարանը", "New Testament") rather than implied to be a full Bible, matching how the app already discloses grc (Greek NT) and the Sanskrit NT elsewhere. The app as a whole still offers the complete Bible via its other translations, read in parallel.*
+
+### Latviešu — Latvian (lv) (ADD WITH THE NEXT RELEASE — lv_gluck.json is in tree since 2026-07-17, not yet in a submitted build)
+
+**Nosaukums:** Hexapla — Paralēlā Bībele
+
+**Īsais apraksts (≤80):**
+Bībele bez interneta: 32 klasiski tulkojumi, audio, lasīšanas plāni, Strong.
+
+**Pilnais apraksts:**
+
+Hexapla ir pilna Bībele — bez interneta, bez reklāmām, bez konta un bez datu vākšanas. Viss ir bez maksas, nekas nav slēgts.
+
+📖 32 klasiski tulkojumi 27 valodās: Glika Bībele 1685/1689, KJV 1611 ar apokrifiem, Webster 1833, Ženēvas Bībele 1599, Diodati 1649, Reina-Valera 1909, Lutera Bībele 1545, Martina Bībele 1744, Kārļa XII Bībele 1703, krievu Sinodālais tulkojums, baznīcslāvu valoda, japāņu Meidzi, ķīniešu Union versija (和合本), kā arī ebreju un grieķu oriģinālteksti.
+✝️ Labā vēsts — Dieva pestīšanas plāns soli pa solim, tikai no Rakstiem.
+🔴 Kristus vārdi sarkanā krāsā.
+🎧 Audio: lasījums balsī un teksta pārvēršana runā ar panta izcelšanu, atskaņošana fonā, aizmigšanas taimeris.
+📚 Stronga numuri ar pilnu ebreju/grieķu vārdnīcu.
+📜 Oriģinālvalodas starprindu tulkojums: pieskarieties vārdam grieķu vai ebreju tekstā, lai redzētu Stronga numuru un pilnu gramatisko analīzi.
+🔀 Lasiet divus tulkojumus blakus, pantu pēc panta, vai salīdziniet vienu pantu visos tulkojumos.
+📅 Lasīšanas plāni: Bībele gada laikā, hronoloģisks plāns, Jaunā Derība 90 dienās un citi — ar progresa izsekošanu.
+🔍 Meklēšana, kas nav jutīga pret diakritiskajām zīmēm, visos tulkojumos.
+✏️ Grāmatzīmes, piezīmes, iekrāsojumi, savstarpējas atsauces, dublējums.
+🖼 Dienas pants logrīkā; Dorē un Šnorra klasiskie gravējumi.
+
+Visi teksti ir sabiedrības īpašums. Lietotne nevāc nekādus datus.
+
+### Nederlands — Dutch (nl) (ADD WITH THE NEXT RELEASE — nl_staten.json is in tree since 2026-07-16, not yet in a submitted build)
+
+**Titel:** Hexapla — Parallelle Bijbel
+
+**Korte beschrijving (≤80):**
+Bijbel offline: 32 klassieke vertalingen, audio, leesplannen, Strong.
+
+**Volledige beschrijving:**
+
+Hexapla is de complete Bijbel — offline, zonder advertenties, zonder account en zonder gegevensverzameling. Alles gratis, niets vergrendeld.
+
+📖 32 klassieke vertalingen in 27 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
+✝️ Het Goede Nieuws — Gods heilsplan stap voor stap, uitsluitend Schrift.
+🔴 Woorden van Christus in rood.
+🎧 Audio: voorlezen en tekst-naar-spraak met versmarkering, afspelen op de achtergrond, slaaptimer.
+📚 Strongnummers met het volledige Hebreeuws/Grieks lexicon.
+📜 Interlineair van de grondtekst: tik op een woord in de Griekse of Hebreeuwse tekst voor het Strongnummer en de volledige grammaticale analyse.
+🔀 Lees twee vertalingen naast elkaar, vers voor vers, of vergelijk een vers in alle vertalingen.
+📅 Leesplannen: de Bijbel in 1 jaar, chronologisch plan, het NT in 90 dagen en meer — met voortgangsbijhouding.
+🔍 Zoeken ongevoelig voor diakritische tekens, in alle vertalingen.
+✏️ Bladwijzers, notities, markeringen, kruisverwijzingen, back-up.
+🖼 Vers van de dag op de widget; klassieke gravures van Doré en Schnorr.
+
+Alle teksten zijn publiek domein. De app verzamelt geen gegevens.
+
+### Polski — Polish (pl) (ADD WITH THE NEXT RELEASE — pl_gdanska.json is in tree since 2026-07-16, not yet in a submitted build)
+
+**Nazwa:** Hexapla — Biblia Równoległa
+
+**Krótki opis (≤80):**
+Biblia offline: 32 klasyczne przekłady, audio, plany czytania, Strong.
+
+**Pełny opis:**
+
+Hexapla to kompletna Biblia — bez internetu, bez reklam, bez konta i bez zbierania danych. Wszystko za darmo, nic nie jest zablokowane.
+
+📖 32 klasyczne przekłady w 27 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
+✝️ Dobra Nowina — Boży plan zbawienia krok po kroku, wyłącznie na podstawie Pisma.
+🔴 Słowa Chrystusa zaznaczone na czerwono.
+🎧 Audio: lektor i synteza mowy z podświetlaniem wersetu, odtwarzanie w tle, minutnik snu.
+📚 Numery Stronga z pełnym słownikiem hebrajsko-greckim.
+📜 Interlinia tekstu oryginalnego: dotknij słowa w tekście greckim lub hebrajskim, aby zobaczyć numer Stronga i pełną analizę gramatyczną.
+🔀 Czytaj dwa przekłady obok siebie, werset po wersecie, lub porównaj werset we wszystkich przekładach.
+📅 Plany czytania: Biblia w rok, plan chronologiczny, NT w 90 dni i inne — ze śledzeniem postępów.
+🔍 Wyszukiwanie niewrażliwe na znaki diakrytyczne we wszystkich przekładach.
+✏️ Zakładki, notatki, zakreślenia, odsyłacze, kopia zapasowa.
+🖼 Werset dnia na widżecie; klasyczne ryciny Dorégo i Schnorra.
+
+Wszystkie teksty są własnością publiczną. Aplikacja nie zbiera żadnych danych.
+
+### Српски / Srpski — Serbian (sr) (ADD WITH THE NEXT RELEASE — sr_karadzic.json is in tree since 2026-07-17, not yet in a submitted build; listing uses Latin script, matching the shipped translation's own script)
+
+**Naziv:** Hexapla — Paralelna Biblija
+
+**Kratak opis (≤80):**
+Biblija bez interneta: 32 klasična prevoda, audio, planovi čitanja, Strong.
+
+**Pun opis:**
+
+Hexapla je kompletna Biblija — bez interneta, bez reklama, bez naloga i bez prikupljanja podataka. Sve je besplatno, ništa nije zaključano.
+
+📖 32 klasična prevoda na 27 jezika: Sveto pismo — Karadžić/Daničić, 1847/1865, KJV 1611 sa apokrifima, Webster 1833, Ženevska Biblija 1599, Diodati 1649, Reina-Valera 1909, Lutherova Biblija 1545, Martin 1744, Biblija Karla XII 1703, ruski Sinodalni prevod, crkvenoslovenski, japanski Meiji, kineska Union verzija (和合本), kao i hebrejski i grčki izvorni tekstovi.
+✝️ Dobra vest — Božji plan spasenja korak po korak, isključivo iz Svetog pisma.
+🔴 Hristove reči crvenim slovima.
+🎧 Audio: čitanje i sinteza govora sa isticanjem stiha, reprodukcija u pozadini, tajmer za spavanje.
+📚 Strongovi brojevi sa kompletnim hebrejsko-grčkim rečnikom.
+📜 Interlinearni prikaz izvornog teksta: dodirnite reč u grčkom ili hebrejskom tekstu za Strongov broj i potpunu gramatičku analizu.
+🔀 Čitajte dva prevoda uporedo, stih po stih, ili uporedite jedan stih u svim prevodima.
+📅 Planovi čitanja: Biblija za godinu dana, hronološki plan, Novi zavet za 90 dana i drugi — sa praćenjem napretka.
+🔍 Pretraga neosetljiva na dijakritičke znakove kroz sve prevode.
+✏️ Obeleživači, beleške, isticanja, unakrsne reference, rezervna kopija.
+🖼 Stih dana na vidžetu; klasične gravure Dorea i Šnora.
+
+Svi tekstovi su javno vlasništvo. Aplikacija ne prikuplja nikakve podatke.

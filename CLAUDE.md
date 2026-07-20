@@ -159,6 +159,31 @@ maximize reach, keep everything free, nothing locked, collect no data.
   when a clean source lands: per-locale lexicon file keyed by the
   same H/G ids, chosen by UI locale, English fallback; same model
   later for DE/ES/PT.
+- **PERSIAN MARTYN NT — INTEGRATED IN TREE 2026-07-20** ("mrt",
+  fa_martyn.json, 33rd translation / 28th language, «عهد جدید — ترجمهٔ
+  هنری مارتین، ۱۸۷۶ (FA)», defaultPrimaryId fa/prs/tg->mrt, NT-only like
+  grc/arm, NO sources_text [PD], NO versemap entries [exact KJV grid]):
+  THE FIRST TRANSLATION PRODUCED BY THE PROJECT'S OWN MULTIMODAL
+  TRANSCRIPTION — 7,957 verses read page-by-page from the archive.org
+  scan of the 1876 BFBS reprint by ~16 Sonnet agent-chunks in one day,
+  litmus 7/7 TR (incl. Comma, Acts 8:37, Rom 16:24, Jn 5:4 [the
+  anti-Bruce marker], Acts 20:28 church-of-GOD, Pericope Adulterae,
+  Mark 16:9-20). tools/build_martyn_nt.py = the converter: a strict
+  KJV-grid state machine over the reports' verse markers with layered
+  audits (per-chapter 1..N, n-gram dittography, ASCII-leak, length-ratio
+  vs KJV) that caught what agent self-reports missed. Curated: Acts
+  21:21b-32a supplied from the 1837 FIRST PRINTING (folio 295 of the
+  1876 scan is a master-scan duplicate; per-verse {یادداشت} witness
+  notes); Heb 6:14's 1876-only triple «منتشر» corrected to the 1837's
+  doubled form; Jn 21:11 kept as printed (BOTH witnesses read 253, not
+  153 — noted); Mark 5:28/29 print-merge resegmented; missing-numeral
+  splits at Mk 6:15, Lk 23:17, Rom 15:33, Rev 22:9; five suspect sites
+  REPLACED from a page-level re-verify pass (martyn_spot_reverify.md —
+  the print was innocent everywhere, all flags were chunk-pass slips);
+  ي/ك→ی/ک normalized (mixed transcriber IMEs). All reports in
+  Hexapla-releases/research/martyn_*.md. GLEN OT (1856, HathiTrust
+  njp.32101076512563, feasibility CONFIRMED same-easy-tier) = the next
+  campaign; see SESSION_HANDOFF for access/harvest notes.
 - **Candidate research pipeline (2026-07-16)**: tools/TRANSLATION_RESEARCH.md
   is a self-contained brief (litmus table + license gates + report format)
   for agent research passes; verdict reports land in

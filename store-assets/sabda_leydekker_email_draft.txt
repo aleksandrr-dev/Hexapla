@@ -1,0 +1,45 @@
+To: ylsa@sabda.org
+Subject: Izin menggunakan teks LDKDR (Alkitab Leydekker) di aplikasi Alkitab paralel gratis
+
+Selamat siang,
+
+Nama saya Aleksandr Ratchkov. Saya mengembangkan Hexapla, aplikasi
+Alkitab paralel gratis untuk Android — tanpa iklan, tanpa akun, dan
+tanpa pengumpulan data (https://aleksandrr-dev.github.io/Hexapla/).
+Semua isi aplikasi selalu gratis untuk semua orang.
+
+Saya ingin menambahkan Perjanjian Baru terjemahan Melchior Leydekker
+(1733), yang saya temukan dalam format digital di alkitab.mobi
+sebagai "LDKDR" (https://alkitab.mobi/ldkdr/). Terjemahan aslinya
+tentu saja sudah menjadi milik umum (Leydekker wafat tahun 1701),
+tetapi halaman hak cipta SABDA (https://alkitab.mobi/copyright/)
+tidak menyatakan secara eksplisit status digitalisasi LDKDR ini —
+berbeda dengan beberapa versi lain di halaman yang sama yang memang
+ditandai "Public Domain" secara jelas. Karena itu saya ingin
+memastikan langsung ke YLSA sebelum menggunakannya.
+
+Bolehkah saya menggunakan teks digital LDKDR ini di dalam aplikasi?
+Sumbernya akan saya cantumkan dengan jelas di daftar sumber teks
+aplikasi ("Text sources"), dengan kredit kepada YLSA/SABDA. Jika
+YLSA memiliki teks ini dalam format yang lebih mudah diproses
+(teks/JSON/XML), itu akan sangat membantu — jika tidak, saya akan
+mengambil teks per halaman dari situs dengan hati-hati.
+
+Terima kasih atas kerja YLSA dalam mendigitalkan teks-teks Alkitab
+bersejarah ini.
+
+Hormat saya,
+[nama Anda]
+
+---
+English summary for reference (do not send — the Indonesian above is
+the actual draft, matching this project's pattern of writing to
+Bible-society-type recipients in their own language):
+
+Asks YLSA/SABDA for permission to use their "LDKDR" digitization of
+Leydekker's 1733 Malay NT in Hexapla. Notes the underlying 1733
+translation is PD by age (Leydekker died 1701), but SABDA's own
+copyright page doesn't explicitly mark THIS digitization PD/CC the
+way it does for some sibling entries on the same page — so this asks
+directly rather than assuming. Offers attribution in the app's
+sources_text list, and asks if a machine-readable format is available.

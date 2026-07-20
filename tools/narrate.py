@@ -371,19 +371,26 @@ def ru_book_name_spoken(name):
 
 
 def strip_ru_markup(text):
-    """Drop escaped OSIS remnants from Synodal verses.
+    """Drop apparatus notes from Synodal verses.
 
-    Three verses carry HTML-escaped XML that survived conversion (audited
-    2026-07-15): Иов 2:9 wraps a ~600-char Septuagint variant of the whole
-    verse in &lt;note&gt;; Иов 9:9 has a constellations note; Псалтирь 143:15
-    trails a &lt;title type="psalm"&gt; belonging to the next psalm. Read aloud
-    these become apparatus voiced as scripture.
+    The escaped-OSIS defect this function was written for (audited 2026-07-15:
+    Иов 2:9's ~600-char Septuagint variant in &lt;note&gt;, Иов 9:9's
+    constellations note, Псалтирь 143:15's stray &lt;title&gt;) was fixed in the
+    ASSET on 2026-07-16 (commit 534a43d): the surviving two notes are now
+    {Примечание: ...} margin notes, the same {x:y} colon-note convention the
+    KJV asset uses, which BibleRepo.parseAsset strips for readers.
 
-    ⚠ This is a DATA DEFECT in ru_synodal.json, not a narration problem — the
-    app very likely renders the literal markup too, since BibleRepo.parseAsset
-    strips {x:y} notes but knows nothing about &lt;note&gt;. Fixing the asset is
-    the real answer; this keeps it out of the audio meanwhile.
+    So this must strip BRACE notes now, exactly like strip_kjv_notes — the old
+    &lt;note&gt; regexes matched nothing after the asset fix, and Иов 2 + Иов 9
+    were narrated on 2026-07-18 with the note text spoken as scripture (Иов 2
+    tripped qa's digit check via «70-ти»; Иов 9's note has no digit and leaked
+    silently). Both chapters need a re-render with this fix in place.
+
+    The escaped-tag stripping is kept as a defensive layer in case a future
+    asset regeneration reintroduces the module's raw form.
     """
+    text = re.sub(r"\{[^:}]*:[^}]*\}", "", text)       # {Примечание: ...} notes
+    text = re.sub(r"[{}]", "", text)                   # unwrap supplied words
     text = re.sub(r"&lt;note&gt;.*?&lt;/note&gt;", "", text, flags=re.S)
     text = re.sub(r"&lt;title[^&]*&gt;.*?&lt;/title&gt;", "", text, flags=re.S)
     text = re.sub(r"&lt;[^&]*&gt;", "", text)          # any stray escaped tag

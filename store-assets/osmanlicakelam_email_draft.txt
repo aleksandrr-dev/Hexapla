@@ -1,0 +1,45 @@
+SUBMIT VIA WEB FORM, NOT EMAIL: https://osmanlicakelam.net/en/contact
+(CAPTCHA-protected Drupal contact form, no direct email address found
+on the site — this has to be submitted by hand, not automated.)
+
+---
+
+Subject/Name field: Aleksandr Ratchkov — permission request, Hexapla app
+
+Message:
+
+Hello,
+
+My name is Aleksandr Ratchkov. I develop Hexapla, a free offline
+parallel-Bible app for Android — no ads, no account, no data
+collection (https://aleksandrr-dev.github.io/Hexapla/). Everything in
+the app is free for everyone, permanently.
+
+I would like to add the 1827 J.D. Kieffer Ottoman Turkish New
+Testament and Old Testament (the British and Foreign Bible Society
+revision of Wojciech Bobowski's original 1665 translation), which I
+found transcribed on your site and reading tool. The underlying
+translation is of course centuries old and out of copyright, but your
+site states the transcription itself is "© Osmanlica Kelam Editors" —
+so I wanted to ask directly rather than assume.
+
+Would you be willing to let me use your transcription of the 1827
+text in the app? I would credit "Osmanlıca Kelam" clearly in the
+app's text-sources list. If you have the text available in a more
+directly usable format (plain text/JSON/XML per verse), that would
+help a great deal — otherwise I can retrieve it carefully from the
+reading tool page by page, the same way I already tested it while
+researching whether the text itself would be a good fit.
+
+Thank you for the work you've put into preserving and transcribing
+these historic Ottoman texts.
+
+Best regards,
+[your name]
+
+---
+Note: this asks specifically about the 1827 Kieffer NT+OT transcription,
+the candidate that passed the deity-verse litmus check (see
+turkish_report.md). It does not ask about the separate 1665 Ali Bey
+manuscript transcription also on the site, since that one was only
+partially checked and isn't the recommended candidate.

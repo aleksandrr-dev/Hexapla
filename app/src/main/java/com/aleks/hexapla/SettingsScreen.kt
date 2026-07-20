@@ -478,7 +478,13 @@ fun SettingsScreen(settings: AppSettings) {
                         }
                     }
                 }
-            } else {
+            } else if (BuildConfig.EXTERNAL_DONATIONS) {
+                // The compile-time constant repeats the externalTips gate so R8
+                // can PROVE this branch dead in the play flavor and strip the
+                // Donation object from the dex — a plain `else` is only
+                // runtime-unreachable there (outer gate requires playTips),
+                // which R8 cannot see. Same runtime behavior in every flavor;
+                // regressed silently in the 1.4.0 empty-Support restructure.
                 Row {
                     Donation.links.forEach { (label, url) ->
                         ChoiceChip(label, selected = false) {

@@ -1,0 +1,22 @@
+To: titus@em.uni-frankfurt.de (reply in-thread to Prof. Gippert's grant)
+Subject: Re: [your original subject]
+
+Dear Professor Gippert,
+
+Thank you very much — this is wonderful news. I gladly confirm both
+conditions: TITUS and the editors will be credited in the app's sources
+section, shown in all of its interface languages, and the app is and
+will remain permanently free — no advertising, no charges, nothing
+unlocked by payment. That is its founding principle and will not change.
+
+If you or the editors have a preferred credit wording, or a link the
+credit should carry, I will use it verbatim; otherwise I will credit
+"TITUS (Thesaurus Indogermanischer Text- und Sprachmaterialien),
+Universität Frankfurt" together with the editors named in each text's
+header, for both the Zohrab Bible and the 1743 Moscow Bible.
+
+With sincere thanks for TITUS's work in preserving these texts,
+
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://aleksandrr-dev.github.io/Hexapla/

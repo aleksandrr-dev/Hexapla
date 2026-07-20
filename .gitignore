@@ -14,3 +14,4 @@ tools/.kokoro_venv/
 tools/.cosyvoice_venv/
 tools/piper_models/
 tools/voice_samples/
+tools/.chatterbox_venv/

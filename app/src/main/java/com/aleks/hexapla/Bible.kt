@@ -55,7 +55,11 @@ object BibleRepo {
         Translation("vd", "bibles/ar_vandyck.json", "الكتاب المقدس — Van Dyck, 1865 (AR)", Locale("ar")),
         Translation("arm", "bibles/hy_west1853.json", "Նոր Կտակարան — արեւմտահայերէն NT, 1853 (HY)", Locale("hy")),
         Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la")),
-        Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale("be"))
+        Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale("be")),
+        // Transcribed by this project from the 1876 BFBS reprint's page scans
+        // (Acts 21:21b-32a supplied from the 1837 first printing where the
+        // 1876 scan's folio 295 is a master-scan duplicate). PD by age.
+        Translation("mrt", "bibles/fa_martyn.json", "عهد جدید — ترجمهٔ هنری مارتین، ۱۸۷۶ (FA)", Locale("fa"))
     )
 
     fun translation(id: String): Translation =
@@ -93,6 +97,8 @@ object BibleRepo {
         "ta" -> "ta"
         "la" -> "vul"
         "be" -> "dzm"
+        // Dari and Tajik readers share the classical Persian scripture.
+        "fa", "prs", "tg" -> "mrt"
         "zh" -> Locale.getDefault().let {
             if (it.script == "Hant" || it.country in setOf("TW", "HK", "MO")) "cuv" else "cus"
         }

@@ -865,11 +865,10 @@ must include them; owner should spot-check on-device before submitting.
   asset-backups/ru_synodal.json.pretitles.bak. TWO GATES CAUGHT IN DRY-RUN:
   Пс 139 skipped — its v1 IS an own-verse title and rst carries a stray extra
   «Псалом.» that would have been doubled onto it (own-verse-title guard now in
-  the script); Пс 151 RESOLVED 2026-07-16: stays UNTITLED. The module's «на
-  единоборстов с Голиафом» is a typo'd editorial paraphrase of the LXX
-  heading, NOT a Synodal superscription — azbyka's Synodal prints no title
-  there, only the footnote «У Евреев этого псалма нет…», and rst has no
-  Ps 151. One typo'd witness vs a contradicting second = do not add.
+  the script); Пс 151: the 2026-07-16 "stays untitled" resolution was
+  REVERSED 2026-07-20 on decisive new evidence — see the completion-pass
+  entry below (the 1904 print titles it; the module's «единоборстов» was a
+  typo'd COPY of that genuine title, not an editorial paraphrase).
   The Slavonic (cu_elizabeth) remains OPEN — see (c) below.
   SOURCE RESEARCH DONE 2026-07-15 (Opus agent, byte-level verification):
   (a) ru_synodal.json PROVENANCE SOLVED: it was converted from the CrossWire
@@ -965,15 +964,19 @@ must include them; owner should spot-check on-device before submitting.
       false positive (own-verse title). THE PSALTER TITLE RESTORATION IS
       NOW COMPLETE — every psalm titled or witness-confirmed untitled.
       Backup: asset-backups/ru_synodal.json.pretitles2.bak.
-      ⚠ Пс 151 EVIDENCE SHIFT (flagged, NOT acted on — owner marked the
-      untitled decision final): the same 1904 print DOES title it
-      «(Псалом Давида на единоборство съ Голіаѳомъ)» with the «переведен
-      с Греческого» footnote, correctly spelled — the balance is now 2
-      witnesses FOR a title vs azbyka's absence. Owner call if reopened.
+      ✅ Пс 151 TITLED 2026-07-20 (owner delegated the call same day,
+      reversing 2026-07-16): the 1904 print titles it «(Псалом Давида на
+      единоборство съ Голіаѳомъ *)» — correctly spelled, parenthesized
+      under the same LXX-supplied convention as the other 24 — applied as
+      «[Псалом Давида на единоборство с Голиафом.]» plus the print's own
+      footnote as a {Примечание: У Евреев этого псалма нет; он переведен
+      с Греческого.} brace note (on-demand translator's-note mechanism).
+      The Slavonic keeps its own longer title — editions still differ in
+      WORDING, and now both are faithful to their prints.
       ⚠ RU NARRATION STALENESS: the ru render passed Psalms before these
       24 titles (and before the Job 2/9 note fix) — re-render queue after
       the main ru render finishes: book 18 chapters (1-based psalms) 32,
-      90, 92-96, 103, 106, 113-118, 135-137, 145-150 + book 17 chapters
+      90, 92-96, 103, 106, 113-118, 135-137, 145-151 + book 17 chapters
       2 and 9 (--book/--chapter are 0-based in narrate.py; use --force).
       FALLBACK: my-bible.info has a complete CIVIL-script CS psalter (no
       transliteration needed) but NO stated license and murky provenance —

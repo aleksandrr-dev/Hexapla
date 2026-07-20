@@ -76,6 +76,18 @@ TITLES = {
     148: "[Аллилуия.]",
     149: "[Аллилуия.]",
     150: "[Аллилуия.]",
+    # Пс 151 — added 2026-07-20 by owner delegation, REVERSING the
+    # 2026-07-16 "stays untitled" decision on new evidence: the 1904 print
+    # titles it «(Псалом Давида на единоборство съ Голіаѳомъ *)» with the
+    # footnote «У Евреевъ псалма сего нѣтъ; онъ переведенъ съ Греческаго.»
+    # — correctly spelled (the RusSynodal module's «единоборстов» was a
+    # typo'd copy of this genuine title, not an editorial paraphrase), and
+    # parenthesized under the same LXX-supplied convention as the other 24.
+    # The footnote ships too, as a {Примечание:} brace note (the asset's
+    # existing on-demand translator's-note mechanism, cf. Иов 2:9) —
+    # readers of a Hebrew-numbered Bible genuinely need it.
+    151: "[Псалом Давида на единоборство с Голиафом.] "
+         "{Примечание: У Евреев этого псалма нет; он переведен с Греческого.}",
 }
 
 # Expected opening words of each psalm's CURRENT verse 1 (from the asset,
@@ -106,6 +118,7 @@ BODY_STARTS = {
     148: "Хвалите Господа с небес",
     149: "Пойте Господу песнь новую",
     150: "Хвалите Бога во святыне",
+    151: "Я был меньший между братьями моими",
 }
 
 

@@ -6,6 +6,10 @@ identified there — confirm before sending).
 DRAFT 1 — Lietuvių kalbos institutas (seniejirastai.lki.lt), for the
 Bitneris 1701 NT and Ruigys 1727 NT diplomatic transcriptions
 =====================================================================
+To: seniejirastai@gmail.com
+    (the technical contact from the site's own metadata, per
+    lithuanian_report.md; the institute's general address on the site
+    footer is a fallback if this bounces)
 Subject: Leidimo prašymas — 1701/1727 NT tekstai nemokamoje Biblijos
          programėlėje / permission request for a free Bible app
 
@@ -14,8 +18,8 @@ Gerbiamieji,
 kuriu Hexapla — nemokamą Biblijos programėlę Android telefonams (be
 reklamų, be duomenų rinkimo, viskas nemokama;
 https://aleksandrr-dev.github.io/Hexapla/). Joje greta pateikiami
-klasikiniai įvairių kalbų Biblijos vertimai — šiuo metu 29 vertimai
-24 kalbomis.
+klasikiniai įvairių kalbų Biblijos vertimai — šiuo metu 32 vertimai
+27 kalbomis.
 
 Jūsų svetainėje seniejirastai.lki.lt paskelbtos Samuelio Bitnerio 1701 m.
 ir Pilypo Ruigio 1727 m. Naujojo Testamento transkripcijos — vienintelės
@@ -28,7 +32,7 @@ Institutą ir svetainę kaip šaltinį?
 Jei leidimas įmanomas su sąlygomis (konkreti nuoroda, žyma), mielai jų
 laikysiuos. Dėkoju už jūsų darbą saugant senuosius raštus!
 
-[EN summary: I develop a free Bible app (29 translations / 24
+[EN summary: I develop a free Bible app (32 translations / 27
 languages, all PD/CC, credited). Your 1701 and 1727 NT transcriptions
 are the only machine-readable old Lithuanian scripture I have found.
 Your terms require written permission to redistribute — may I include
@@ -43,14 +47,19 @@ https://github.com/aleksandrr-dev
 DRAFT 2 — Vilnius University Chylinski Bible project
 (chylinskibible.flf.vu.lt), for the 1657-1660 NT (litmus 7/7)
 =====================================================================
+To: chylinskibible@flf.vu.lt
+    (given explicitly on the project's own page, per
+    lithuanian_report.md; note the manuscript page IMAGES are a
+    separate British Library permission — this asks only about the
+    edited NT text)
 Subject: Permission request — Chylinski NT text in a free Bible app
 
 Dear colleagues,
 
 I develop Hexapla, a free offline parallel-Bible app for Android (no
 ads, no analytics, nothing paid;
-https://aleksandrr-dev.github.io/Hexapla/) — 29 classical translations
-in 24 languages, each credited in the app.
+https://aleksandrr-dev.github.io/Hexapla/) — 32 classical translations
+in 27 languages, each credited in the app.
 
 Your edition of Chylinski's New Testament is a remarkable resource, and
 the only complete machine-readable early Lithuanian NT I have found.

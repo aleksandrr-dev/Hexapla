@@ -71,13 +71,13 @@
     <string name="era_judges">Дні Судзьдзяў</string>
     <string name="era_saul">Самуіл і Саўл</string>
     <string name="era_david">Праўленьне Давіда</string>
-    <string name="era_solomon">Саламон і Храм</string>
+    <string name="era_solomon">Салямон і Храм</string>
     <string name="era_divided">Падзеленае Царства</string>
     <string name="era_isaiah">Дні Ісаі</string>
     <string name="era_last_kings">Апошнія цары Юды</string>
-    <string name="era_fall">Падзеньне Ерусаліму</string>
+    <string name="era_fall">Падзеньне Ерузаліму</string>
     <string name="era_exile">Пры рэках Вавілонскіх</string>
-    <string name="era_return">Вяртаньне ў Сіён</string>
+    <string name="era_return">Вяртаньне ў Сыон</string>
     <string name="era_christ">Жыцьцё Хрыста</string>
     <string name="era_church">Царква і Пасланьні</string>
     <string name="era_revelation">Адкрыцьце</string>
@@ -116,7 +116,7 @@
 
     <!-- Bookmarks -->
     <string name="support_title">Падтрымаць распрацоўшчыка</string>
-    <string name="support_note">Праграма бясплатная і поўная. Ахвяраваньне нічога ня адмыкае — гэта толькі для тых, хто хоча падзякаваць.</string>
+    <string name="support_note">Праграма бясплатная і поўная. Ахвяраваньне нічога не адмыкае — гэта толькі для тых, хто хоча падзякаваць.</string>
     <string name="bookmarks_title">Закладкі</string>
     <string name="no_bookmarks">Пакуль няма закладак. Доўга дакраніцеся да верша падчас чытаньня, каб захаваць яго.</string>
     <string name="delete">Выдаліць</string>
@@ -129,7 +129,7 @@
     <string name="note">Нататка</string>
     <string name="save">Захаваць</string>
     <string name="cancel">Скасаваць</string>
-    <string name="keep_screen_on">Ня выключаць экран падчас чытаньня</string>
+    <string name="keep_screen_on">Не выключаць экран падчас чытаньня</string>
     <string name="verse_actions">Верш</string>
     <string name="add_bookmark">Дадаць закладку</string>
     <string name="xrefs">Крыжаваныя спасылкі</string>

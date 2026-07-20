@@ -200,6 +200,30 @@ LANG_CONFIG = {
         # ru_stress task is therefore MOOT, not merely deferred.
         "normalizer": "ru_variants",
     },
+    "sv": {
+        "asset": "sv_karlxii.json",
+        "engine": "chatterbox",
+        # The Swedish friend's voice (take 1, 2026-07-20; consent recorded
+        # with the takes). Reference is the normalized+padded version —
+        # the raw take's low level (peak 0.36) and abrupt 0.2s onset caused
+        # accent drift and a garbled opening in the first ear test.
+        # Owner + friend picked variant C of the parameter sweep 2026-07-20:
+        # cfg_weight 0.3 (adherence to HIS voice — default 0.5 genericized
+        # the accent, "sounds like Västergötland"), exaggeration 0.4.
+        # ⚠ RUN UNDER tools\.chatterbox_venv\Scripts\python.exe (in-process
+        # model, like cosyvoice under its venv). GPU: Chatterbox (~4 GB)
+        # must NOT share the 8 GB GPU with a live CosyVoice render — set
+        # CHATTERBOX_DEVICE=cpu to test, or wait for the GPU to free.
+        # Disclosure note: Chatterbox embeds Resemble's inaudible Perth
+        # watermark — mention alongside the AI-voice notice on upload.
+        "voice": str(OUTPUT / "_sv_ref_norm.wav"),
+        "language_id": "sv",
+        "cfg_weight": 0.3,
+        "exaggeration": 0.4,
+        "strip_notes": False,
+        "default_books": None,
+        "normalizer": None,
+    },
     "cu": {
         "asset": "cu_elizabeth.json",
         "engine": "cosyvoice3",
@@ -303,6 +327,31 @@ def ru_ordinal_fem(n):
     return " ".join(parts)
 
 
+_SV_ONES = {1: "ett", 2: "två", 3: "tre", 4: "fyra", 5: "fem", 6: "sex",
+            7: "sju", 8: "åtta", 9: "nio", 10: "tio", 11: "elva", 12: "tolv",
+            13: "tretton", 14: "fjorton", 15: "femton", 16: "sexton",
+            17: "sjutton", 18: "arton", 19: "nitton"}
+_SV_TENS = {20: "tjugo", 30: "trettio", 40: "fyrtio", 50: "femtio",
+            60: "sextio", 70: "sjuttio", 80: "åttio", 90: "nittio"}
+
+
+def sv_cardinal(n):
+    """Swedish cardinal for 1..199, spelled out so the TTS cannot fall back
+    to an English digit reading (the CosyVoice «Глава one» lesson)."""
+    if n < 1 or n > 199:
+        raise ValueError(f"sv_cardinal: {n} out of range 1..199")
+    out = ""
+    if n >= 100:
+        out = "hundra" if n < 200 else ""
+        n -= 100
+        if n == 0:
+            return out
+    if n in _SV_ONES:
+        return out + _SV_ONES[n]
+    tens, ones = (n // 10) * 10, n % 10
+    return out + _SV_TENS[tens] + (_SV_ONES[ones] if ones else "")
+
+
 def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None):
     """Generate the spoken chapter header, e.g. 'Genesis, Chapter 5'.
 
@@ -324,6 +373,17 @@ def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None)
         if n_chapters == 1:
             return book
         return f"{book}, Глава {ru_ordinal_fem(chapter_idx + 1)}"
+    if lang == "sv":
+        # Asset names are Swedish («1 Mosebok», «Psaltaren»); numbers are
+        # spelled out (sv_cardinal) so Chatterbox cannot read digits the
+        # English way. Swedish convention says «Psalm 23», not «kapitel 23»,
+        # for the Psalter. ⚠ Native-review welcome: ask the Swedish friend.
+        book = book_name or f"Bok {book_idx + 1}"
+        if n_chapters == 1:
+            return book
+        if book == "Psaltaren":
+            return f"Psaltaren, Psalm {sv_cardinal(chapter_idx + 1)}"
+        return f"{book}, kapitel {sv_cardinal(chapter_idx + 1)}"
     else:
         book = book_name or (BOOK_NAMES[book_idx]
                              if book_idx < len(BOOK_NAMES) else f"Book {book_idx}")
@@ -675,6 +735,49 @@ def synthesize_cosyvoice3(text, cfg, book_idx, output_wav):
         return False
 
 
+_chatterbox_model = None
+
+
+def _get_chatterbox():
+    """Lazy in-process Chatterbox Multilingual (MIT; ResembleAI/chatterbox).
+
+    Must run under tools\\.chatterbox_venv. Device: CHATTERBOX_DEVICE env
+    (default cuda). ⚠ Do not load on the GPU while a CosyVoice render owns
+    it — ~4 GB of Chatterbox on the shared 8 GB card can OOM a days-long
+    render; use CHATTERBOX_DEVICE=cpu for tests instead.
+    """
+    global _chatterbox_model
+    if _chatterbox_model is not None:
+        return _chatterbox_model
+    from chatterbox.mtl_tts import ChatterboxMultilingualTTS
+    device = os.environ.get("CHATTERBOX_DEVICE", "cuda")
+    _chatterbox_model = ChatterboxMultilingualTTS.from_pretrained(device=device)
+    return _chatterbox_model
+
+
+def synthesize_chatterbox(text, cfg, output_wav):
+    """Synthesize one verse with Chatterbox Multilingual (zero-shot clone,
+    no transcript needed). Params come from the ear-test-picked config."""
+    try:
+        model = _get_chatterbox()
+        wav = model.generate(
+            text,
+            language_id=cfg["language_id"],
+            audio_prompt_path=cfg["voice"],
+            cfg_weight=cfg.get("cfg_weight", 0.5),
+            exaggeration=cfg.get("exaggeration", 0.5),
+        )
+        import numpy as np
+        audio = np.clip(wav.squeeze(0).cpu().numpy(), -1.0, 1.0)
+        # PCM_16 to match make_silence_wav()'s gaps (same reason as CosyVoice).
+        sf.write(str(output_wav), (audio * 32767).astype(np.int16),
+                 model.sr, subtype="PCM_16")
+        return True
+    except Exception as e:
+        print(f"    Chatterbox error: {e}", file=sys.stderr)
+        return False
+
+
 def synthesize_piper(text, model_path, output_wav, length_scale=1.11):
     """Synthesize with Piper via Python API."""
     try:
@@ -868,8 +971,13 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
     a retry returns the identical audio and would just burn time.
     """
     cfg = LANG_CONFIG[lang]
-    if cfg["engine"] != "cosyvoice3":
+    if cfg["engine"] not in ("cosyvoice3", "chatterbox"):
         return pairs
+
+    def _resynth(text, alt_path):
+        if cfg["engine"] == "chatterbox":
+            return synthesize_chatterbox(text, cfg, alt_path)
+        return synthesize_cosyvoice3(text, cfg, book_idx, alt_path)
 
     rates = [r for r in (_verse_rate(verses[i], d)
                          for i, (w, d) in enumerate(pairs)
@@ -889,7 +997,7 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
         best = (abs(math.log(rate / median)), wav, dur, rate)
         for attempt in range(PACE_MAX_RETRIES):
             alt = Path(temp_dir) / f"verse_{i:04d}_r{attempt}.wav"
-            if not synthesize_cosyvoice3(verses[i], cfg, book_idx, str(alt)):
+            if not _resynth(verses[i], str(alt)):
                 break
             try:
                 alt_dur = get_wav_duration_ms(alt)
@@ -1013,6 +1121,8 @@ def synthesize_verse(text, lang, temp_dir, verse_idx, book_idx=None):
         ok = synthesize_cosyvoice3(text, cfg, book_idx, str(wav_path))
     elif cfg["engine"] == "piper":
         ok = synthesize_piper(text, cfg["voice"], str(wav_path))
+    elif cfg["engine"] == "chatterbox":
+        ok = synthesize_chatterbox(text, cfg, str(wav_path))
     else:
         print(f"    Unknown engine: {cfg['engine']}", file=sys.stderr)
         return None, 0
@@ -1216,6 +1326,25 @@ def main():
     if cfg["engine"] in ("kokoro", "bark") and not Path(KOKORO_PYTHON).exists():
         print(f"ERROR: Kokoro venv not found at {KOKORO_PYTHON}", file=sys.stderr)
         sys.exit(1)
+
+    if cfg["engine"] == "chatterbox":
+        # Fail now, not 20 minutes into a run.
+        if not Path(cfg["voice"]).exists():
+            print(f"ERROR: reference recording not found: {cfg['voice']}",
+                  file=sys.stderr)
+            sys.exit(1)
+        try:
+            import chatterbox  # noqa: F401
+        except ImportError as e:
+            print(f"ERROR: cannot import chatterbox ({e}).\n"
+                  "  This engine runs IN-PROCESS and needs its venv:\n"
+                  "  tools\\.chatterbox_venv\\Scripts\\python.exe tools/narrate.py "
+                  f"--lang {args.lang}", file=sys.stderr)
+            sys.exit(1)
+        dev = os.environ.get("CHATTERBOX_DEVICE", "cuda")
+        print(f"Chatterbox | voice: {Path(cfg['voice']).name} | "
+              f"lang {cfg['language_id']} | cfg_weight {cfg['cfg_weight']} "
+              f"exaggeration {cfg['exaggeration']} | device {dev}")
 
     if cfg["engine"] == "cosyvoice3":
         # Fail now, not 20 minutes into a run.

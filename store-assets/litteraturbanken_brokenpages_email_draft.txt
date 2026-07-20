@@ -1,0 +1,43 @@
+To: info@litteraturbanken.se  (verify on litteraturbanken.se/om — support
+address may differ)
+Subject: Trasiga faksimilbilder i Karl XII:s bibel (lb2431561) — apokryferna
+
+Hej,
+
+Jag heter Aleksandr Ratchkov och bygger Hexapla, en gratis bibelapp utan
+reklam (https://aleksandrr-dev.github.io/Hexapla/). Jag använder ert
+fantastiska faksimil av Karl XII:s bibel 1703 (verk lb2431561) som källa
+för apokryferna, med erkännande till Göteborgs universitetsbibliotek och
+Litteraturbanken.se enligt era villkor.
+
+Jag vill rapportera ett tekniskt fel: ett stort antal sidbilder i
+apokryfe-delen (tryckta sidor ca 636-746) levereras inte. Servern svarar
+med HTTP 200 men innehållet är HTML (Angular-appens felsida) i stället
+för JPEG, på båda upplösningsnivåerna (_3 och _5), och även er egen
+läsare visar tomma sidor där. Exempel:
+
+  Fungerar:  .../lb2431561/lb2431561_5/lb2431561_5_0793.jpeg  (sid 659)
+  Trasig:    .../lb2431561/lb2431561_5/lb2431561_5_0814.jpeg  (sid 680)
+
+Av de tryckta sidorna 636-717 fungerar endast ett fåtal (636-638, 656,
+658-659, 668-671, 700-701); resten ger felsidan. Jag skickar gärna en
+fullständig lista över de trasiga bildnumren om det hjälper.
+
+Skulle det vara möjligt att återställa dessa bilder? Verket är i övrigt
+utmärkt digitaliserat och sidorna 660-746 innehåller större delen av
+Tobit, Syrak, Baruk och Mackabéerböckerna.
+
+Tack för ert arbete med Litteraturbanken — det är en ovärderlig resurs.
+
+Med vänliga hälsningar,
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+
+---
+
+(English summary for reference: bug report — most facsimile page images
+for the Apocrypha section of the 1703 Karl XII Bible, work lb2431561,
+return the Angular error shell with HTTP 200 instead of JPEG, at both
+resolution tiers, including in Litteraturbanken's own reader. Working
+example page 659 vs broken page 680. Asking if the images can be
+restored; offering the full list of broken image numbers.)

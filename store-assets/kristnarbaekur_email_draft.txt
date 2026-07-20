@@ -1,0 +1,45 @@
+To: fannarbb@gmail.com
+Subject: Your Guðbrandsbiblía NT transcription — permission & provenance question
+
+Góðan dag,
+
+My name is Aleksandr Ratchkov. I build Hexapla, a free offline parallel
+Bible app (Android; no ads, no charges, nothing locked — an evangelism
+project): https://aleksandrr-dev.github.io/Hexapla/
+
+I found your remarkable verse-numbered transcription of the Guðbrandsbiblía
+New Testament on archive.org
+(nyja-testamentid-gudbrandsbiblia_202301, "Kristnar Bækur") and would love
+to bring the 1584 text to the app's readers — it would be the app's first
+Icelandic translation, presented alongside classic Reformation-era Bibles
+in 27 languages. I have three questions:
+
+1. PERMISSION / LICENSE. The archive.org item does not state a license for
+   your transcription and verse-numbering work. Would you permit its use in
+   the app, free of charge to users, with attribution to Kristnar Bækur
+   (wording of your choice)? If you prefer a formal license, CC BY or
+   CC BY-SA would both work for us.
+
+2. PATCHED VERSES. Your item description mentions that a few verses were
+   supplied by translating back from the King James Version where the
+   original could not be used directly. Could you list WHICH verses those
+   are? This matters to us because we would like to re-transcribe exactly
+   those verses from the 1584 facsimile pages ourselves, so that the app's
+   text is Guðbrandur's own throughout — and it protects your work too,
+   since we would document the distinction clearly.
+
+3. SOURCE. Which facsimile/scan did you transcribe from, and how did you
+   assign the verse numbers (the 1584 print itself has none in the prose)?
+   Any notes on your method would help us verify and credit it properly.
+
+The app's policy is strict: only public-domain texts or licensed texts
+with honored attribution, and we never ship a text whose provenance we
+cannot document. Your transcription is the best Icelandic candidate we
+have found in a year of research — I would be delighted to credit
+Kristnar Bækur in the app's sources section in all its interface
+languages.
+
+Kær kveðja / with warm regards,
+Aleksandr Ratchkov
+aleksratchkov@gmail.com
+https://aleksandrr-dev.github.io/Hexapla/

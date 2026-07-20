@@ -9,12 +9,23 @@ maximize reach, keep everything free, nothing locked, collect no data.
 
 - JAVA_HOME is NOT on PATH in shells predating 2026-07-06; use
   `C:\Program Files\Android\Android Studio\jbr` (user env var is set).
-- AGP 9.2.1 / Gradle 9.4.1 / Kotlin 2.3.21 (built-in Kotlin — no
-  kotlin-android plugin) / Compose BOM 2024.10 / minSdk 26 / targetSdk 35.
+- AGP 9.3.0 (bumped from 9.2.1 by Android Studio's updater 2026-07-20,
+  owner-confirmed; verified same-day: compile, lint, both release flavors,
+  R8 donation stripping) / Gradle 9.4.1 / Kotlin 2.3.21 (built-in Kotlin —
+  no kotlin-android plugin) / Compose BOM 2024.10 / minSdk 26 / targetSdk 35.
   Gradle 9.6 works too (was rolled back only for reproducibility).
 - **Product flavors** (dimension "distribution"):
   - `play` — Google Play. `EXTERNAL_DONATIONS=false`; R8 strips the ЮMoney
-    donation path entirely (verified absent from dex).
+    donation path entirely (verified absent from dex). ⚠ THIS SILENTLY
+    REGRESSED IN 1.4.0: the empty-Support restructure moved Donation.links
+    into a plain `else` branch — runtime-unreachable on play (outer gate
+    requires playTips) but not PROVABLY dead, so the string shipped in every
+    1.4.0-1.5.1 play dex. FIXED 2026-07-20: the branch is now
+    `else if (BuildConfig.EXTERNAL_DONATIONS)` (identical runtime semantics,
+    provably dead for R8); re-verified absent from play dex / present in
+    rustore dex, under AGP 9.3.0. Re-check this grep before every Play
+    upload: `unzip -p app-play-release.apk "classes*.dex" | grep -ac yoomoney`
+    must print 0.
   - `rustore` — RuStore + direct APK. External ЮMoney donation link shows
     when Play Billing is unavailable.
 - Commands: `./gradlew bundlePlayRelease` (Play AAB),

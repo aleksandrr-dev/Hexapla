@@ -161,6 +161,14 @@ LANG_CONFIG = {
         "default_books": None,
         "normalizer": "wycliffe",
     },
+    "ylt": {
+        "asset": "en_ylt.json",
+        "engine": "kokoro",
+        "voice": "am_adam",
+        "strip_notes": True,
+        "default_books": None,
+        "normalizer": None,
+    },
     "ru": {
         "asset": "ru_synodal.json",
         "engine": "cosyvoice3",

@@ -388,9 +388,7 @@ EXTRA = {
     },
     ("lut", "wlc"): {
         63: [(1, 14, 14, 1, 14, 15)],                               # (lut only; wlc lacks NT)
-        65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
         3: [(16, 36, 50, 17, 1, 15), (17, 1, 13, 17, 16, 28),       # Num 16/17 boundary
-            (26, 1, 1, 25, 19, 19), (26, 1, 1, 26, 1, 1),           # Heb 25:19 = KJV 26:1a
             (29, 40, 40, 30, 1, 1), (30, 1, 16, 30, 2, 17)],
         8: [(20, 42, 42, 20, 42, 42), (20, 42, 42, 21, 1, 1),       # KJV 20:42 = Heb 20:42+21:1
             (21, 1, 15, 21, 2, 16),
@@ -398,9 +396,7 @@ EXTRA = {
         10: [(4, 21, 34, 5, 1, 14), (5, 1, 18, 5, 15, 32),          # 1 Kgs 4/5 boundary
              (22, 43, 43, 22, 43, 44), (22, 44, 53, 22, 45, 54)],   # Heb splits 22:43
         11: [(11, 21, 21, 12, 1, 1), (12, 1, 21, 12, 2, 22)],       # 2 Kgs 11/12 boundary
-             # (lut 15:39 is an empty trailing slot in the asset — unmapped)
-        12: [(6, 1, 15, 5, 27, 41), (6, 16, 81, 6, 1, 66),          # 1 Chr 5/6 boundary
-             (12, 4, 4, 12, 4, 5), (12, 5, 40, 12, 6, 41)],         # Heb splits 12:4
+        12: [(6, 1, 15, 5, 27, 41), (6, 16, 81, 6, 1, 66)],         # 1 Chr 5/6 boundary
         15: [(4, 1, 6, 3, 33, 38), (4, 7, 23, 4, 1, 17),            # Neh 3/4 boundary
              (7, 72, 73, 7, 72, 72),                                 # KJV 7:73 ~ Heb 7:72
              (9, 38, 38, 10, 1, 1), (10, 1, 39, 10, 2, 40)],
@@ -410,6 +406,20 @@ EXTRA = {
         38: [(4, 1, 6, 3, 19, 24)],                                 # Malachi: Heb has 3 chapters
         46: [(13, 12, 13, 13, 12, 12), (13, 14, 14, 13, 13, 13)],   # (lut only)
         43: [(19, 40, 41, 19, 40, 40)],                              # (lut only)
+    },
+    # Sites where the shipped Luther digitization (Zefania GerLut1545)
+    # diverges from the true Hebrew arrangement: it keeps Num 25 / 1 Chr 12 /
+    # Rev 12 KJV-shaped (Num 25:19's Hebrew content is the tail clause of its
+    # 25:18, "und die Plage danach kam"), while it DOES split KJV 2 Kgs 15:38
+    # into native 38+39 ("und Ahas, sein Sohn, ward König..."). Discovered
+    # 2026-07-20 (fix_lut_alignment.py) — these were shared lut+wlc runs
+    # before, describing an arrangement the lut asset never had.
+    ("wlc",): {
+        3: [(26, 1, 1, 25, 19, 19), (26, 1, 1, 26, 1, 1)],          # Heb 25:19 = KJV 26:1a
+        12: [(12, 4, 4, 12, 4, 5), (12, 5, 40, 12, 6, 41)],         # Heb splits 12:4
+    },
+    ("lut",): {
+        11: [(15, 38, 38, 15, 38, 39)],                             # lut splits KJV 2 Kgs 15:38
     },
 }
 

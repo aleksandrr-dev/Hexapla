@@ -754,8 +754,9 @@ maximize reach, keep everything free, nothing locked, collect no data.
   legacy keys read as canonical — identical for KJV-grid
   translations, shifts only where display was already broken).
   Also fixed: 98 "Retournez au début" scraping-junk suffixes stripped
-  from fr_martin.json (Beblia web scrape artifact); lut 2 Kgs 15:39
-  is an empty slot in the asset (unmapped, cosmetic).
+  from fr_martin.json (Beblia web scrape artifact). ~~lut 2 Kgs 15:39
+  empty slot~~ — that "cosmetic" note understated a real defect family,
+  FIXED 2026-07-20, see the de_luther alignment entry in ASSET DEFECTS.
 - **Welcome screen "Just start reading" now opens the Gospel of
   John** (AppState.open(42, 0) before the reader restores last
   position — owner's idea: a newcomer's first tap should land on
@@ -803,14 +804,30 @@ must include them; owner should spot-check on-device before submitting.
   surfacing them as headings, which needs UI work).
   ⚠ THIS DISCARDED REAL INFORMATION, reversibly: <Sponsa>/<Sponsus> identify
   WHO IS SPEAKING in Song of Songs and print Clementine editions carry them as
-  rubrics. The markers are still in the source archive — a later version can
-  reinstate them as structure.
-- ru_synodal.json: 3 verses carry escaped OSIS (&lt;note&gt; wrapping a ~600-
-  char LXX variant at Иов 2:9; a constellations note at Иов 9:9; a stray
-  &lt;title type="psalm"&gt; at Псалтирь 143:15). OWNER CONFIRMED the app
-  RENDERS this markup to readers. narrate.py keeps it out of the audio
-  (strip_ru_markup) but **THE ASSET IS STILL UNFIXED** — BibleRepo.parseAsset
-  strips {x:y} notes and knows nothing about escaped tags. Still to do.
+  rubrics. ✅ REINSTATED AS STRUCTURE 2026-07-20 (in tree, not yet shipped):
+  tools/build_vul_rubrics.py extracts all 198 rubrics across 194 verses (the
+  old "194 markers" figure counted verses; 4 verses carry two) from the
+  clemtext source (Quasimodo.zip re-fetched, cached at Hexapla-releases/
+  clemtext/) into assets/rubrics_vul.json (4.6 KB) with per-marker character
+  offsets verified against the shipped verse text; Rubrics.kt loads it and
+  ReaderScreen shows the labels as small italic headers above their verses
+  when the primary is vul (offsets recorded for a future inline renderer;
+  secondary-pane rubrics deliberately not rendered yet).
+- ru_synodal.json escaped OSIS: ✅ ASSET FIXED 2026-07-16 (commit 534a43d,
+  owner-verified on device) — the Иов 2:9 LXX-variant note and Иов 9:9
+  constellations note were converted to {Примечание: ...} margin notes
+  (the KJV {x:y} convention BibleRepo strips at parse; readers see them
+  under "Translator's notes"); the stray Пс 143:15 title was removed.
+  ⚠ FOLLOW-UP FIXED 2026-07-20: narrate.py's strip_ru_markup still
+  targeted the OLD &lt;note&gt; form, so Иов 2+9 were NARRATED 2026-07-18
+  with the note text spoken as scripture (Иов 9's leak was silent — no
+  digit to trip QA). strip_ru_markup now strips brace notes like
+  strip_kjv_notes; qa_narration's tail check now scales its allowance by
+  the final verse's length (Есфирь 4/10 + Иов 42 end in 1.1-3.5k-char
+  LXX additions — were false FAILs under the flat 60s allowance).
+  PENDING: re-render ru books 17 chapters 1+8 (narrate.py --lang ru
+  --book 17 --chapter N --force) AFTER the main ru render finishes —
+  don't run two CosyVoice processes concurrently on the GPU.
 - **⚠ ~HALF THE PSALTER IS MISSING ITS TITLES — ru_synodal AND cu_elizabeth.**
   Found 2026-07-15 while fixing the Psalm 144 stray title; NOT yet fixed, needs
   a source and an owner decision. Measured against the app's own Clementine
@@ -922,6 +939,31 @@ must include them; owner should spot-check on-device before submitting.
       at Ps 151 (azbyka witness, footnote only) — SYNODAL 151 STAYS
       UNTITLED while the SLAVONIC keeps its long title, because the two
       EDITIONS genuinely differ there. Per-edition fidelity, final.
+      ✅ SYNODAL COMPLETION PASS 2026-07-20 (tools/fix_ru_psalm_titles2.py,
+      in tree): the residual 24 titles absent from BOTH PD digitizations
+      were recovered by multimodal page-reading of a genuine 1904
+      Синодальная типография print (archive.org B-001-026-985-ALL /
+      bibliiailiknigis00sankuoft, 7-е изд., 600ppi; full report
+      research/ru_psalm_titles_completion.md) — Пс 32, 90, 92-96, 103,
+      106, 113-118, 135-137, 145-150. Convention mirrors print AND asset:
+      print-(parens) = LXX-supplied -> asset [brackets] (Пс 98 precedent);
+      print-bare = Hebrew-attested -> bare (only Пс 137 «Давида.», whose
+      MT 138 carries לדוד — the print's parens distinction is precise).
+      Пс 42/70/104 print-confirmed genuinely untitled (104 diverges from
+      the Vulgate's "Alleluja" — per-edition fidelity). Пс 7 was a census
+      false positive (own-verse title). THE PSALTER TITLE RESTORATION IS
+      NOW COMPLETE — every psalm titled or witness-confirmed untitled.
+      Backup: asset-backups/ru_synodal.json.pretitles2.bak.
+      ⚠ Пс 151 EVIDENCE SHIFT (flagged, NOT acted on — owner marked the
+      untitled decision final): the same 1904 print DOES title it
+      «(Псалом Давида на единоборство съ Голіаѳомъ)» with the «переведен
+      с Греческого» footnote, correctly spelled — the balance is now 2
+      witnesses FOR a title vs azbyka's absence. Owner call if reopened.
+      ⚠ RU NARRATION STALENESS: the ru render passed Psalms before these
+      24 titles (and before the Job 2/9 note fix) — re-render queue after
+      the main ru render finishes: book 18 chapters (1-based psalms) 32,
+      90, 92-96, 103, 106, 113-118, 135-137, 145-150 + book 17 chapters
+      2 and 9 (--book/--chapter are 0-based in narrate.py; use --force).
       FALLBACK: my-bible.info has a complete CIVIL-script CS psalter (no
       transliteration needed) but NO stated license and murky provenance —
       strictly weaker. DEAD ENDS (verified): rusbible.ru IS the gap (drops
@@ -933,6 +975,29 @@ must include them; owner should spot-check on-device before submitting.
   (Joshua 24:14, upstream-Traditional defect) — FIXED 2026-07-15 via
   tools/fix_remaining_markup.py, owner-approved. audit_asset_markup.py now
   reports ALL 23 ASSETS CLEAN.
+- **de_luther ALIGNMENT REPAIR 2026-07-20 (tools/fix_lut_alignment.py; in
+  tree, not yet shipped)**: the "lut 2 Kgs 15:39 empty slot (cosmetic)" note
+  hid a defect family — the v1.1 scrape had squeezed several native-numbered
+  chapters, leaving 8 empty tail slots, 78 verses one slot off their
+  versemap-described positions (= fix_de_luther's 78 deliberately-skipped,
+  still-OCR-damaged verses), and FIVE verses of scripture missing outright:
+  2 Sam 19:1 (the "Mein Sohn Absalom!" lament), 1 Kgs 22:44, Acts 7:56
+  ("I see the heavens opened"), Hag 2:22, Ps 13:7 — plus 2 Kgs 15:39 and
+  Hag 1:15; Hag 2 also carried a DUPLICATE of 2:1 at 2:2. Split view paired
+  all those chapters off-by-one. All repaired from the Zefania master
+  (assertion-gated, whole-Bible re-scan = 0 problems, asset now exactly the
+  master's 31,170 verses, zero empties; backup
+  asset-backups/de_luther.json.prealign.bak; master XML cached at
+  Hexapla-releases/SF_2009-01-20_GER_LUTH1545_(LUTHER 1545).xml). Num 25:19 /
+  1 Chr 12:41 / Rev 12:18 empty tails were SPURIOUS for this digitization
+  (it keeps those KJV-shaped; Num 25:19's Hebrew content is 25:18's tail
+  clause) — slots dropped, and build_versemap.py's shared ("lut","wlc")
+  table SPLIT: those runs are now wlc-only, lut gained the 2 Kgs 15:38=38-39
+  split run, Ps 13 title runs now auto-emit (was silently identity = KJV
+  13:1 paired with the German TITLE). versemap.json regenerated; diff
+  verified lut-only (+ harmless wlc run reorder). ⚠ Existing users'
+  bookmarks/notes in the 7 shifted chapters referenced wrong-by-one verses
+  before; canonical-key pivot makes them correct after this ships.
 - TOOLS: tools/audit_asset_markup.py scans every asset for this class of
   leakage. Run it before any release. It found 6 of 23 assets dirty.
   ⚠ A MARKUP REGEX CANNOT SEE SILENT CORRUPTION: it found 20 de_luther verses;

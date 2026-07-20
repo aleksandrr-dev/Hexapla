@@ -69,7 +69,9 @@ CV_FAIL = 0.35
 SPREAD_WARN = 2.0
 SPREAD_FAIL = 3.0
 MIN_KB = 8
-TAIL_SLACK_S = 60.0     # last offset may sit this far from the end, at most
+TAIL_SLACK_S = 60.0     # tail allowance beyond the final verse's own length
+TAIL_FLOOR_CPS = 6.0    # slowest plausible speech, chars/sec — scales the
+                        # tail allowance for long final verses (LXX additions)
 
 # Flatness, relative to the chapter's own median. The one confirmed artifact
 # sat at 1.35x its chapter median; 1.6x is deliberately well clear of that so
@@ -199,19 +201,8 @@ def check_chapter(lang, books, cfg, book_idx, ch_idx):
         elif zero_len:
             warn(f"{zero_len} verse(s) measured 0ms (delta == gap)")
 
-    dur = probe_duration_s(ogg)
-    stats = {"kb": kb, "dur_s": dur}
-    if dur is None:
-        fail("ffprobe could not read duration")
-    elif offsets:
-        last_s = offsets[-1] / 1000
-        if last_s > dur:
-            fail(f"last offset {last_s:.1f}s is beyond audio end {dur:.1f}s")
-        elif dur - last_s > TAIL_SLACK_S:
-            fail(f"last offset {last_s:.1f}s but audio runs {dur:.1f}s "
-                 f"({dur-last_s:.1f}s unaccounted)")
-
-    # Text-side checks + pace.
+    # Text-side normalization (needed by the tail check below, and by the
+    # digit/pace checks after it).
     texts = []
     for v in raw:
         if not v:
@@ -219,6 +210,29 @@ def check_chapter(lang, books, cfg, book_idx, ch_idx):
             continue
         t = narrate.strip_kjv_notes(v) if cfg["strip_notes"] else v
         texts.append(narrate.normalize_text(t, cfg["normalizer"]))
+
+    dur = probe_duration_s(ogg)
+    stats = {"kb": kb, "dur_s": dur}
+    if dur is None:
+        fail("ffprobe could not read duration")
+    elif offsets:
+        last_s = offsets[-1] / 1000
+        # The last offset marks the final verse's START, so a long final verse
+        # legitimately sits far from the audio end — Есфирь 4:17's 3,507-char
+        # LXX prayer runs ~270s of speech on its own (ditto Есфирь 10:3 and
+        # Иов 42:17, all flagged as false FAILs 2026-07-20 under the old flat
+        # allowance). Scale the allowance by that verse's normalized length at
+        # a deliberately slow floor rate; a real offsets/audio disagreement
+        # (the Bark bug shipped 30s of offsets on 441.6s of audio) still lands
+        # far beyond any length-justified allowance.
+        last_len = len(texts[-1]) if texts else 0
+        allow = TAIL_SLACK_S + last_len / TAIL_FLOOR_CPS
+        if last_s > dur:
+            fail(f"last offset {last_s:.1f}s is beyond audio end {dur:.1f}s")
+        elif dur - last_s > allow:
+            fail(f"last offset {last_s:.1f}s but audio runs {dur:.1f}s "
+                 f"({dur-last_s:.1f}s unaccounted; allowance {allow:.0f}s "
+                 f"for a {last_len}-char final verse)")
 
     if lang in ("ru", "cu"):
         for i, t in enumerate(texts):

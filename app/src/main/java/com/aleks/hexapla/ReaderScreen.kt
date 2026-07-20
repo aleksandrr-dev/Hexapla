@@ -180,7 +180,11 @@ fun ReaderScreen(settings: AppSettings) {
     val verses = books[book].chapters[chapter]
     // Verse-level versification pivot (KJV backbone); identity until loaded.
     var mapsReady by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { VerseMap.load(context); mapsReady = true }
+    var rubricsReady by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        VerseMap.load(context); mapsReady = true
+        Rubrics.load(context); rubricsReady = true
+    }
     // Secondary pane rows aligned to the primary through the KJV pivot:
     // (text, secondary's own 1-based chapter/verse for interlinear taps).
     val sBooks = secondaryBooks
@@ -529,6 +533,19 @@ fun ReaderScreen(settings: AppSettings) {
                             )
                             .padding(horizontal = 16.dp, vertical = 6.dp)
                     ) {
+                        // Clementine Vulgate rubrics (Canticum speakers, the
+                        // Ps 118 / Lamentations acrostic letters, Prologus)
+                        // render as a small label above their verse.
+                        if (rubricsReady)
+                            Rubrics.labels(settings.primaryId, book, chapter + 1, i + 1)?.let { r ->
+                                Text(
+                                    r.joinToString("   "),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontStyle = FontStyle.Italic,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(bottom = 2.dp)
+                                )
+                            }
                         if (settings.splitEnabled && secondaryAligned != null) {
                             val (second, secondPos) = secondaryAligned.getOrNull(i)
                                 ?: ("" to (chapter + 1 to i + 1))

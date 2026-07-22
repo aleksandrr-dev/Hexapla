@@ -179,6 +179,8 @@
     <string name="compare_note">Choose which translations appear in the verse comparison.</string>
     <string name="audio_title">Narrated audio (KJV)</string>
     <string name="audio_note">Human narration from LibriVox (public domain), covering most books of the KJV. Audio is downloaded per section (a few chapters, ~10–30 MB) when you press play and kept for offline listening. Books without a recording fall back to text-to-speech, and verse highlighting is unavailable while narrating.</string>
+    <string name="audio_stream" tools:ignore="MissingTranslation">Stream without saving</string>
+    <string name="audio_stream_note" tools:ignore="MissingTranslation">Play audio as it loads instead of downloading it. Uses less storage but needs a connection each time; chapters you already downloaded still play offline.</string>
     <string name="audio_downloading">Downloading audio… %1$d%%</string>
     <string name="audio_narrated">Narrated audio</string>
     <string name="audio_storage">Downloaded audio: %1$d MB</string>

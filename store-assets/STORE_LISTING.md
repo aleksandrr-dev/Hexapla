@@ -22,6 +22,30 @@ Localized reader screenshots (John 1 in the language's own translation,
 `tools/make_reader_shot.py`): lead with the reader shot on that
 language's Play listing, then the order above.
 
+## 1.6.0 release notes (paste per store)
+
+**EN:** One new translation: the Persian New Testament in Henry Martyn's
+translation (1876) — the first Bible transcribed by the project's own team,
+bringing the total to 34 translations in 29 languages. New narration:
+Webster's Bible (1833) is now fully read aloud, and the remaining King
+James books gain clear narration, so every English chapter has a voice.
+
+**RU:** Один новый перевод: персидский Новый Завет в переводе Генри
+Мартина (1876) — первая Библия, расшифрованная командой проекта. Теперь
+34 перевода на 29 языках. Новая озвучка: Библия Уэбстера (1833) полностью
+озвучена, добавлена озвучка оставшихся книг Библии короля Якова — теперь
+у каждой английской главы есть голос.
+
+**DE:** Eine neue Übersetzung: das persische Neue Testament in der
+Übersetzung von Henry Martyn (1876) — jetzt 34 Übersetzungen in 29
+Sprachen. Neue Audioausgabe: die Webster-Bibel (1833) wird vollständig
+vorgelesen, und die übrigen King-James-Bücher erhalten ebenfalls eine
+klare Vertonung.
+
+(ES/FR/PT and the other listing languages: same two facts — +Persian
+Martyn NT 1876 → 34/29, and full Webster + remaining-KJV narration.
+Translate from the EN above per prior-release pattern.)
+
 ## 1.5.1 release notes (paste per store)
 
 **RU:** Один новый перевод: белорусский Новый Завет и Псалтирь в переводе
@@ -425,13 +449,13 @@ split view; welcome screen opens the Gospel of John; bug fixes.
 **Название:** Гексапла — параллельная Библия
 
 **Краткое описание (до 80 зн.):**
-Библия офлайн: 33 перевода, озвучка, планы чтения, симфония Стронга.
+Библия офлайн: 34 перевода, озвучка, планы чтения, симфония Стронга.
 
 **Полное описание:**
 
 Гексапла — полная Библия без интернета, без рекламы, без регистрации и без сбора данных. Всё бесплатно и ничего не заблокировано.
 
-📖 33 классических перевода на 28 языках: Синодальный, Елизаветинская Библия (церковнославянский), KJV 1611 с апокрифами, Библия Уэбстера 1833, Женевская 1599, Уиклиф, Тиндейл, Bible Martin 1744 (франц.), Библия Лютера 1545 (нем.), Карла XII 1703 (швед.), датская 1819, Рейна-Валера 1909 (исп.), Диодати 1649 (итал.), Bíblia Livre — Алмейда TR (порт.), 明治元訳 — первая японская Библия 1880/87, китайская 和合本 1919 (трад. и упрощ. иероглифы), древнееврейский текст (Ленинградский кодекс), греческий Новый Завет (византийский текст), санскритский Новый Завет 1851 года, тамильская Библия (IRV 2019, линия Бауэра 1871), латинская Вульгата (Климентина, 1592), нидерландская Statenvertaling 1637 года и арабская Библия Ван Дейка 1865 года — и другие.
+📖 34 классических перевода на 29 языках: Синодальный, Елизаветинская Библия (церковнославянский), KJV 1611 с апокрифами, Библия Уэбстера 1833, Женевская 1599, Уиклиф, Тиндейл, Bible Martin 1744 (франц.), Библия Лютера 1545 (нем.), Карла XII 1703 (швед.), датская 1819, Рейна-Валера 1909 (исп.), Диодати 1649 (итал.), Bíblia Livre — Алмейда TR (порт.), 明治元訳 — первая японская Библия 1880/87, китайская 和合本 1919 (трад. и упрощ. иероглифы), древнееврейский текст (Ленинградский кодекс), греческий Новый Завет (византийский текст), санскритский Новый Завет 1851 года, тамильская Библия (IRV 2019, линия Бауэра 1871), латинская Вульгата (Климентина, 1592), нидерландская Statenvertaling 1637 года, арабская Библия Ван Дейка 1865 года и персидский Новый Завет в переводе Генри Мартина 1876 года — и другие.
 
 ✝️ «Благая весть» — план спасения шаг за шагом, только стихи Писания.
 🔴 Слова Христа выделены красным.
@@ -453,13 +477,13 @@ split view; welcome screen opens the Gospel of John; bug fixes.
 **Title:** Hexapla — Parallel Bible
 
 **Short description:**
-Offline Bible: 33 classic translations, audio, Strong's, reading plans.
+Offline Bible: 34 classic translations, audio, Strong's, reading plans.
 
 **Full description:**
 
 Hexapla is the complete Bible — offline, ad-free, account-free, and it collects no data. Everything is free and nothing is locked.
 
-📖 33 classic translations across 28 languages: KJV 1611 with Apocrypha, Webster 1833, Geneva 1599, Wycliffe, Tyndale, Bible Martin 1744 (French), Luther 1545 (German), Karl XII 1703 (Swedish), Danish 1819/1871, Reina-Valera 1909 (Spanish), Diodati 1649 (Italian), Bíblia Livre — Almeida TR (Portuguese), 明治元訳 Meiji Motoyaku — the first Japanese Bible 1880/87, the Chinese Union Version 和合本 1919 (Traditional and Simplified), Russian Synodal, Church Slavonic, the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the Sanskrit New Testament of 1851, the Tamil Bible (IRV 2019, the 1871 Bower lineage), the Clementine Vulgate of 1592 (Latin), the Dutch Statenvertaling (1637), the Arabic Van Dyck (1865), and more.
+📖 34 classic translations across 29 languages: KJV 1611 with Apocrypha, Webster 1833, Geneva 1599, Wycliffe, Tyndale, Bible Martin 1744 (French), Luther 1545 (German), Karl XII 1703 (Swedish), Danish 1819/1871, Reina-Valera 1909 (Spanish), Diodati 1649 (Italian), Bíblia Livre — Almeida TR (Portuguese), 明治元訳 Meiji Motoyaku — the first Japanese Bible 1880/87, the Chinese Union Version 和合本 1919 (Traditional and Simplified), Russian Synodal, Church Slavonic, the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the Sanskrit New Testament of 1851, the Tamil Bible (IRV 2019, the 1871 Bower lineage), the Clementine Vulgate of 1592 (Latin), the Dutch Statenvertaling (1637), the Arabic Van Dyck (1865), and the Persian New Testament in Henry Martyn's translation (1876), and more.
 
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.

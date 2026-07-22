@@ -48,6 +48,7 @@ data class AppSettings(
     val showStrongs: Boolean = false,
     val showDictionary: Boolean = false,   // Webster 1828, tap-a-word (EN texts)
     val audioNarration: Boolean = false,
+    val audioStream: Boolean = false,   // stream narration without saving offline
     val streak: Int = 0,
     val redLetters: Boolean = true,
     val hideVerseNumbers: Boolean = false,
@@ -84,6 +85,7 @@ object Store {
     private val SHOW_STRONGS = booleanPreferencesKey("show_strongs")
     private val SHOW_DICT = booleanPreferencesKey("show_dict")
     private val AUDIO_NARR = booleanPreferencesKey("audio_narration")
+    private val AUDIO_STREAM = booleanPreferencesKey("audio_stream")
     private val STREAK = intPreferencesKey("streak")
     private val STREAK_DAY = longPreferencesKey("streak_day")
     private val HIGHLIGHTS = stringPreferencesKey("highlights")
@@ -117,6 +119,7 @@ object Store {
             showStrongs = p[SHOW_STRONGS] ?: false,
             showDictionary = p[SHOW_DICT] ?: false,
             audioNarration = p[AUDIO_NARR] ?: false,
+            audioStream = p[AUDIO_STREAM] ?: false,
             streak = p[STREAK] ?: 0,
             redLetters = p[RED_LETTERS] ?: true,
             hideVerseNumbers = p[HIDE_NUMBERS] ?: false,
@@ -186,6 +189,7 @@ object Store {
     suspend fun setShowStrongs(c: Context, v: Boolean) = c.dataStore.edit { it[SHOW_STRONGS] = v }
     suspend fun setShowDictionary(c: Context, v: Boolean) = c.dataStore.edit { it[SHOW_DICT] = v }
     suspend fun setAudioNarration(c: Context, v: Boolean) = c.dataStore.edit { it[AUDIO_NARR] = v }
+    suspend fun setAudioStream(c: Context, v: Boolean) = c.dataStore.edit { it[AUDIO_STREAM] = v }
     suspend fun setRedLetters(c: Context, v: Boolean) = c.dataStore.edit { it[RED_LETTERS] = v }
     suspend fun setHideVerseNumbers(c: Context, v: Boolean) = c.dataStore.edit { it[HIDE_NUMBERS] = v }
     suspend fun setWelcomeSeen(c: Context) = c.dataStore.edit { it[WELCOME_SEEN] = true }

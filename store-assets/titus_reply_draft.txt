@@ -4,16 +4,23 @@ Subject: Re: [your original subject]
 Dear Professor Gippert,
 
 Thank you very much — this is wonderful news. I gladly confirm both
-conditions: TITUS and the editors will be credited in the app's sources
-section, shown in all of its interface languages, and the app is and
+conditions: TITUS and the editors will be credited, and the app is and
 will remain permanently free — no advertising, no charges, nothing
 unlocked by payment. That is its founding principle and will not change.
 
+For the credit itself, may I propose the following arrangement? The
+app's sources section (shown in all of its interface languages) would
+credit "TITUS (Thesaurus Indogermanischer Text- und Sprachmaterialien),
+Universität Frankfurt, TITUS version by Jost Gippert, data entry by the
+Tbilisi team" with a link to the project website — and the website
+(which the app links directly) would carry the full credit paragraph
+naming every editor and data-entry contributor individually, exactly as
+they appear in each text's header. If you would prefer all names to
+appear inside the app itself, I will gladly do that instead.
+
 If you or the editors have a preferred credit wording, or a link the
-credit should carry, I will use it verbatim; otherwise I will credit
-"TITUS (Thesaurus Indogermanischer Text- und Sprachmaterialien),
-Universität Frankfurt" together with the editors named in each text's
-header, for both the Zohrab Bible and the 1743 Moscow Bible.
+credit should carry, I will use it verbatim — for both the Zohrab Bible
+and the 1743 Moscow Bible.
 
 With sincere thanks for TITUS's work in preserving these texts,
 

@@ -1,280 +1,174 @@
 # -*- coding: utf-8 -*-
-"""Upload generated Bible narration to archive.org.
+"""Upload a generated narration set to archive.org (one item per translation).
 
-Uses the `ia` CLI (internetarchive package) to upload generated audio files
-to an archive.org item. Files are organized by book/chapter indices.
+    python tools/upload_narration.py wbt --dry-run
+    python tools/upload_narration.py wbt
 
-Usage:
-  python upload_narration.py --lang en --item hexapla-audio-en
-  python upload_narration.py --lang wbt --item hexapla-audio-en
-  python upload_narration.py --lang ru --item hexapla-audio-ru
+Needs the `internetarchive` package and a configured ~/.config/internetarchive/
+ia.ini (the owner's account is already linked).
 
-Options:
-  --lang LANG       Language code (ru, en)
-  --item ITEM       archive.org item identifier
-  --dry-run         Print what would be uploaded without uploading
+⚠ OWNER POLICY (2026-07-13, restated 2026-07-21): the owner's personal name
+must NOT appear anywhere in the metadata. Credit the project/app, never him.
+The account that performs the upload is inherently his, but nothing we WRITE
+names him.
+
+Item layout mirrors tools/NARRATION_PLAN.md §6: files land as
+<bookIdx>/<chapter>.ogg plus the per-chapter <bookIdx>/<chapter>.json verse
+offset sidecars (small, and what makes verse highlighting / tap-to-seek
+possible in the app — LibriVox audio cannot do that).
 """
 import argparse
 import json
-import os
-import subprocess
 import sys
 from pathlib import Path
 
-HERE = Path(__file__).parent
-OUTPUT = Path("C:/Projects/Hexapla-releases/narration")
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-# Remote filename conventions — must match audio_index.json URLs
-REMOTE_PREFIX = {
-    "en": "kjv",
-    "wbt": "wbt",
-    "gnv": "gnv",
-    "tyn": "tyn",
-    "wyc": "wyc",
-    "ru": "syn",
-}
+NARRATION = Path("C:/Projects/Hexapla-releases/narration")
+APP = "https://aleksandrr-dev.github.io/Hexapla/"
 
-# Item metadata templates
-ITEM_METADATA = {
-    "ru": {
-        "title": "Hexapla Bible Audio - Russian (Synodal)",
-        "description": "Self-generated narration of the Russian Synodal Bible translation using Piper TTS.",
-        "subject": ["bible", "audio", "russian", "synodal", "tts", "narration", "hexapla"],
-        "creator": "Aleksandr Ratchkov (generator), Piper TTS",
-        "licenseurl": "http://creativecommons.org/licenses/by-sa/4.0/",  # Placeholder
-        "mediatype": "audio",
-        "collection": "texts",
-    },
-    "en": {
-        "title": "Hexapla Bible Audio - English (KJV)",
-        "description": "Self-generated narration of King James Bible for books without LibriVox coverage.",
-        "subject": ["bible", "audio", "english", "kjv", "tts", "narration", "hexapla"],
-        "creator": "Aleksandr Ratchkov (generator), Kokoro TTS",
-        "licenseurl": "http://creativecommons.org/licenses/by-sa/4.0/",
-        "mediatype": "audio",
-        "collection": "texts",
-    },
+# Per-set metadata. Keep descriptions factual: what the text is, that the
+# reading is synthetic, and that everything is free.
+SETS = {
     "wbt": {
-        "title": "Hexapla Bible Audio - English (Webster 1833)",
-        "description": "Self-generated narration of Webster's Bible Translation (1833), all 66 books.",
-        "subject": ["bible", "audio", "english", "webster", "tts", "narration", "hexapla"],
-        "creator": "Aleksandr Ratchkov (generator), Kokoro TTS",
-        "licenseurl": "http://creativecommons.org/licenses/by-sa/4.0/",
-        "mediatype": "audio",
-        "collection": "texts",
+        "identifier": "hexapla-audio-webster-1833",
+        "title": "The Holy Bible, Webster's Revision (1833) — complete audio narration",
+        "translation": "Webster's Revision of the King James Bible, 1833",
+        "language": "eng",
+        "voice": "Kokoro text-to-speech (Apache-2.0), voice am_adam",
+        "subject": ["bible", "audiobook", "webster bible", "public domain",
+                    "scripture", "christianity", "text to speech",
+                    "hexapla", "audio bible"],
     },
     "gnv": {
-        "title": "Hexapla Bible Audio - English (Geneva 1599)",
-        "description": "Self-generated narration of the Geneva Bible (1599), all 66 books.",
-        "subject": ["bible", "audio", "english", "geneva", "tts", "narration", "hexapla"],
-        "creator": "Aleksandr Ratchkov (generator), Kokoro TTS",
-        "licenseurl": "http://creativecommons.org/licenses/by-sa/4.0/",
-        "mediatype": "audio",
-        "collection": "texts",
+        "identifier": "hexapla-audio-geneva-1599",
+        "title": "The Geneva Bible (1599) — complete audio narration",
+        "translation": "Geneva Bible, 1599",
+        "language": "eng",
+        "voice": "Kokoro text-to-speech (Apache-2.0), voice am_adam",
+        "subject": ["bible", "audiobook", "geneva bible", "public domain",
+                    "scripture", "christianity", "text to speech",
+                    "hexapla", "audio bible"],
     },
-    "tyn": {
-        "title": "Hexapla Bible Audio - English (Tyndale 1525/1531)",
-        "description": "Self-generated narration of Tyndale's Bible (1525 NT / 1531 Pentateuch + partial OT).",
-        "subject": ["bible", "audio", "english", "tyndale", "tts", "narration", "hexapla"],
-        "creator": "Aleksandr Ratchkov (generator), Kokoro TTS",
-        "licenseurl": "http://creativecommons.org/licenses/by-sa/4.0/",
-        "mediatype": "audio",
-        "collection": "texts",
+    # ⚠ NAME POLICY for sv/ru: BOTH are cloned from real people's consented
+    # reference recordings (sv = the owner's friend, ru = the owner). The
+    # no-personal-names rule covers them BOTH — credit the consent, never
+    # the person. Do not "improve" these descriptions with anyone's name.
+    "sv": {
+        "identifier": "hexapla-audio-karlxii-1703",
+        "title": "Karl XII:s Bibel (1703) — komplett ljudinspelning / complete audio narration",
+        "translation": "Karl XII:s Bibel, 1703 (Swedish)",
+        "language": "swe",
+        "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
+                 "from a consented reference recording by a native Swedish "
+                 "volunteer",
+        "subject": ["bible", "audiobook", "karl xii bibel", "svenska",
+                    "public domain", "scripture", "christianity",
+                    "text to speech", "hexapla", "audio bible"],
     },
-    "wyc": {
-        "title": "Hexapla Bible Audio - English (Wycliffe ~1395)",
-        "description": "Self-generated narration of the Wycliffe Bible (~1395), all 66 books.",
-        "subject": ["bible", "audio", "english", "wycliffe", "tts", "narration", "hexapla"],
-        "creator": "Aleksandr Ratchkov (generator), Kokoro TTS",
-        "licenseurl": "http://creativecommons.org/licenses/by-sa/4.0/",
-        "mediatype": "audio",
-        "collection": "texts",
+    "ru": {
+        "identifier": "hexapla-audio-synodal-1876",
+        "title": "Синодальный перевод (1876) — полная аудиозапись / complete audio narration",
+        "translation": "Russian Synodal Bible, 1876",
+        "language": "rus",
+        "voice": "Fun-CosyVoice3 — synthetic speech cloned from a consented "
+                 "reference recording by a native Russian volunteer",
+        "subject": ["bible", "audiobook", "синодальный перевод", "библия",
+                    "public domain", "scripture", "christianity",
+                    "text to speech", "hexapla", "audio bible"],
     },
 }
+# ⚠ ru UPLOAD GATE: do not upload ru until (a) the ~381-chapter leak
+# re-render has completed under the fixed RU_STYLES, (b) the leak scanner
+# has re-screened the re-rendered set clean, and (c) the NT + apocrypha
+# passes are done. Uploading a partially-defective corpus wastes the item's
+# reputation and everyone's bandwidth.
 
-# Book names (canonical order, 66 books)
-BOOK_NAMES = [
-    "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth",
-    "1 Samuel", "2 Samuel", "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah",
-    "Esther", "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Songs",
-    "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
-    "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi",
-    "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians",
-    "Galatians", "Ephesians", "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians",
-    "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews", "James",
-    "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation",
-]
+DESCRIPTION = """<p>A complete chapter-by-chapter audio narration of
+<b>{translation}</b>, produced for <a href="{app}">Hexapla</a>, a free and
+offline parallel Bible app for Android.</p>
 
+<p>The underlying translation is in the <b>public domain</b> by age. The
+reading is <b>synthetic speech</b>, generated with {voice} — it is not a human
+performance, and no narrator is credited because none was involved.</p>
 
-def check_ia_available():
-    """Check if `ia` CLI is available."""
-    try:
-        subprocess.run(["ia", "--help"], capture_output=True, timeout=5)
-        return True
-    except FileNotFoundError:
-        return False
-    except Exception:
-        return False
+<p>Files are one Ogg audio file per chapter, laid out as
+<code>&lt;book&gt;/&lt;chapter&gt;.ogg</code> using the standard 66-book
+Protestant order with zero-based book numbering (0 = Genesis, 65 =
+Revelation). Each audio file has a matching <code>.json</code> sidecar
+listing the start time in milliseconds of every verse, so players can
+highlight verses or seek to them directly.</p>
 
-
-def get_uploaded_files(item_id):
-    """Get list of files already uploaded to the item."""
-    try:
-        result = subprocess.run(
-            ["ia", "list", item_id],
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        if result.returncode == 0:
-            files = []
-            for line in result.stdout.strip().split("\n"):
-                line = line.strip()
-                if line and not line.startswith("["):
-                    files.append(line)
-            return set(files)
-    except Exception as e:
-        print(f"Warning: could not list existing files: {e}", file=sys.stderr)
-
-    return set()
+<p>{n_chapters} chapters. Free to use, copy and redistribute. The app that
+uses these files is free as well: no advertising, no purchases, no accounts,
+and no data collection.</p>"""
 
 
-def upload_file(item_id, local_path, remote_path, dry_run=False):
-    """Upload a single file to archive.org item."""
+def build(set_key, dry_run=False):
+    meta_src = SETS[set_key]
+    src = NARRATION / set_key
+    if not src.is_dir():
+        sys.exit(f"no narration directory at {src}")
+
+    oggs = sorted(src.rglob("*.ogg"))
+    jsons = sorted(src.rglob("*.json"))
+    if not oggs:
+        sys.exit(f"no .ogg files under {src}")
+    # Every chapter must carry its offsets sidecar, or verse highlighting
+    # silently degrades for that chapter in the app.
+    missing = [str(o.relative_to(src)) for o in oggs
+               if not o.with_suffix(".json").exists()]
+    if missing:
+        sys.exit(f"{len(missing)} chapters lack a .json sidecar: {missing[:5]}")
+
+    total_bytes = sum(f.stat().st_size for f in oggs + jsons)
+    metadata = {
+        "mediatype": "audio",
+        "collection": "opensource_audio",
+        "title": meta_src["title"],
+        # ⚠ project credit only — never the owner's personal name.
+        "creator": "Hexapla (free offline parallel Bible app)",
+        "language": meta_src["language"],
+        "subject": meta_src["subject"],
+        "licenseurl": "https://creativecommons.org/publicdomain/mark/1.0/",
+        "rights": "Translation is public domain by age; the narration audio "
+                  "is machine-generated and placed in the public domain.",
+        "originalurl": APP,
+        "description": DESCRIPTION.format(
+            translation=meta_src["translation"], app=APP,
+            voice=meta_src["voice"], n_chapters=len(oggs)),
+    }
+
+    files = {}
+    for f in oggs + jsons:
+        files[str(f.relative_to(src)).replace("\\", "/")] = str(f)
+    cover = NARRATION / "cover.jpg"
+    if cover.exists():
+        files["cover.jpg"] = str(cover)
+
+    print(f"item      : {meta_src['identifier']}")
+    print(f"files     : {len(files)} ({len(oggs)} chapters + sidecars)")
+    print(f"size      : {total_bytes / 1e9:.2f} GB")
+    print(f"metadata  : {json.dumps(metadata, ensure_ascii=False, indent=1)}")
     if dry_run:
-        print(f"  [DRY] Would upload {local_path} -> {item_id}/{remote_path}")
-        return True
-
-    try:
-        cmd = [
-            "ia",
-            "upload",
-            item_id,
-            str(local_path),
-            "--remote-name", remote_path,
-            "--quiet",
-        ]
-        result = subprocess.run(cmd, capture_output=True, timeout=300)
-        if result.returncode != 0:
-            print(f"Upload failed: {result.stderr.decode()}", file=sys.stderr)
-            return False
-        print(f"  Uploaded {remote_path}")
-        return True
-    except subprocess.TimeoutExpired:
-        print(f"Upload timeout for {local_path}", file=sys.stderr)
-        return False
-    except Exception as e:
-        print(f"Upload error: {e}", file=sys.stderr)
-        return False
-
-
-def upload_language(lang, item_id, dry_run=False):
-    """Upload all generated files for a language to archive.org."""
-    lang_dir = OUTPUT / lang
-    if not lang_dir.exists():
-        print(f"No output directory for {lang}: {lang_dir}", file=sys.stderr)
-        return False
-
-    # Collect all .ogg files
-    ogg_files = list(lang_dir.glob("*/*.ogg"))
-    if not ogg_files:
-        print(f"No .ogg files found in {lang_dir}", file=sys.stderr)
-        return False
-
-    print(f"Found {len(ogg_files)} audio files to upload")
-
-    # Get existing files (skip if already there)
-    existing = get_uploaded_files(item_id) if not dry_run else set()
-
-    uploaded = 0
-    prefix = REMOTE_PREFIX.get(lang, lang)
-
-    for ogg_file in sorted(ogg_files):
-        book_idx = ogg_file.parent.name
-        chapter = ogg_file.stem  # 0-based, matches audio_index.json URLs
-        remote_path = f"{prefix}_{book_idx}_{chapter}.ogg"
-
-        if remote_path in existing:
-            print(f"  Skipping {remote_path} (already uploaded)")
-            continue
-
-        if upload_file(item_id, ogg_file, remote_path, dry_run=dry_run):
-            uploaded += 1
-
-    print(f"\nUploaded {uploaded}/{len(ogg_files)} files")
-    return uploaded > 0
-
-
-def create_item_if_needed(item_id, lang, dry_run=False):
-    """Create archive.org item if it doesn't exist."""
-    if dry_run:
-        print(f"[DRY] Would create item {item_id} if needed")
+        print("\nDRY RUN — nothing uploaded.")
         return
 
-    try:
-        # Check if item exists
-        result = subprocess.run(
-            ["ia", "metadata", item_id],
-            capture_output=True,
-            timeout=10,
-        )
-        if result.returncode == 0:
-            print(f"Item {item_id} exists")
-            return
-
-        # Create item
-        meta = ITEM_METADATA.get(lang, ITEM_METADATA["en"])
-        cmd = ["ia", "upload", item_id, "--metadata"]
-        for key, value in meta.items():
-            if isinstance(value, list):
-                for v in value:
-                    cmd.extend([f"{key}={v}"])
-            else:
-                cmd.append(f"{key}={value}")
-
-        print(f"Creating item {item_id}...", file=sys.stderr)
-        result = subprocess.run(cmd, capture_output=True, timeout=30)
-        if result.returncode == 0:
-            print(f"Item created: {item_id}")
-        else:
-            print(f"Warning: item creation may have failed: {result.stderr.decode()}", file=sys.stderr)
-
-    except Exception as e:
-        print(f"Warning: could not create item: {e}", file=sys.stderr)
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Upload generated Bible narration to archive.org.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__,
-    )
-    parser.add_argument("--lang", required=True, choices=list(REMOTE_PREFIX.keys()), help="Language")
-    parser.add_argument("--item", required=True, help="archive.org item identifier")
-    parser.add_argument("--dry-run", action="store_true", help="Print what would be uploaded")
-
-    args = parser.parse_args()
-
-    # Check ia CLI
-    if not args.dry_run and not check_ia_available():
-        print("Error: 'ia' CLI not found. Install with: pip install internetarchive", file=sys.stderr)
-        print("Then authenticate with: ia configure", file=sys.stderr)
+    from internetarchive import upload
+    res = upload(meta_src["identifier"], files=files, metadata=metadata,
+                 retries=6, retries_sleep=20, verbose=True)
+    bad = [r for r in res if getattr(r, "status_code", 200) not in (200, None)]
+    print(f"\nuploaded {len(res) - len(bad)}/{len(res)} requests, {len(bad)} failed")
+    if bad:
+        for r in bad[:10]:
+            print("  FAILED:", getattr(r, "url", "?"), getattr(r, "status_code", "?"))
         sys.exit(1)
-
-    print(f"Uploading {args.lang} narration to archive.org item: {args.item}\n")
-
-    # Create item if needed
-    if not args.dry_run:
-        create_item_if_needed(args.item, args.lang)
-
-    # Upload files
-    if upload_language(args.lang, args.item, dry_run=args.dry_run):
-        print("\nUpload complete!")
-        if not args.dry_run:
-            print(f"View at: https://archive.org/details/{args.item}")
-    else:
-        sys.exit(1)
+    print(f"\nDONE -> https://archive.org/details/{meta_src['identifier']}")
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("set", choices=sorted(SETS))
+    ap.add_argument("--dry-run", action="store_true")
+    a = ap.parse_args()
+    build(a.set, a.dry_run)

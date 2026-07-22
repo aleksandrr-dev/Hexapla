@@ -175,7 +175,7 @@
     <string name="widget_description">A nap verse és gyors visszatérés az olvasott helyhez</string>
     <string name="widget_continue">Olvasás folytatása: %1$s →</string>
     <string name="compare_note">Válaszd ki, mely fordítások jelenjenek meg a versösszehasonlításban.</string>
-    <string name="audio_title">Felolvasott hangfelvétel (KJV)</string>
+    <string name="audio_title">Felolvasott hangfelvétel</string>
     <string name="audio_note">Emberi felolvasás a LibriVoxtól (közkincs), amely a KJV angol szöveg legtöbb könyvét lefedi. A hang szakaszonként (néhány fejezet, kb. 10–30 MB) töltődik le lejátszáskor, és offline hallgatáshoz megmarad. A felvétel nélküli könyveknél gépi felolvasás lép életbe, és a vers kiemelése nem érhető el felolvasás közben.</string>
     <string name="audio_downloading">Hang letöltése… %1$d%%</string>
     <string name="audio_narrated">Felolvasott hang</string>

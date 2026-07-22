@@ -175,7 +175,7 @@
     <string name="widget_description">Werset dnia i szybki powrót do miejsca czytania</string>
     <string name="widget_continue">Kontynuuj czytanie: %1$s →</string>
     <string name="compare_note">Wybierz, które przekłady mają się pojawiać w porównaniu wersetów.</string>
-    <string name="audio_title">Narracja audio (KJV)</string>
+    <string name="audio_title">Narracja audio</string>
     <string name="audio_note">Ludzka narracja z LibriVox (domena publiczna), obejmująca większość ksiąg KJV. Audio jest pobierane sekcjami (kilka rozdziałów, ~10–30 MB) po naciśnięciu odtwarzania i zapisywane do słuchania offline. Księgi bez nagrania korzystają z syntezatora mowy, a podświetlanie bieżącego wersetu jest niedostępne podczas narracji.</string>
     <string name="audio_downloading">Pobieranie audio… %1$d%%</string>
     <string name="audio_narrated">Audio z narracją</string>

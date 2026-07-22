@@ -175,7 +175,7 @@
     <string name="widget_description">آية اليوم وعودة سريعة إلى موضع قراءتك</string>
     <string name="widget_continue">تابع القراءة: %1$s ←</string>
     <string name="compare_note">اختر الترجمات التي تظهر في مقارنة الآيات.</string>
-    <string name="audio_title">صوت مروي (KJV)</string>
+    <string name="audio_title">صوت مروي</string>
     <string name="audio_note">سرد بشري من LibriVox (ملك عام)، يغطي معظم أسفار الـKJV. يُنزَّل الصوت لكل قسم (بضعة إصحاحات، نحو 10–30 ميغابايت) عند الضغط على تشغيل، ويُحفظ للاستماع دون اتصال. الأسفار التي لا تحتوي على تسجيل تعود إلى تحويل النص إلى كلام، ولا يتوفر تمييز الآية أثناء السرد.</string>
     <string name="audio_downloading">جارٍ تنزيل الصوت… %1$d%%</string>
     <string name="audio_narrated">صوت مروي</string>

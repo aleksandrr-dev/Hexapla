@@ -175,7 +175,7 @@
     <string name="widget_description">Dagens vers och snabb väg tillbaka till din läsning</string>
     <string name="widget_continue">Fortsätt läsa: %1$s →</string>
     <string name="compare_note">Välj vilka översättningar som visas i versjämförelsen.</string>
-    <string name="audio_title">Inläst ljud (KJV)</string>
+    <string name="audio_title">Inläst ljud</string>
     <string name="audio_note">Mänsklig inläsning från LibriVox (allmän egendom) som täcker de flesta av KJV:s böcker. Ljudet laddas ner per avsnitt (några kapitel, ~10–30 MB) när du trycker på spela och sparas för lyssning offline. Böcker utan inspelning läses i stället upp med talsyntes, och versmarkering är inte tillgänglig under inläst uppläsning.</string>
     <string name="audio_downloading">Laddar ner ljud… %1$d%%</string>
     <string name="audio_narrated">Inläst ljud</string>

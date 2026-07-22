@@ -167,7 +167,7 @@
     <string name="widget_description">Vers des Tages und schnelle Rückkehr zur Lesestelle</string>
     <string name="widget_continue">Weiterlesen: %1$s →</string>
     <string name="compare_note">Wähle, welche Übersetzungen im Versvergleich erscheinen.</string>
-    <string name="audio_title">Gesprochene Lesung (KJV)</string>
+    <string name="audio_title">Gesprochene Lesung</string>
     <string name="audio_note">Menschliche Lesung von LibriVox (gemeinfrei), für die meisten Bücher der KJV. Audio wird abschnittsweise (~10–30 MB) heruntergeladen und offline gespeichert. Bücher ohne Aufnahme nutzen die Sprachausgabe.</string>
     <string name="audio_downloading">Audio wird geladen… %1$d%%</string>
     <string name="audio_narrated">Gesprochene Lesung</string>

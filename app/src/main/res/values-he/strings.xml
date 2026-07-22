@@ -175,7 +175,7 @@
     <string name="widget_description">פסוק היום וחזרה מהירה למקום שבו הפסקתם לקרוא</string>
     <string name="widget_continue">המשך קריאה: %1$s ←</string>
     <string name="compare_note">בחרו אילו תרגומים יופיעו בהשוואת הפסוקים.</string>
-    <string name="audio_title">הקראה מוקלטת (KJV)</string>
+    <string name="audio_title">הקראה מוקלטת</string>
     <string name="audio_note">הקראה אנושית מ-LibriVox (נחלת הכלל), המכסה את רוב ספרי ה-KJV. השמע מורד לפי קטע (כמה פרקים, כ-10–30 מ״ב) כאשר לוחצים על הפעלה, ונשמר להאזנה גם ללא חיבור לרשת. ספרים ללא הקלטה עוברים להקראה סינתטית, וסימון הפסוק הנוכחי אינו זמין בזמן ההקראה.</string>
     <string name="audio_downloading">מוריד שמע… %1$d%%</string>
     <string name="audio_narrated">שמע מוקלט</string>

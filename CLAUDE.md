@@ -55,10 +55,33 @@ maximize reach, keep everything free, nothing locked, collect no data.
   answered NO — tip products deliberately NOT created so Brazil rates
   Livre; tips exist only in code). Target audience 13+, no ads/ad-ID/health.
   Third-party store syndication: publish-all. Play uses Play App Signing.
-- **Landing page** (what the in-app QR encodes, update as stores go live):
-  https://aleksandrr-dev.github.io/Hexapla/ — buttons: RuStore (live),
-  Play (marked "скоро", flip when production approves), direct APK via
-  GitHub releases/latest (`gh release create vX.Y.Z <apk>` each release).
+- **Landing page** (what the in-app QR encodes, AND what the archive.org
+  narration items link to — update as stores go live):
+  https://aleksandrr-dev.github.io/Hexapla/ (repo root `index.html`).
+  REBUILT 2026-07-21 (commit d2e30e3, owner-requested): **English first**
+  in title/tagline/every button, Russian second on the same lines; counts
+  refreshed 17 languages -> «33 translations in 28 languages» (they had
+  been stale since the 1.4.x era). Button order: direct APK (GitHub
+  releases/latest, `gh release create vX.Y.Z <apk>` each release),
+  RuStore (live), Play (`.soon` class = greyed + non-clickable).
+  ⚠ **PENDING PAGE UPDATES — owner, 2026-07-21: "once it's on Play Store
+  officially, and F-Droid, we'll update it again."** So on those events:
+  (1) Play production approved -> drop the `soon` class from the Play
+  button and retitle it (it currently reads "coming soon / скоро");
+  (2) F-Droid/IzzyOnDroid listing live -> ADD a fourth button (roadmap
+  items 2 + 6; the `foss` flavor is already F-Droid-ready — IzzyOnDroid
+  takes a released APK, F-Droid proper needs an fdroiddata MR with
+  gradle:[foss]);
+  (3) whenever the translation count changes, bump the page AND
+  store-assets/STORE_LISTING.md together — they must agree.
+  ⚠ Count bookkeeping is currently inconsistent in the repo's own
+  history: the 1.5.1 listing copy says «33 translations in 28 languages»
+  (Belarusian) while commit 078fc44 calls Persian "33rd/28th". Bible.kt
+  literally holds 35 Translation() entries / 28 locale codes (zh counted
+  twice, and grc+wlc are original-language texts rather than
+  translations — the likely source of the -2). Reconcile once, then keep
+  page and listing in lockstep. The page today says 33/28 to match the
+  SHIPPED listings; Persian is in tree but unreleased.
 - Privacy policy: https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
 - Listing texts (5 languages) + screenshot order: `store-assets/STORE_LISTING.md`.
 - **Google Play (2026-07-08)**: closed track now has 1.2.0 (code 5),
@@ -227,6 +250,26 @@ maximize reach, keep everything free, nothing locked, collect no data.
   declaration trusted (owner decision 2026-07-16), provenance email
   drafted at store-assets/ebible_arabic_email_draft.txt for the owner
   to send. Two Door43 orgs republish the byte-identical text CC BY-SA.
+  ✉ ANSWERED 2026-07-20 by Michael Johnson (eBible) — honest reading:
+  the provenance question is STILL OPEN, not resolved. He believes he
+  got arb-vd from the **Digital Bible Society**, treated the text as PD
+  by age, "didn't think to inquire about vocalizations separately", and
+  has had no objections in all the years he has hosted it. That is a
+  named upstream + absence of complaint — NOT an account of where the
+  tashkeel layer came from. The practical position IS stronger (extra
+  link in the chain of custody, years unchallenged, Door43 CC BY-SA
+  fallback).
+  ✅ **CLOSED BY OWNER DECISION 2026-07-20: risk accepted — ship as is.**
+  His reasoning: years of unchallenged hosting is good enough evidence
+  in practice, and if a rights claim ever surfaces we adjust then. Same
+  documented-deviation pattern as the Ponomar call (act now, respond to
+  feedback if it arrives). ⚠ For any future session: this is a RISK
+  ACCEPTANCE, not a provenance finding — the tashkeel's origin remains
+  unestablished, so do not cite this entry as proof the vocalization is
+  PD. If contact ever comes, the fallbacks are (a) the Door43 CC BY-SA
+  republications of the byte-identical text, (b) asking the Digital
+  Bible Society directly, (c) an unvocalized edition. No further action
+  needed unless that happens; the ebible_arabic thread is closed.
   ⚠ TAMIL PSALM TITLES REPAIRED 2026-07-16: convert_tamil_irv.py had
   DROPPED all 137 \d superscriptions since integration (its comment
   falsely claimed the KJV asset drops titles too) — found while writing
@@ -309,9 +352,25 @@ maximize reach, keep everything free, nothing locked, collect no data.
        versemap incl. the Luther-arrangement Job reflow (srp 39 = KJV
        38:39-40:5 etc., every boundary text-verified). Book names from
        \toc2 («1. Mojsijeva», «Psalmi»). defaultPrimaryId sr/bs/hr->srb.
-       UPGRADE PATHS documented: srp1868 (Cyrillic ekavian) pending
-       eBible's answer on its Redistributable=False catalog flag (in the
-       email draft); CrossWire SrKDIjekav (Cyrillic, Karadžić's authentic
+       UPGRADE PATHS documented: ★ srp1868 (Cyrillic ekavian) is
+       **UNBLOCKED 2026-07-20** — Michael Johnson (eBible) replied that
+       both Serbian entries are now Redistributable=True, PD by age, and
+       I VERIFIED it in the live catalog myself (ebible.org/Scriptures/
+       translations.csv: srp1868 «Свето писмо или Библија Превод
+       Даничић-Караџић», Cyrillic, Redistributable=True, Copyright=
+       "public domain"; srp1865 likewise). ⚠ OWNER DECISION PENDING on
+       SHAPE — recommendation: ADD srp1868 as a second-script Serbian
+       (zh Hans/Hant precedent) rather than replacing srb, with
+       defaultPrimaryId sr->Cyrillic and bs/hr staying on the Latin
+       1865; Cyrillic is the script Karadžić's own alphabet reform was
+       about, so it is the more edition-authentic face of this
+       translation, while the Latin still serves the digraphic/Croatian
+       readership. ⚠ DO NOT assume convert_serbian.py transfers: the
+       1865 needed 6 seam-slot replacements (eBible's KJV-slot
+       duplicates carried MODERN paraphrases) and 17 curated chapters
+       incl. the Luther-arrangement Job reflow — the 1868 needs its own
+       structural audit before any versemap reuse.
+       (Historic note, now superseded: this was) CrossWire SrKDIjekav (Cyrillic, Karadžić's authentic
        ijekavian, PD) surveyed 2026-07-17 — 94 divergent chapters (whole
        Psalter native-numbered with vacuous trailing empty slots, its
        own Job reflow) — integrable later as a second-script Serbian
@@ -391,10 +450,17 @@ maximize reach, keep everything free, nothing locked, collect no data.
       ⚠ TRAP CONFIRMED: the plain "Latvian" module/gratis lv = a modern
       revision that FAILS the litmus (1 Tim 3:16 "Tas", Lk 2:33
       "father") — never use it.
-    Armenian — TWO tracks: classical Zohrab BLOCKED on licenses
-      (arak29 = no license stated; TITUS = permission-required;
-      litmus informational: Vulgate-family readings incl. «որ» at
-      1 Tim 3:16, no Comma, LXX psalm numbering, 9-book deuterocanon).
+    Armenian — TWO tracks: classical Zohrab — TITUS PERMISSION GRANTED
+      2026-07-20 (Gippert; credit + app-free conditions, same grant as
+      the Georgian Bakar) and OWNER-DECIDED 2026-07-20: **OT ONLY** —
+      the Zohrab NT authentically lacks the Comma (5th-c. version,
+      not a CT edit), but shipping the app's first Comma-less 1 Jn 5:7
+      is a doctrinal-boundary call the owner resolved by scoping to
+      the OT, which raises none of the deviations and completes the
+      Armenian pair (arm 1853 = NT-only, litmus 7/7). Full-Zohrab-
+      with-note remains a possible later decision. (Litmus record:
+      Vulgate-family readings incl. «որ» at 1 Tim 3:16, no Comma,
+      LXX psalm numbering, 9-book deuterocanon.)
       ★ ~~Western Armenian NT 1853~~ INTEGRATED IN TREE 2026-07-17
       ("arm", hy_west1853.json, 31st translation / 26th language,
       litmus 7/7 on the asset). ⚠ The module's "exact KJV grid" claim
@@ -1046,10 +1112,26 @@ must include them; owner should spot-check on-device before submitting.
 
 ## Architecture notes (beyond README)
 
-- `ReadingService`: foreground media service. Two backends — TTS (per-verse
+- `ReadingService`: foreground media service. Backends — TTS (per-verse
   feeding; NEVER pre-queue a chapter, engines drop utterances while loading
-  a language) and MediaPlayer for LibriVox sections (`assets/audio_index.json`,
-  50 books covered; missing books fall back to TTS). Music bed rotates
+  a language); MediaPlayer for LibriVox sections (`assets/audio_index.json`,
+  50 books covered; download+cache); and (NEW 2026-07-22, in tree for 1.5.2/
+  code 13) MediaPlayer STREAMING of self-generated per-chapter narration for
+  non-kjv translations via `assets/audio_index_gen.json` (built by
+  tools/build_audio_index_gen.py from the rendered narration/<id> sets +
+  the archive.org item). Webster (wbt) is the first: streams
+  hexapla-audio-webster-1833 per chapter. `AudioRepo.generated()` yields
+  single-chapter Sections (first==last, generated=true). Generated audio
+  DOWNLOADS-AND-CACHES like LibriVox (offline after first listen) via
+  `ensureDownloadedGen`/`generatedFile`; the latter keys the cache by the
+  full archive path (`item_book_chapter.ogg`) because generated URLs share
+  a `<ch>.ogg` tail that localFile's last-segment rule would collide on
+  (the LibriVox `localFile` path is untouched). Download-fail + missing/
+  unrendered → TTS fallback. ⚠ NOT YET: verse highlighting during generated
+  narration (offsets ARE in audio_index_gen for it); audio_note string
+  still KJV-worded ×13. Both audio items live on archive.org (webster-1833
+  = wbt via audio_index_gen; hexapla-audio-en = 22 KJV Kokoro gap books via
+  audio_index.json as kjv_<book>_<ch>.ogg, which also cache offline). Music bed rotates
   through `assets/music/` (Kevin MacLeod CC-BY, perceptual x² volume curve).
   Settings are observed live via Store.settings collect in onCreate.
 - Scroll-to-verse: ONE snapshotFlow collector in ReaderScreen owns all
@@ -1130,6 +1212,9 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    stress-dictionary quality, ReadingService diff review).
 5. iOS port = separate v2.0-scale project (Kotlin/Compose Multiplatform;
    Swift needed for audio/TTS/widget/notifications; Mac + Apple $99/yr).
+   ★ FULL EXECUTION PLAN: IOS_PORT_PLAN.md (repo root, written 2026-07-21
+   by Fable-5 with whole-architecture context — self-contained for a
+   future agent; GATED on Play production going live + owner go).
 6. Maybe: fonts (Literata/EB Garamond), music download-on-demand
    (APK 39→23 MB), rotating covers, `foss` flavor for F-Droid proper.
 

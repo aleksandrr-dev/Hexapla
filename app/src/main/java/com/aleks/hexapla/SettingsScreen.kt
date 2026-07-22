@@ -206,6 +206,14 @@ fun SettingsScreen(settings: AppSettings) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         if (settings.audioNarration) {
+            SwitchRow(stringResource(R.string.audio_stream), settings.audioStream) {
+                scope.launch { Store.setAudioStream(context, it) }
+            }
+            Text(
+                stringResource(R.string.audio_stream_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             var audioBytes by remember { mutableStateOf(0L) }
             LaunchedEffect(Unit) {
                 audioBytes = withContext(Dispatchers.IO) { AudioRepo.downloadedBytes(context) }

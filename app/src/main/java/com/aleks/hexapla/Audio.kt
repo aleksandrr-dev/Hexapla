@@ -17,10 +17,23 @@ import java.net.URL
  */
 object AudioRepo {
 
-    /** One MP3 covering chapters [first]..[last] (1-based, inclusive). */
-    data class Section(val first: Int, val last: Int, val url: String)
+    /**
+     * One audio file covering chapters [first]..[last] (1-based, inclusive).
+     * [generated] true = self-generated per-chapter narration (one file per
+     * chapter; its URL tail `<ch>.ogg` repeats across books, so it is cached
+     * by full archive path, see [generatedFile]); false = LibriVox section.
+     * Both download-and-cache on device — the app plays offline after the
+     * first listen either way.
+     */
+    data class Section(
+        val first: Int,
+        val last: Int,
+        val url: String,
+        val generated: Boolean = false
+    )
 
     private var cache: Map<Int, List<Section>>? = null
+    private var genCache: MutableMap<String, Map<Int, List<Section>>> = HashMap()
     private val mutex = Mutex()
 
     /** Book index → ordered sections. Books absent here have no narration. */
@@ -45,21 +58,82 @@ object AudioRepo {
     fun sectionFor(sections: List<Section>?, chapter: Int): Section? =
         sections?.firstOrNull { chapter + 1 in it.first..it.last }
 
+    /**
+     * Self-generated narration (e.g. Webster), streamed per chapter from
+     * archive.org. Returns bookIdx → one single-chapter [Section] per rendered
+     * chapter, or an empty map if this translation has no generated audio.
+     * Reads assets/audio_index_gen.json, produced by tools/build_audio_index_gen.py.
+     */
+    suspend fun generated(context: Context, translationId: String): Map<Int, List<Section>> =
+        mutex.withLock {
+            genCache[translationId] ?: withContext(Dispatchers.IO) {
+                val root = try {
+                    org.json.JSONObject(
+                        context.assets.open("audio_index_gen.json")
+                            .readBytes().toString(Charsets.UTF_8)
+                    )
+                } catch (_: Exception) { org.json.JSONObject() }
+                val set = root.optJSONObject(translationId)
+                val m = HashMap<Int, List<Section>>()
+                if (set != null) {
+                    for (bk in set.keys()) {
+                        val book = set.getJSONObject(bk)
+                        val base = book.getString("base")
+                        val chapters = book.getJSONObject("chapters")
+                        val list = ArrayList<Section>()
+                        for (ck in chapters.keys()) {
+                            val ch = ck.toInt()  // 0-based
+                            val f = chapters.getJSONObject(ck).getString("f")
+                            // One file per chapter: first == last == 1-based chapter.
+                            list.add(Section(ch + 1, ch + 1, "$base/$f", generated = true))
+                        }
+                        m[bk.toInt()] = list.sortedBy { it.first }
+                    }
+                }
+                m
+            }.also { genCache[translationId] = it }
+        }
+
     private fun audioDir(context: Context) = File(context.filesDir, "audio")
 
     fun localFile(context: Context, url: String): File =
         File(audioDir(context), url.substringAfterLast('/'))
 
+    /**
+     * Cache file for generated per-chapter audio. Its URL tail (`5.ogg`)
+     * repeats across books, so keying by [localFile]'s last-segment rule
+     * would collide; key by the full archive path instead
+     * (`item/book/chapter.ogg` → `item_book_chapter.ogg`), unique per chapter.
+     */
+    fun generatedFile(context: Context, url: String): File {
+        val key = url.substringAfter("/download/", url.substringAfterLast('/'))
+            .replace('/', '_')
+        return File(audioDir(context), key)
+    }
+
     fun isDownloaded(context: Context, url: String): Boolean =
         localFile(context, url).let { it.exists() && it.length() > 0 }
 
-    /** Download to cache if needed; returns the local file or null on failure. */
+    /** LibriVox: download to the last-segment cache file if needed. */
     suspend fun ensureDownloaded(
         context: Context,
         url: String,
         onProgress: (Int) -> Unit = {}
+    ): File? = downloadTo(url, localFile(context, url), onProgress)
+
+    /** Generated narration: download to the collision-free cache file. */
+    suspend fun ensureDownloadedGen(
+        context: Context,
+        url: String,
+        onProgress: (Int) -> Unit = {}
+    ): File? = downloadTo(url, generatedFile(context, url), onProgress)
+
+    /** Download [url] to [dest] if not already cached; local file or null. */
+    private suspend fun downloadTo(
+        url: String,
+        dest: File,
+        onProgress: (Int) -> Unit
     ): File? = withContext(Dispatchers.IO) {
-        val dest = localFile(context, url)
         if (dest.exists() && dest.length() > 0) return@withContext dest
         dest.parentFile?.mkdirs()
         val tmp = File(dest.path + ".part")

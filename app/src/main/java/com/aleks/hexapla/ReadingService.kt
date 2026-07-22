@@ -204,8 +204,13 @@ class ReadingService : Service() {
                     voicePrefs = Store.voicePrefs(this@ReadingService).first()
                     translationId = settings.primaryId
                     books = BibleRepo.load(this@ReadingService, translationId)
-                    audioSections = if (settings.audioNarration && translationId == "kjv")
-                        try { AudioRepo.index(this@ReadingService) } catch (_: Exception) { emptyMap() }
+                    // kjv → LibriVox sections; other translations → self-generated
+                    // per-chapter narration (Webster etc.) streamed from archive.org.
+                    audioSections = if (settings.audioNarration)
+                        try {
+                            if (translationId == "kjv") AudioRepo.index(this@ReadingService)
+                            else AudioRepo.generated(this@ReadingService, translationId)
+                        } catch (_: Exception) { emptyMap() }
                     else emptyMap()
                     bookIdx = b; chapterIdx = c; verseIdx = v
                     if (ttsReady || sectionForCurrent() != null) startChapter(fromVerse = v)
@@ -272,22 +277,50 @@ class ReadingService : Service() {
         updateNotification()
         scope.launch { Store.setLastPosition(this@ReadingService, bookIdx, chapterIdx) }
         scope.launch {
-            var lastShown = -10
-            val file = AudioRepo.ensureDownloaded(this@ReadingService, sec.url) { pct ->
-                if (pct >= lastShown + 10) {
-                    lastShown = pct
-                    downloadPercent = pct
-                    scope.launch { updateNotification() }
+            // Source priority: an already-cached file (offline, instant) > a
+            // live stream when the user opted out of saving (Settings) >
+            // download-and-cache (default; plays offline next time). Generated
+            // audio caches under a collision-free key — its URL tail `<ch>.ogg`
+            // repeats across books.
+            val cacheFile = if (sec.generated)
+                AudioRepo.generatedFile(this@ReadingService, sec.url)
+            else
+                AudioRepo.localFile(this@ReadingService, sec.url)
+            val haveCache = cacheFile.exists() && cacheFile.length() > 0
+            val streaming = settings.audioStream && !haveCache
+
+            val dataSource: String
+            if (haveCache) {
+                downloadPercent = -1
+                dataSource = cacheFile.path
+            } else if (streaming) {
+                downloadPercent = -1
+                updateNotification()
+                dataSource = sec.url
+            } else {
+                var lastShown = -10
+                val onPct: (Int) -> Unit = { pct ->
+                    if (pct >= lastShown + 10) {
+                        lastShown = pct
+                        downloadPercent = pct
+                        scope.launch { updateNotification() }
+                    }
                 }
+                val file = if (sec.generated)
+                    AudioRepo.ensureDownloadedGen(this@ReadingService, sec.url, onPct)
+                else
+                    AudioRepo.ensureDownloaded(this@ReadingService, sec.url, onPct)
+                downloadPercent = -1
+                if (currentSection != sec) return@launch  // user moved on meanwhile
+                if (file == null) {
+                    // Download failed (offline, not cached) — TTS for now.
+                    narrating = false
+                    speakCurrentChapter(fromVerse = 0)
+                    return@launch
+                }
+                dataSource = file.path
             }
-            downloadPercent = -1
             if (currentSection != sec) return@launch  // user moved on meanwhile
-            if (file == null) {
-                // Download failed (offline?) — fall back to TTS for this chapter.
-                narrating = false
-                speakCurrentChapter(fromVerse = 0)
-                return@launch
-            }
             player = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
@@ -295,7 +328,7 @@ class ReadingService : Service() {
                         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                setDataSource(file.path)
+                setDataSource(dataSource)
                 setOnPreparedListener { mp ->
                     // Land a few seconds early so the target verse isn't clipped.
                     val skipMs = (mp.duration * fraction).toInt() - 4000
@@ -307,7 +340,14 @@ class ReadingService : Service() {
                     updateNotification()
                 }
                 setOnCompletionListener { onSectionFinished(sec) }
-                setOnErrorListener { _, _, _ -> stopEverything(); true }
+                setOnErrorListener { _, _, _ ->
+                    // A dropped stream falls back to TTS; a local-file error stops.
+                    if (streaming && currentSection == sec) {
+                        narrating = false
+                        speakCurrentChapter(fromVerse = 0)
+                    } else stopEverything()
+                    true
+                }
                 prepareAsync()
             }
         }

@@ -178,7 +178,7 @@
     <string name="widget_continue">Continue reading: %1$s →</string>
     <string name="compare_note">Choose which translations appear in the verse comparison.</string>
     <string name="audio_title">Narrated audio</string>
-    <string name="audio_note" tools:ignore="MissingTranslation">Human narration from LibriVox (public domain) for the King James, plus clear synthesized narration for the Webster Bible and the King James books LibriVox does not cover. Audio is fetched per chapter and kept for offline listening (or turn on streaming below). Other translations are read aloud by the device\'s text-to-speech. Verse highlighting is unavailable while narrating.</string>
+    <string name="audio_note" tools:ignore="MissingTranslation">Chapters are read aloud — recorded narration where it exists, otherwise the device\'s text-to-speech. Audio is saved for offline listening, or turn on streaming below to save space.</string>
     <string name="audio_stream" tools:ignore="MissingTranslation">Stream without saving</string>
     <string name="audio_stream_note" tools:ignore="MissingTranslation">Play audio as it loads instead of downloading it. Uses less storage but needs a connection each time; chapters you already downloaded still play offline.</string>
     <string name="audio_downloading">Downloading audio… %1$d%%</string>

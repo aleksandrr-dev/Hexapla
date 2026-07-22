@@ -29,18 +29,20 @@ translation (1876) — the first Bible transcribed by the project's own team,
 bringing the total to 34 translations in 29 languages. New narration:
 Webster's Bible (1833) is now fully read aloud, and the remaining King
 James books gain clear narration, so every English chapter has a voice.
+Audio is saved for offline listening, or turn on streaming to save space.
 
 **RU:** Один новый перевод: персидский Новый Завет в переводе Генри
 Мартина (1876) — первая Библия, расшифрованная командой проекта. Теперь
 34 перевода на 29 языках. Новая озвучка: Библия Уэбстера (1833) полностью
 озвучена, добавлена озвучка оставшихся книг Библии короля Якова — теперь
 у каждой английской главы есть голос.
+Аудио сохраняется для прослушивания офлайн, либо включите потоковый режим.
 
 **DE:** Eine neue Übersetzung: das persische Neue Testament in der
 Übersetzung von Henry Martyn (1876) — jetzt 34 Übersetzungen in 29
 Sprachen. Neue Audioausgabe: die Webster-Bibel (1833) wird vollständig
 vorgelesen, und die übrigen King-James-Bücher erhalten ebenfalls eine
-klare Vertonung.
+klare Vertonung. Audio wird offline gespeichert oder kann gestreamt werden.
 
 (ES/FR/PT and the other listing languages: same two facts — +Persian
 Martyn NT 1876 → 34/29, and full Webster + remaining-KJV narration.
@@ -505,13 +507,13 @@ All texts are public domain. The app collects nothing.
 **Titre :** Hexapla — Bible parallèle
 
 **Description courte :**
-Bible hors ligne : 33 traductions classiques, audio, plans de lecture.
+Bible hors ligne : 34 traductions classiques, audio, plans de lecture.
 
 **Description complète :**
 
 Hexapla, c'est la Bible complète — hors ligne, sans publicité, sans compte, sans collecte de données. Tout est gratuit, rien n'est verrouillé.
 
-📖 33 traductions classiques en 28 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique ; interlinéaire grec/hébreu (analyse grammaticale au toucher) ; dictionnaire Webster 1828 pour les traductions anglaises. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
+📖 34 traductions classiques en 29 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique ; interlinéaire grec/hébreu (analyse grammaticale au toucher) ; dictionnaire Webster 1828 pour les traductions anglaises. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
 
 Tous les textes sont dans le domaine public. L'application ne collecte rien.
 
@@ -522,13 +524,13 @@ Tous les textes sont dans le domaine public. L'application ne collecte rien.
 **Titel:** Hexapla — Parallelbibel
 
 **Kurzbeschreibung:**
-Bibel offline: 33 klassische Übersetzungen, Audio, Lesepläne, Strong.
+Bibel offline: 34 klassische Übersetzungen, Audio, Lesepläne, Strong.
 
 **Vollständige Beschreibung:**
 
 Hexapla ist die vollständige Bibel — offline, werbefrei, ohne Konto, ohne Datensammlung. Alles kostenlos, nichts gesperrt.
 
-📖 33 klassische Übersetzungen in 28 Sprachen, darunter die Lutherbibel 1545, die KJV 1611 sowie Hebräisch und Griechisch im Original. ✝️ Die Gute Nachricht: Gottes Heilsplan Schritt für Schritt, nur Schrift. 🔴 Worte Christi in Rot. 🎧 Audiowiedergabe mit Vershervorhebung. 📚 Strong-Nummern mit Lexikon; Interlinear für Griechisch/Hebräisch (grammatische Analyse per Tipp); Websters Wörterbuch 1828 für die englischen Übersetzungen. 📅 Lesepläne mit Fortschritt. ✏️ Lesezeichen, Notizen, Markierungen, Sicherung.
+📖 34 klassische Übersetzungen in 29 Sprachen, darunter die Lutherbibel 1545, die KJV 1611 sowie Hebräisch und Griechisch im Original. ✝️ Die Gute Nachricht: Gottes Heilsplan Schritt für Schritt, nur Schrift. 🔴 Worte Christi in Rot. 🎧 Audiowiedergabe mit Vershervorhebung. 📚 Strong-Nummern mit Lexikon; Interlinear für Griechisch/Hebräisch (grammatische Analyse per Tipp); Websters Wörterbuch 1828 für die englischen Übersetzungen. 📅 Lesepläne mit Fortschritt. ✏️ Lesezeichen, Notizen, Markierungen, Sicherung.
 
 Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
@@ -539,13 +541,13 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 **Título:** Hexapla — Biblia paralela
 
 **Descripción corta:**
-Biblia sin conexión: 33 traducciones clásicas, audio, planes de lectura.
+Biblia sin conexión: 34 traducciones clásicas, audio, planes de lectura.
 
 **Descripción completa:**
 
 Hexapla es la Biblia completa — sin conexión, sin anuncios, sin cuentas y sin recopilar datos. Todo es gratis y nada está bloqueado.
 
-📖 33 traducciones clásicas en 28 idiomas, incluida la Reina-Valera 1909, la KJV 1611 y los originales hebreo y griego. ✝️ Las Buenas Nuevas: el plan de salvación de Dios paso a paso, solo Escritura. 🔴 Palabras de Cristo en rojo. 🎧 Audio con resaltado de versículos. 📚 Números Strong con léxico; interlineal griego/hebreo (análisis gramatical al tocar); diccionario Webster 1828 para las traducciones inglesas. 📅 Planes de lectura con progreso. ✏️ Marcadores, notas, resaltados, copia de seguridad.
+📖 34 traducciones clásicas en 29 idiomas, incluida la Reina-Valera 1909, la KJV 1611 y los originales hebreo y griego. ✝️ Las Buenas Nuevas: el plan de salvación de Dios paso a paso, solo Escritura. 🔴 Palabras de Cristo en rojo. 🎧 Audio con resaltado de versículos. 📚 Números Strong con léxico; interlineal griego/hebreo (análisis gramatical al tocar); diccionario Webster 1828 para las traducciones inglesas. 📅 Planes de lectura con progreso. ✏️ Marcadores, notas, resaltados, copia de seguridad.
 
 Todos los textos son de dominio público. La aplicación no recopila nada.
 
@@ -559,13 +561,13 @@ Todos los textos son de dominio público. La aplicación no recopila nada.
 **Title:** Hexapla — Parallel Bible
 
 **Short description (≤80):**
-Offline Bible: 33 classic translations incl. Tamil, Latin and the Sanskrit NT, audio, Strong's.
+Offline Bible: 34 classic translations incl. Tamil, Latin and the Sanskrit NT, audio, Strong's.
 
 **Full description:**
 
 Hexapla is the complete Bible — offline, ad-free, account-free, and it collects no data. Everything is free and nothing is locked.
 
-📖 33 classic translations across 28 languages — including the **complete Tamil Bible** (IRV 2019, the TR-faithful 1871 Bower lineage), the **Sanskrit New Testament of 1851** (सत्यवेदः, Calcutta Baptist Mission, Devanagari), the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the KJV 1611 with Apocrypha, Geneva 1599, Wycliffe, Tyndale, Luther 1545, and more.
+📖 34 classic translations across 29 languages — including the **complete Tamil Bible** (IRV 2019, the TR-faithful 1871 Bower lineage), the **Sanskrit New Testament of 1851** (सत्यवेदः, Calcutta Baptist Mission, Devanagari), the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the KJV 1611 with Apocrypha, Geneva 1599, Wycliffe, Tyndale, Luther 1545, and more.
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.
 🎧 Audio: human narration (LibriVox) and text-to-speech with verse highlighting, background playback, sleep timer.
@@ -580,13 +582,13 @@ All texts are public domain. The app collects nothing.
 **Title:** Hexapla — இணை வேதாகமம்
 
 **Short description (≤80):**
-வேதாகமம் ஆஃப்லைன்: 33 மொழிபெயர்ப்புகள், ஒலி, திட்டங்கள், ஸ்ட்ராங்.
+வேதாகமம் ஆஃப்லைன்: 34 மொழிபெயர்ப்புகள், ஒலி, திட்டங்கள், ஸ்ட்ராங்.
 
 **Full description:**
 
 ஹெக்ஸாப்லா — முழு வேதாகமம்: இணையம் தேவையில்லை, விளம்பரம் இல்லை, பதிவு இல்லை, தரவு சேகரிப்பு இல்லை. எல்லாம் இலவசம், எதுவும் பூட்டப்படவில்லை.
 
-📖 28 மொழிகளில் 33 பாரம்பரிய மொழிபெயர்ப்புகள் — முழு தமிழ் வேதாகமம் (IRV 2019, 1871 பவர்/யூனியன் பாரம்பரியம்), எபிரெய தனக் (லெனின்கிராட் கோடெக்ஸ்), கிரேக்கப் புதிய ஏற்பாடு (பைசந்திய உரை), KJV 1611 (அப்போக்கிரிபாவுடன்), ஜெனீவா 1599, லூத்தர் 1545, சமஸ்கிருதப் புதிய ஏற்பாடு 1851 மற்றும் பல.
+📖 29 மொழிகளில் 34 பாரம்பரிய மொழிபெயர்ப்புகள் — முழு தமிழ் வேதாகமம் (IRV 2019, 1871 பவர்/யூனியன் பாரம்பரியம்), எபிரெய தனக் (லெனின்கிராட் கோடெக்ஸ்), கிரேக்கப் புதிய ஏற்பாடு (பைசந்திய உரை), KJV 1611 (அப்போக்கிரிபாவுடன்), ஜெனீவா 1599, லூத்தர் 1545, சமஸ்கிருதப் புதிய ஏற்பாடு 1851 மற்றும் பல.
 ✝️ நற்செய்தி — தேவனுடைய இரட்சிப்பின் திட்டம், படிப்படியாக, வேத வசனங்களே.
 🔴 கிறிஸ்துவின் வார்த்தைகள் சிவப்பில்.
 🎧 ஒலி: மனிதக் குரல் வாசிப்பு (LibriVox) மற்றும் பேச்சு மாற்றம் வசன ஒளிர்வுடன்; பின்னணி இயக்கம், தூக்க டைமர்.
@@ -601,13 +603,13 @@ All texts are public domain. The app collects nothing.
 **Título:** Hexapla — Bíblia Paralela
 
 **Descrição curta (≤80):**
-Bíblia offline: 33 traduções clássicas, áudio, planos de leitura, Strong.
+Bíblia offline: 34 traduções clássicas, áudio, planos de leitura, Strong.
 
 **Descrição completa:**
 
 Hexapla — a Bíblia completa sem internet, sem anúncios, sem cadastro e sem coleta de dados. Tudo gratuito, nada bloqueado.
 
-📖 33 traduções clássicas em 28 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+📖 34 traduções clássicas em 29 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
 ✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
 🔴 Palavras de Cristo em vermelho.
 🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
@@ -626,13 +628,13 @@ Todos os textos são de domínio público. O app não coleta nenhum dado.
 **Titolo:** Hexapla — Bibbia parallela
 
 **Descrizione breve (≤80):**
-Bibbia offline: 33 traduzioni classiche, audio, piani di lettura, Strong.
+Bibbia offline: 34 traduzioni classiche, audio, piani di lettura, Strong.
 
 **Descrizione completa:**
 
 Hexapla — la Bibbia completa senza internet, senza pubblicità, senza registrazione e senza raccolta dati. Tutto gratuito, niente bloccato.
 
-📖 33 traduzioni classiche in 28 lingue: Diodati 1649/1885, KJV 1611 con apocrifi, Webster 1833, Ginevra 1599, Reina-Valera 1909, Almeida TR, Lutero 1545, Martin 1744, Carlo XII 1703, danese 1819, Sinodale russa, slavo ecclesiastico, 明治元訳 giapponese, 和合本 cinese, e gli originali ebraico e greco.
+📖 34 traduzioni classiche in 29 lingue: Diodati 1649/1885, KJV 1611 con apocrifi, Webster 1833, Ginevra 1599, Reina-Valera 1909, Almeida TR, Lutero 1545, Martin 1744, Carlo XII 1703, danese 1819, Sinodale russa, slavo ecclesiastico, 明治元訳 giapponese, 和合本 cinese, e gli originali ebraico e greco.
 ✝️ La Buona Novella: il piano di salvezza di Dio passo dopo passo, solo Scrittura.
 🔴 Parole di Cristo in rosso.
 🎧 Audio: narrazione e sintesi vocale con evidenziazione dei versetti, riproduzione in sottofondo, timer.
@@ -651,13 +653,13 @@ Tutti i testi sono di pubblico dominio. L'app non raccoglie alcun dato.
 **Titel:** Hexapla — Parallellbibel
 
 **Kort beskrivning (≤80):**
-Bibeln offline: 33 klassiska översättningar, ljud, läsplaner, Strong.
+Bibeln offline: 34 klassiska översättningar, ljud, läsplaner, Strong.
 
 **Fullständig beskrivning:**
 
 Hexapla — hela Bibeln utan internet, utan reklam, utan konto och utan datainsamling. Allt gratis, inget låst.
 
-📖 33 klassiska översättningar på 28 språk: Karl XII:s Bibel 1703, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, danska 1819, ryska synodala, kyrkoslaviska, japanska 明治元訳, kinesiska 和合本 samt hebreiska och grekiska grundtexterna.
+📖 34 klassiska översättningar på 29 språk: Karl XII:s Bibel 1703, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, danska 1819, ryska synodala, kyrkoslaviska, japanska 明治元訳, kinesiska 和合本 samt hebreiska och grekiska grundtexterna.
 ✝️ De goda nyheterna: Guds frälsningsplan steg för steg, endast Skriften.
 🔴 Kristi ord i rött.
 🎧 Ljud: uppläsning och talsyntes med versmarkering, bakgrundsuppspelning, insomningstimer.
@@ -676,13 +678,13 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 **Titel:** Hexapla — Parallelbibel
 
 **Kort beskrivelse (≤80):**
-Bibelen offline: 33 klassiske oversættelser, lyd, læseplaner, Strong.
+Bibelen offline: 34 klassiske oversættelser, lyd, læseplaner, Strong.
 
 **Fuld beskrivelse:**
 
 Hexapla — hele Bibelen uden internet, uden reklamer, uden konto og uden dataindsamling. Alt er gratis, intet er låst.
 
-📖 33 klassiske oversættelser på 28 sprog: Dansk Bibel 1819, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karl XII 1703, russisk synodal, kirkeslavisk, japansk 明治元訳, kinesisk 和合本 samt de hebraiske og græske grundtekster.
+📖 34 klassiske oversættelser på 29 sprog: Dansk Bibel 1819, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karl XII 1703, russisk synodal, kirkeslavisk, japansk 明治元訳, kinesisk 和合本 samt de hebraiske og græske grundtekster.
 ✝️ Det gode budskab: Guds frelsesplan trin for trin, kun Skriften.
 🔴 Kristi ord med rødt.
 🎧 Lyd: oplæsning og talesyntese med versfremhævning, baggrundsafspilning, sleep-timer.
@@ -701,13 +703,13 @@ Alle tekster er offentlig ejendom. Appen indsamler ingen data.
 **タイトル:** Hexapla — 対照聖書
 
 **簡単な説明 (≤80):**
-オフライン聖書：古典訳33種・音声・通読計画・ストロング番号・原語対訳。
+オフライン聖書：古典訳34種・音声・通読計画・ストロング番号・原語対訳。
 
 **詳細な説明:**
 
 Hexapla（ヘクサプラ）— インターネット不要、広告なし、登録不要、データ収集なしの聖書アプリ。すべて無料、制限はありません。
 
-📖 28言語・33の古典訳：明治元訳（1880/87年、日本初の聖書）、欽定訳 KJV 1611（外典付き）、ウェブスター訳1833、ジュネーブ聖書1599、ディオダティ訳1649、レイナ・バレラ訳1909、ルター訳1545、中国語和合本1919（繁体・簡体）、ロシア語会堂訳ほか、ヘブライ語・ギリシア語原典も収録。
+📖 29言語・34の古典訳：明治元訳（1880/87年、日本初の聖書）、欽定訳 KJV 1611（外典付き）、ウェブスター訳1833、ジュネーブ聖書1599、ディオダティ訳1649、レイナ・バレラ訳1909、ルター訳1545、中国語和合本1919（繁体・簡体）、ロシア語会堂訳ほか、ヘブライ語・ギリシア語原典も収録。
 ✝️ 福音：神の救いのご計画を聖書の御言葉だけで、順を追って。
 🔴 キリストの言葉を赤字で表示。
 🎧 音声：朗読と読み上げ（節のハイライト付き）、バックグラウンド再生、スリープタイマー。
@@ -726,13 +728,13 @@ Hexapla（ヘクサプラ）— インターネット不要、広告なし、登
 **标题:** Hexapla — 对照圣经
 
 **简短说明 (≤80):**
-离线圣经：33部经典译本，语音朗读，读经计划，斯特朗编号，原文对照。
+离线圣经：34部经典译本，语音朗读，读经计划，斯特朗编号，原文对照。
 
 **完整说明:**
 
 Hexapla（六栏经）— 完整圣经，无需联网，无广告，无需注册，不收集任何数据。完全免费，没有任何限制。
 
-📖 28种语言、33部经典译本：和合本1919（简体与繁体）、英文钦定本 KJV 1611（含次经）、韦伯斯特1833、日内瓦1599、意大利迪奥达蒂1649、西班牙雷纳-瓦莱拉1909、德文路德1545、日文明治元译，以及希伯来文与希腊文原文。
+📖 29种语言、34部经典译本：和合本1919（简体与繁体）、英文钦定本 KJV 1611（含次经）、韦伯斯特1833、日内瓦1599、意大利迪奥达蒂1649、西班牙雷纳-瓦莱拉1909、德文路德1545、日文明治元译，以及希伯来文与希腊文原文。
 ✝️ 福音：神的救恩计划，逐步呈现，唯独圣经经文。
 🔴 基督的话语以红字显示。
 🎧 语音：真人朗读与语音合成，逐节高亮，后台播放，定时关闭。
@@ -751,13 +753,13 @@ Hexapla（六栏经）— 完整圣经，无需联网，无广告，无需注册
 **標題:** Hexapla — 對照聖經
 
 **簡短說明 (≤80):**
-離線聖經：33部經典譯本，語音朗讀，讀經計畫，史特朗編號，原文對照。
+離線聖經：34部經典譯本，語音朗讀，讀經計畫，史特朗編號，原文對照。
 
 **完整說明:**
 
 Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊，不收集任何資料。完全免費，沒有任何限制。
 
-📖 28種語言、33部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
+📖 29種語言、34部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
 ✝️ 福音：神的救恩計畫，逐步呈現，唯獨聖經經文。
 🔴 基督的話語以紅字顯示。
 🎧 語音：真人朗讀與語音合成，逐節高亮，背景播放，定時關閉。
@@ -776,13 +778,13 @@ Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊
 **Título:** Hexapla — Bíblia Paralela
 
 **Descrição curta (≤80):**
-Bíblia offline: 33 traduções clássicas, áudio, planos de leitura, Strong.
+Bíblia offline: 34 traduções clássicas, áudio, planos de leitura, Strong.
 
 **Descrição completa:**
 
 Hexapla — a Bíblia completa sem internet, sem anúncios, sem registo e sem recolha de dados. Tudo gratuito, nada bloqueado.
 
-📖 33 traduções clássicas em 28 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+📖 34 traduções clássicas em 29 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
 ✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
 🔴 Palavras de Cristo em vermelho.
 🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
@@ -801,13 +803,13 @@ Todos os textos são de domínio público. A aplicação não recolhe nenhum dad
 **標題:** Hexapla — 對照聖經
 
 **簡短說明 (≤80):**
-離線聖經：33部經典譯本，語音朗讀，讀經計劃，史特朗編號，原文對照。
+離線聖經：34部經典譯本，語音朗讀，讀經計劃，史特朗編號，原文對照。
 
 **完整說明:**
 
 Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊，不收集任何資料。完全免費，沒有任何限制。
 
-📖 28種語言、33部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
+📖 29種語言、34部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
 ✝️ 福音：神的救恩計劃，逐步呈現，唯獨聖經經文。
 🔴 基督的話語以紅字顯示。
 🎧 語音：真人朗讀與語音合成，逐節高亮，背景播放，定時關閉。
@@ -930,13 +932,13 @@ Všechny texty jsou volným dílem. Aplikace neshromažďuje žádná data.
 **Nimi:** Hexapla — Rinnakkaisraamattu
 
 **Lyhyt kuvaus (≤80):**
-Raamattu offline: 33 klassista käännöstä, ääni, lukusuunnitelmat, Strong.
+Raamattu offline: 34 klassista käännöstä, ääni, lukusuunnitelmat, Strong.
 
 **Täydellinen kuvaus:**
 
 Hexapla on koko Raamattu — ilman internetiä, ilman mainoksia, ilman tiliä ja ilman tiedonkeruuta. Kaikki on ilmaista, mikään ei ole lukittu.
 
-📖 33 klassista käännöstä 28 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
+📖 34 klassista käännöstä 29 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
 ✝️ Hyvä sanoma — Jumalan pelastussuunnitelma askel askeleelta, pelkkää Raamattua.
 🔴 Kristuksen sanat punaisella.
 🎧 Ääni: ihmisääninen luenta ja tekstistä puheeksi -toiminto jakeen korostuksella, taustatoisto, uniajastin.
@@ -982,13 +984,13 @@ Hexapla הוא אוסף כתבי הקודש המלא — ללא אינטרנט, 
 **Cím:** Hexapla — Párhuzamos Biblia
 
 **Rövid leírás (≤80):**
-Biblia internet nélkül: 33 klasszikus fordítás, hang, olvasási tervek, Strong.
+Biblia internet nélkül: 34 klasszikus fordítás, hang, olvasási tervek, Strong.
 
 **Teljes leírás:**
 
 A Hexapla a teljes Biblia — internet nélkül, hirdetések nélkül, regisztráció nélkül és adatgyűjtés nélkül. Minden ingyenes, semmi sincs lezárva.
 
-📖 33 klasszikus fordítás 28 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
+📖 34 klasszikus fordítás 29 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
 ✝️ A jó hír — Isten üdvtervének lépései, kizárólag Szentírás alapján.
 🔴 Krisztus szavai piros betűkkel.
 🎧 Hang: felolvasás és szövegfelolvasás versenkénti kiemeléssel, háttérben lejátszás, elalváskapcsoló.
@@ -1059,13 +1061,13 @@ Visi teksti ir sabiedrības īpašums. Lietotne nevāc nekādus datus.
 **Titel:** Hexapla — Parallelle Bijbel
 
 **Korte beschrijving (≤80):**
-Bijbel offline: 33 klassieke vertalingen, audio, leesplannen, Strong.
+Bijbel offline: 34 klassieke vertalingen, audio, leesplannen, Strong.
 
 **Volledige beschrijving:**
 
 Hexapla is de complete Bijbel — offline, zonder advertenties, zonder account en zonder gegevensverzameling. Alles gratis, niets vergrendeld.
 
-📖 33 klassieke vertalingen in 28 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
+📖 34 klassieke vertalingen in 29 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
 ✝️ Het Goede Nieuws — Gods heilsplan stap voor stap, uitsluitend Schrift.
 🔴 Woorden van Christus in rood.
 🎧 Audio: voorlezen en tekst-naar-spraak met versmarkering, afspelen op de achtergrond, slaaptimer.
@@ -1084,13 +1086,13 @@ Alle teksten zijn publiek domein. De app verzamelt geen gegevens.
 **Nazwa:** Hexapla — Biblia Równoległa
 
 **Krótki opis (≤80):**
-Biblia offline: 33 klasyczne przekłady, audio, plany czytania, Strong.
+Biblia offline: 34 klasyczne przekłady, audio, plany czytania, Strong.
 
 **Pełny opis:**
 
 Hexapla to kompletna Biblia — bez internetu, bez reklam, bez konta i bez zbierania danych. Wszystko za darmo, nic nie jest zablokowane.
 
-📖 33 klasyczne przekłady w 28 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
+📖 34 klasyczne przekłady w 29 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
 ✝️ Dobra Nowina — Boży plan zbawienia krok po kroku, wyłącznie na podstawie Pisma.
 🔴 Słowa Chrystusa zaznaczone na czerwono.
 🎧 Audio: lektor i synteza mowy z podświetlaniem wersetu, odtwarzanie w tle, minutnik snu.

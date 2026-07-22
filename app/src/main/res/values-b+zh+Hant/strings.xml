@@ -175,7 +175,7 @@
     <string name="widget_description">每日經文，並可快速回到閱讀位置</string>
     <string name="widget_continue">繼續閱讀：%1$s →</string>
     <string name="compare_note">選擇在經文對照中顯示哪些譯本。</string>
-    <string name="audio_title">真人朗讀音訊（KJV）</string>
+    <string name="audio_title">真人朗讀音訊</string>
     <string name="audio_note">來自 LibriVox 的英語真人朗讀（公有領域），涵蓋 KJV 大部分書卷。按下播放時按分段下載音訊（數章內容，約10–30 MB），並保留供離線聆聽。沒有錄音的書卷會改用文字轉語音，且真人朗讀時無法逐節標示經文。</string>
     <string name="audio_downloading">正在下載音訊… %1$d%%</string>
     <string name="audio_narrated">真人朗讀</string>

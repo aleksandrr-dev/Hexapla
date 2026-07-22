@@ -175,7 +175,7 @@
     <string name="widget_description">Versetto del giorno e ritorno rapido al punto di lettura</string>
     <string name="widget_continue">Continua a leggere: %1$s →</string>
     <string name="compare_note">Scegli quali traduzioni compaiono nel confronto dei versetti.</string>
-    <string name="audio_title">Audio narrato (KJV)</string>
+    <string name="audio_title">Audio narrato</string>
     <string name="audio_note">Narrazione con voce umana da LibriVox (pubblico dominio), che copre la maggior parte dei libri della KJV inglese. L\'audio si scarica per sezioni (alcuni capitoli, ~10–30 MB) quando premi play e resta salvato per l\'ascolto offline. I libri senza registrazione ricorrono alla sintesi vocale, e durante la narrazione l\'evidenziazione dei versetti non è disponibile.</string>
     <string name="audio_downloading">Download dell\'audio… %1$d%%</string>
     <string name="audio_narrated">Audio narrato</string>

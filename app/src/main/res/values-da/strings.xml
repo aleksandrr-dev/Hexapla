@@ -175,7 +175,7 @@
     <string name="widget_description">Dagens vers og hurtig tilbagevenden til dit læsested</string>
     <string name="widget_continue">Læs videre: %1$s →</string>
     <string name="compare_note">Vælg, hvilke oversættelser der vises i verssammenligningen.</string>
-    <string name="audio_title">Oplæst lyd (KJV)</string>
+    <string name="audio_title">Oplæst lyd</string>
     <string name="audio_note">Menneskelig oplæsning fra LibriVox (public domain), som dækker de fleste af KJV\'s bøger. Lyden downloades pr. sektion (nogle få kapitler, ca. 10–30 MB), når du trykker på afspil, og gemmes til offline lytning. Bøger uden indspilning falder tilbage på tekst-til-tale, og fremhævning af vers er ikke tilgængelig under oplæsningen.</string>
     <string name="audio_downloading">Downloader lyd… %1$d%%</string>
     <string name="audio_narrated">Oplæst lyd</string>

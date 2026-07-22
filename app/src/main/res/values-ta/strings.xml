@@ -174,7 +174,7 @@
     <string name="widget_description">அன்றைய வசனமும் வாசித்த இடத்திற்கு விரைவாகத் திரும்புதலும்</string>
     <string name="widget_continue">வாசிப்பைத் தொடர்: %1$s →</string>
     <string name="compare_note">வசன ஒப்பீட்டில் எந்த மொழிபெயர்ப்புகள் தோன்றும் என்பதைத் தேர்ந்தெடுக்கவும்.</string>
-    <string name="audio_title">மனிதக் குரல் வாசிப்பு (KJV)</string>
+    <string name="audio_title">மனிதக் குரல் வாசிப்பு</string>
     <string name="audio_note">LibriVox-இன் (பொதுக் களம்) மனிதக் குரல் வாசிப்பு, KJV-இன் பெரும்பாலான புத்தகங்களுக்கு. பிளே அழுத்தும்போது ஒலி பகுதி பகுதியாக (சில அதிகாரங்கள், ~10–30 MB) பதிவிறக்கப்பட்டு ஆஃப்லைன் கேட்பதற்காக வைக்கப்படும். பதிவு இல்லாத புத்தகங்களுக்குப் பேச்சு மாற்றம் பயன்படும்; மனிதக் குரலின்போது வசன ஒளிர்வு கிடைக்காது.</string>
     <string name="audio_downloading">ஒலி பதிவிறக்கம்… %1$d%%</string>
     <string name="audio_narrated">மனிதக் குரல் ஒலி</string>

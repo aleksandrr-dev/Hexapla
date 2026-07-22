@@ -169,7 +169,7 @@
     <string name="widget_description">Стих дня и быстрый возврат к месту чтения</string>
     <string name="widget_continue">Продолжить чтение: %1$s →</string>
     <string name="compare_note">Выберите переводы, отображаемые при сравнении стиха.</string>
-    <string name="audio_title">Озвученное чтение (KJV)</string>
+    <string name="audio_title">Озвученное чтение</string>
     <string name="audio_note">Живое чтение с LibriVox (общественное достояние), охватывает большинство книг KJV. Аудио загружается по частям (несколько глав, ~10–30 МБ) при нажатии кнопки воспроизведения и сохраняется для офлайн-прослушивания. Книги без записи озвучиваются синтезатором речи; подсветка стихов при озвучке недоступна.</string>
     <string name="audio_downloading">Загрузка аудио… %1$d%%</string>
     <string name="audio_narrated">Озвученное чтение</string>

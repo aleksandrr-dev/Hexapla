@@ -175,7 +175,7 @@
     <string name="widget_description">Stih dana i brz povratak na mesto čitanja</string>
     <string name="widget_continue">Nastavi čitanje: %1$s →</string>
     <string name="compare_note">Izaberite koji prevodi se prikazuju u poređenju stihova.</string>
-    <string name="audio_title">Audio naracija (KJV)</string>
+    <string name="audio_title">Audio naracija</string>
     <string name="audio_note">Ljudska naracija sa LibriVox-a (javno vlasništvo), koja pokriva većinu knjiga KJV prevoda. Zvuk se preuzima po odeljcima (nekoliko glava, ~10–30 MB) kada pritisnete reprodukciju i čuva se za slušanje bez interneta. Knjige bez snimka koriste pretvaranje teksta u govor, a isticanje stiha nije dostupno tokom naracije.</string>
     <string name="audio_downloading">Preuzimanje zvuka… %1$d%%</string>
     <string name="audio_narrated">Audio naracija</string>

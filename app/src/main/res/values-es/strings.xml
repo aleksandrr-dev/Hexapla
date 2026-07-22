@@ -167,7 +167,7 @@
     <string name="widget_description">Versículo del día y regreso rápido a tu lectura</string>
     <string name="widget_continue">Continuar leyendo: %1$s →</string>
     <string name="compare_note">Elige qué traducciones aparecen en la comparación de versículos.</string>
-    <string name="audio_title">Audio narrado (KJV)</string>
+    <string name="audio_title">Audio narrado</string>
     <string name="audio_note">Narración humana de LibriVox (dominio público), para la mayoría de los libros de la KJV. El audio se descarga por secciones (~10–30 MB) y se guarda para escuchar sin conexión. Los libros sin grabación usan la voz sintética.</string>
     <string name="audio_downloading">Descargando audio… %1$d%%</string>
     <string name="audio_narrated">Audio narrado</string>

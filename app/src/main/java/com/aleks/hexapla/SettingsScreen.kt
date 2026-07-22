@@ -137,26 +137,29 @@ fun SettingsScreen(settings: AppSettings) {
         /* ---- Reading / translations ---- */
         SectionHeader(stringResource(R.string.settings_reading))
 
-        Text(stringResource(R.string.primary_translation), style = MaterialTheme.typography.titleSmall)
-        TranslationPicker(
+        TranslationPickerField(
+            title = stringResource(R.string.primary_translation),
+            summary = BibleRepo.translation(settings.primaryId).label,
             selectedIds = setOf(settings.primaryId),
             multiSelect = false
         ) { id -> scope.launch { Store.setPrimary(context, id) } }
 
         Spacer(Modifier.height(8.dp))
-        SectionHeader(stringResource(R.string.compare))
+        // Store convention: an empty compare set means "all enabled".
+        val compareSel = settings.compareIds.ifEmpty {
+            BibleRepo.translations.map { it.id }.toSet()
+        }
+        TranslationPickerField(
+            title = stringResource(R.string.compare),
+            summary = "${compareSel.size}/${BibleRepo.translations.size}",
+            selectedIds = compareSel,
+            multiSelect = true
+        ) { id -> scope.launch { Store.toggleCompareId(context, id) } }
         Text(
             stringResource(R.string.compare_note),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        // Store convention: an empty compare set means "all enabled".
-        TranslationPicker(
-            selectedIds = settings.compareIds.ifEmpty {
-                BibleRepo.translations.map { it.id }.toSet()
-            },
-            multiSelect = true
-        ) { id -> scope.launch { Store.toggleCompareId(context, id) } }
 
         Spacer(Modifier.height(8.dp))
         SwitchRow(stringResource(R.string.keep_screen_on), settings.keepScreenOn) {
@@ -280,8 +283,9 @@ fun SettingsScreen(settings: AppSettings) {
         }
 
         if (settings.splitEnabled) {
-            Text(stringResource(R.string.secondary_translation), style = MaterialTheme.typography.titleSmall)
-            TranslationPicker(
+            TranslationPickerField(
+                title = stringResource(R.string.secondary_translation),
+                summary = BibleRepo.translation(settings.secondaryId).label,
                 selectedIds = setOf(settings.secondaryId),
                 multiSelect = false
             ) { id -> scope.launch { Store.setSecondary(context, id) } }

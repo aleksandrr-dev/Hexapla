@@ -175,7 +175,7 @@
     <string name="widget_description">Päivän jae ja pikapaluu lukukohtaasi</string>
     <string name="widget_continue">Jatka lukemista: %1$s →</string>
     <string name="compare_note">Valitse, mitkä käännökset näkyvät jaevertailussa.</string>
-    <string name="audio_title">Kerrottu ääni (KJV)</string>
+    <string name="audio_title">Kerrottu ääni</string>
     <string name="audio_note">Ihmisen lukema ääni LibriVoxista (vapaasti käytettävissä), kattaa suurimman osan KJV:n kirjoista. Ääni ladataan osioittain (muutama luku, ~10–30 Mt) kun painat toistoa, ja se säilyy offline-kuuntelua varten. Kirjat, joista ei ole äänitystä, käyttävät tekstistä puheeksi -toimintoa, eikä jakeen korostus ole tällöin käytettävissä.</string>
     <string name="audio_downloading">Ladataan ääntä… %1$d%%</string>
     <string name="audio_narrated">Kerrottu ääni</string>

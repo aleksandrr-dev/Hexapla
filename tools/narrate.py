@@ -63,18 +63,36 @@ LIBRIVOX_GAP_BOOKS = [
 # owner's three separate takes differed by only 0.7-1.2 semitones and
 # CosyVoice normalized that away entirely — take2 was recorded DEEPER than
 # take1 but cloned back HIGHER (88.4Hz -> 99.7Hz). The reference is a speaker
-# embedding, not a performance. Instructions, by contrast, land hard:
-#   normal  5.2s  96.4Hz
-#   solemn 11.6s  95.8Hz  (2.24x slower)
-#   tender  9.4s  89.9Hz  (1.82x slower, -1.2 st)
-# Note the model steers TIMING and MANNER, not pitch — «низким» (deep) moved
-# F0 by only 0.1 st. That is arguably right: it stays recognizably one person.
+# embedding, not a performance. Instructions, by contrast, land hard.
+#
+# ⚠⚠ THE INSTRUCTION MUST BE IN ENGLISH, NOT RUSSIAN. Fixed 2026-07-20 after
+# the owner heard «Прочитай очень медленно…» SPOKEN ALOUD in the finished
+# audio. Cause: frontend_instruct2() passes the instruction as the zero-shot
+# PROMPT TEXT (cosyvoice/cli/frontend.py:210) — it enters the LLM's text
+# stream with only <|endofprompt|> dividing it from the verse, and when
+# instruction and verse are the SAME LANGUAGE the model cannot hold that
+# boundary and reads the instruction out (often INSTEAD of the verse).
+# Measured A/B, 60 samples over header/short/long texts, ASR-verified:
+#   solemn_ru 12/12 leaked   tender_ru 12/12 leaked
+#   solemn_en  0/12          tender_en  0/12          normal(en) 0/12
+# Damage: 344 chapters = all 9 instruct-style books rendered before the fix
+# (research/ru_narration_leak_scan.md). Scan with tools/scan_narration_leaks.py
+# after any future instruct-engine render — duration heuristics CANNOT catch
+# this (a leak can replace the utterance without lengthening it).
+#
+# Style strength, same A/B, leak-free English instructions vs normal:
+#   short 1.37x slower (solemn) / 1.20x (tender)
+#   long  1.25x        (solemn) / 1.12x (tender)
+# The old comment here claimed 2.24x/1.82x — those figures were measured on
+# the LEAKING Russian instructions, so most of that "slowdown" was the model
+# reciting the instruction, not style. The real effect is gentler; owner ear
+# check pending on whether solemn is still solemn enough.
 RU_STYLES = {
     "normal": "You are a helpful assistant.<|endofprompt|>",
-    "solemn": "You are a helpful assistant. Прочитай очень медленно, "
-              "низким и торжественным голосом.<|endofprompt|>",
-    "tender": "You are a helpful assistant. Прочитай мягко и нежно, "
-              "как поэзию.<|endofprompt|>",
+    "solemn": "You are a helpful assistant. Read this very slowly, in a "
+              "low and solemn voice.<|endofprompt|>",
+    "tender": "You are a helpful assistant. Read this softly and tenderly, "
+              "like poetry.<|endofprompt|>",
 }
 
 # Owner's assignment (2026-07-15): solemn for Job, Lamentations, the prophets;
@@ -988,6 +1006,13 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
     median = rates[len(rates) // 2]
     lo, hi = median / PACE_TOL, median * PACE_TOL
 
+    # NOTE (2026-07-20): an absolute per-verse duration ceiling was added here
+    # to catch instruct-instruction leaks, then REMOVED once measured: the
+    # arithmetic gives it a catch window only below ~2.7 characters, i.e. it
+    # was dead against the defect while still able to re-roll the slow
+    # dramatisations the owner likes. Leaks are fixed at the root instead (see
+    # RU_STYLES) and audited post-hoc by tools/scan_narration_leaks.py.
+    # Duration cannot detect a leak that REPLACES an utterance.
     for i, (wav, dur) in enumerate(pairs):
         if not wav or len(verses[i]) < PACE_MIN_CHARS:
             continue
@@ -1268,6 +1293,28 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
             header = chapter_header_text(lang, book_idx, chapter_idx, n_chapters,
                                          book_name=books[book_idx].get("name"))
             hdr_wav, hdr_dur = synthesize_verse(header, lang, tmp, -1, book_idx)
+            # Headers get their own guard because repace_outliers() cannot
+            # cover them — a header has no chapter pace cohort to compare
+            # against. This catches the DOUBLED/STUTTERED announcement class
+            # (ru 20/0, Eccl 1, owner-reported 2026-07-20), which does inflate
+            # duration. It does NOT catch instruction leaks — those are fixed
+            # at the root (see RU_STYLES) and can replace an utterance without
+            # lengthening it; measured, this ceiling permits 9.9-11.9s while
+            # the worst leaked header ran 10.9s. Deterministic engines (kokoro)
+            # never trip the limit.
+            hdr_limit_ms = int(len(header) / 3.5 * 1000) + 3000
+            for _retake in range(3):
+                if not hdr_wav or hdr_dur <= hdr_limit_ms:
+                    break
+                print(f"    header retake {_retake + 1}: "
+                      f"{hdr_dur}ms > {hdr_limit_ms}ms limit", flush=True)
+                alt_wav, alt_dur = synthesize_verse(header, lang, tmp,
+                                                    -(2 + _retake), book_idx)
+                if alt_wav and alt_dur > 0 and alt_dur < hdr_dur:
+                    hdr_wav, hdr_dur = alt_wav, alt_dur
+            if hdr_wav and hdr_dur > hdr_limit_ms:
+                print(f"    WARNING: header still {hdr_dur}ms after retakes "
+                      f"(limit {hdr_limit_ms}ms) — keeping shortest take", flush=True)
 
             pairs = []
             for i, v_text in enumerate(verses):

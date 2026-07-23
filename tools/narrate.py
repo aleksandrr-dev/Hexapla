@@ -1361,6 +1361,10 @@ def main():
                         choices=list(LANG_CONFIG.keys()),
                         help="Language/translation code")
     parser.add_argument("--book", type=int, help="Book index (0-65)")
+    parser.add_argument("--books", type=str, default=None,
+                        help="Ordered book spec, e.g. '1,39-65,2-38' — renders "
+                             "in THIS order (skips existing). Overrides the "
+                             "default sweep; lets you prioritise, e.g. NT first.")
     parser.add_argument("--chapter", type=int, help="Chapter index (0-based)")
     parser.add_argument("--force", action="store_true", help="Overwrite existing")
     parser.add_argument("--dry-run", action="store_true", help="Print plan only")
@@ -1428,7 +1432,22 @@ def main():
     books = load_bible(args.lang)
     print(f"Loaded {cfg['asset']} ({len(books)} books)")
 
-    if args.book is not None:
+    if args.books is not None:
+        # Ordered spec like "1,39-65,2-38": explicit priority order, deduped
+        # keeping first occurrence. Skip-existing still applies per chapter.
+        book_range = []
+        for tok in args.books.split(","):
+            tok = tok.strip()
+            if not tok:
+                continue
+            if "-" in tok:
+                a, b = tok.split("-")
+                book_range.extend(range(int(a), int(b) + 1))
+            else:
+                book_range.append(int(tok))
+        seen = set()
+        book_range = [b for b in book_range if not (b in seen or seen.add(b))]
+    elif args.book is not None:
         book_range = [args.book]
     elif args.all_books or cfg["default_books"] is None:
         book_range = list(range(len(books)))

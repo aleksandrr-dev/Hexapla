@@ -83,7 +83,14 @@ maximize reach, keep everything free, nothing locked, collect no data.
   page and listing in lockstep. The page today says 33/28 to match the
   SHIPPED listings; Persian is in tree but unreleased.
 - Privacy policy: https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
-- Listing texts (5 languages) + screenshot order: `store-assets/STORE_LISTING.md`.
+- Listing texts + screenshot order: `store-assets/STORE_LISTING.md`.
+  ★ RELEASE-NOTES STANDARD (owner, 2026-07-23): "What's new" is kept there as
+  a full Play-Console copy-paste block — EVERY listing locale in its own
+  `<locale>…</locale>` tag (30 locales, matching Play's list), so the owner
+  pastes the whole set at once. For each release, fill every locale (reuse
+  prior wording where stable); see the "Release-notes format — STANDARD"
+  section at the top of STORE_LISTING.md. be/hy/iw/ta = best-effort, native
+  review pending.
 - **Google Play (2026-07-08)**: closed track now has 1.2.0 (code 5),
   uploaded same day as 1.1.2 (code 4); the 14-day tester clock
   (started ~2026-07-07) keeps running across uploads to the same track.

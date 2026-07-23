@@ -131,403 +131,7 @@ Ny översättning: Persiska Nya testamentet i Henry Martyns översättning (1876
 新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共34部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
 </zh-TW>
 
-## 1.5.1 release notes (paste per store)
-
-**RU:** Один новый перевод: белорусский Новый Завет и Псалтирь в переводе
-Дзекуць-Малея и Луцкевіча (1931 год, классическая белорусская орфография,
-«тарашкевица») — теперь 33 перевода на 28 языках. Белорусский язык также
-добавлен в интерфейс — итого 25 языков интерфейса.
-
-**EN:** One new translation: the Belarusian New Testament and Psalms
-translated by Dzyakuts-Maley and Lutskevich (1931, classical Belarusian
-orthography) — bringing the total to 33 translations in 28 languages.
-Belarusian also joins the interface languages, for 25 languages total.
-
-**DE:** Eine neue Übersetzung: das belarussische Neue Testament und die
-Psalmen, übersetzt von Dzyakuts-Maley und Lutskevich (1931, klassische
-belarussische Orthographie) — jetzt 33 Übersetzungen in 28 Sprachen.
-Belarussisch ist außerdem als neue Oberflächensprache hinzugekommen,
-insgesamt 25 Sprachen.
-
-**ES:** Una nueva traducción: el Nuevo Testamento y los Salmos en bielorruso,
-traducidos por Dzyakuts-Maley y Lutskevich (1931, ortografía bielorrusa
-clásica) — ahora 33 traducciones en 28 idiomas. El bielorruso también se
-suma como idioma de interfaz, para un total de 25.
-
-**FR:** Une nouvelle traduction : le Nouveau Testament et les Psaumes en
-biélorusse, traduits par Dzyakuts-Maley et Lutskevich (1931, orthographe
-biélorusse classique) — portant le total à 33 traductions en 28 langues. Le
-biélorusse rejoint aussi les langues d'interface, pour un total de 25.
-
-**PT:** Uma nova tradução: o Novo Testamento e os Salmos em bielorrusso,
-traduzidos por Dzyakuts-Maley e Lutskevich (1931, ortografia bielorrussa
-clássica) — agora 33 traduções em 28 idiomas. O bielorrusso também passa a
-ser um idioma de interface, totalizando 25.
-
-**IT:** Una nuova traduzione: il Nuovo Testamento e i Salmi in bielorusso,
-tradotti da Dzyakuts-Maley e Lutskevich (1931, ortografia bielorussa
-classica) — ora 33 traduzioni in 28 lingue. Il bielorusso si aggiunge anche
-alle lingue dell'interfaccia, per un totale di 25.
-
-**SV:** En ny översättning: det vitryska Nya testamentet och Psaltaren,
-översatt av Dzyakuts-Maley och Lutskevich (1931, klassisk vitrysk
-ortografi) — nu 33 översättningar på 28 språk. Vitryska tillkommer även som
-gränssnittsspråk, totalt 25 språk.
-
-**DA:** En ny oversættelse: det hviderussiske Nye Testamente og Salmerne,
-oversat af Dzyakuts-Maley og Lutskevich (1931, klassisk hviderussisk
-retskrivning) — nu 33 oversættelser på 28 sprog. Hviderussisk kommer også
-til som grænsefladesprog, i alt 25 sprog.
-
-**JA:** 新しい翻訳を1件追加。ジャクーツ=マレイとルツケーヴィチによる
-1931年のベラルーシ語新約聖書と詩篇（伝統的なベラルーシ語正書法）—
-28言語・33の翻訳になりました。インターフェース言語にもベラルーシ語が
-加わり、合計25言語になりました。
-
-**ZH-CN:** 新增1部译本:由德亚库茨-马莱伊与卢茨凯维奇翻译的1931年白俄罗斯
-语新约与诗篇(传统白俄罗斯语正字法)——现有28种语言、33部译本。界面语言
-新增白俄罗斯语,总数达到25种。
-
-**ZH-TW:** 新增1部譯本:由德亞庫茨-馬萊伊與盧茨凱維奇翻譯的1931年白俄羅斯
-語新約與詩篇(傳統白俄羅斯語正字法)——現有28種語言、33部譯本。介面語言
-新增白俄羅斯語,總數達到25種。
-
-**TA:** ஒரு புதிய மொழிபெயர்ப்பு: ஜியாகுட்ஸ்-மாலி மற்றும் லுட்ஸ்கேவிச்
-மொழிபெயர்த்த 1931 பெலாரூசிய புதிய ஏற்பாடு மற்றும் சங்கீதங்கள்
-(பாரம்பரிய பெலாரூசிய எழுத்துமுறை) — இப்போது 28 மொழிகளில் 33
-மொழிபெயர்ப்புகள். இடைமுகி மொழிகளிலும் பெலாரூசியன் சேர்க்கப்பட்டு,
-மொத்தம் 25 மொழிகள் ஆகின்றன.
-
-## 1.5.0 release notes (paste per store)
-
-**RU:** Одиннадцать новых переводов: нидерландский Statenvertaling, арабский
-Ван Дейк, английский Young's Literal Translation, новогреческий Вамвас,
-финская Библия 1776 года, польская Гданьская Библия, сербский перевод
-Караджича/Даничича (читают и боснийские, и хорватские пользователи),
-венгерская Библия Кароли, чешская Кралицкая Библия, западноармянский Новый
-Завет 1853 года и латышская Библия Глюка — теперь 32 перевода на 27 языках.
-Интерфейс пополнился одиннадцатью языками (арабский, чешский, греческий,
-иврит, венгерский, армянский, латышский, нидерландский, польский, сербский,
-финский) — итого 24 языка интерфейса; для арабского и иврита добавлена
-поддержка письма справа налево, включая перелистывание глав в правильном
-направлении. Латышская Библия Глюка получила 12 из 13 второканонических
-книг, а Елизаветинская церковнославянская Библия — обе ранее отсутствовавшие
-книги (3-я Ездры и 3-я Маккавейская). Также восстановлены 137 надписаний
-псалмов в тамильском переводе, утерянных при конвертации.
-
-**EN:** Eleven new translations — Dutch (Statenvertaling), Arabic (Van
-Dyck), English (Young's Literal Translation), Modern Greek (Vamvas), Finnish
-(Biblia 1776), Polish (Gdańska), Serbian (Karadžić/Daničić, also read by
-Bosnian and Croatian speakers), Hungarian (Károli), Czech (Kralická),
-Western Armenian NT (1853), and Latvian (Glück) — bring the total to 32
-translations in 27 languages. Eleven new interface languages (Arabic, Czech,
-Greek, Hebrew, Hungarian, Armenian, Latvian, Dutch, Polish, Serbian,
-Finnish) bring the UI to 24 languages total, with right-to-left support for
-Arabic and Hebrew, including a fix so the chapter-swipe gesture follows the
-reading direction. The Latvian Glück Bible gained 12 of its 13 Apocrypha
-books, and the Church Slavonic Elizabeth Bible gained its two previously
-missing books (2 Esdras and 3 Maccabees). Also: 137 psalm titles restored in
-the Tamil translation that a converter had dropped.
-
-**DE:** Elf neue Übersetzungen (Niederländisch, Arabisch, Englisch — Young's
-Literal Translation, Neugriechisch, Finnisch, Polnisch, Serbisch,
-Ungarisch, Tschechisch, Armenisch und Lettisch) erhöhen die Gesamtzahl auf
-32 Übersetzungen in 27 Sprachen. Elf neue Oberflächensprachen (Arabisch,
-Tschechisch, Griechisch, Hebräisch, Ungarisch, Armenisch, Lettisch,
-Niederländisch, Polnisch, Serbisch, Finnisch) bringen die App-Sprache auf
-insgesamt 24 Sprachen — mit Rechts-nach-links-Unterstützung für Arabisch
-und Hebräisch, inklusive einer Korrektur, damit das Wischen zum
-Kapitelwechsel der Leserichtung folgt. Die lettische Glück-Bibel erhielt 12
-ihrer 13 Apokryphen-Bücher, die kirchenslawische Elisabeth-Bibel ihre beiden
-zuvor fehlenden Bücher; außerdem wurden 137 verlorene Psalmüberschriften in
-der tamilischen Übersetzung wiederhergestellt.
-
-**ES:** Once traducciones nuevas (neerlandés, árabe, inglés — Young's
-Literal Translation, griego moderno, finés, polaco, serbio, húngaro, checo,
-armenio y letón) elevan el total a 32 traducciones en 27 idiomas. Once
-idiomas nuevos de interfaz (árabe, checo, griego, hebreo, húngaro, armenio,
-letón, neerlandés, polaco, serbio, finés) llevan la interfaz a 24 idiomas en
-total, con soporte de derecha a izquierda para árabe y hebreo, incluida una
-corrección para que el gesto de deslizar capítulos siga el sentido de
-lectura. La Biblia letona de Glück recibió 12 de sus 13 libros apócrifos, y
-la Biblia eslava eclesiástica de Isabel sus dos libros que faltaban; además
-se restauraron 137 títulos de salmos perdidos en la traducción tamil.
-
-**FR:** Onze nouvelles traductions (néerlandais, arabe, anglais — Young's
-Literal Translation, grec moderne, finnois, polonais, serbe, hongrois,
-tchèque, arménien et letton) portent le total à 32 traductions en 27
-langues. Onze nouvelles langues d'interface (arabe, tchèque, grec, hébreu,
-hongrois, arménien, letton, néerlandais, polonais, serbe, finnois) portent
-l'interface à 24 langues au total, avec la prise en charge de l'écriture de
-droite à gauche pour l'arabe et l'hébreu, y compris une correction du
-balayage de chapitre pour suivre le sens de lecture. La Bible lettone de
-Glück a reçu 12 de ses 13 livres apocryphes, et la Bible slavonne
-d'Élisabeth ses deux livres manquants ; 137 titres de psaumes perdus ont
-aussi été restaurés dans la traduction tamoule.
-
-**PT:** Onze novas traduções (holandês, árabe, inglês — Young's Literal
-Translation, grego moderno, finlandês, polonês, sérvio, húngaro, tcheco,
-armênio e letão) elevam o total a 32 traduções em 27 idiomas. Onze novos
-idiomas de interface (árabe, tcheco, grego, hebraico, húngaro, armênio,
-letão, holandês, polonês, sérvio, finlandês) levam a interface a 24 idiomas
-no total, com suporte da direita para a esquerda no árabe e no hebraico,
-incluindo uma correção para que o gesto de deslizar capítulos siga o
-sentido de leitura. A Bíblia letã de Glück recebeu 12 de seus 13 livros
-apócrifos, e a Bíblia eslava eclesiástica de Isabel seus dois livros que
-faltavam; também foram restaurados 137 títulos de salmos perdidos na
-tradução tâmil.
-
-**IT:** Undici nuove traduzioni (olandese, arabo, inglese — Young's Literal
-Translation, greco moderno, finlandese, polacco, serbo, ungherese, ceco,
-armeno e lettone) portano il totale a 32 traduzioni in 27 lingue. Undici
-nuove lingue dell'interfaccia (arabo, ceco, greco, ebraico, ungherese,
-armeno, lettone, olandese, polacco, serbo, finlandese) portano l'interfaccia
-a 24 lingue totali, con supporto da destra a sinistra per arabo ed ebraico,
-inclusa una correzione per far seguire allo scorrimento tra i capitoli il
-verso di lettura. La Bibbia lettone di Glück ha ricevuto 12 dei suoi 13
-libri apocrifi, e la Bibbia slava ecclesiastica di Elisabetta i suoi due
-libri mancanti; sono stati inoltre ripristinati 137 titoli dei salmi perduti
-nella traduzione tamil.
-
-**SV:** Elva nya översättningar (nederländska, arabiska, engelska —
-Young's Literal Translation, nygrekiska, finska, polska, serbiska,
-ungerska, tjeckiska, armeniska och lettiska) höjer totalen till 32
-översättningar på 27 språk. Elva nya gränssnittsspråk (arabiska, tjeckiska,
-grekiska, hebreiska, ungerska, armeniska, lettiska, nederländska, polska,
-serbiska, finska) tar gränssnittet till 24 språk totalt, med stöd för
-höger-till-vänster-skrift för arabiska och hebreiska, inklusive en fix så
-att kapitelbyte med svep följer läsriktningen. Den lettiska Glück-bibeln
-fick 12 av sina 13 apokryfiska böcker, och den kyrkoslaviska
-Elisabetbibeln sina två saknade böcker; dessutom återställdes 137 förlorade
-psalmrubriker i den tamilska översättningen.
-
-**DA:** Elleve nye oversættelser (hollandsk, arabisk, engelsk — Young's
-Literal Translation, nygræsk, finsk, polsk, serbisk, ungarsk, tjekkisk,
-armensk og lettisk) bringer totalen op på 32 oversættelser på 27 sprog.
-Elleve nye sprog i brugerfladen (arabisk, tjekkisk, græsk, hebraisk,
-ungarsk, armensk, lettisk, hollandsk, polsk, serbisk, finsk) bringer
-brugerfladen op på i alt 24 sprog, med understøttelse af
-højre-til-venstre-skrift for arabisk og hebraisk, inklusive en rettelse så
-kapitelswipe følger læseretningen. Den lettiske Glück-bibel fik 12 af sine
-13 apokryfe bøger, og den kirkeslaviske Elisabeth-bibel sine to manglende
-bøger; desuden blev 137 mistede salmeoverskrifter genskabt i den tamilske
-oversættelse.
-
-**JA:** 新しい翻訳を11件追加（オランダ語のスターテン訳、アラビア語のヴァ
-ンダイク訳、英語のYoung's Literal Translation、現代ギリシャ語のヴァンヴァ
-ス訳、フィンランド語の1776年訳、ポーランド語のグダニスク聖書、セルビア語
-のカラジッチ/ダニチッチ訳、ハンガリー語のカーロリ訳、チェコ語のクラリツ
-ェ聖書、1853年の西アルメニア語新約聖書、ラトビア語のグリュック聖書）—
-27言語・32の翻訳になりました。インターフェース言語も11言語追加（アラビ
-ア語、チェコ語、ギリシャ語、ヘブライ語、ハンガリー語、アルメニア語、ラト
-ビア語、オランダ語、ポーランド語、セルビア語、フィンランド語）され、合計
-24言語に。アラビア語・ヘブライ語では右から左に読む表示に対応し、章送り
-のスワイプ操作も読む方向に合わせて修正しました。ラトビア語グリュック聖書
-に外典13巻中12巻を追加、教会スラヴ語エリザベス聖書には欠けていた2巻（エ
-ズラ記第二・マカバイ記第三）を追加。タミル語訳では失われていた詩篇の表題
-137件も復元しました。
-
-**ZH-CN:** 新增11部译本（荷兰语司泰顿译本、阿拉伯语范戴克译本、英语
-Young's Literal Translation、现代希腊语瓦姆瓦斯译本、芬兰语1776年圣经、
-波兰语格但斯克圣经、塞尔维亚语卡拉季奇/达尼契奇译本、匈牙利语卡罗利译
-本、捷克语克拉利采圣经、1853年西亚美尼亚语新约、拉脱维亚语格吕克圣经）
-——现有27种语言、32部译本。界面新增11种语言（阿拉伯语、捷克语、希腊语、
-希伯来语、匈牙利语、亚美尼亚语、拉脱维亚语、荷兰语、波兰语、塞尔维亚语、
-芬兰语），界面语言总数达到24种；阿拉伯语和希伯来语现已支持从右到左显示，
-章节滑动手势也已按阅读方向修正。拉脱维亚语格吕克圣经新增13卷次经中的12
-卷，教会斯拉夫语伊丽莎白圣经补全了此前缺失的两卷（以斯拉记下、马加比三
-书）；泰米尔语译本中丢失的137个诗篇标题也已恢复。
-
-**ZH-TW:** 新增11部譯本（荷蘭語司泰頓譯本、阿拉伯語范戴克譯本、英語
-Young's Literal Translation、現代希臘語瓦姆瓦斯譯本、芬蘭語1776年聖經、
-波蘭語格但斯克聖經、塞爾維亞語卡拉季奇/達尼契奇譯本、匈牙利語卡羅利譯
-本、捷克語克拉利采聖經、1853年西亞美尼亞語新約、拉脫維亞語格呂克聖經）
-——現有27種語言、32部譯本。介面新增11種語言（阿拉伯語、捷克語、希臘語、
-希伯來語、匈牙利語、亞美尼亞語、拉脫維亞語、荷蘭語、波蘭語、塞爾維亞語、
-芬蘭語），介面語言總數達到24種；阿拉伯語和希伯來語現已支援從右到左顯示，
-章節滑動手勢也已依閱讀方向修正。拉脫維亞語格呂克聖經新增13卷次經中的12
-卷，教會斯拉夫語伊麗莎白聖經補全了先前缺失的兩卷（以斯拉記下、馬加比三
-書）；泰米爾語譯本中遺失的137個詩篇標題也已恢復。
-
-**TA:** 11 புதிய மொழிபெயர்ப்புகள் (டச்சு Statenvertaling, அரபு Van Dyck,
-ஆங்கிலம் Young's Literal Translation, நவீன கிரேக்கம் Vamvas, பின்னிஷ்
-Biblia 1776, போலிஷ் Gdańska, செர்பியன் Karadžić/Daničić, ஹங்கேரியன்
-Károli, செக் Kralická, 1853 மேற்கு அர்மேனிய புதிய ஏற்பாடு, லாட்வியன் Glück)
-சேர்க்கப்பட்டு — இப்போது 27 மொழிகளில் 32 மொழிபெயர்ப்புகள். இடைமுகத்திலும்
-11 புதிய மொழிகள் (அரபு, செக், கிரேக்கம், ஹீப்ரு, ஹங்கேரியன், அர்மேனியன்,
-லாட்வியன், டச்சு, போலிஷ், செர்பியன், பின்னிஷ்) சேர்க்கப்பட்டு மொத்தம் 24
-இடைமுகி மொழிகள் ஆகின்றன; அரபு மற்றும் ஹீப்ருவிற்கு வலமிருந்து இடமாகப்
-படிக்கும் திசைக்கு ஏற்ப காட்சியும் அத்தியாய ஸ்வைப் திசையும்
-திருத்தப்பட்டன. தமிழ் மொழிபெயர்ப்பில் மாற்றியமைப்பின்போது இழந்த 137
-சங்கீத தலைப்புகள் மீட்டெடுக்கப்பட்டன; லாட்வியன் க்ளூக் பைபிளுக்கு
-அபோக்ரிபாவின் 13 புத்தகங்களில் 12 சேர்க்கப்பட்டன, மேலும் சர்ச் ஸ்லாவோனிக்
-எலிசபெத் பைபிளில் விடுபட்டிருந்த இரு புத்தகங்களும் (2 எஸ்றா, 3 மக்கபேயர்)
-சேர்க்கப்பட்டன.
-
-## 1.4.3 release notes (paste per store; 1.4.2 was never uploaded — these notes fold its changes in)
-
-**RU:** Два новых перевода: полная тамильская Библия (IRV 2019) и
-латинская Вульгата (Климентина, 1592) с второканоническими книгами —
-22 перевода на 17 языках. Подстрочник заговорил по-русски:
-грамматический разбор каждого греческого и еврейского слова — на
-языке приложения. Заметки и выделения остаются на своём стихе при
-смене перевода (старые пометки в Псалтири могли сместиться —
-выделите заново). Интерфейс на тамильском.
-
-**EN:** Two new translations: the complete Tamil Bible (IRV 2019) and
-the Latin Vulgate (Clementine, 1592) with the Deuterocanon — 22
-translations in 17 languages. The interlinear now speaks your
-language: the grammar of every Greek and Hebrew word appears in the
-app language. Notes and highlights stay on the right verse when you
-switch translations. Tamil UI added.
-
-**DE:** Zwei neue Übersetzungen: die vollständige tamilische Bibel
-(IRV 2019) und die lateinische Vulgata (Clementina, 1592) mit
-Deuterokanon — 22 Übersetzungen in 17 Sprachen. Die Interlinearansicht
-spricht jetzt Deutsch: Die Grammatik jedes griechischen und
-hebräischen Wortes erscheint in der App-Sprache. Notizen und
-Markierungen bleiben beim Übersetzungswechsel am richtigen Vers.
-
-**ES:** Dos traducciones nuevas: la Biblia tamil completa (IRV 2019) y
-la Vulgata latina (Clementina, 1592) con los deuterocanónicos — 22
-traducciones en 17 idiomas. La interlineal ahora habla español: la
-gramática de cada palabra griega y hebrea se muestra en el idioma de
-la aplicación. Las notas y los resaltados permanecen en el versículo
-correcto al cambiar de traducción.
-
-**FR:** Deux nouvelles traductions : la Bible tamoule complète (IRV
-2019) et la Vulgate latine (Clémentine, 1592) avec les
-deutérocanoniques — 22 traductions en 17 langues. L'interlinéaire
-parle désormais français : la grammaire de chaque mot grec et hébreu
-s'affiche dans la langue de l'application. Les notes et surlignages
-restent sur le bon verset lors d'un changement de traduction.
-
-**PT:** Duas novas traduções: a Bíblia tâmil completa (IRV 2019) e a
-Vulgata latina (Clementina, 1592) com os deuterocanônicos — 22
-traduções em 17 idiomas. A interlinear agora fala português: a
-gramática de cada palavra grega e hebraica aparece no idioma do
-aplicativo. As notas e os destaques permanecem no versículo certo ao
-trocar de tradução.
-
-**IT:** Due nuove traduzioni: la Bibbia tamil completa (IRV 2019) e la
-Vulgata latina (Clementina, 1592) con i deuterocanonici — 22
-traduzioni in 17 lingue. L'interlineare ora parla italiano: la
-grammatica di ogni parola greca ed ebraica appare nella lingua
-dell'app. Note ed evidenziazioni restano sul versetto giusto quando si
-cambia traduzione.
-
-**SV:** Två nya översättningar: hela tamilska Bibeln (IRV 2019) och
-latinska Vulgata (Clementina, 1592) med apokryferna — 22
-översättningar på 17 språk. Interlinjären talar nu svenska:
-grammatiken för varje grekiskt och hebreiskt ord visas på appens
-språk. Anteckningar och markeringar stannar på rätt vers när du byter
-översättning.
-
-**DA:** To nye oversættelser: hele den tamilske Bibel (IRV 2019) og
-den latinske Vulgata (Clementina, 1592) med apokryferne — 22
-oversættelser på 17 sprog. Interlineæren taler nu dansk: grammatikken
-for hvert græsk og hebraisk ord vises på appens sprog. Noter og
-fremhævninger bliver på det rigtige vers, når du skifter oversættelse.
-
-**JA:** 新しい翻訳を2つ追加：タミル語聖書全巻（IRV 2019）と第二正典付き
-ラテン語ウルガタ（クレメンティナ、1592年）— 17言語・22の翻訳に。イン
-ターリニアが日本語に対応：ギリシャ語・ヘブライ語の各単語の文法解析が
-アプリの言語で表示されます。翻訳を切り替えても、メモとハイライトが正
-しい節に残ります。
-
-**ZH-CN:** 新增两部译本：泰米尔语圣经全书（IRV 2019）和含次经的拉丁语
-武加大译本（克莱门汀，1592年）——现有17种语言、22部译本。逐字对照现在
-说中文：每个希腊文和希伯来文单词的语法分析以应用语言显示。切换译本时，
-笔记和高亮停留在正确的经节上。
-
-**ZH-TW:** 新增兩部譯本：泰米爾語聖經全書（IRV 2019）和含次經的拉丁語
-武加大譯本（克萊門汀，1592年）——現有17種語言、22部譯本。逐字對照現在
-說中文：每個希臘文和希伯來文單詞的語法分析以應用程式語言顯示。切換譯
-本時，筆記和螢光標記停留在正確的經節上。
-
-**TA:** முழுத் தமிழ் வேதாகமம் (IRV 2019) இப்போது ஹெக்ஸாப்லாவில் —
-தமிழ் இடைமுகத்துடன்! மேலும் லத்தீன் வுல்காத்தா (1592) — 17 மொழிகளில்
-22 மொழிபெயர்ப்புகள். கிரேக்க/எபிரெய வார்த்தைகளின் இலக்கண விளக்கம்
-தமிழிலேயே. மொழிபெயர்ப்பை மாற்றினாலும் குறிப்புகளும் வண்ணக்
-குறியீடுகளும் சரியான வசனத்திலேயே இருக்கும்.
-
-## 1.4.2 release notes (paste per store; Play has all 10 listing languages — use the matching line)
-
-**RU:** Подстрочник заговорил по-русски: грамматический разбор каждого
-греческого и еврейского слова теперь на языке приложения. Заметки и
-выделения остаются на своём стихе при смене перевода (старые пометки
-в Псалтири могли сместиться на стих — просто выделите заново).
-Закладки в списке упорядочены точно по тексту.
-
-**EN:** The interlinear now speaks your language: the grammar of every
-Greek and Hebrew word appears in the app language. Notes and highlights
-now stay on the right verse when you switch translations. Bookmarks
-list in true verse order.
-
-**DE:** Die Interlinearansicht spricht jetzt Deutsch: Die Grammatik
-jedes griechischen und hebräischen Wortes erscheint in der App-Sprache.
-Notizen und Markierungen bleiben beim Übersetzungswechsel jetzt am
-richtigen Vers. Lesezeichen erscheinen in echter Versreihenfolge.
-
-**ES:** La interlineal ahora habla español: la gramática de cada
-palabra griega y hebrea se muestra en el idioma de la aplicación. Las
-notas y los resaltados ahora permanecen en el versículo correcto al
-cambiar de traducción. Los marcadores se ordenan por su lugar real.
-
-**FR:** L'interlinéaire parle désormais français : la grammaire de
-chaque mot grec et hébreu s'affiche dans la langue de l'application.
-Les notes et les surlignages restent désormais sur le bon verset lors
-d'un changement de traduction. Les signets suivent l'ordre réel des
-versets.
-
-**PT:** A interlinear agora fala português: a gramática de cada palavra
-grega e hebraica aparece no idioma do aplicativo. As notas e os
-destaques agora permanecem no versículo certo ao trocar de tradução.
-Os marcadores seguem a ordem real dos versículos.
-
-**IT:** L'interlineare ora parla italiano: la grammatica di ogni parola
-greca ed ebraica appare nella lingua dell'app. Note ed evidenziazioni
-ora restano sul versetto giusto quando si cambia traduzione. I
-segnalibri seguono l'ordine reale dei versetti.
-
-**SV:** Interlinjären talar nu svenska: grammatiken för varje grekiskt
-och hebreiskt ord visas på appens språk. Anteckningar och markeringar
-stannar nu på rätt vers när du byter översättning. Bokmärken listas i
-äkta versordning.
-
-**DA:** Interlineæren taler nu dansk: grammatikken for hvert græsk og
-hebraisk ord vises på appens sprog. Noter og fremhævninger bliver nu
-på det rigtige vers, når du skifter oversættelse. Bogmærker vises i
-ægte versrækkefølge.
-
-**JA:** インターリニアが日本語に対応：ギリシャ語・ヘブライ語の各単語の
-文法解析がアプリの言語で表示されます。翻訳を切り替えても、メモとハイ
-ライトが正しい節に残るようになりました。しおりは正確な節順に並びます。
-
-**ZH-CN:** 逐字对照现在说中文：每个希腊文和希伯来文单词的语法分析以
-应用语言显示。切换译本时，笔记和高亮现在会停留在正确的经节上。书签
-按真实经节顺序排列。
-
-**ZH-TW:** 逐字對照現在說中文：每個希臘文和希伯來文單詞的語法分析以
-應用程式語言顯示。切換譯本時，筆記和螢光標記現在會停留在正確的經節
-上。書籤按真實經節順序排列。
-
-## 1.4.1 release notes (paste per store)
-
-**RU:** Новое: санскритский Новый Завет 1851 года (20-й перевод);
-интерфейс на 12 языках (добавлены pt/it/sv/da/ja/zh); восстановлены
-пропущенные стихи в KJV (Мф 2:16 и др.); исправлены шведский и
-датский тексты; завершён Тиндейл (33 книги); точное постишное
-сопоставление переводов в параллельном режиме; экран приветствия
-открывает Евангелие от Иоанна; исправления ошибок.
-
-**EN:** New: the Sanskrit New Testament of 1851 (20th translation);
-UI in 12 languages (pt/it/sv/da/ja/zh added); missing KJV verses
-restored (Mt 2:16 et al.); Swedish and Danish texts repaired;
-Tyndale completed (33 books); precise verse-by-verse alignment in
-split view; welcome screen opens the Gospel of John; bug fixes.
-
----
+*(Older release notes — 1.5.1 and earlier — are archived at the very end of this file to keep the current listing text near the top.)*
 
 ## Русский (primary for RuStore)
 
@@ -1246,3 +850,408 @@ Hexapla — гэта поўная Біблія — без інтэрнэту, б
 *Note: be_dzekuc is a New Testament + Psalms translation (1931) — named explicitly above ("Новы Запавет і Псальмы", "New Testament and Psalms") rather than implied to be a full Bible, matching how the app already discloses grc (Greek NT), the Sanskrit NT, and hy_west1853 (Armenian NT) elsewhere in this file. The app as a whole still offers the complete Bible via its other translations, read in parallel; confirmed directly against the asset — `be_dzekuc.json` has real chapter data only for the New Testament books (Matthew idx39 through Revelation idx65) and Psalms (idx18), every other OT book empty.*
 
 *⚠ ORTHOGRAPHY CAVEAT (unresolved, needs a native-speaker pass): the shipped verse text reads as classical Belarusian orthography ("тарашкевіца" — the pre-1933-reform standard still used by diaspora/independent Belarusian publications), not the modern official "narkamaŭka" standard most contemporary software localization defaults to. Spot-checked directly in `be_dzekuc.json`: John 1:14 "пасялілася", 1 Timothy 3:16 "багабойнасьці", "зьявіўся", "сьвеце" (soft-sign assimilation — тарашкевіца spells these with ь; narkamaŭka drops it, e.g. "багабойнасці", "з'явіўся", "свеце"). This listing text above was written to match that classical register as a good-faith, non-native-speaker effort — it has NOT been reviewed by a native Belarusian speaker, the same open item already flagged for the Armenian listing text elsewhere in this file. Do not treat it as final; get a native-speaker orthography check before shipping it with confidence.*
+
+
+---
+
+# ── ARCHIVE: older release notes (historical) ──
+
+These predate the 30-locale copy-paste standard and are kept only for reference; they use the old EN/RU/DE-per-line form. Do not reformat or reuse — new releases follow the STANDARD section at the top of this file.
+
+## 1.5.1 release notes (paste per store)
+
+**RU:** Один новый перевод: белорусский Новый Завет и Псалтирь в переводе
+Дзекуць-Малея и Луцкевіча (1931 год, классическая белорусская орфография,
+«тарашкевица») — теперь 33 перевода на 28 языках. Белорусский язык также
+добавлен в интерфейс — итого 25 языков интерфейса.
+
+**EN:** One new translation: the Belarusian New Testament and Psalms
+translated by Dzyakuts-Maley and Lutskevich (1931, classical Belarusian
+orthography) — bringing the total to 33 translations in 28 languages.
+Belarusian also joins the interface languages, for 25 languages total.
+
+**DE:** Eine neue Übersetzung: das belarussische Neue Testament und die
+Psalmen, übersetzt von Dzyakuts-Maley und Lutskevich (1931, klassische
+belarussische Orthographie) — jetzt 33 Übersetzungen in 28 Sprachen.
+Belarussisch ist außerdem als neue Oberflächensprache hinzugekommen,
+insgesamt 25 Sprachen.
+
+**ES:** Una nueva traducción: el Nuevo Testamento y los Salmos en bielorruso,
+traducidos por Dzyakuts-Maley y Lutskevich (1931, ortografía bielorrusa
+clásica) — ahora 33 traducciones en 28 idiomas. El bielorruso también se
+suma como idioma de interfaz, para un total de 25.
+
+**FR:** Une nouvelle traduction : le Nouveau Testament et les Psaumes en
+biélorusse, traduits par Dzyakuts-Maley et Lutskevich (1931, orthographe
+biélorusse classique) — portant le total à 33 traductions en 28 langues. Le
+biélorusse rejoint aussi les langues d'interface, pour un total de 25.
+
+**PT:** Uma nova tradução: o Novo Testamento e os Salmos em bielorrusso,
+traduzidos por Dzyakuts-Maley e Lutskevich (1931, ortografia bielorrussa
+clássica) — agora 33 traduções em 28 idiomas. O bielorrusso também passa a
+ser um idioma de interface, totalizando 25.
+
+**IT:** Una nuova traduzione: il Nuovo Testamento e i Salmi in bielorusso,
+tradotti da Dzyakuts-Maley e Lutskevich (1931, ortografia bielorussa
+classica) — ora 33 traduzioni in 28 lingue. Il bielorusso si aggiunge anche
+alle lingue dell'interfaccia, per un totale di 25.
+
+**SV:** En ny översättning: det vitryska Nya testamentet och Psaltaren,
+översatt av Dzyakuts-Maley och Lutskevich (1931, klassisk vitrysk
+ortografi) — nu 33 översättningar på 28 språk. Vitryska tillkommer även som
+gränssnittsspråk, totalt 25 språk.
+
+**DA:** En ny oversættelse: det hviderussiske Nye Testamente og Salmerne,
+oversat af Dzyakuts-Maley og Lutskevich (1931, klassisk hviderussisk
+retskrivning) — nu 33 oversættelser på 28 sprog. Hviderussisk kommer også
+til som grænsefladesprog, i alt 25 sprog.
+
+**JA:** 新しい翻訳を1件追加。ジャクーツ=マレイとルツケーヴィチによる
+1931年のベラルーシ語新約聖書と詩篇（伝統的なベラルーシ語正書法）—
+28言語・33の翻訳になりました。インターフェース言語にもベラルーシ語が
+加わり、合計25言語になりました。
+
+**ZH-CN:** 新增1部译本:由德亚库茨-马莱伊与卢茨凯维奇翻译的1931年白俄罗斯
+语新约与诗篇(传统白俄罗斯语正字法)——现有28种语言、33部译本。界面语言
+新增白俄罗斯语,总数达到25种。
+
+**ZH-TW:** 新增1部譯本:由德亞庫茨-馬萊伊與盧茨凱維奇翻譯的1931年白俄羅斯
+語新約與詩篇(傳統白俄羅斯語正字法)——現有28種語言、33部譯本。介面語言
+新增白俄羅斯語,總數達到25種。
+
+**TA:** ஒரு புதிய மொழிபெயர்ப்பு: ஜியாகுட்ஸ்-மாலி மற்றும் லுட்ஸ்கேவிச்
+மொழிபெயர்த்த 1931 பெலாரூசிய புதிய ஏற்பாடு மற்றும் சங்கீதங்கள்
+(பாரம்பரிய பெலாரூசிய எழுத்துமுறை) — இப்போது 28 மொழிகளில் 33
+மொழிபெயர்ப்புகள். இடைமுகி மொழிகளிலும் பெலாரூசியன் சேர்க்கப்பட்டு,
+மொத்தம் 25 மொழிகள் ஆகின்றன.
+
+## 1.5.0 release notes (paste per store)
+
+**RU:** Одиннадцать новых переводов: нидерландский Statenvertaling, арабский
+Ван Дейк, английский Young's Literal Translation, новогреческий Вамвас,
+финская Библия 1776 года, польская Гданьская Библия, сербский перевод
+Караджича/Даничича (читают и боснийские, и хорватские пользователи),
+венгерская Библия Кароли, чешская Кралицкая Библия, западноармянский Новый
+Завет 1853 года и латышская Библия Глюка — теперь 32 перевода на 27 языках.
+Интерфейс пополнился одиннадцатью языками (арабский, чешский, греческий,
+иврит, венгерский, армянский, латышский, нидерландский, польский, сербский,
+финский) — итого 24 языка интерфейса; для арабского и иврита добавлена
+поддержка письма справа налево, включая перелистывание глав в правильном
+направлении. Латышская Библия Глюка получила 12 из 13 второканонических
+книг, а Елизаветинская церковнославянская Библия — обе ранее отсутствовавшие
+книги (3-я Ездры и 3-я Маккавейская). Также восстановлены 137 надписаний
+псалмов в тамильском переводе, утерянных при конвертации.
+
+**EN:** Eleven new translations — Dutch (Statenvertaling), Arabic (Van
+Dyck), English (Young's Literal Translation), Modern Greek (Vamvas), Finnish
+(Biblia 1776), Polish (Gdańska), Serbian (Karadžić/Daničić, also read by
+Bosnian and Croatian speakers), Hungarian (Károli), Czech (Kralická),
+Western Armenian NT (1853), and Latvian (Glück) — bring the total to 32
+translations in 27 languages. Eleven new interface languages (Arabic, Czech,
+Greek, Hebrew, Hungarian, Armenian, Latvian, Dutch, Polish, Serbian,
+Finnish) bring the UI to 24 languages total, with right-to-left support for
+Arabic and Hebrew, including a fix so the chapter-swipe gesture follows the
+reading direction. The Latvian Glück Bible gained 12 of its 13 Apocrypha
+books, and the Church Slavonic Elizabeth Bible gained its two previously
+missing books (2 Esdras and 3 Maccabees). Also: 137 psalm titles restored in
+the Tamil translation that a converter had dropped.
+
+**DE:** Elf neue Übersetzungen (Niederländisch, Arabisch, Englisch — Young's
+Literal Translation, Neugriechisch, Finnisch, Polnisch, Serbisch,
+Ungarisch, Tschechisch, Armenisch und Lettisch) erhöhen die Gesamtzahl auf
+32 Übersetzungen in 27 Sprachen. Elf neue Oberflächensprachen (Arabisch,
+Tschechisch, Griechisch, Hebräisch, Ungarisch, Armenisch, Lettisch,
+Niederländisch, Polnisch, Serbisch, Finnisch) bringen die App-Sprache auf
+insgesamt 24 Sprachen — mit Rechts-nach-links-Unterstützung für Arabisch
+und Hebräisch, inklusive einer Korrektur, damit das Wischen zum
+Kapitelwechsel der Leserichtung folgt. Die lettische Glück-Bibel erhielt 12
+ihrer 13 Apokryphen-Bücher, die kirchenslawische Elisabeth-Bibel ihre beiden
+zuvor fehlenden Bücher; außerdem wurden 137 verlorene Psalmüberschriften in
+der tamilischen Übersetzung wiederhergestellt.
+
+**ES:** Once traducciones nuevas (neerlandés, árabe, inglés — Young's
+Literal Translation, griego moderno, finés, polaco, serbio, húngaro, checo,
+armenio y letón) elevan el total a 32 traducciones en 27 idiomas. Once
+idiomas nuevos de interfaz (árabe, checo, griego, hebreo, húngaro, armenio,
+letón, neerlandés, polaco, serbio, finés) llevan la interfaz a 24 idiomas en
+total, con soporte de derecha a izquierda para árabe y hebreo, incluida una
+corrección para que el gesto de deslizar capítulos siga el sentido de
+lectura. La Biblia letona de Glück recibió 12 de sus 13 libros apócrifos, y
+la Biblia eslava eclesiástica de Isabel sus dos libros que faltaban; además
+se restauraron 137 títulos de salmos perdidos en la traducción tamil.
+
+**FR:** Onze nouvelles traductions (néerlandais, arabe, anglais — Young's
+Literal Translation, grec moderne, finnois, polonais, serbe, hongrois,
+tchèque, arménien et letton) portent le total à 32 traductions en 27
+langues. Onze nouvelles langues d'interface (arabe, tchèque, grec, hébreu,
+hongrois, arménien, letton, néerlandais, polonais, serbe, finnois) portent
+l'interface à 24 langues au total, avec la prise en charge de l'écriture de
+droite à gauche pour l'arabe et l'hébreu, y compris une correction du
+balayage de chapitre pour suivre le sens de lecture. La Bible lettone de
+Glück a reçu 12 de ses 13 livres apocryphes, et la Bible slavonne
+d'Élisabeth ses deux livres manquants ; 137 titres de psaumes perdus ont
+aussi été restaurés dans la traduction tamoule.
+
+**PT:** Onze novas traduções (holandês, árabe, inglês — Young's Literal
+Translation, grego moderno, finlandês, polonês, sérvio, húngaro, tcheco,
+armênio e letão) elevam o total a 32 traduções em 27 idiomas. Onze novos
+idiomas de interface (árabe, tcheco, grego, hebraico, húngaro, armênio,
+letão, holandês, polonês, sérvio, finlandês) levam a interface a 24 idiomas
+no total, com suporte da direita para a esquerda no árabe e no hebraico,
+incluindo uma correção para que o gesto de deslizar capítulos siga o
+sentido de leitura. A Bíblia letã de Glück recebeu 12 de seus 13 livros
+apócrifos, e a Bíblia eslava eclesiástica de Isabel seus dois livros que
+faltavam; também foram restaurados 137 títulos de salmos perdidos na
+tradução tâmil.
+
+**IT:** Undici nuove traduzioni (olandese, arabo, inglese — Young's Literal
+Translation, greco moderno, finlandese, polacco, serbo, ungherese, ceco,
+armeno e lettone) portano il totale a 32 traduzioni in 27 lingue. Undici
+nuove lingue dell'interfaccia (arabo, ceco, greco, ebraico, ungherese,
+armeno, lettone, olandese, polacco, serbo, finlandese) portano l'interfaccia
+a 24 lingue totali, con supporto da destra a sinistra per arabo ed ebraico,
+inclusa una correzione per far seguire allo scorrimento tra i capitoli il
+verso di lettura. La Bibbia lettone di Glück ha ricevuto 12 dei suoi 13
+libri apocrifi, e la Bibbia slava ecclesiastica di Elisabetta i suoi due
+libri mancanti; sono stati inoltre ripristinati 137 titoli dei salmi perduti
+nella traduzione tamil.
+
+**SV:** Elva nya översättningar (nederländska, arabiska, engelska —
+Young's Literal Translation, nygrekiska, finska, polska, serbiska,
+ungerska, tjeckiska, armeniska och lettiska) höjer totalen till 32
+översättningar på 27 språk. Elva nya gränssnittsspråk (arabiska, tjeckiska,
+grekiska, hebreiska, ungerska, armeniska, lettiska, nederländska, polska,
+serbiska, finska) tar gränssnittet till 24 språk totalt, med stöd för
+höger-till-vänster-skrift för arabiska och hebreiska, inklusive en fix så
+att kapitelbyte med svep följer läsriktningen. Den lettiska Glück-bibeln
+fick 12 av sina 13 apokryfiska böcker, och den kyrkoslaviska
+Elisabetbibeln sina två saknade böcker; dessutom återställdes 137 förlorade
+psalmrubriker i den tamilska översättningen.
+
+**DA:** Elleve nye oversættelser (hollandsk, arabisk, engelsk — Young's
+Literal Translation, nygræsk, finsk, polsk, serbisk, ungarsk, tjekkisk,
+armensk og lettisk) bringer totalen op på 32 oversættelser på 27 sprog.
+Elleve nye sprog i brugerfladen (arabisk, tjekkisk, græsk, hebraisk,
+ungarsk, armensk, lettisk, hollandsk, polsk, serbisk, finsk) bringer
+brugerfladen op på i alt 24 sprog, med understøttelse af
+højre-til-venstre-skrift for arabisk og hebraisk, inklusive en rettelse så
+kapitelswipe følger læseretningen. Den lettiske Glück-bibel fik 12 af sine
+13 apokryfe bøger, og den kirkeslaviske Elisabeth-bibel sine to manglende
+bøger; desuden blev 137 mistede salmeoverskrifter genskabt i den tamilske
+oversættelse.
+
+**JA:** 新しい翻訳を11件追加（オランダ語のスターテン訳、アラビア語のヴァ
+ンダイク訳、英語のYoung's Literal Translation、現代ギリシャ語のヴァンヴァ
+ス訳、フィンランド語の1776年訳、ポーランド語のグダニスク聖書、セルビア語
+のカラジッチ/ダニチッチ訳、ハンガリー語のカーロリ訳、チェコ語のクラリツ
+ェ聖書、1853年の西アルメニア語新約聖書、ラトビア語のグリュック聖書）—
+27言語・32の翻訳になりました。インターフェース言語も11言語追加（アラビ
+ア語、チェコ語、ギリシャ語、ヘブライ語、ハンガリー語、アルメニア語、ラト
+ビア語、オランダ語、ポーランド語、セルビア語、フィンランド語）され、合計
+24言語に。アラビア語・ヘブライ語では右から左に読む表示に対応し、章送り
+のスワイプ操作も読む方向に合わせて修正しました。ラトビア語グリュック聖書
+に外典13巻中12巻を追加、教会スラヴ語エリザベス聖書には欠けていた2巻（エ
+ズラ記第二・マカバイ記第三）を追加。タミル語訳では失われていた詩篇の表題
+137件も復元しました。
+
+**ZH-CN:** 新增11部译本（荷兰语司泰顿译本、阿拉伯语范戴克译本、英语
+Young's Literal Translation、现代希腊语瓦姆瓦斯译本、芬兰语1776年圣经、
+波兰语格但斯克圣经、塞尔维亚语卡拉季奇/达尼契奇译本、匈牙利语卡罗利译
+本、捷克语克拉利采圣经、1853年西亚美尼亚语新约、拉脱维亚语格吕克圣经）
+——现有27种语言、32部译本。界面新增11种语言（阿拉伯语、捷克语、希腊语、
+希伯来语、匈牙利语、亚美尼亚语、拉脱维亚语、荷兰语、波兰语、塞尔维亚语、
+芬兰语），界面语言总数达到24种；阿拉伯语和希伯来语现已支持从右到左显示，
+章节滑动手势也已按阅读方向修正。拉脱维亚语格吕克圣经新增13卷次经中的12
+卷，教会斯拉夫语伊丽莎白圣经补全了此前缺失的两卷（以斯拉记下、马加比三
+书）；泰米尔语译本中丢失的137个诗篇标题也已恢复。
+
+**ZH-TW:** 新增11部譯本（荷蘭語司泰頓譯本、阿拉伯語范戴克譯本、英語
+Young's Literal Translation、現代希臘語瓦姆瓦斯譯本、芬蘭語1776年聖經、
+波蘭語格但斯克聖經、塞爾維亞語卡拉季奇/達尼契奇譯本、匈牙利語卡羅利譯
+本、捷克語克拉利采聖經、1853年西亞美尼亞語新約、拉脫維亞語格呂克聖經）
+——現有27種語言、32部譯本。介面新增11種語言（阿拉伯語、捷克語、希臘語、
+希伯來語、匈牙利語、亞美尼亞語、拉脫維亞語、荷蘭語、波蘭語、塞爾維亞語、
+芬蘭語），介面語言總數達到24種；阿拉伯語和希伯來語現已支援從右到左顯示，
+章節滑動手勢也已依閱讀方向修正。拉脫維亞語格呂克聖經新增13卷次經中的12
+卷，教會斯拉夫語伊麗莎白聖經補全了先前缺失的兩卷（以斯拉記下、馬加比三
+書）；泰米爾語譯本中遺失的137個詩篇標題也已恢復。
+
+**TA:** 11 புதிய மொழிபெயர்ப்புகள் (டச்சு Statenvertaling, அரபு Van Dyck,
+ஆங்கிலம் Young's Literal Translation, நவீன கிரேக்கம் Vamvas, பின்னிஷ்
+Biblia 1776, போலிஷ் Gdańska, செர்பியன் Karadžić/Daničić, ஹங்கேரியன்
+Károli, செக் Kralická, 1853 மேற்கு அர்மேனிய புதிய ஏற்பாடு, லாட்வியன் Glück)
+சேர்க்கப்பட்டு — இப்போது 27 மொழிகளில் 32 மொழிபெயர்ப்புகள். இடைமுகத்திலும்
+11 புதிய மொழிகள் (அரபு, செக், கிரேக்கம், ஹீப்ரு, ஹங்கேரியன், அர்மேனியன்,
+லாட்வியன், டச்சு, போலிஷ், செர்பியன், பின்னிஷ்) சேர்க்கப்பட்டு மொத்தம் 24
+இடைமுகி மொழிகள் ஆகின்றன; அரபு மற்றும் ஹீப்ருவிற்கு வலமிருந்து இடமாகப்
+படிக்கும் திசைக்கு ஏற்ப காட்சியும் அத்தியாய ஸ்வைப் திசையும்
+திருத்தப்பட்டன. தமிழ் மொழிபெயர்ப்பில் மாற்றியமைப்பின்போது இழந்த 137
+சங்கீத தலைப்புகள் மீட்டெடுக்கப்பட்டன; லாட்வியன் க்ளூக் பைபிளுக்கு
+அபோக்ரிபாவின் 13 புத்தகங்களில் 12 சேர்க்கப்பட்டன, மேலும் சர்ச் ஸ்லாவோனிக்
+எலிசபெத் பைபிளில் விடுபட்டிருந்த இரு புத்தகங்களும் (2 எஸ்றா, 3 மக்கபேயர்)
+சேர்க்கப்பட்டன.
+
+## 1.4.3 release notes (paste per store; 1.4.2 was never uploaded — these notes fold its changes in)
+
+**RU:** Два новых перевода: полная тамильская Библия (IRV 2019) и
+латинская Вульгата (Климентина, 1592) с второканоническими книгами —
+22 перевода на 17 языках. Подстрочник заговорил по-русски:
+грамматический разбор каждого греческого и еврейского слова — на
+языке приложения. Заметки и выделения остаются на своём стихе при
+смене перевода (старые пометки в Псалтири могли сместиться —
+выделите заново). Интерфейс на тамильском.
+
+**EN:** Two new translations: the complete Tamil Bible (IRV 2019) and
+the Latin Vulgate (Clementine, 1592) with the Deuterocanon — 22
+translations in 17 languages. The interlinear now speaks your
+language: the grammar of every Greek and Hebrew word appears in the
+app language. Notes and highlights stay on the right verse when you
+switch translations. Tamil UI added.
+
+**DE:** Zwei neue Übersetzungen: die vollständige tamilische Bibel
+(IRV 2019) und die lateinische Vulgata (Clementina, 1592) mit
+Deuterokanon — 22 Übersetzungen in 17 Sprachen. Die Interlinearansicht
+spricht jetzt Deutsch: Die Grammatik jedes griechischen und
+hebräischen Wortes erscheint in der App-Sprache. Notizen und
+Markierungen bleiben beim Übersetzungswechsel am richtigen Vers.
+
+**ES:** Dos traducciones nuevas: la Biblia tamil completa (IRV 2019) y
+la Vulgata latina (Clementina, 1592) con los deuterocanónicos — 22
+traducciones en 17 idiomas. La interlineal ahora habla español: la
+gramática de cada palabra griega y hebrea se muestra en el idioma de
+la aplicación. Las notas y los resaltados permanecen en el versículo
+correcto al cambiar de traducción.
+
+**FR:** Deux nouvelles traductions : la Bible tamoule complète (IRV
+2019) et la Vulgate latine (Clémentine, 1592) avec les
+deutérocanoniques — 22 traductions en 17 langues. L'interlinéaire
+parle désormais français : la grammaire de chaque mot grec et hébreu
+s'affiche dans la langue de l'application. Les notes et surlignages
+restent sur le bon verset lors d'un changement de traduction.
+
+**PT:** Duas novas traduções: a Bíblia tâmil completa (IRV 2019) e a
+Vulgata latina (Clementina, 1592) com os deuterocanônicos — 22
+traduções em 17 idiomas. A interlinear agora fala português: a
+gramática de cada palavra grega e hebraica aparece no idioma do
+aplicativo. As notas e os destaques permanecem no versículo certo ao
+trocar de tradução.
+
+**IT:** Due nuove traduzioni: la Bibbia tamil completa (IRV 2019) e la
+Vulgata latina (Clementina, 1592) con i deuterocanonici — 22
+traduzioni in 17 lingue. L'interlineare ora parla italiano: la
+grammatica di ogni parola greca ed ebraica appare nella lingua
+dell'app. Note ed evidenziazioni restano sul versetto giusto quando si
+cambia traduzione.
+
+**SV:** Två nya översättningar: hela tamilska Bibeln (IRV 2019) och
+latinska Vulgata (Clementina, 1592) med apokryferna — 22
+översättningar på 17 språk. Interlinjären talar nu svenska:
+grammatiken för varje grekiskt och hebreiskt ord visas på appens
+språk. Anteckningar och markeringar stannar på rätt vers när du byter
+översättning.
+
+**DA:** To nye oversættelser: hele den tamilske Bibel (IRV 2019) og
+den latinske Vulgata (Clementina, 1592) med apokryferne — 22
+oversættelser på 17 sprog. Interlineæren taler nu dansk: grammatikken
+for hvert græsk og hebraisk ord vises på appens sprog. Noter og
+fremhævninger bliver på det rigtige vers, når du skifter oversættelse.
+
+**JA:** 新しい翻訳を2つ追加：タミル語聖書全巻（IRV 2019）と第二正典付き
+ラテン語ウルガタ（クレメンティナ、1592年）— 17言語・22の翻訳に。イン
+ターリニアが日本語に対応：ギリシャ語・ヘブライ語の各単語の文法解析が
+アプリの言語で表示されます。翻訳を切り替えても、メモとハイライトが正
+しい節に残ります。
+
+**ZH-CN:** 新增两部译本：泰米尔语圣经全书（IRV 2019）和含次经的拉丁语
+武加大译本（克莱门汀，1592年）——现有17种语言、22部译本。逐字对照现在
+说中文：每个希腊文和希伯来文单词的语法分析以应用语言显示。切换译本时，
+笔记和高亮停留在正确的经节上。
+
+**ZH-TW:** 新增兩部譯本：泰米爾語聖經全書（IRV 2019）和含次經的拉丁語
+武加大譯本（克萊門汀，1592年）——現有17種語言、22部譯本。逐字對照現在
+說中文：每個希臘文和希伯來文單詞的語法分析以應用程式語言顯示。切換譯
+本時，筆記和螢光標記停留在正確的經節上。
+
+**TA:** முழுத் தமிழ் வேதாகமம் (IRV 2019) இப்போது ஹெக்ஸாப்லாவில் —
+தமிழ் இடைமுகத்துடன்! மேலும் லத்தீன் வுல்காத்தா (1592) — 17 மொழிகளில்
+22 மொழிபெயர்ப்புகள். கிரேக்க/எபிரெய வார்த்தைகளின் இலக்கண விளக்கம்
+தமிழிலேயே. மொழிபெயர்ப்பை மாற்றினாலும் குறிப்புகளும் வண்ணக்
+குறியீடுகளும் சரியான வசனத்திலேயே இருக்கும்.
+
+## 1.4.2 release notes (paste per store; Play has all 10 listing languages — use the matching line)
+
+**RU:** Подстрочник заговорил по-русски: грамматический разбор каждого
+греческого и еврейского слова теперь на языке приложения. Заметки и
+выделения остаются на своём стихе при смене перевода (старые пометки
+в Псалтири могли сместиться на стих — просто выделите заново).
+Закладки в списке упорядочены точно по тексту.
+
+**EN:** The interlinear now speaks your language: the grammar of every
+Greek and Hebrew word appears in the app language. Notes and highlights
+now stay on the right verse when you switch translations. Bookmarks
+list in true verse order.
+
+**DE:** Die Interlinearansicht spricht jetzt Deutsch: Die Grammatik
+jedes griechischen und hebräischen Wortes erscheint in der App-Sprache.
+Notizen und Markierungen bleiben beim Übersetzungswechsel jetzt am
+richtigen Vers. Lesezeichen erscheinen in echter Versreihenfolge.
+
+**ES:** La interlineal ahora habla español: la gramática de cada
+palabra griega y hebrea se muestra en el idioma de la aplicación. Las
+notas y los resaltados ahora permanecen en el versículo correcto al
+cambiar de traducción. Los marcadores se ordenan por su lugar real.
+
+**FR:** L'interlinéaire parle désormais français : la grammaire de
+chaque mot grec et hébreu s'affiche dans la langue de l'application.
+Les notes et les surlignages restent désormais sur le bon verset lors
+d'un changement de traduction. Les signets suivent l'ordre réel des
+versets.
+
+**PT:** A interlinear agora fala português: a gramática de cada palavra
+grega e hebraica aparece no idioma do aplicativo. As notas e os
+destaques agora permanecem no versículo certo ao trocar de tradução.
+Os marcadores seguem a ordem real dos versículos.
+
+**IT:** L'interlineare ora parla italiano: la grammatica di ogni parola
+greca ed ebraica appare nella lingua dell'app. Note ed evidenziazioni
+ora restano sul versetto giusto quando si cambia traduzione. I
+segnalibri seguono l'ordine reale dei versetti.
+
+**SV:** Interlinjären talar nu svenska: grammatiken för varje grekiskt
+och hebreiskt ord visas på appens språk. Anteckningar och markeringar
+stannar nu på rätt vers när du byter översättning. Bokmärken listas i
+äkta versordning.
+
+**DA:** Interlineæren taler nu dansk: grammatikken for hvert græsk og
+hebraisk ord vises på appens sprog. Noter og fremhævninger bliver nu
+på det rigtige vers, når du skifter oversættelse. Bogmærker vises i
+ægte versrækkefølge.
+
+**JA:** インターリニアが日本語に対応：ギリシャ語・ヘブライ語の各単語の
+文法解析がアプリの言語で表示されます。翻訳を切り替えても、メモとハイ
+ライトが正しい節に残るようになりました。しおりは正確な節順に並びます。
+
+**ZH-CN:** 逐字对照现在说中文：每个希腊文和希伯来文单词的语法分析以
+应用语言显示。切换译本时，笔记和高亮现在会停留在正确的经节上。书签
+按真实经节顺序排列。
+
+**ZH-TW:** 逐字對照現在說中文：每個希臘文和希伯來文單詞的語法分析以
+應用程式語言顯示。切換譯本時，筆記和螢光標記現在會停留在正確的經節
+上。書籤按真實經節順序排列。
+
+## 1.4.1 release notes (paste per store)
+
+**RU:** Новое: санскритский Новый Завет 1851 года (20-й перевод);
+интерфейс на 12 языках (добавлены pt/it/sv/da/ja/zh); восстановлены
+пропущенные стихи в KJV (Мф 2:16 и др.); исправлены шведский и
+датский тексты; завершён Тиндейл (33 книги); точное постишное
+сопоставление переводов в параллельном режиме; экран приветствия
+открывает Евангелие от Иоанна; исправления ошибок.
+
+**EN:** New: the Sanskrit New Testament of 1851 (20th translation);
+UI in 12 languages (pt/it/sv/da/ja/zh added); missing KJV verses
+restored (Mt 2:16 et al.); Swedish and Danish texts repaired;
+Tyndale completed (33 books); precise verse-by-verse alignment in
+split view; welcome screen opens the Gospel of John; bug fixes.
+
+---

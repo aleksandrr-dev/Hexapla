@@ -24,9 +24,20 @@ NARRATION = Path("C:/Projects/Hexapla-releases/narration")
 ASSETS = Path(__file__).parent.parent / "app" / "src" / "main" / "assets"
 OUT = ASSETS / "audio_index_gen.json"
 
-# Each generated set: (narration dir id, bible asset, archive.org item id).
+# Each generated set. `tid` = the app translation id (the index is keyed by
+# it; ReadingService looks up AudioRepo.generated(translationId)); `dir` = the
+# narration output folder (may differ from tid); `partial` = index whatever
+# chapters exist rather than requiring the full 1189 (for a Bible still
+# rendering — the missing books fall back to TTS until a later index refresh).
 SETS = [
-    ("wbt", "en_webster.json", "hexapla-audio-webster-1833"),
+    {"tid": "wbt", "dir": "wbt", "asset": "en_webster.json",
+     "item": "hexapla-audio-webster-1833", "partial": False},
+    # Swedish Karl XII 1703: narration folder 'sv', app id 'kxii'. PARTIAL —
+    # Genesis, Exodus, Psalms and the NT render first (for the friend's
+    # deadline), the rest of the OT fills in later. Rebuild this index (and
+    # re-upload) after each batch completes.
+    {"tid": "kxii", "dir": "sv", "asset": "sv_karlxii.json",
+     "item": "hexapla-audio-karlxii-1703", "partial": True},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 
@@ -41,10 +52,12 @@ def bible_chapter_counts(asset_name):
     return counts
 
 
-def build_set(set_id, asset_name, item_id, errors):
-    src = NARRATION / set_id
+def build_set(s, errors):
+    tid, ndir, asset_name = s["tid"], s["dir"], s["asset"]
+    item_id, partial = s["item"], s["partial"]
+    src = NARRATION / ndir
     if not src.is_dir():
-        errors.append(f"{set_id}: no narration dir at {src}")
+        errors.append(f"{tid}: no narration dir at {src}")
         return None
     counts = bible_chapter_counts(asset_name)
     base = f"{ARCHIVE_BASE}/{item_id}"
@@ -56,23 +69,31 @@ def build_set(set_id, asset_name, item_id, errors):
             ogg = src / str(bi) / f"{ci}.ogg"
             sidecar = src / str(bi) / f"{ci}.json"
             if not ogg.exists():
-                errors.append(f"{set_id}: missing audio {bi}/{ci}.ogg")
+                if not partial:
+                    errors.append(f"{tid}: missing audio {bi}/{ci}.ogg")
                 continue
-            if not sidecar.exists():
-                errors.append(f"{set_id}: missing sidecar {bi}/{ci}.json")
+            offsets = []
+            if sidecar.exists():
+                offsets = json.loads(sidecar.read_text(encoding="utf-8")).get("offsets", [])
+            elif not partial:
+                errors.append(f"{tid}: missing sidecar {bi}/{ci}.json")
                 continue
-            offsets = json.loads(sidecar.read_text(encoding="utf-8")).get("offsets", [])
             chapters[str(ci)] = {"f": f"{bi}/{ci}.ogg", "o": offsets}
             total += 1
         if chapters:
             entry[str(bi)] = {"base": base, "chapters": chapters}
-    # Assertions: every chapter of the grid present, book count matches.
     expected = sum(counts)
-    if total != expected:
-        errors.append(f"{set_id}: {total} chapters built, grid expects {expected}")
-    if len(entry) != len(counts):
-        errors.append(f"{set_id}: {len(entry)} books built, grid has {len(counts)}")
-    print(f"{set_id}: {total}/{expected} chapters across {len(entry)}/{len(counts)} books")
+    if not partial:
+        # Complete sets must cover the whole grid — catches a broken upload.
+        if total != expected:
+            errors.append(f"{tid}: {total} chapters built, grid expects {expected}")
+        if len(entry) != len(counts):
+            errors.append(f"{tid}: {len(entry)} books built, grid has {len(counts)}")
+    tag = " (partial)" if partial else ""
+    print(f"{tid}: {total}/{expected} chapters across "
+          f"{len(entry)}/{len(counts)} books{tag}")
+    if partial and entry:
+        print(f"       books present: {sorted(int(k) for k in entry)}")
     return entry
 
 
@@ -83,10 +104,10 @@ def main():
 
     errors = []
     out = {}
-    for set_id, asset, item in SETS:
-        e = build_set(set_id, asset, item, errors)
-        if e is not None:
-            out[set_id] = e
+    for s in SETS:
+        e = build_set(s, errors)
+        if e:
+            out[s["tid"]] = e
 
     if errors:
         print("\nFAILED:")

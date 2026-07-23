@@ -35,7 +35,7 @@ FONTS = {
     "el": ["segoeui.ttf"],
     "hy": ["sylfaen.ttf", "segoeui.ttf"],
 }
-LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl", "pl", "sr"}
+LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl", "pl", "sr", "be"}
 # Scripts PIL cannot shape (Indic reordering, Arabic/Hebrew RTL+shaping) ->
 # WPF family names (render_text.ps1).
 COMPLEX = {"ta": "Nirmala UI", "ar": "Segoe UI", "he": "Segoe UI"}
@@ -71,6 +71,9 @@ TAGLINES = {
     # Best-effort classical-orthography Armenian, consistent with the
     # already-flagged listing text — same pending native review applies here.
     "hy": ("Եբրայերէն · Յունարէն · 1853 · KJV", "հին տեքստեր՝ կողք կողքի"),
+    # Belarusian (тарашкевіца), best-effort — same pending native review as
+    # he/hy and the be listing text (get an orthography check before final).
+    "be": ("Гэбрайская · Грэцкая · Дзекуць-Малей · KJV", "старажытныя тэксты побач"),
 }
 
 

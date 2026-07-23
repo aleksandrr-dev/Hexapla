@@ -50,6 +50,9 @@ SHOTS = [
     ("pl", "pl_gdanska.json", 42, "Jan 1", ["segoeui.ttf"], False),
     ("sr", "sr_karadzic.json", 42, "Jovan 1", ["segoeui.ttf"], False),
     ("ar", "ar_vandyck.json", 42, "إنجيل يوحنا 1", ["segoeui.ttf"], False),
+    # Belarusian: verse text is the real Dzekuć-Malej translation from the
+    # asset (accurate); only the short title is authored (тарашкевіца).
+    ("be", "be_dzekuc.json", 42, "Паводле Яна 1", ["segoeui.ttf"], False),
     # he_wlc.json has no New Testament — John 1 doesn't exist there, so this
     # shot uses Genesis 1 (book index 0) instead.
     ("he", "he_wlc.json", 0, "בראשית א", ["segoeui.ttf"], False),

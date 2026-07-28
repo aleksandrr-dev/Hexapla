@@ -71,12 +71,25 @@ fun PlansScreen(settings: AppSettings, openReader: () -> Unit) {
         mutableIntStateOf(plans.indexOfFirst { it.id == settings.lastPlanId }.coerceAtLeast(0))
     }
     val plan = plans[tab]
-    val progress by Store.planProgress(context, plan.id).collectAsState(initial = emptySet())
+    // null until the completed-days set actually loads from DataStore, so the
+    // auto-scroll below waits for real progress instead of firing on the empty
+    // initial value — that empty value parked every plan at Day 1 even when days
+    // were already checked off.
+    val progressLoaded by Store.planProgress(context, plan.id).collectAsState(initial = null)
+    val progress = progressLoaded ?: emptySet()
     val nextDay = remember(progress, plan) {
         plan.days.firstOrNull { !progress.contains(it.day) }?.day ?: plan.days.size
     }
     val listState = rememberLazyListState()
-    LaunchedEffect(tab, loaded) { listState.scrollToItem((nextDay - 1).coerceAtLeast(0)) }
+    // Jump to the current day once per plan-open, after progress has loaded — not
+    // on every checkmark toggle (that would yank the list as you tick days).
+    var scrolledTab by remember { mutableIntStateOf(-1) }
+    LaunchedEffect(tab, progressLoaded) {
+        if (progressLoaded != null && scrolledTab != tab) {
+            listState.scrollToItem((nextDay - 1).coerceAtLeast(0))
+            scrolledTab = tab
+        }
+    }
 
     Column(Modifier.fillMaxSize()) {
         Row(

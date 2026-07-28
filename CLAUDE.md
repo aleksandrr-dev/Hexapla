@@ -2,7 +2,7 @@
 
 Offline parallel Bible app for Android. Kotlin + Jetpack Compose, single
 module, no backend, no analytics. Owner: aleksandrr-dev (GitHub)
-([address removed]; GitHub aleksandrr-dev). Mission: evangelism —
+(GitHub aleksandrr-dev). Mission: evangelism —
 maximize reach, keep everything free, nothing locked, collect no data.
 
 ## Build
@@ -91,38 +91,11 @@ maximize reach, keep everything free, nothing locked, collect no data.
   prior wording where stable); see the "Release-notes format — STANDARD"
   section at the top of STORE_LISTING.md. be/hy/iw/ta = best-effort, native
   review pending.
-- **Google Play (2026-07-08)**: closed track now has 1.2.0 (code 5),
-  uploaded same day as 1.1.2 (code 4); the 14-day tester clock
-  (started ~2026-07-07) keeps running across uploads to the same track.
-- **GitHub release v1.2.0** published (releases/latest serves the
-  1.2.0 RuStore-flavor APK for the landing page's direct-APK button).
-- **1.3.0 (code 6)** (era headings + 1828 dictionary): submitted to
-  RuStore + GitHub release v1.3.0 published 2026-07-09. Play: 1.3.0
-  uploaded to the closed track and **submitted for review 2026-07-10**
-  (status "In review"). Removing the auto-carried previous bundle
-  (code 2) from the release's "Previous release → Included" section was
-  needed — otherwise Play errors "APK completely shadowed by higher
-  version code". Release notes were refreshed (were still the "First
-  release / 12 translations" text).
 - **Play production gate — tester count is the blocker, not the clock:**
   as of 2026-07-10 only **8 of 12 required testers are opted in**. The
   14-day countdown only advances on days with ≥12 opted-in testers, so
   it is effectively **not running** until 4 more testers join (via the
   closed-test opt-in link, each on their own Google account).
-- **Play store listing refreshed + submitted for review 2026-07-10:**
-  all 5 languages — app name → the number-free «Parallel Bible» titles
-  (Hexapla — Parallel Bible / Гексапла — параллельная Библия / Biblia
-  paralela / Parallelbibel / Bible parallèle), plus short + full
-  descriptions updated to the current "13 translations" copy from
-  `STORE_LISTING.md`. Was previously the stale "6 languages / 12
-  translations" text (Play listing had never been refreshed, only the
-  repo file). Edit at Grow users → Store presence → Store listings →
-  Default store listing → Edit.
-- **1.4.0 (code 7) built + staged 2026-07-11, re-cut same day to add
-  the Nordics** (interlinear; +Almeida, Diodati, Meiji, CUV×2 scripts,
-  Karl XII 1703, Dansk 1819; −BBE; Play empty-Support fix):
-  `C:\Projects\Hexapla-1.4.0-rustore.apk` / `-play.aab`. 18 translations
-  / 14 languages; STORE_LISTING.md fully refreshed incl. interlinear line.
 - **Interlinear localization (owner-approved 2026-07-12)**:
   (a) ~~1.4.2 item~~ DONE 2026-07-12, in tree for 1.4.2 (code 9):
   grammar labels in Interlinear.kt decoders moved to string
@@ -146,16 +119,16 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Strong.zip, gloss-only, complete H1-H8674 + Greek, quality ideal
   for tap-a-word, 0.46 MB deflated) — NO license anywhere; MyBible's
   module credits it «с разрешения [имя удалено]» (personal permission).
-  EMAIL the BibleQuote maintainer / BibleQuote (biblequote.org contact form,
-  jesuschrist.ru; GitHub maintainer the GitHub maintainer) — draft at
+  EMAIL the BibleQuote maintainers (biblequote.org contact form,
+  jesuschrist.ru) — draft at
   store-assets/biblequote_email_draft.txt: ask (1) permission for
   the gloss-only files in a free attributed app, (2) PROVENANCE —
   is it the 1998 Bob Jones University symphony key? (residual-rights
   question). SENT by owner 2026-07-12 — awaiting reply.
   ⚠ READ THE REPLY WITH THIS IN MIND (audit 2026-07-15): one
-  (low-quality, UNVERIFIED) Russian source claims «[имя удалено] не
-  является владельцем прав на публикацию словаря Стронга» — if Ha is
-  NOT the rights holder, his permission does not clear the rights and
+  (low-quality, UNVERIFIED) Russian source claims «[the maintainer] не
+  является владельцем прав на публикацию словаря Стронга» — if that maintainer is
+  NOT the rights holder, their permission does not clear the rights and
   a "yes" is not legally load-bearing. Question (2) PROVENANCE
   therefore matters MORE than question (1) permission. Audit
   confirmed BJU's 1998 «Библейская симфония с ключом к еврейским и
@@ -257,7 +230,7 @@ maximize reach, keep everything free, nothing locked, collect no data.
   declaration trusted (owner decision 2026-07-16), provenance email
   drafted at store-assets/ebible_arabic_email_draft.txt for the owner
   to send. Two Door43 orgs republish the byte-identical text CC BY-SA.
-  ✉ ANSWERED 2026-07-20 by the eBible maintainer (eBible) — honest reading:
+  ✉ ANSWERED 2026-07-20 by the eBible maintainer — honest reading:
   the provenance question is STILL OPEN, not resolved. He believes he
   got arb-vd from the **Digital Bible Society**, treated the text as PD
   by age, "didn't think to inquire about vocalizations separately", and
@@ -360,7 +333,7 @@ maximize reach, keep everything free, nothing locked, collect no data.
        38:39-40:5 etc., every boundary text-verified). Book names from
        \toc2 («1. Mojsijeva», «Psalmi»). defaultPrimaryId sr/bs/hr->srb.
        UPGRADE PATHS documented: ★ srp1868 (Cyrillic ekavian) is
-       **UNBLOCKED 2026-07-20** — the eBible maintainer (eBible) replied that
+       **UNBLOCKED 2026-07-20** — the eBible maintainer replied that
        both Serbian entries are now Redistributable=True, PD by age, and
        I VERIFIED it in the live catalog myself (ebible.org/Scriptures/
        translations.csv: srp1868 «Свето писмо или Библија Превод
@@ -420,7 +393,7 @@ maximize reach, keep everything free, nothing locked, collect no data.
   digitization (CrossWire BulCarigradNT, NT-only) is "Permission granted
   to CrossWire" by name; permission email drafted (BG+EN) at
   store-assets/tsarigrad_email_draft.txt (contact from the .conf:
-  the module contact). BulVeren claims 1871 but FAILS 3/7 (CT pattern) +
+  the module's named contact). BulVeren claims 1871 but FAILS 3/7 (CT pattern) +
   NC; bibliata/beblia "Tsarigrad" is actively © despite find.bible
   calling it PD (aggregator-mislabel trap — remember for future
   candidates). No 1871 OT digitization exists anywhere.
@@ -491,7 +464,7 @@ maximize reach, keep everything free, nothing locked, collect no data.
       God" conflate; LXX psalter, pre-1868 orthography incl. archaic
       letters, 3 Macc in canon) — permission-required.
       ⚠ ONE EMAIL COVERS BOTH: store-assets/titus_email_draft.txt asks
-      TITUS ([contact address removed]) for the Zohrab AND
+      TITUS (Uni Frankfurt; contact in the local titus_email_draft.txt) for the Zohrab AND
       the Bakar. eBible/CrossWire/gratis/scrollmapper have ZERO
       Armenian-classical or Georgian entries (verified).
     Lithuanian — BLOCKED (license): the 1735 Bible has NO machine-
@@ -536,16 +509,115 @@ maximize reach, keep everything free, nothing locked, collect no data.
   40:14, Lev 27:18, Num 7:22, Gal 5:21). Wycliffe versemap curated
   same day (44 runs; versemap.json now 1496 runs, zero identity
   fallbacks). Tyndale label → "1525/1531".
-  Karl XII 1703 Apokryferna — confirmed live at kxii.se (Judith,
-  Wisdom, Tobit, Sirach, Baruch, 1-2 Macc, Esther/Daniel additions;
-  per-chapter pages, no bulk download; Litteraturbanken-based, text PD
-  but transcription license unstated — permission email
-  (store-assets/kxii_email_draft.txt, Swedish + English) SENT by
-  owner (confirmed 2026-07-13) — awaiting reply; WHEN THEY REPLY YES: build_meiji_nt.py-style
-  scrape into the sv asset's apocrypha slots (indexes 66+, alongside
-  the 1873 BFBS canon), credit kxii.se in sources_text ×12 locales,
-  deity-litmus not applicable to apocrypha but spot-check text
-  quality vs the Litteraturbanken facsimile).
+  ★★ PROJECT QUEUE (owner, 2026-07-27, supersedes earlier orderings):
+      1. Swedish audio ships  2. Glen OT campaign finishes
+      3. **ICELANDIC — the whole 66-book canon (Þorláksbiblía 1644)**
+      4. Apocrypha: Karl XII first, then Luther 1545.
+  ⚠ SCALE CHECK for (3), so nobody starts it unaware: the Icelandic canon is
+  **31,102 verses** — roughly TWICE the ~15,100 verses left in Glen, and the
+  largest single campaign this project would have attempted (Martyn NT was
+  7,957). Estimate ~70-80 chunks. It is now viable and VERIFIABLE (see the
+  Þorláksbiblía entry under the Icelandic notes), which it was not before —
+  but it is not a small addition.
+  ⚠ OVERLAP TO RESOLVE BEFORE STARTING: the volunteer is transcribing the
+  1584 Guðbrandsbiblía while this would transcribe the 1644 Þorláksbiblía —
+  the same text tradition, revised. Two Icelandic Bibles is a legitimate
+  outcome (the zh Hans/Hant and Serbian two-script precedents), but decide
+  deliberately rather than by accident, and tell him what we are doing.
+  ★ Karl XII 1703 Apokryferna — **UNBLOCKED, APPROVED, QUEUED AT (4).**
+  OWNER DECISION 2026-07-27, revised the same day: originally "next after
+  Glen", now **behind the Icelandic canon** — Swedish ships, Glen finishes,
+  Icelandic, THEN apocrypha.
+  LICENSING IS SETTLED and does NOT depend on kxii.se: the scan-hunt
+  (research/scanhunt_karlxii_apocrypha.md) found Litteraturbanken id
+  lb2431561, a facsimile of the SAME 1703 print, declared "fritt från
+  kända upphovsrättsliga begränsningar" with the API reporting license
+  "cc-0"; attribution requested to Göteborgs universitetsbibliotek +
+  Litteraturbanken.se (goes in sources_text as a promised credit — the
+  Tweedale/Ponomar class). ⚠ The kxii.se permission email is MOOT — it
+  BOUNCED TWICE and is not needed; do NOT resend it. Litteraturbanken is
+  the STRONGER position anyway, because kxii.se's own transcription
+  license was merely unstated. kxii.se remains useful for ONE thing: a
+  free independent QA diff target (via Wayback) — the only apocrypha
+  candidate on record that has one, which is part of why it outranks the
+  Icelandic and Luther routes.
+  SHAPE: apocrypha at pp. 636-746 WITH printed verse numbers (so the
+  per-chapter checksum discipline of the Glen campaign applies — unlike
+  the unversified Icelandic prose); Fraktur, "reads easier than the
+  Persian naskh"; ~8-20h estimated. Transcribe into the sv asset's
+  apocrypha slots (indexes 66+, alongside the 1873 BFBS canon).
+  Deity-litmus is not applicable to apocrypha; spot-check text quality
+  against the facsimile and diff against kxii.se.
+  ⚠ Karl XII's apocrypha is a 10-12 unit set (no 1/2 Esdras) — the same
+  shape as Luther's and Glück's, so expect ~12 of the app's 17 slots.
+  ★ LUTHER 1545 APOKRYPHEN — APPROVED, #2 BEHIND KARL XII (2026-07-27).
+  Full research: research/apocrypha_sweep_2026-07-27.md (incl. the
+  ORCHESTRATOR-VERIFIED ADDENDUM measured from the file itself).
+  SOURCE: the Zefania "Luther 1545 (Letzte Hand)" module, identifier
+  LUT.1545.LH — two mutually corroborating copies: SF_2012-08-14_DEUTSCH_
+  LUT_1545_LH (staged in Hexapla-releases/) and the gratis-bible/bible
+  mirror de/lut.1545.lh.xml (gratis-bible is already a trusted source
+  here — ru/rst.xml came from it). 76 books = 66 canon + Luther's 10
+  apocrypha units (Judit, Weisheit, Tobia, Sirach, Baruch, 1-2 Makkabäer,
+  xDaniel, xEster, Manasse; no 1/2 Esdras). Canon litmus PASSES on the
+  module (1 Tim 3:16 «Gott ist offenbaret im Fleisch»), same textual
+  tradition as the shipped asset.
+  ⚠ NOT the zeno.org copy — zeno is BLOCKED by its own terms (asserts
+  §§87a UrhG database right; «Übernahme … in eine andere Datenbank ist
+  nicht gestattet» restated INSIDE its Gemeinfrei clause; no-scraping;
+  non-commercial only; and its "Gemeinfrei" tag is self-described as an
+  OPINION, not a warranty). Do not re-propose zeno.
+  RIGHTS, two layers, kept separate:
+   (a) THE TEXT IS CLEAN, established from the statute, not inferred:
+       UrhG §70 protects critical/scientific editions of PD works for
+       25 years from publication, so even the Volz 1972 edition layer
+       lapsed at the end of 1997; the 1545 text is PD by age. CARVE-OUT:
+       any Volz-authored introduction/apparatus is an ordinary §64 work
+       (Volz †1978 → © to end of 2048) — TEXT ONLY, never the apparatus.
+   (b) THE TRANSCRIPTION LAYER IS AMBIGUOUS: the module's <rights> is an
+       INTENT NOTE, «Umsonst habt ihrs empfangen, umsonst gebet es auch.
+       (Matthäus 10:8)», from lutherbibel.net (transcriber initialled only; site now
+       dead). That is not a licence with terms.
+  ✅ **CLOSED BY OWNER DECISION 2026-07-27: risk accepted, explicitly
+  "same as Van Dyck."** Same documented-deviation pattern: act now,
+  respond to feedback if it ever arrives. Supporting it: the underlying
+  text rights are independently clean (a), the stated intent is
+  give-it-away-freely, and it is the same Zefania family the app already
+  ships de_luther from (so no new counterparty).
+  ⚠ For any future session: this is a RISK ACCEPTANCE, NOT a licence
+  finding. Do NOT cite this entry as proof the transcription is licensed.
+  If contact ever comes, the fallbacks are (a) luth1912ap.xml in the same
+  gratis-bible repo — explicit unhedged "Public Domain", same 10 units,
+  at the cost of being the 1912 revision (edition mismatch with our 1545
+  canon, so a real downgrade, not a free swap), (b) transcribing from a
+  PD facsimile like the Karl XII route. No further action needed unless
+  that happens.
+  ⚠⚠ CONVERTER REQUIREMENTS (both found by direct inspection — do not
+  skip):
+   1. **4,716 <NOTE> elements are embedded INSIDE <VERS> nodes**, running
+      straight on from scripture with no separator (verified at 1 Tim
+      3:16). A naive strip-tags-keep-text converter WILL inject Luther's
+      marginal notes into verse text — the exact defect class already
+      repaired in ru_synodal (escaped OSIS), la_vulgata (<Aleph>/<Sponsa>)
+      and zh_cuv (<WAHb>). Extract notes BEFORE text extraction and assert
+      zero note text remains. ⚠ The gratis-bible copy was described as
+      "clean OSIS" but the two copies were NOT diffed — do not assume the
+      mirror is note-free; run tools/audit_asset_markup.py plus an
+      explicit note-leak check on whichever copy is actually converted.
+   2. Structural fit vs the app's KJV apocrypha slots: SEVEN of ten match
+      the KJV chapter grid exactly (Judith 16, Wisdom 19, Tobit 14,
+      Sirach 51, Baruch 6, 1 Macc 16, 2 Macc 15). THREE need curation —
+      xDaniel bundles what KJV splits into Azariah/Susanna/Bel; xEster is
+      arranged differently from Additions to Esther; Manasse is versified
+      (16 vv) where the app's KJV slot is ONE unversified block. Verse-
+      total gaps in Tobit and Sirach are expected RECENSION differences —
+      do NOT "fix" them toward the KJV.
+  💡 OPPORTUNITY, scope separately so it cannot delay the apocrypha: those
+  notes are Luther's OWN Anmerkungen («Die gantze Heilige Schrifft mit den
+  Anmerkungen des Reformators»), and the app already has the mechanism to
+  surface them — the KJV's 7,859 {x: y} margin notes shown on demand under
+  "Translator's notes". Would be the first non-English translation notes
+  in the app.
   Tamil — INTEGRATED IN TREE 2026-07-13 for 1.4.3 (code 10): IRV
   Tamil 2019 (ebible.org tam2017, Bridge Connectivity Solutions,
   CC BY-SA 4.0 — same publisher/license/pipeline as Sanskrit), the
@@ -658,16 +730,16 @@ maximize reach, keep everything free, nothing locked, collect no data.
   1848); OCR scoped at 400-800 proofreading hours — NOT feasible;
   email SanskritBible.in about their OT progress instead.
   Guðbrandsbiblía 1584 (Icelandic) — PERMISSION DECLINED 2026-07-12
-  by the ICB director (framkvæmdastjóri, Icelandic Bible
+  by the framkvæmdastjóri (director) of the Icelandic Bible
   Society): they are building an authoritative digital text of BOTH
   Guðbrandsbiblía and Viðeyjarbiblía with the Digital Bible Library
-  (based on a named scholar's work); the current website
+  (based on a named scholar's academic edition); the current website
   text has known flaws ("slightly flawed", editorial issues); "we
   are not going to allow any further publication of those texts"
   until the DBL work is finalized — low priority, "not going to
   come out for a while". CLOSED — do NOT scrape biblian.is. Both
   Icelandic texts blocked. RE-ASK when the DBL edition ships
-  (check dbl.bible / re-email [contact address removed] yearly); the DBL text
+  (check dbl.bible / re-email the Icelandic Bible Society yearly — address in the local biblian_email_draft.txt); the DBL text
   would also be cleaner than what we'd have scraped. Earlier
   scoping (litmus PASS, no verse numbers in prose) remains valid
   background for that day. History:
@@ -681,11 +753,11 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Comma PRESENT, Acts 8:37 present, Lk 2:33 "hans faðir" = Luther's
   own reading (same as shipped de_luther — acceptable). TWO GATES:
   (1) transcription is "Allur réttur áskilinn" (all rights
-  reserved) — email [contact address removed], draft at
+  reserved) — email the Icelandic Bible Society (address in the draft), draft at
   store-assets/biblian_email_draft.txt; (2) PROSE HAS NO VERSE
   NUMBERS (pericope paragraphs; Mt 2 = 6 paragraphs for 23 verses;
   only Psalms/poetry are verse-per-paragraph) → 150-400+ h
-  segmentation UNLESS a named scholar's working files
+  segmentation UNLESS that scholar's working files
   carry verse structure — ASK THIS in the permission email; a yes
   collapses it to a normal converter. Plan B in same email:
   Viðeyjarbiblía 1841 (biblian.is/videy/, presumably versified,
@@ -1134,9 +1206,42 @@ must include them; owner should spot-check on-device before submitting.
   full archive path (`item_book_chapter.ogg`) because generated URLs share
   a `<ch>.ogg` tail that localFile's last-segment rule would collide on
   (the LibriVox `localFile` path is untouched). Download-fail + missing/
-  unrendered → TTS fallback. ⚠ NOT YET: verse highlighting during generated
-  narration (offsets ARE in audio_index_gen for it); audio_note string
-  still KJV-worded ×13. Both audio items live on archive.org (webster-1833
+  unrendered → TTS fallback.
+  ✅ VERSE-FOLLOWING DURING GENERATED NARRATION — DONE 2026-07-24 (in tree,
+  uncommitted, compiles; NOT yet on-device-verified or shipped). Section now
+  carries the per-verse `o` offsets (Audio.kt), and ReadingService.
+  startVerseFollow polls player.currentPosition (~250ms) → offsets → publishes
+  Playback.verse, so recorded audio highlights + auto-scrolls exactly like TTS
+  (ReaderScreen highlights when Playback.verse==i). No word-level highlight for
+  recorded audio (offsets are per-verse). ✅ EXACT seek-to-verse from offsets
+  DONE 2026-07-24: playSection takes startVerse; onPreparedListener seeks to
+  offsets[startVerse]-250ms when the section carries offsets (verse 0 → no seek,
+  chapter announcement plays), else the sectionFraction verse-count estimate.
+  Makes stop→resume land exactly on the verse for generated audio (TTS was
+  already exact). Translation-agnostic — every render that emits "o" gets it.
+  💡 FUTURE IDEA (owner interested 2026-07-24) — WORD-LEVEL following on recorded
+  narration via FORCED ALIGNMENT. TTS gets word ranges live from the engine
+  (onRangeStart); recorded audio has none. To match it: run a forced aligner
+  (WhisperX / Montreal Forced Aligner) over each rendered chapter ogg against its
+  known verse text → per-WORD ms timestamps, emit a parallel per-word array into
+  audio_index_gen.json alongside "o", and extend startVerseFollow to set
+  Playback.wordStart/wordEnd from it. NOT token-heavy — a local compute pass
+  (GPU/CPU, same class as the renders), zero LLM tokens; only cost is writing the
+  aligner script + app wiring (~audio-fix sized) plus re-processing every rendered
+  chapter once. Deferred; verse-level is the right call for now.
+  ✅ GENERATED AUDIO "REVERTS TO TTS AFTER SOME CHAPTERS" BUG — FIXED
+  2026-07-24 (owner heard it on Webster; in tree, uncommitted). Root cause:
+  on auto-advance, playSection downloads the next chapter on demand and
+  downloadTo had NO retry — one transient archive.org failure → null →
+  immediate TTS fallback (ReadingService ~L315). Fix: (a) downloadTo now
+  retries 3× with backoff (Audio.kt, helps LibriVox too); (b) new
+  ReadingService.prefetchAhead caches the next 2 generated chapters in the
+  background while the current one plays (skipped in stream-don't-save mode
+  and for LibriVox multi-chapter sections). followJob+prefetchJob cancelled
+  in releasePlayer.
+  ⚠ STILL OPEN: audio_note string is KJV-worded ×13 (reword for generated
+  translations). ⚠ gnv/Geneva is NOT in audio_index_gen.json yet (render
+  paused 373/1189, never uploaded) — only wbt has generated audio today. Both audio items live on archive.org (webster-1833
   = wbt via audio_index_gen; hexapla-audio-en = 22 KJV Kokoro gap books via
   audio_index.json as kjv_<book>_<ch>.ogg, which also cache offline). Music bed rotates
   through `assets/music/` (Kevin MacLeod CC-BY, perceptual x² volume curve).

@@ -42,7 +42,7 @@ def main():
     for idx, (plate, title) in sorted(PLATES.items()):
         url = URL.format(plate)
         req = urllib.request.Request(url, headers={
-            "User-Agent": "HexaplaArtBot/1.0 ([address removed])"
+            "User-Agent": "HexaplaArtBot/1.0 (+https://github.com/aleksandrr-dev/Hexapla)"
         })
         data = None
         for attempt in range(3):

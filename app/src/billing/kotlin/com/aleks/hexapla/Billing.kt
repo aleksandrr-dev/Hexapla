@@ -79,9 +79,11 @@ class TipManager(context: Context) : PurchasesUpdatedListener {
                 }
             )
             .build()
-        client.queryProductDetailsAsync(params) { result, details ->
+        // Play Billing 8 changed this callback: the second arg is now a
+        // QueryProductDetailsResult wrapper, not a bare List<ProductDetails>.
+        client.queryProductDetailsAsync(params) { result, queryResult ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK) {
-                products.value = details.sortedBy { d ->
+                products.value = queryResult.productDetailsList.sortedBy { d ->
                     d.oneTimePurchaseOfferDetails?.priceAmountMicros ?: 0
                 }.map { TipProduct(it) }
             }

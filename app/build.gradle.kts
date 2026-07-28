@@ -13,14 +13,14 @@ val keystoreProps = Properties().apply {
 
 android {
     namespace = "com.aleks.hexapla"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.aleks.hexapla"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 13
-        versionName = "1.6.0"
+        targetSdk = 36
+        versionCode = 14
+        versionName = "1.6.1"
     }
 
     buildFeatures {
@@ -110,6 +110,6 @@ dependencies {
 
     // Proprietary Google Play Billing — store flavors only. The foss
     // (F-Droid) variant must not link it; src/foss stubs TipManager.
-    "playImplementation"("com.android.billingclient:billing-ktx:7.1.1")
-    "rustoreImplementation"("com.android.billingclient:billing-ktx:7.1.1")
+    "playImplementation"("com.android.billingclient:billing-ktx:8.0.0")
+    "rustoreImplementation"("com.android.billingclient:billing-ktx:8.0.0")
 }

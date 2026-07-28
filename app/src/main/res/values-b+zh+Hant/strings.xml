@@ -176,7 +176,7 @@
     <string name="widget_continue">繼續閱讀：%1$s →</string>
     <string name="compare_note">選擇在經文對照中顯示哪些譯本。</string>
     <string name="audio_title">真人朗讀音訊</string>
-    <string name="audio_note">來自 LibriVox 的英語真人朗讀（公有領域），涵蓋 KJV 大部分書卷。按下播放時按分段下載音訊（數章內容，約10–30 MB），並保留供離線聆聽。沒有錄音的書卷會改用文字轉語音，且真人朗讀時無法逐節標示經文。</string>
+    <string name="audio_note">各章可以朗讀——有錄製朗讀時使用錄音，否則使用裝置的語音合成。音訊會儲存供離線收聽，亦可開啟下方的串流播放以節省空間。</string>
     <string name="audio_downloading">正在下載音訊… %1$d%%</string>
     <string name="audio_narrated">真人朗讀</string>
     <string name="audio_storage">已下載音訊：%1$d MB</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">每天兩篇詩篇，讀完全卷</string>
     <string name="gospel_share">分享福音 →</string>
     <string name="search_all">搜尋所有譯本</string>
-    <string name="welcome_tagline">17種語言的聖經——離線、免費、完整。</string>
+    <string name="welcome_tagline">29種語言的聖經——離線、免費、完整。</string>
     <string name="welcome_gospel">初次接觸聖經？從這裡開始</string>
     <string name="welcome_plan">培養每日讀經習慣</string>
     <string name="welcome_read">直接開始閱讀</string>

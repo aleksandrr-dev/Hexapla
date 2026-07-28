@@ -2,6 +2,7 @@ package com.aleks.hexapla
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -29,7 +30,10 @@ object AudioRepo {
         val first: Int,
         val last: Int,
         val url: String,
-        val generated: Boolean = false
+        val generated: Boolean = false,
+        /** Per-verse start offsets (ms) for generated audio, drives
+         *  verse-following; null for LibriVox and older indexes. */
+        val offsets: List<Int>? = null
     )
 
     private var cache: Map<Int, List<Section>>? = null
@@ -83,9 +87,16 @@ object AudioRepo {
                         val list = ArrayList<Section>()
                         for (ck in chapters.keys()) {
                             val ch = ck.toInt()  // 0-based
-                            val f = chapters.getJSONObject(ck).getString("f")
+                            val obj = chapters.getJSONObject(ck)
+                            val f = obj.getString("f")
+                            // Per-verse ms offsets ("o") enable verse-following.
+                            val oArr = obj.optJSONArray("o")
+                            val offsets = oArr?.let { a ->
+                                (0 until a.length()).map { a.getInt(it) }
+                            }
                             // One file per chapter: first == last == 1-based chapter.
-                            list.add(Section(ch + 1, ch + 1, "$base/$f", generated = true))
+                            list.add(Section(ch + 1, ch + 1, "$base/$f",
+                                generated = true, offsets = offsets))
                         }
                         m[bk.toInt()] = list.sortedBy { it.first }
                     }
@@ -137,30 +148,37 @@ object AudioRepo {
         if (dest.exists() && dest.length() > 0) return@withContext dest
         dest.parentFile?.mkdirs()
         val tmp = File(dest.path + ".part")
-        try {
-            val conn = URL(url).openConnection() as HttpURLConnection
-            conn.connectTimeout = 15_000
-            conn.readTimeout = 30_000
-            conn.instanceFollowRedirects = true
-            val total = conn.contentLengthLong
-            conn.inputStream.use { input ->
-                tmp.outputStream().use { output ->
-                    val buf = ByteArray(64 * 1024)
-                    var read = 0L
-                    while (true) {
-                        val n = input.read(buf)
-                        if (n < 0) break
-                        output.write(buf, 0, n)
-                        read += n
-                        if (total > 0) onProgress((read * 100 / total).toInt())
+        // Retry transient network failures before giving up — a single dropped
+        // request must not bounce narrated audio to TTS for the whole chapter.
+        var attempt = 0
+        while (attempt < 3) {
+            try {
+                val conn = URL(url).openConnection() as HttpURLConnection
+                conn.connectTimeout = 15_000
+                conn.readTimeout = 30_000
+                conn.instanceFollowRedirects = true
+                val total = conn.contentLengthLong
+                conn.inputStream.use { input ->
+                    tmp.outputStream().use { output ->
+                        val buf = ByteArray(64 * 1024)
+                        var read = 0L
+                        while (true) {
+                            val n = input.read(buf)
+                            if (n < 0) break
+                            output.write(buf, 0, n)
+                            read += n
+                            if (total > 0) onProgress((read * 100 / total).toInt())
+                        }
                     }
                 }
+                if (tmp.renameTo(dest)) return@withContext dest
+            } catch (_: Exception) {
+                tmp.delete()
             }
-            if (tmp.renameTo(dest)) dest else null
-        } catch (_: Exception) {
-            tmp.delete()
-            null
+            attempt++
+            if (attempt < 3) delay(1500L * attempt)
         }
+        null
     }
 
     fun downloadedBytes(context: Context): Long =

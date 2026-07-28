@@ -176,7 +176,7 @@
     <string name="widget_continue">Turpināt lasīt: %1$s →</string>
     <string name="compare_note">Izvēlieties, kuri tulkojumi parādās pantu salīdzinājumā.</string>
     <string name="audio_title">Ieskaņots audio</string>
-    <string name="audio_note">Cilvēka balss ieskaņojums no LibriVox (sabiedrības īpašums), aptverot lielāko daļu KJV grāmatu. Nospiežot atskaņot, audio tiek lejupielādēts pa sadaļām (dažas nodaļas, ~10–30 MB) un saglabāts bezsaistes klausīšanai. Grāmatām bez ieskaņojuma tiek izmantota sintezētā balss, un panta izcelšana ieskaņojuma laikā nav pieejama.</string>
+    <string name="audio_note">Nodaļas tiek lasītas priekšā — ar ieskaņojumu tur, kur tāds ir, citādi ar ierīces runas sintēzi. Skaņa tiek saglabāta klausīšanai bezsaistē, vai ieslēdziet zemāk straumēšanu, lai taupītu vietu.</string>
     <string name="audio_downloading">Lejupielādē audio… %1$d%%</string>
     <string name="audio_narrated">Ieskaņots audio</string>
     <string name="audio_storage">Lejupielādētais audio: %1$d MB</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">Divi psalmi dienā cauri visai Psalmu grāmatai</string>
     <string name="gospel_share">Kopīgot Labo Vēsti →</string>
     <string name="search_all">Meklēt visos tulkojumos</string>
-    <string name="welcome_tagline">Bībele septiņpadsmit valodās — bezsaistē, bez maksas, pilnībā.</string>
+    <string name="welcome_tagline">Bībele divdesmit deviņās valodās — bezsaistē, bez maksas, pilnībā.</string>
     <string name="welcome_gospel">Bībele jums vēl sveša? Sāciet šeit</string>
     <string name="welcome_plan">Izveidojiet ikdienas lasīšanas paradumu</string>
     <string name="welcome_read">Vienkārši sākt lasīt</string>

@@ -168,7 +168,7 @@
     <string name="widget_continue">Weiterlesen: %1$s →</string>
     <string name="compare_note">Wähle, welche Übersetzungen im Versvergleich erscheinen.</string>
     <string name="audio_title">Gesprochene Lesung</string>
-    <string name="audio_note">Menschliche Lesung von LibriVox (gemeinfrei), für die meisten Bücher der KJV. Audio wird abschnittsweise (~10–30 MB) heruntergeladen und offline gespeichert. Bücher ohne Aufnahme nutzen die Sprachausgabe.</string>
+    <string name="audio_note">Kapitel werden vorgelesen — als Aufnahme, wo eine vorhanden ist, sonst über die Sprachausgabe des Geräts. Audio wird für die Offline-Wiedergabe gespeichert; schalten Sie unten Streaming ein, um Speicherplatz zu sparen.</string>
     <string name="audio_downloading">Audio wird geladen… %1$d%%</string>
     <string name="audio_narrated">Gesprochene Lesung</string>
     <string name="audio_storage">Heruntergeladenes Audio: %1$d MB</string>
@@ -185,7 +185,7 @@
     <string name="plan_psalms_desc">Zwei Psalmen pro Tag durch den ganzen Psalter</string>
     <string name="gospel_share">Die Gute Nachricht teilen →</string>
     <string name="search_all">In allen Übersetzungen suchen</string>
-    <string name="welcome_tagline">Die Bibel in siebzehn Sprachen — offline, kostenlos, vollständig.</string>
+    <string name="welcome_tagline">Die Bibel in neunundzwanzig Sprachen — offline, kostenlos, vollständig.</string>
     <string name="welcome_gospel">Neu in der Bibel? Fang hier an</string>
     <string name="welcome_plan">Tägliche Lesegewohnheit aufbauen</string>
     <string name="welcome_read">Einfach lesen</string>

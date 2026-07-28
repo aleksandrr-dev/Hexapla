@@ -15,3 +15,16 @@ tools/.cosyvoice_venv/
 tools/piper_models/
 tools/voice_samples/
 tools/.chatterbox_venv/
+
+# Correspondence drafts — PERSONAL, never commit (owner instruction 2026-07-27).
+# These are permission/enquiry emails to third parties and contain other
+# people's names and contact addresses. 17 of them had been tracked and were
+# PUBLIC on GitHub until they were purged from history on 2026-07-27; the
+# purge is only durable if they stay ignored. Keep them on disk, out of git.
+store-assets/*_draft.txt
+store-assets/*_drafts.txt
+store-assets/*draft*.txt
+store-assets/*_reply*.txt
+
+# /doctor settings backup — local artifact, not project content.
+CLAUDE.md.doctor-backup

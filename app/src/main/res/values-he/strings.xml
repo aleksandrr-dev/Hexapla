@@ -176,7 +176,7 @@
     <string name="widget_continue">המשך קריאה: %1$s ←</string>
     <string name="compare_note">בחרו אילו תרגומים יופיעו בהשוואת הפסוקים.</string>
     <string name="audio_title">הקראה מוקלטת</string>
-    <string name="audio_note">הקראה אנושית מ-LibriVox (נחלת הכלל), המכסה את רוב ספרי ה-KJV. השמע מורד לפי קטע (כמה פרקים, כ-10–30 מ״ב) כאשר לוחצים על הפעלה, ונשמר להאזנה גם ללא חיבור לרשת. ספרים ללא הקלטה עוברים להקראה סינתטית, וסימון הפסוק הנוכחי אינו זמין בזמן ההקראה.</string>
+    <string name="audio_note">הפרקים מוקראים בקול — הקראה מוקלטת היכן שקיימת, אחרת הקראה ממוחשבת של המכשיר. השמע נשמר להאזנה לא מקוונת, או הפעילו הזרמה למטה כדי לחסוך מקום.</string>
     <string name="audio_downloading">מוריד שמע… %1$d%%</string>
     <string name="audio_narrated">שמע מוקלט</string>
     <string name="audio_storage">שמע שהורד: %1$d מ״ב</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">שני מזמורי תהלים ביום לכל אורך ספר תהלים</string>
     <string name="gospel_share">שתפו את הבשורה הטובה ←</string>
     <string name="search_all">חפש בכל התרגומים</string>
-    <string name="welcome_tagline">התנ״ך בשבע עשרה שפות — ללא חיבור לרשת, חינם, מלא.</string>
+    <string name="welcome_tagline">התנ״ך בעשרים ותשע שפות — ללא חיבור לרשת, חינם, מלא.</string>
     <string name="welcome_gospel">חדשים בתנ״ך? התחילו כאן</string>
     <string name="welcome_plan">בנו הרגל קריאה יומי</string>
     <string name="welcome_read">פשוט התחילו לקרוא</string>

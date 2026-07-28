@@ -176,7 +176,7 @@
     <string name="widget_continue">Kontynuuj czytanie: %1$s →</string>
     <string name="compare_note">Wybierz, które przekłady mają się pojawiać w porównaniu wersetów.</string>
     <string name="audio_title">Narracja audio</string>
-    <string name="audio_note">Ludzka narracja z LibriVox (domena publiczna), obejmująca większość ksiąg KJV. Audio jest pobierane sekcjami (kilka rozdziałów, ~10–30 MB) po naciśnięciu odtwarzania i zapisywane do słuchania offline. Księgi bez nagrania korzystają z syntezatora mowy, a podświetlanie bieżącego wersetu jest niedostępne podczas narracji.</string>
+    <string name="audio_note">Rozdziały są czytane na głos — nagraniem tam, gdzie istnieje, a w pozostałych przypadkach syntezatorem mowy urządzenia. Dźwięk zapisuje się do słuchania offline lub włącz poniżej strumieniowanie, aby oszczędzić miejsce.</string>
     <string name="audio_downloading">Pobieranie audio… %1$d%%</string>
     <string name="audio_narrated">Audio z narracją</string>
     <string name="audio_storage">Pobrane audio: %1$d MB</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">Dwa Psalmy dziennie przez cały Psałterz</string>
     <string name="gospel_share">Podziel się Dobrą Nowiną →</string>
     <string name="search_all">Szukaj we wszystkich przekładach</string>
-    <string name="welcome_tagline">Biblia w siedemnastu językach — offline, za darmo, w całości.</string>
+    <string name="welcome_tagline">Biblia w dwudziestu dziewięciu językach — offline, za darmo, w całości.</string>
     <string name="welcome_gospel">Nowy w lekturze Biblii? Zacznij tutaj</string>
     <string name="welcome_plan">Wyrób sobie nawyk codziennego czytania</string>
     <string name="welcome_read">Po prostu zacznij czytać</string>

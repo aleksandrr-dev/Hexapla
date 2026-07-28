@@ -176,7 +176,7 @@
     <string name="widget_continue">تابع القراءة: %1$s ←</string>
     <string name="compare_note">اختر الترجمات التي تظهر في مقارنة الآيات.</string>
     <string name="audio_title">صوت مروي</string>
-    <string name="audio_note">سرد بشري من LibriVox (ملك عام)، يغطي معظم أسفار الـKJV. يُنزَّل الصوت لكل قسم (بضعة إصحاحات، نحو 10–30 ميغابايت) عند الضغط على تشغيل، ويُحفظ للاستماع دون اتصال. الأسفار التي لا تحتوي على تسجيل تعود إلى تحويل النص إلى كلام، ولا يتوفر تمييز الآية أثناء السرد.</string>
+    <string name="audio_note">تُقرأ الأصحاحات بصوت مسموع — تلاوة مسجَّلة حيثما توفّرت، وإلا فقراءة آلية من الجهاز. يُحفظ الصوت للاستماع دون إنترنت، أو فعّل البث أدناه لتوفير المساحة.</string>
     <string name="audio_downloading">جارٍ تنزيل الصوت… %1$d%%</string>
     <string name="audio_narrated">صوت مروي</string>
     <string name="audio_storage">الصوت المنزَّل: %1$d ميغابايت</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">مزموران يوميًا عبر كل سفر المزامير</string>
     <string name="gospel_share">شارك البشارة السارة ←</string>
     <string name="search_all">البحث في جميع الترجمات</string>
-    <string name="welcome_tagline">الكتاب المقدس بسبع عشرة لغة — بلا إنترنت، مجانًا، كاملًا.</string>
+    <string name="welcome_tagline">الكتاب المقدس بتسع وعشرين لغة — بلا إنترنت، مجانًا، كاملًا.</string>
     <string name="welcome_gospel">جديد على الكتاب المقدس؟ ابدأ هنا</string>
     <string name="welcome_plan">كوّن عادة قراءة يومية</string>
     <string name="welcome_read">ابدأ القراءة فقط</string>

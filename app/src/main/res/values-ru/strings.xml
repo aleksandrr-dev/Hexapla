@@ -170,7 +170,7 @@
     <string name="widget_continue">Продолжить чтение: %1$s →</string>
     <string name="compare_note">Выберите переводы, отображаемые при сравнении стиха.</string>
     <string name="audio_title">Озвученное чтение</string>
-    <string name="audio_note">Живое чтение с LibriVox (общественное достояние), охватывает большинство книг KJV. Аудио загружается по частям (несколько глав, ~10–30 МБ) при нажатии кнопки воспроизведения и сохраняется для офлайн-прослушивания. Книги без записи озвучиваются синтезатором речи; подсветка стихов при озвучке недоступна.</string>
+    <string name="audio_note">Главы читаются вслух — записанной озвучкой там, где она есть, иначе синтезатором речи устройства. Аудио сохраняется для прослушивания офлайн, либо включите ниже потоковый режим, чтобы сэкономить место.</string>
     <string name="audio_downloading">Загрузка аудио… %1$d%%</string>
     <string name="audio_narrated">Озвученное чтение</string>
     <string name="audio_storage">Загружено аудио: %1$d МБ</string>
@@ -187,7 +187,7 @@
     <string name="plan_psalms_desc">По два псалма в день через всю Псалтирь</string>
     <string name="gospel_share">Поделиться Благой вестью →</string>
     <string name="search_all">Искать во всех переводах</string>
-    <string name="welcome_tagline">Библия на 17 языках — офлайн, бесплатно, полностью.</string>
+    <string name="welcome_tagline">Библия на 29 языках — офлайн, бесплатно, полностью.</string>
     <string name="welcome_gospel">Новичок в Библии? Начните здесь</string>
     <string name="welcome_plan">Читать каждый день по плану</string>
     <string name="welcome_read">Просто начать читать</string>

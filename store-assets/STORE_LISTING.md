@@ -38,97 +38,196 @@ share one Spanish text; fr-CA/fr-FR share one French text; zh-CN is
 Simplified, zh-HK/zh-TW are Traditional. Older release sections below predate
 this standard and keep their EN/RU/DE-only form (historical, do not reformat).
 
+## 1.6.1 release notes (paste per store)
+
+<en-US>
+The Swedish Karl XII Bible (1703) is now read aloud: the complete New Testament plus Genesis, Exodus and the Psalms, with more books added over time. Recorded narration now follows and highlights each verse as it is read, and resuming continues from the exact verse you stopped on. Fixes: narration no longer drops back to the device's text-to-speech partway through a book, and reading plans now open on your current day.
+</en-US>
+<ar>
+أصبح الكتاب المقدس السويدي بترجمة كارل الثاني عشر (1703) مقروءًا صوتيًا: العهد الجديد كاملًا مع سفر التكوين وسفر الخروج والمزامير، وستُضاف أسفار أخرى تباعًا. التلاوة المسجَّلة تتابع كل آية وتُبرزها أثناء القراءة، والاستئناف يبدأ من الآية نفسها التي توقفت عندها. إصلاحات: لم تعد التلاوة تعود إلى القراءة الآلية من الجهاز في منتصف السفر، وخطط القراءة تفتح الآن على يومك الحالي.
+</ar>
+<be>
+Швэдзкая Біблія Карла XII (1703) цяпер агучана: увесь Новы Запавет, а таксама Быцьцё, Выхад і Псальмы; іншыя кнігі дадаюцца паступова. Запісаная агучка сочыць за кожным вершам і падсьвятляе яго, а працяг пачынаецца з таго самага верша, на якім вы спыніліся. Выпраўлена: агучка больш не пераходзіць на сынтэз маўленьня прылады пасярод кнігі, а планы чытаньня адкрываюцца на бягучым дні.
+</be>
+<cs-CZ>
+Švédská Bible Karla XII. (1703) je nyní namluvená: celý Nový zákon a k tomu Genesis, Exodus a Žalmy; další knihy přibývají postupně. Nahraná četba nyní sleduje a zvýrazňuje každý verš a pokračování naváže přesně na verši, kde jste skončili. Opravy: četba už uprostřed knihy nepřepne na hlasový výstup zařízení a plány čtení se otevírají na aktuálním dni.
+</cs-CZ>
+<da-DK>
+Den svenske Karl XII-bibel (1703) læses nu op: hele Det Nye Testamente samt 1. og 2. Mosebog og Salmerne; flere bøger kommer til løbende. Den indlæste oplæsning følger og fremhæver nu hvert vers, og når du fortsætter, starter den præcis ved det vers, du stoppede på. Rettelser: oplæsningen skifter ikke længere til enhedens talesyntese midt i en bog, og læseplaner åbner på din aktuelle dag.
+</da-DK>
+<de-DE>
+Die schwedische Karl-XII.-Bibel (1703) wird jetzt vorgelesen: das vollständige Neue Testament sowie Genesis, Exodus und die Psalmen; weitere Bücher kommen nach und nach hinzu. Die aufgenommene Lesung folgt nun jedem Vers und hebt ihn hervor, und beim Fortsetzen geht es genau bei dem Vers weiter, bei dem Sie aufgehört haben. Behoben: Die Lesung wechselt nicht mehr mitten im Buch zur Sprachausgabe des Geräts, und Lesepläne öffnen sich beim aktuellen Tag.
+</de-DE>
+<el-GR>
+Η σουηδική Βίβλος του Καρόλου ΙΒ΄ (1703) διαβάζεται πλέον φωναχτά: ολόκληρη η Καινή Διαθήκη μαζί με τη Γένεση, την Έξοδο και τους Ψαλμούς· και άλλα βιβλία προστίθενται σταδιακά. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει τώρα κάθε στίχο, ενώ η συνέχιση ξεκινά ακριβώς από τον στίχο που σταματήσατε. Διορθώσεις: η ανάγνωση δεν γυρίζει πια στη φωνητική σύνθεση της συσκευής στη μέση ενός βιβλίου και τα προγράμματα ανάγνωσης ανοίγουν στην τρέχουσα ημέρα.
+</el-GR>
+<es-419>
+La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+</es-419>
+<es-ES>
+La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+</es-ES>
+<es-US>
+La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+</es-US>
+<fi-FI>
+Ruotsalainen Kaarle XII:n Raamattu (1703) luetaan nyt ääneen: koko Uusi testamentti sekä 1. ja 2. Mooseksen kirja ja Psalmit; lisää kirjoja tulee vähitellen. Äänitetty luenta seuraa ja korostaa nyt jokaista jaetta, ja jatkaminen alkaa täsmälleen siitä jakeesta, mihin jäit. Korjauksia: luenta ei enää vaihda laitteen puhesynteesiin kesken kirjan, ja lukusuunnitelmat avautuvat nykyiseen päivääsi.
+</fi-FI>
+<fr-CA>
+La Bible suédoise de Charles XII (1703) est désormais lue à voix haute : tout le Nouveau Testament, ainsi que la Genèse, l'Exode et les Psaumes ; d'autres livres s'ajouteront progressivement. La narration enregistrée suit et surligne maintenant chaque verset, et la reprise repart exactement au verset où vous vous étiez arrêté. Corrections : la narration ne bascule plus vers la synthèse vocale de l'appareil au milieu d'un livre, et les plans de lecture s'ouvrent au jour en cours.
+</fr-CA>
+<fr-FR>
+La Bible suédoise de Charles XII (1703) est désormais lue à voix haute : tout le Nouveau Testament, ainsi que la Genèse, l'Exode et les Psaumes ; d'autres livres s'ajouteront progressivement. La narration enregistrée suit et surligne maintenant chaque verset, et la reprise repart exactement au verset où vous vous étiez arrêté. Corrections : la narration ne bascule plus vers la synthèse vocale de l'appareil au milieu d'un livre, et les plans de lecture s'ouvrent au jour en cours.
+</fr-FR>
+<hu-HU>
+A svéd XII. Károly-Biblia (1703) mostantól hangosan is olvasható: a teljes Újszövetség, valamint Mózes első és második könyve és a Zsoltárok; a többi könyv fokozatosan érkezik. A felvett felolvasás mostantól követi és kiemeli az egyes verseket, a folytatás pedig pontosan onnan indul, ahol abbahagytad. Javítások: a felolvasás már nem vált az eszköz beszédszintetizátorára a könyv közepén, az olvasótervek pedig az aktuális napon nyílnak meg.
+</hu-HU>
+<hy-AM>
+Շուէտական Կարլ ԺԲ.-ի Աստուածաշունչը (1703) այժմ ընթերցւում է բարձրաձայն՝ ամբողջ Նոր Կտակարանը, ինչպէս նաեւ Ծննդոց, Ելից եւ Սաղմոսներ գիրքերը. միւս գիրքերը կ՚աւելանան աստիճանաբար։ Ձայնագրուած ընթերցումն այժմ հետեւում է իւրաքանչիւր համարին եւ ընդգծում է այն, իսկ շարունակելիս սկսում է ճիշդ այն համարից, ուր կանգ էիք առել։ Ուղղումներ՝ ընթերցումն այլեւս գրքի կէսին չի անցնում սարքի խօսքի սինթեզի, եւ ընթերցանութեան ծրագրերը բացւում են ընթացիկ օրով։
+</hy-AM>
+<it-IT>
+La Bibbia svedese di Carlo XII (1703) ora viene letta ad alta voce: tutto il Nuovo Testamento più Genesi, Esodo e i Salmi; altri libri saranno aggiunti nel tempo. La narrazione registrata ora segue ed evidenzia ogni versetto, e la ripresa riparte esattamente dal versetto in cui ti eri fermato. Correzioni: la narrazione non torna più alla sintesi vocale del dispositivo a metà libro e i piani di lettura si aprono al giorno corrente.
+</it-IT>
+<iw-IL>
+התרגום השוודי של קרל השנים־עשר (1703) מוקרא כעת בקול: כל הברית החדשה, וכן בראשית, שמות ותהילים; ספרים נוספים יתווספו בהדרגה. ההקראה המוקלטת עוקבת כעת אחר כל פסוק ומדגישה אותו, וההמשך מתחיל בדיוק בפסוק שבו הפסקתם. תיקונים: ההקראה כבר לא עוברת להקראה ממוחשבת של המכשיר באמצע ספר, ותוכניות הקריאה נפתחות ביום הנוכחי.
+</iw-IL>
+<ja-JP>
+スウェーデン語のカール12世訳聖書（1703年）が朗読に対応しました。新約聖書全巻に加え、創世記・出エジプト記・詩篇が聴けます（他の書も順次追加）。録音朗読は各節を追って強調表示するようになり、再開すると止めた節から正確に続きます。修正：朗読が書の途中で端末の音声合成に戻らなくなり、通読プランは現在の日から開くようになりました。
+</ja-JP>
+<lv>
+Zviedru Kārļa XII Bībele (1703) tagad ir ierunāta: visa Jaunā Derība, kā arī 1. un 2. Mozus grāmata un Psalmi; pārējās grāmatas tiks pievienotas pakāpeniski. Ieskaņotā lasīšana tagad seko katram pantam un to izceļ, bet, turpinot atskaņošanu, tā sākas tieši no tā panta, kurā apstājāties. Labojumi: lasīšana vairs nepārslēdzas uz ierīces runas sintēzi grāmatas vidū, un lasīšanas plāni atveras pašreizējā dienā.
+</lv>
+<nl-NL>
+De Zweedse Karel XII-Bijbel (1703) wordt nu voorgelezen: het volledige Nieuwe Testament plus Genesis, Exodus en de Psalmen; meer boeken volgen geleidelijk. De opgenomen voordracht volgt en markeert nu elk vers, en bij hervatten gaat het verder bij precies het vers waar u stopte. Opgelost: de voordracht schakelt niet meer halverwege een boek terug naar de spraakuitvoer van het apparaat, en leesplannen openen op uw huidige dag.
+</nl-NL>
+<pl-PL>
+Szwedzka Biblia Karola XII (1703) jest teraz czytana na głos: cały Nowy Testament oraz Księga Rodzaju, Księga Wyjścia i Psalmy; kolejne księgi będą dodawane stopniowo. Nagrane czytanie śledzi teraz każdy werset i go podświetla, a wznowienie zaczyna się dokładnie od wersetu, na którym przerwano. Poprawki: czytanie nie wraca już do syntezatora mowy urządzenia w środku księgi, a plany czytania otwierają się na bieżącym dniu.
+</pl-PL>
+<pt-BR>
+A Bíblia sueca de Carlos XII (1703) agora é narrada: todo o Novo Testamento, além de Gênesis, Êxodo e os Salmos; outros livros serão acrescentados aos poucos. A narração gravada agora acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo em que você parou. Correções: a narração não volta mais para a síntese de voz do aparelho no meio de um livro, e os planos de leitura abrem no seu dia atual.
+</pt-BR>
+<pt-PT>
+A Bíblia sueca de Carlos XII (1703) passa a ser narrada: todo o Novo Testamento, além de Génesis, Êxodo e os Salmos; outros livros serão acrescentados gradualmente. A narração gravada acompanha agora cada versículo e destaca-o, e ao retomar continua exatamente no versículo em que parou. Correções: a narração já não volta à síntese de voz do aparelho a meio de um livro, e os planos de leitura abrem no seu dia atual.
+</pt-PT>
+<ru-RU>
+Шведская Библия Карла XII (1703) теперь озвучена: весь Новый Завет, а также Бытие, Исход и Псалтирь; остальные книги добавляются постепенно. Записанная озвучка теперь следит за каждым стихом и подсвечивает его, а при продолжении воспроизведение начинается ровно с того стиха, на котором вы остановились. Исправлено: озвучка больше не переключается на синтезатор речи устройства посреди книги, а планы чтения открываются на текущем дне.
+</ru-RU>
+<sr>
+Švedska Biblija Karla XII (1703) sada se čita naglas: ceo Novi zavet, kao i Postanje, Izlazak i Psalmi; ostale knjige dodaju se postepeno. Snimljena naracija sada prati i ističe svaki stih, a nastavak počinje tačno od stiha na kom ste stali. Ispravke: naracija više ne prelazi na sintezu govora uređaja usred knjige, a planovi čitanja otvaraju se na tekućem danu.
+</sr>
+<sv-SE>
+Karl XII:s Bibel (1703) läses nu upp: hela Nya testamentet samt Första och Andra Moseboken och Psaltaren; fler böcker läggs till efter hand. Den inlästa uppläsningen följer och markerar nu varje vers, och när du fortsätter startar den exakt vid versen där du slutade. Rättningar: uppläsningen växlar inte längre till enhetens talsyntes mitt i en bok, och läsplaner öppnas på din aktuella dag.
+</sv-SE>
+<ta-IN>
+கார்ல் பன்னிரண்டாம் மன்னரின் ஸ்வீடிஷ் விவிலியம் (1703) இப்போது ஒலிவடிவில் வாசிக்கப்படுகிறது: புதிய ஏற்பாடு முழுவதும், மேலும் ஆதியாகமம், யாத்திராகமம், சங்கீதம்; மற்ற புத்தகங்கள் படிப்படியாகச் சேர்க்கப்படும். பதிவுசெய்யப்பட்ட ஒலிவாசிப்பு இப்போது ஒவ்வொரு வசனத்தையும் பின்தொடர்ந்து சிறப்பித்துக் காட்டுகிறது; மீண்டும் தொடங்கும்போது நீங்கள் நிறுத்திய வசனத்திலிருந்தே தொடர்கிறது. சரிசெய்தவை: புத்தகத்தின் நடுவில் ஒலிவாசிப்பு சாதனத்தின் பேச்சுத்தொகுப்புக்கு மாறாது; வாசிப்புத் திட்டங்கள் தற்போதைய நாளில் திறக்கும்.
+</ta-IN>
+<zh-CN>
+瑞典卡尔十二世圣经（1703年）现已支持朗读：新约全书，以及创世记、出埃及记和诗篇；其余各卷将陆续加入。录制朗读现在会逐节跟随并高亮显示，继续播放时会从你停下的那一节精确接续。修复：朗读不再在书卷中途退回设备的语音合成，读经计划现在会打开到你当前的日程。
+</zh-CN>
+<zh-HK>
+瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
+</zh-HK>
+<zh-TW>
+瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
+</zh-TW>
+
+⚠ The Swedish narration ships PARTIAL by design (New Testament + Genesis,
+Exodus, Psalms). Books without audio fall back to Swedish TTS, which is why the
+notes say "more books added over time" rather than naming a count — the
+archive.org item grows without an app update. Re-check the wording if a later
+release completes the set.
+
 ## 1.6.0 release notes (paste per store)
 
 <en-US>
-New translation: the Persian New Testament in Henry Martyn's translation (1876) — now 34 translations in 29 languages. New narration: Webster's Bible (1833) is now read aloud in full, and the remaining King James books are narrated too. Audio saves for offline listening, or turn on streaming to save space.
+New translation: the Persian New Testament in Henry Martyn's translation (1876) — now 33 translations in 29 languages. New narration: Webster's Bible (1833) is now read aloud in full, and the remaining King James books are narrated too. Audio saves for offline listening, or turn on streaming to save space.
 </en-US>
 <ar>
-ترجمة جديدة: العهد الجديد الفارسي بترجمة هنري مارتن (1876) — الآن 34 ترجمة في 29 لغة. صوت جديد: أصبحت نسخة وبستر (1833) مقروءة بالكامل، وأُضيفت قراءة صوتية لبقية أسفار الملك جيمس. يُحفظ الصوت للاستماع دون إنترنت، أو فعّل البث لتوفير المساحة.
+ترجمة جديدة: العهد الجديد الفارسي بترجمة هنري مارتن (1876) — الآن 33 ترجمة في 29 لغة. صوت جديد: أصبحت نسخة وبستر (1833) مقروءة بالكامل، وأُضيفت قراءة صوتية لبقية أسفار الملك جيمس. يُحفظ الصوت للاستماع دون إنترنت، أو فعّل البث لتوفير المساحة.
 </ar>
 <be>
-Новы пераклад: персідскі Новы Запавет у перакладзе Гэнры Мартына (1876) — цяпер 34 пераклады на 29 мовах. Новая агучка: Біблія Ўэбстэра (1833) цалкам агучана, дададзена агучка астатніх кніг Кінга Джэймса. Аўдыё захоўваецца для афлайнавага праслухоўваньня, або ўключыце патокавы рэжым.
+Новы пераклад: персідскі Новы Запавет у перакладзе Гэнры Мартына (1876) — цяпер 33 пераклады на 29 мовах. Новая агучка: Біблія Ўэбстэра (1833) цалкам агучана, дададзена агучка астатніх кніг Кінга Джэймса. Аўдыё захоўваецца для афлайнавага праслухоўваньня, або ўключыце патокавы рэжым.
 </be>
 <cs-CZ>
-Nový překlad: perský Nový zákon v překladu Henryho Martyna (1876) — nyní 34 překladů ve 29 jazycích. Nové načtení: Websterova Bible (1833) je nyní celá namluvená a přibylo načtení zbývajících knih Bible krále Jakuba. Zvuk se ukládá pro offline poslech, nebo zapněte streamování.
+Nový překlad: perský Nový zákon v překladu Henryho Martyna (1876) — nyní 33 překladů ve 29 jazycích. Nové načtení: Websterova Bible (1833) je nyní celá namluvená a přibylo načtení zbývajících knih Bible krále Jakuba. Zvuk se ukládá pro offline poslech, nebo zapněte streamování.
 </cs-CZ>
 <da-DK>
-Ny oversættelse: Det Persiske Nye Testamente i Henry Martyns oversættelse (1876) — nu 34 oversættelser på 29 sprog. Ny oplæsning: Webster-Bibelen (1833) er nu læst helt op, og de øvrige King James-bøger er også indlæst. Lyd gemmes til offline-lytning, eller slå streaming til.
+Ny oversættelse: Det Persiske Nye Testamente i Henry Martyns oversættelse (1876) — nu 33 oversættelser på 29 sprog. Ny oplæsning: Webster-Bibelen (1833) er nu læst helt op, og de øvrige King James-bøger er også indlæst. Lyd gemmes til offline-lytning, eller slå streaming til.
 </da-DK>
 <de-DE>
-Eine neue Übersetzung: das persische Neue Testament in der Übersetzung von Henry Martyn (1876) — jetzt 34 Übersetzungen in 29 Sprachen. Neue Audioausgabe: die Webster-Bibel (1833) wird vollständig vorgelesen, und die übrigen King-James-Bücher erhalten ebenfalls eine Vertonung. Audio wird offline gespeichert oder kann gestreamt werden.
+Eine neue Übersetzung: das persische Neue Testament in der Übersetzung von Henry Martyn (1876) — jetzt 33 Übersetzungen in 29 Sprachen. Neue Audioausgabe: die Webster-Bibel (1833) wird vollständig vorgelesen, und die übrigen King-James-Bücher erhalten ebenfalls eine Vertonung. Audio wird offline gespeichert oder kann gestreamt werden.
 </de-DE>
 <el-GR>
-Νέα μετάφραση: η Περσική Καινή Διαθήκη στη μετάφραση του Χένρι Μάρτιν (1876) — τώρα 34 μεταφράσεις σε 29 γλώσσες. Νέα αφήγηση: η Βίβλος Webster (1833) διαβάζεται πλέον ολόκληρη, ενώ προστέθηκε αφήγηση και στα υπόλοιπα βιβλία της KJV. Ο ήχος αποθηκεύεται για ακρόαση εκτός σύνδεσης ή ενεργοποιήστε τη ροή.
+Νέα μετάφραση: η Περσική Καινή Διαθήκη στη μετάφραση του Χένρι Μάρτιν (1876) — τώρα 33 μεταφράσεις σε 29 γλώσσες. Νέα αφήγηση: η Βίβλος Webster (1833) διαβάζεται πλέον ολόκληρη, ενώ προστέθηκε αφήγηση και στα υπόλοιπα βιβλία της KJV. Ο ήχος αποθηκεύεται για ακρόαση εκτός σύνδεσης ή ενεργοποιήστε τη ροή.
 </el-GR>
 <es-419>
-Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 34 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
+Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
 </es-419>
 <es-ES>
-Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 34 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
+Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
 </es-ES>
 <es-US>
-Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 34 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
+Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
 </es-US>
 <fi-FI>
-Uusi käännös: persialainen Uusi testamentti Henry Martynin käännöksenä (1876) — nyt 34 käännöstä 29 kielellä. Uusi ääniluku: Websterin Raamattu (1833) luetaan nyt kokonaan, ja myös loput King James -kirjat on äänitetty. Ääni tallentuu offline-kuunteluun, tai ota suoratoisto käyttöön.
+Uusi käännös: persialainen Uusi testamentti Henry Martynin käännöksenä (1876) — nyt 33 käännöstä 29 kielellä. Uusi ääniluku: Websterin Raamattu (1833) luetaan nyt kokonaan, ja myös loput King James -kirjat on äänitetty. Ääni tallentuu offline-kuunteluun, tai ota suoratoisto käyttöön.
 </fi-FI>
 <fr-CA>
-Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 34 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
+Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 33 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
 </fr-CA>
 <fr-FR>
-Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 34 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
+Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 33 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
 </fr-FR>
 <hu-HU>
-Új fordítás: a perzsa Újszövetség Henry Martyn fordításában (1876) — most 34 fordítás 29 nyelven. Új felolvasás: a Webster-Biblia (1833) mostantól teljesen fel van olvasva, és a többi King James-könyv is hangot kapott. A hang letöltődik offline hallgatáshoz, vagy kapcsold be a streamelést.
+Új fordítás: a perzsa Újszövetség Henry Martyn fordításában (1876) — most 33 fordítás 29 nyelven. Új felolvasás: a Webster-Biblia (1833) mostantól teljesen fel van olvasva, és a többi King James-könyv is hangot kapott. A hang letöltődik offline hallgatáshoz, vagy kapcsold be a streamelést.
 </hu-HU>
 <hy-AM>
-Նոր թարգմանութիւն՝ պարսկերէն Նոր Կտակարանը Հենրի Մարտինի թարգմանութեամբ (1876) — այժմ 34 թարգմանութիւն 29 լեզուներով։ Նոր ձայնագրութիւն՝ Ուեբսթերի Աստուածաշունչը (1833) այժմ ամբողջութեամբ ընթերցուած է, եւ ձայն ստացան նաեւ մնացեալ Քինգ Ջեյմս գրքերը։ Ձայնը պահւում է անցանց լսելու համար, կամ միացրէք հոսքը։
+Նոր թարգմանութիւն՝ պարսկերէն Նոր Կտակարանը Հենրի Մարտինի թարգմանութեամբ (1876) — այժմ 33 թարգմանութիւն 29 լեզուներով։ Նոր ձայնագրութիւն՝ Ուեբսթերի Աստուածաշունչը (1833) այժմ ամբողջութեամբ ընթերցուած է, եւ ձայն ստացան նաեւ մնացեալ Քինգ Ջեյմս գրքերը։ Ձայնը պահւում է անցանց լսելու համար, կամ միացրէք հոսքը։
 </hy-AM>
 <it-IT>
-Nuova traduzione: il Nuovo Testamento persiano nella versione di Henry Martyn (1876) — ora 34 traduzioni in 29 lingue. Nuova narrazione: la Bibbia di Webster (1833) è ora letta per intero e sono stati narrati anche gli altri libri della King James. L'audio si salva per l'ascolto offline, oppure attiva lo streaming.
+Nuova traduzione: il Nuovo Testamento persiano nella versione di Henry Martyn (1876) — ora 33 traduzioni in 29 lingue. Nuova narrazione: la Bibbia di Webster (1833) è ora letta per intero e sono stati narrati anche gli altri libri della King James. L'audio si salva per l'ascolto offline, oppure attiva lo streaming.
 </it-IT>
 <iw-IL>
-תרגום חדש: הברית החדשה הפרסית בתרגומו של הנרי מרטין (1876) — כעת 34 תרגומים ב-29 שפות. הקראה חדשה: תרגום וובסטר (1833) מוקרא כעת במלואו, ונוספה הקראה לשאר ספרי המלך ג'יימס. השמע נשמר להאזנה לא מקוונת, או הפעילו הזרמה.
+תרגום חדש: הברית החדשה הפרסית בתרגומו של הנרי מרטין (1876) — כעת 33 תרגומים ב-29 שפות. הקראה חדשה: תרגום וובסטר (1833) מוקרא כעת במלואו, ונוספה הקראה לשאר ספרי המלך ג'יימס. השמע נשמר להאזנה לא מקוונת, או הפעילו הזרמה.
 </iw-IL>
 <ja-JP>
-新しい翻訳：ヘンリー・マーティン訳のペルシア語新約聖書（1876年）を追加し、34訳・29言語になりました。新しい朗読：ウェブスター訳（1833年）が全編朗読になり、欽定訳の残りの書も朗読されます。音声はオフライン再生用に保存でき、ストリーミングも選べます。
+新しい翻訳：ヘンリー・マーティン訳のペルシア語新約聖書（1876年）を追加し、33訳・29言語になりました。新しい朗読：ウェブスター訳（1833年）が全編朗読になり、欽定訳の残りの書も朗読されます。音声はオフライン再生用に保存でき、ストリーミングも選べます。
 </ja-JP>
 <lv>
-Jauns tulkojums: persiešu Jaunā Derība Henrija Mārtina tulkojumā (1876) — tagad 34 tulkojumi 29 valodās. Jauns ieskaņojums: Vēbstera Bībele (1833) tagad ir pilnībā ierunāta, un ieskaņotas arī pārējās Karaļa Džeimsa grāmatas. Skaņu var saglabāt bezsaistes klausīšanai vai ieslēgt straumēšanu.
+Jauns tulkojums: persiešu Jaunā Derība Henrija Mārtina tulkojumā (1876) — tagad 33 tulkojumi 29 valodās. Jauns ieskaņojums: Vēbstera Bībele (1833) tagad ir pilnībā ierunāta, un ieskaņotas arī pārējās Karaļa Džeimsa grāmatas. Skaņu var saglabāt bezsaistes klausīšanai vai ieslēgt straumēšanu.
 </lv>
 <nl-NL>
-Nieuwe vertaling: het Perzische Nieuwe Testament in de vertaling van Henry Martyn (1876) — nu 34 vertalingen in 29 talen. Nieuwe voordracht: de Webster-Bijbel (1833) wordt nu volledig voorgelezen en ook de overige King James-boeken zijn ingesproken. Audio wordt opgeslagen voor offline luisteren, of schakel streamen in.
+Nieuwe vertaling: het Perzische Nieuwe Testament in de vertaling van Henry Martyn (1876) — nu 33 vertalingen in 29 talen. Nieuwe voordracht: de Webster-Bijbel (1833) wordt nu volledig voorgelezen en ook de overige King James-boeken zijn ingesproken. Audio wordt opgeslagen voor offline luisteren, of schakel streamen in.
 </nl-NL>
 <pl-PL>
-Nowy przekład: perski Nowy Testament w tłumaczeniu Henry'ego Martyna (1876) — teraz 34 przekłady w 29 językach. Nowe nagranie: Biblia Webstera (1833) jest teraz w całości czytana, a pozostałe księgi King James również otrzymały narrację. Dźwięk zapisuje się do słuchania offline lub włącz strumieniowanie.
+Nowy przekład: perski Nowy Testament w tłumaczeniu Henry'ego Martyna (1876) — teraz 33 przekłady w 29 językach. Nowe nagranie: Biblia Webstera (1833) jest teraz w całości czytana, a pozostałe księgi King James również otrzymały narrację. Dźwięk zapisuje się do słuchania offline lub włącz strumieniowanie.
 </pl-PL>
 <pt-BR>
-Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 34 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) agora é narrada por completo, e os demais livros da King James também ganharam narração. O áudio é salvo para ouvir offline, ou ative a transmissão.
+Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 33 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) agora é narrada por completo, e os demais livros da King James também ganharam narração. O áudio é salvo para ouvir offline, ou ative a transmissão.
 </pt-BR>
 <pt-PT>
-Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 34 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) passa a ser narrada por completo, e os restantes livros da King James também têm narração. O áudio é guardado para ouvir offline, ou ative a transmissão.
+Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 33 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) passa a ser narrada por completo, e os restantes livros da King James também têm narração. O áudio é guardado para ouvir offline, ou ative a transmissão.
 </pt-PT>
 <ru-RU>
-Один новый перевод: персидский Новый Завет в переводе Генри Мартина (1876) — теперь 34 перевода на 29 языках. Новая озвучка: Библия Уэбстера (1833) полностью озвучена, добавлена озвучка остальных книг Библии короля Якова. Аудио сохраняется для прослушивания офлайн, либо включите потоковый режим.
+Один новый перевод: персидский Новый Завет в переводе Генри Мартина (1876) — теперь 33 перевода на 29 языках. Новая озвучка: Библия Уэбстера (1833) полностью озвучена, добавлена озвучка остальных книг Библии короля Якова. Аудио сохраняется для прослушивания офлайн, либо включите потоковый режим.
 </ru-RU>
 <sr>
-Novi prevod: persijski Novi zavet u prevodu Henrija Martina (1876) — sada 34 prevoda na 29 jezika. Nova naracija: Vebsterova Biblija (1833) sada je u celosti pročitana, a naraciju su dobile i preostale knjige Kralja Džejmsa. Zvuk se čuva za slušanje van mreže ili uključite strimovanje.
+Novi prevod: persijski Novi zavet u prevodu Henrija Martina (1876) — sada 33 prevoda na 29 jezika. Nova naracija: Vebsterova Biblija (1833) sada je u celosti pročitana, a naraciju su dobile i preostale knjige Kralja Džejmsa. Zvuk se čuva za slušanje van mreže ili uključite strimovanje.
 </sr>
 <sv-SE>
-Ny översättning: Persiska Nya testamentet i Henry Martyns översättning (1876) — nu 34 översättningar på 29 språk. Ny inläsning: Webster-bibeln (1833) är nu helt inläst, och de övriga King James-böckerna har också fått inläsning. Ljudet sparas för offline-lyssning, eller slå på streaming.
+Ny översättning: Persiska Nya testamentet i Henry Martyns översättning (1876) — nu 33 översättningar på 29 språk. Ny inläsning: Webster-bibeln (1833) är nu helt inläst, och de övriga King James-böckerna har också fått inläsning. Ljudet sparas för offline-lyssning, eller slå på streaming.
 </sv-SE>
 <ta-IN>
-புதிய மொழிபெயர்ப்பு: ஹென்றி மார்ட்டின் மொழிபெயர்த்த பாரசீக புதிய ஏற்பாடு (1876) — இப்போது 29 மொழிகளில் 34 மொழிபெயர்ப்புகள். புதிய ஒலிவாசிப்பு: வெப்ஸ்டர் விவிலியம் (1833) இப்போது முழுமையாக வாசிக்கப்படுகிறது; மற்ற கிங் ஜேம்ஸ் புத்தகங்களுக்கும் ஒலிவாசிப்பு சேர்க்கப்பட்டது. ஒலியை ஆஃப்லைனில் கேட்கச் சேமிக்கலாம் அல்லது ஸ்ட்ரீமிங்கை இயக்கவும்.
+புதிய மொழிபெயர்ப்பு: ஹென்றி மார்ட்டின் மொழிபெயர்த்த பாரசீக புதிய ஏற்பாடு (1876) — இப்போது 29 மொழிகளில் 33 மொழிபெயர்ப்புகள். புதிய ஒலிவாசிப்பு: வெப்ஸ்டர் விவிலியம் (1833) இப்போது முழுமையாக வாசிக்கப்படுகிறது; மற்ற கிங் ஜேம்ஸ் புத்தகங்களுக்கும் ஒலிவாசிப்பு சேர்க்கப்பட்டது. ஒலியை ஆஃப்லைனில் கேட்கச் சேமிக்கலாம் அல்லது ஸ்ட்ரீமிங்கை இயக்கவும்.
 </ta-IN>
 <zh-CN>
-新增译本：亨利·马丁翻译的波斯语新约（1876年），现共34部译本、29种语言。新增朗读：韦伯斯特译本（1833年）现已全本朗读，钦定本其余各卷也已录制朗读。音频可保存供离线收听，也可开启流式播放。
+新增译本：亨利·马丁翻译的波斯语新约（1876年），现共33部译本、29种语言。新增朗读：韦伯斯特译本（1833年）现已全本朗读，钦定本其余各卷也已录制朗读。音频可保存供离线收听，也可开启流式播放。
 </zh-CN>
 <zh-HK>
-新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共34部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
+新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共33部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
 </zh-HK>
 <zh-TW>
-新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共34部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
+新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共33部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
 </zh-TW>
 
 *(Older release notes — 1.5.1 and earlier — are archived at the very end of this file to keep the current listing text near the top.)*
@@ -142,13 +241,13 @@ Ny översättning: Persiska Nya testamentet i Henry Martyns översättning (1876
 **Title:** Hexapla — Parallel Bible
 
 **Short description:**
-Offline Bible: 34 classic translations, audio, Strong's, reading plans.
+Offline Bible: 33 classic translations, audio, Strong's, reading plans.
 
 **Full description:**
 
 Hexapla is the complete Bible — offline, ad-free, account-free, and it collects no data. Everything is free and nothing is locked.
 
-📖 34 classic translations across 29 languages: KJV 1611 with Apocrypha, Webster 1833, Geneva 1599, Wycliffe, Tyndale, Bible Martin 1744 (French), Luther 1545 (German), Karl XII 1703 (Swedish), Danish 1819/1871, Reina-Valera 1909 (Spanish), Diodati 1649 (Italian), Bíblia Livre — Almeida TR (Portuguese), 明治元訳 Meiji Motoyaku — the first Japanese Bible 1880/87, the Chinese Union Version 和合本 1919 (Traditional and Simplified), Russian Synodal, Church Slavonic, the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the Sanskrit New Testament of 1851, the Tamil Bible (IRV 2019, the 1871 Bower lineage), the Clementine Vulgate of 1592 (Latin), the Dutch Statenvertaling (1637), the Arabic Van Dyck (1865), and the Persian New Testament in Henry Martyn's translation (1876), and more.
+📖 33 classic translations across 29 languages: KJV 1611 with Apocrypha, Webster 1833, Geneva 1599, Wycliffe, Tyndale, Bible Martin 1744 (French), Luther 1545 (German), Karl XII 1703 (Swedish), Danish 1819/1871, Reina-Valera 1909 (Spanish), Diodati 1649 (Italian), Bíblia Livre — Almeida TR (Portuguese), 明治元訳 Meiji Motoyaku — the first Japanese Bible 1880/87, the Chinese Union Version 和合本 1919 (Traditional and Simplified), Russian Synodal, Church Slavonic, the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the Sanskrit New Testament of 1851, the Tamil Bible (IRV 2019, the 1871 Bower lineage), the Clementine Vulgate of 1592 (Latin), the Dutch Statenvertaling (1637), the Arabic Van Dyck (1865), and the Persian New Testament in Henry Martyn's translation (1876), and more.
 
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.
@@ -170,13 +269,13 @@ All texts are public domain. The app collects nothing.
 **Title:** Hexapla — Parallel Bible
 
 **Short description (≤80):**
-Offline Bible: 34 classic translations incl. Tamil, Latin and the Sanskrit NT, audio, Strong's.
+Offline Bible: 33 classic translations incl. Tamil, Latin and the Sanskrit NT, audio, Strong's.
 
 **Full description:**
 
 Hexapla is the complete Bible — offline, ad-free, account-free, and it collects no data. Everything is free and nothing is locked.
 
-📖 34 classic translations across 29 languages — including the **complete Tamil Bible** (IRV 2019, the TR-faithful 1871 Bower lineage), the **Sanskrit New Testament of 1851** (सत्यवेदः, Calcutta Baptist Mission, Devanagari), the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the KJV 1611 with Apocrypha, Geneva 1599, Wycliffe, Tyndale, Luther 1545, and more.
+📖 33 classic translations across 29 languages — including the **complete Tamil Bible** (IRV 2019, the TR-faithful 1871 Bower lineage), the **Sanskrit New Testament of 1851** (सत्यवेदः, Calcutta Baptist Mission, Devanagari), the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the KJV 1611 with Apocrypha, Geneva 1599, Wycliffe, Tyndale, Luther 1545, and more.
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.
 🎧 Audio: human narration (LibriVox) and text-to-speech with verse highlighting, background playback, sleep timer.
@@ -191,13 +290,13 @@ All texts are public domain. The app collects nothing.
 **العنوان:** Hexapla — كتاب مقدس موازي
 
 **الوصف القصير (≤80):**
-الكتاب المقدس دون إنترنت: 34 ترجمة، صوت، خطط قراءة، أرقام سترونغ.
+الكتاب المقدس دون إنترنت: 33 ترجمة، صوت، خطط قراءة، أرقام سترونغ.
 
 **الوصف الكامل:**
 
 هكسابلا هو الكتاب المقدس الكامل — دون إنترنت، دون إعلانات، دون حساب، ودون جمع أي بيانات. كل شيء مجاني ولا شيء مقفل.
 
-📖 34 ترجمة كلاسيكية في 29 لغة: ترجمة فان دايك 1865 (العربية)، الملك جيمس KJV 1611 مع الأسفار القانونية الثانية، وبستر 1833، جنيف 1599، ديوداتي 1649، رينا-فاليرا 1909، لوثر 1545، مارتن 1744، كارل الثاني عشر 1703، السينودسية الروسية، السلافية الكنسية، المييجي اليابانية، والنسخة الصينية الموحدة (和合本)، إضافة إلى النصين الأصليين العبري واليوناني.
+📖 33 ترجمة كلاسيكية في 29 لغة: ترجمة فان دايك 1865 (العربية)، الملك جيمس KJV 1611 مع الأسفار القانونية الثانية، وبستر 1833، جنيف 1599، ديوداتي 1649، رينا-فاليرا 1909، لوثر 1545، مارتن 1744، كارل الثاني عشر 1703، السينودسية الروسية، السلافية الكنسية، المييجي اليابانية، والنسخة الصينية الموحدة (和合本)، إضافة إلى النصين الأصليين العبري واليوناني.
 ✝️ البشارة — خطة الله للخلاص، خطوة بخطوة، من الكتاب المقدس فقط.
 🔴 كلام المسيح باللون الأحمر.
 🎧 صوت: تلاوة وتحويل نص إلى كلام مع تمييز الآية، تشغيل في الخلفية، مؤقت نوم.
@@ -216,13 +315,13 @@ All texts are public domain. The app collects nothing.
 **Վերնագիր:** Hexapla — Զուգահեռ Սուրբ Գիրք
 
 **Համառոտ նկարագրութիւն (≤80):**
-Աստուածաշունչ առանց ինտերնետի. 34 թարգմանութիւն, ձայն, ընթերցման ծրագրեր, Strong
+Աստուածաշունչ առանց ինտերնետի. 33 թարգմանութիւն, ձայն, ընթերցման ծրագրեր, Strong
 
 **Ամբողջական նկարագրութիւն:**
 
 Hexapla-ն ամբողջական Աստուածաշունչն է՝ առանց ինտերնետի, առանց գովազդի, առանց հաշուի եւ առանց տուեալների հաւաքման։ Ամէն ինչ անվճար է, ոչինչ փակուած չէ։
 
-📖 34 դասական թարգմանութիւն 29 լեզուներով՝ Արեւմտահայերէն Նոր Կտակարանը (1853), KJV 1611-ը՝ ապոկրիֆներով, Webster 1833, Ժնեւի Աստուածաշունչը 1599, Diodati 1649, Reina-Valera 1909, Լիւթերի Աստուածաշունչը 1545, Martin 1744, Կարլոս XII-ի Աստուածաշունչը 1703, ռուսական սինոդալ թարգմանութիւնը, եկեղեցասլավոներէնը, ճապոներէն Մեիջին, չինական Union տարբերակը (和合本), ինչպէս նաեւ եբրայերէն եւ հունարէն բնագրերը։
+📖 33 դասական թարգմանութիւն 29 լեզուներով՝ Արեւմտահայերէն Նոր Կտակարանը (1853), KJV 1611-ը՝ ապոկրիֆներով, Webster 1833, Ժնեւի Աստուածաշունչը 1599, Diodati 1649, Reina-Valera 1909, Լիւթերի Աստուածաշունչը 1545, Martin 1744, Կարլոս XII-ի Աստուածաշունչը 1703, ռուսական սինոդալ թարգմանութիւնը, եկեղեցասլավոներէնը, ճապոներէն Մեիջին, չինական Union տարբերակը (和合本), ինչպէս նաեւ եբրայերէն եւ հունարէն բնագրերը։
 ✝️ Բարի լուրը — Աստուծոյ փրկութեան ծրագիրը քայլ առ քայլ, միայն Սուրբ Գրքից։
 🔴 Քրիստոսի խօսքերը՝ կարմիրով։
 🎧 Ձայն՝ կենդանի ընթերցում եւ տեքստից խօսք փոխակերպում՝ համարի ընդգծմամբ, ֆոնային նուագարկում, քնի ժամաչափ։
@@ -243,13 +342,13 @@ Hexapla-ն ամբողջական Աստուածաշունչն է՝ առանց ի�
 **Назва:** Hexapla — Паралельная Біблія
 
 **Кароткі апіс (≤80):**
-Біблія без інтэрнэту: 34 клясычныя пераклады, аўдыё, плян чытаньня, Strong.
+Біблія без інтэрнэту: 33 клясычныя пераклады, аўдыё, плян чытаньня, Strong.
 
 **Поўны апіс:**
 
 Hexapla — гэта поўная Біблія — без інтэрнэту, без рэклямы, без рэгістрацыі і без збору даных. Усё бясплатна, нічога не заблакавана.
 
-📖 34 клясычныя пераклады ў 29 мовах: Новы Запавет і Псальмы ў перакладзе Дзекуць-Малея і Луцкевіча (1931), KJV 1611 з апокрыфамі, Webster 1833, Жэнеўская Біблія 1599, Diodati 1649, Reina-Valera 1909, Лютэраўская Біблія 1545, Martin 1744, Біблія Карла XII 1703, расійскі сінадальны пераклад, царкоўнаславянская мова, японская Мэйдзі, кітайская версія Union (和合本), а таксама габрэйскі і грэцкі арыгінальныя тэксты.
+📖 33 клясычныя пераклады ў 29 мовах: Новы Запавет і Псальмы ў перакладзе Дзекуць-Малея і Луцкевіча (1931), KJV 1611 з апокрыфамі, Webster 1833, Жэнеўская Біблія 1599, Diodati 1649, Reina-Valera 1909, Лютэраўская Біблія 1545, Martin 1744, Біблія Карла XII 1703, расійскі сінадальны пераклад, царкоўнаславянская мова, японская Мэйдзі, кітайская версія Union (和合本), а таксама габрэйскі і грэцкі арыгінальныя тэксты.
 ✝️ Добрая Навіна — Божы плян збаўленьня крок за крокам, толькі паводле Пісаньня.
 🔴 Словы Хрыста чырвоным колерам.
 🎧 Аўдыё: жывое чытаньне і сынтэз мовы з падсьвятленьнем радка, прайграваньне ў фоне, таймэр сну.
@@ -275,13 +374,13 @@ Hexapla — гэта поўная Біблія — без інтэрнэту, б
 **標題:** Hexapla — 對照聖經
 
 **簡短說明 (≤80):**
-離線聖經：34部經典譯本，語音朗讀，讀經計劃，史特朗編號，原文對照。
+離線聖經：33部經典譯本，語音朗讀，讀經計劃，史特朗編號，原文對照。
 
 **完整說明:**
 
 Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊，不收集任何資料。完全免費，沒有任何限制。
 
-📖 29種語言、34部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
+📖 29種語言、33部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
 ✝️ 福音：神的救恩計劃，逐步呈現，唯獨聖經經文。
 🔴 基督的話語以紅字顯示。
 🎧 語音：真人朗讀與語音合成，逐節高亮，背景播放，定時關閉。
@@ -300,13 +399,13 @@ Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊
 **标题:** Hexapla — 对照圣经
 
 **简短说明 (≤80):**
-离线圣经：34部经典译本，语音朗读，读经计划，斯特朗编号，原文对照。
+离线圣经：33部经典译本，语音朗读，读经计划，斯特朗编号，原文对照。
 
 **完整说明:**
 
 Hexapla（六栏经）— 完整圣经，无需联网，无广告，无需注册，不收集任何数据。完全免费，没有任何限制。
 
-📖 29种语言、34部经典译本：和合本1919（简体与繁体）、英文钦定本 KJV 1611（含次经）、韦伯斯特1833、日内瓦1599、意大利迪奥达蒂1649、西班牙雷纳-瓦莱拉1909、德文路德1545、日文明治元译，以及希伯来文与希腊文原文。
+📖 29种语言、33部经典译本：和合本1919（简体与繁体）、英文钦定本 KJV 1611（含次经）、韦伯斯特1833、日内瓦1599、意大利迪奥达蒂1649、西班牙雷纳-瓦莱拉1909、德文路德1545、日文明治元译，以及希伯来文与希腊文原文。
 ✝️ 福音：神的救恩计划，逐步呈现，唯独圣经经文。
 🔴 基督的话语以红字显示。
 🎧 语音：真人朗读与语音合成，逐节高亮，后台播放，定时关闭。
@@ -325,13 +424,13 @@ Hexapla（六栏经）— 完整圣经，无需联网，无广告，无需注册
 **標題:** Hexapla — 對照聖經
 
 **簡短說明 (≤80):**
-離線聖經：34部經典譯本，語音朗讀，讀經計畫，史特朗編號，原文對照。
+離線聖經：33部經典譯本，語音朗讀，讀經計畫，史特朗編號，原文對照。
 
 **完整說明:**
 
 Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊，不收集任何資料。完全免費，沒有任何限制。
 
-📖 29種語言、34部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
+📖 29種語言、33部經典譯本：和合本1919（繁體與簡體）、英文欽定本 KJV 1611（含次經）、韋伯斯特1833、日內瓦1599、義大利迪奧達蒂1649、西班牙雷納-瓦萊拉1909、德文路德1545、日文明治元譯，以及希伯來文與希臘文原文。
 ✝️ 福音：神的救恩計畫，逐步呈現，唯獨聖經經文。
 🔴 基督的話語以紅字顯示。
 🎧 語音：真人朗讀與語音合成，逐節高亮，背景播放，定時關閉。
@@ -350,13 +449,13 @@ Hexapla（六欄經）— 完整聖經，無需連網，無廣告，無需註冊
 **Název:** Hexapla — Paralelní Bible
 
 **Krátký popis (≤80):**
-Bible offline: 34 klasických překladů, zvuk, plány čtení, Strong.
+Bible offline: 33 klasických překladů, zvuk, plány čtení, Strong.
 
 **Úplný popis:**
 
 Hexapla je kompletní Bible — offline, bez reklam, bez účtu a bez sběru dat. Vše zdarma, nic není uzamčeno.
 
-📖 34 klasických překladů ve 29 jazycích: Bible kralická 1613, KJV 1611 s apokryfy, Webster 1833, Ženevská bible 1599, Diodati 1649, Reina-Valera 1909, Lutherova bible 1545, Martin 1744, Karel XII. 1703, ruský synodální překlad, církevní slovanština, japonský Meidži, čínský Union Version (和合本), a hebrejský i řecký původní text.
+📖 33 klasických překladů ve 29 jazycích: Bible kralická 1613, KJV 1611 s apokryfy, Webster 1833, Ženevská bible 1599, Diodati 1649, Reina-Valera 1909, Lutherova bible 1545, Martin 1744, Karel XII. 1703, ruský synodální překlad, církevní slovanština, japonský Meidži, čínský Union Version (和合本), a hebrejský i řecký původní text.
 ✝️ Dobrá zpráva — Boží plán spásy krok za krokem, pouze biblický text.
 🔴 Slova Kristova červeně.
 🎧 Zvuk: namluvené čtení a syntéza řeči se zvýrazněním verše, přehrávání na pozadí, časovač usínání.
@@ -375,13 +474,13 @@ Všechny texty jsou volným dílem. Aplikace neshromažďuje žádná data.
 **Titel:** Hexapla — Parallelbibel
 
 **Kort beskrivelse (≤80):**
-Bibelen offline: 34 klassiske oversættelser, lyd, læseplaner, Strong.
+Bibelen offline: 33 klassiske oversættelser, lyd, læseplaner, Strong.
 
 **Fuld beskrivelse:**
 
 Hexapla — hele Bibelen uden internet, uden reklamer, uden konto og uden dataindsamling. Alt er gratis, intet er låst.
 
-📖 34 klassiske oversættelser på 29 sprog: Dansk Bibel 1819, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karl XII 1703, russisk synodal, kirkeslavisk, japansk 明治元訳, kinesisk 和合本 samt de hebraiske og græske grundtekster.
+📖 33 klassiske oversættelser på 29 sprog: Dansk Bibel 1819, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karl XII 1703, russisk synodal, kirkeslavisk, japansk 明治元訳, kinesisk 和合本 samt de hebraiske og græske grundtekster.
 ✝️ Det gode budskab: Guds frelsesplan trin for trin, kun Skriften.
 🔴 Kristi ord med rødt.
 🎧 Lyd: oplæsning og talesyntese med versfremhævning, baggrundsafspilning, sleep-timer.
@@ -400,13 +499,13 @@ Alle tekster er offentlig ejendom. Appen indsamler ingen data.
 **Titel:** Hexapla — Parallelle Bijbel
 
 **Korte beschrijving (≤80):**
-Bijbel offline: 34 klassieke vertalingen, audio, leesplannen, Strong.
+Bijbel offline: 33 klassieke vertalingen, audio, leesplannen, Strong.
 
 **Volledige beschrijving:**
 
 Hexapla is de complete Bijbel — offline, zonder advertenties, zonder account en zonder gegevensverzameling. Alles gratis, niets vergrendeld.
 
-📖 34 klassieke vertalingen in 29 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
+📖 33 klassieke vertalingen in 29 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
 ✝️ Het Goede Nieuws — Gods heilsplan stap voor stap, uitsluitend Schrift.
 🔴 Woorden van Christus in rood.
 🎧 Audio: voorlezen en tekst-naar-spraak met versmarkering, afspelen op de achtergrond, slaaptimer.
@@ -425,13 +524,13 @@ Alle teksten zijn publiek domein. De app verzamelt geen gegevens.
 **Nimi:** Hexapla — Rinnakkaisraamattu
 
 **Lyhyt kuvaus (≤80):**
-Raamattu offline: 34 klassista käännöstä, ääni, lukusuunnitelmat, Strong.
+Raamattu offline: 33 klassista käännöstä, ääni, lukusuunnitelmat, Strong.
 
 **Täydellinen kuvaus:**
 
 Hexapla on koko Raamattu — ilman internetiä, ilman mainoksia, ilman tiliä ja ilman tiedonkeruuta. Kaikki on ilmaista, mikään ei ole lukittu.
 
-📖 34 klassista käännöstä 29 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
+📖 33 klassista käännöstä 29 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
 ✝️ Hyvä sanoma — Jumalan pelastussuunnitelma askel askeleelta, pelkkää Raamattua.
 🔴 Kristuksen sanat punaisella.
 🎧 Ääni: ihmisääninen luenta ja tekstistä puheeksi -toiminto jakeen korostuksella, taustatoisto, uniajastin.
@@ -450,13 +549,13 @@ Kaikki tekstit ovat vapaasti käytettävissä (public domain). Sovellus ei kerä
 **Titre :** Hexapla — Bible parallèle
 
 **Description courte :**
-Bible hors ligne : 34 traductions classiques, audio, plans de lecture.
+Bible hors ligne : 33 traductions classiques, audio, plans de lecture.
 
 **Description complète :**
 
 Hexapla, c'est la Bible complète — hors ligne, sans publicité, sans compte, sans collecte de données. Tout est gratuit, rien n'est verrouillé.
 
-📖 34 traductions classiques en 29 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique ; interlinéaire grec/hébreu (analyse grammaticale au toucher) ; dictionnaire Webster 1828 pour les traductions anglaises. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
+📖 33 traductions classiques en 29 langues, dont la Bible Martin 1744, la KJV 1611, l'hébreu et le grec originaux. ✝️ La Bonne Nouvelle : le plan du salut, étape par étape, uniquement l'Écriture. 🔴 Paroles du Christ en rouge. 🎧 Lecture audio avec surlignage des versets. 📚 Numéros Strong avec lexique ; interlinéaire grec/hébreu (analyse grammaticale au toucher) ; dictionnaire Webster 1828 pour les traductions anglaises. 📅 Plans de lecture avec progression. ✏️ Signets, notes, surlignages, sauvegarde.
 
 Tous les textes sont dans le domaine public. L'application ne collecte rien.
 
@@ -467,13 +566,13 @@ Tous les textes sont dans le domaine public. L'application ne collecte rien.
 **Titel:** Hexapla — Parallelbibel
 
 **Kurzbeschreibung:**
-Bibel offline: 34 klassische Übersetzungen, Audio, Lesepläne, Strong.
+Bibel offline: 33 klassische Übersetzungen, Audio, Lesepläne, Strong.
 
 **Vollständige Beschreibung:**
 
 Hexapla ist die vollständige Bibel — offline, werbefrei, ohne Konto, ohne Datensammlung. Alles kostenlos, nichts gesperrt.
 
-📖 34 klassische Übersetzungen in 29 Sprachen, darunter die Lutherbibel 1545, die KJV 1611 sowie Hebräisch und Griechisch im Original. ✝️ Die Gute Nachricht: Gottes Heilsplan Schritt für Schritt, nur Schrift. 🔴 Worte Christi in Rot. 🎧 Audiowiedergabe mit Vershervorhebung. 📚 Strong-Nummern mit Lexikon; Interlinear für Griechisch/Hebräisch (grammatische Analyse per Tipp); Websters Wörterbuch 1828 für die englischen Übersetzungen. 📅 Lesepläne mit Fortschritt. ✏️ Lesezeichen, Notizen, Markierungen, Sicherung.
+📖 33 klassische Übersetzungen in 29 Sprachen, darunter die Lutherbibel 1545, die KJV 1611 sowie Hebräisch und Griechisch im Original. ✝️ Die Gute Nachricht: Gottes Heilsplan Schritt für Schritt, nur Schrift. 🔴 Worte Christi in Rot. 🎧 Audiowiedergabe mit Vershervorhebung. 📚 Strong-Nummern mit Lexikon; Interlinear für Griechisch/Hebräisch (grammatische Analyse per Tipp); Websters Wörterbuch 1828 für die englischen Übersetzungen. 📅 Lesepläne mit Fortschritt. ✏️ Lesezeichen, Notizen, Markierungen, Sicherung.
 
 Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
@@ -484,13 +583,13 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 **Τίτλος:** Hexapla — Παράλληλη Βίβλος
 
 **Σύντομη περιγραφή (≤80):**
-Βίβλος offline: 34 κλασικές μεταφράσεις, ήχος, προγράμματα ανάγνωσης, Strong.
+Βίβλος offline: 33 κλασικές μεταφράσεις, ήχος, προγράμματα ανάγνωσης, Strong.
 
 **Πλήρης περιγραφή:**
 
 Το Hexapla είναι η πλήρης Βίβλος — χωρίς σύνδεση στο διαδίκτυο, χωρίς διαφημίσεις, χωρίς λογαριασμό και χωρίς συλλογή δεδομένων. Όλα δωρεάν, τίποτα κλειδωμένο.
 
-📖 34 κλασικές μεταφράσεις σε 29 γλώσσες: η μετάφραση Βάμβα 1850, η KJV 1611 με τα Απόκρυφα, η Webster 1833, η Γενεύη 1599, η Diodati 1649, η Reina-Valera 1909, η Βίβλος του Λούθηρου 1545, η Martin 1744, ο Κάρολος ΙΒ' 1703, η Ρωσική Συνοδική, η Εκκλησιαστική Σλαβονική, η ιαπωνική Meiji, η κινεζική Union Version (和合本), καθώς και τα πρωτότυπα εβραϊκά και ελληνικά κείμενα.
+📖 33 κλασικές μεταφράσεις σε 29 γλώσσες: η μετάφραση Βάμβα 1850, η KJV 1611 με τα Απόκρυφα, η Webster 1833, η Γενεύη 1599, η Diodati 1649, η Reina-Valera 1909, η Βίβλος του Λούθηρου 1545, η Martin 1744, ο Κάρολος ΙΒ' 1703, η Ρωσική Συνοδική, η Εκκλησιαστική Σλαβονική, η ιαπωνική Meiji, η κινεζική Union Version (和合本), καθώς και τα πρωτότυπα εβραϊκά και ελληνικά κείμενα.
 ✝️ Τα Καλά Νέα — το σχέδιο σωτηρίας του Θεού, βήμα προς βήμα, μόνο από τη Γραφή.
 🔴 Τα λόγια του Χριστού με κόκκινο.
 🎧 Ήχος: αφήγηση και σύνθεση ομιλίας με επισήμανση εδαφίου, αναπαραγωγή στο παρασκήνιο, χρονοδιακόπτης ύπνου.
@@ -509,13 +608,13 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 **שם:** Hexapla — כתבי הקודש במקביל
 
 **תיאור קצר (עד 80 תווים):**
-כתבי קודש ללא אינטרנט: 34 תרגומים קלאסיים, שמע, תוכניות קריאה, מספרי סטרונג.
+כתבי קודש ללא אינטרנט: 33 תרגומים קלאסיים, שמע, תוכניות קריאה, מספרי סטרונג.
 
 **תיאור מלא:**
 
 Hexapla הוא אוסף כתבי הקודש המלא — ללא אינטרנט, ללא פרסומות, ללא צורך בחשבון וללא איסוף נתונים. הכול חינם וכלום אינו נעול.
 
-📖 34 תרגומים קלאסיים ב-29 שפות: הנוסח העברי של התנ"ך לפי כתב היד של לנינגרד (Westminster Leningrad Codex), ה-KJV משנת 1611 עם הספרים החיצוניים, וובסטר 1833, ג'נבה 1599, דיודאטי 1649, ריינה-ולרה 1909, תרגום לותר 1545, מרטין 1744, קרל ה-12 משנת 1703, הנוסח הסינודלי הרוסי, הסלאבית הכנסייתית, מייג'י היפני, התרגום הסיני 和合本, וכן הטקסט היווני של הברית החדשה.
+📖 33 תרגומים קלאסיים ב-29 שפות: הנוסח העברי של התנ"ך לפי כתב היד של לנינגרד (Westminster Leningrad Codex), ה-KJV משנת 1611 עם הספרים החיצוניים, וובסטר 1833, ג'נבה 1599, דיודאטי 1649, ריינה-ולרה 1909, תרגום לותר 1545, מרטין 1744, קרל ה-12 משנת 1703, הנוסח הסינודלי הרוסי, הסלאבית הכנסייתית, מייג'י היפני, התרגום הסיני 和合本, וכן הטקסט היווני של הברית החדשה.
 ✝️ הבשורה הטובה — תוכנית הישועה של אלוהים, צעד אחר צעד, מתוך הכתובים בלבד.
 🔴 דברי ישוע מודגשים באדום (בתרגומים הנוצריים).
 🎧 שמע: קריינות אנושית והמרת טקסט לדיבור עם הדגשת הפסוק, נגינה ברקע, טיימר שינה.
@@ -536,13 +635,13 @@ Hexapla הוא אוסף כתבי הקודש המלא — ללא אינטרנט, 
 **Cím:** Hexapla — Párhuzamos Biblia
 
 **Rövid leírás (≤80):**
-Biblia internet nélkül: 34 klasszikus fordítás, hang, olvasási tervek, Strong.
+Biblia internet nélkül: 33 klasszikus fordítás, hang, olvasási tervek, Strong.
 
 **Teljes leírás:**
 
 A Hexapla a teljes Biblia — internet nélkül, hirdetések nélkül, regisztráció nélkül és adatgyűjtés nélkül. Minden ingyenes, semmi sincs lezárva.
 
-📖 34 klasszikus fordítás 29 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
+📖 33 klasszikus fordítás 29 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
 ✝️ A jó hír — Isten üdvtervének lépései, kizárólag Szentírás alapján.
 🔴 Krisztus szavai piros betűkkel.
 🎧 Hang: felolvasás és szövegfelolvasás versenkénti kiemeléssel, háttérben lejátszás, elalváskapcsoló.
@@ -561,13 +660,13 @@ Minden szöveg közkincs. Az alkalmazás semmilyen adatot nem gyűjt.
 **Titolo:** Hexapla — Bibbia parallela
 
 **Descrizione breve (≤80):**
-Bibbia offline: 34 traduzioni classiche, audio, piani di lettura, Strong.
+Bibbia offline: 33 traduzioni classiche, audio, piani di lettura, Strong.
 
 **Descrizione completa:**
 
 Hexapla — la Bibbia completa senza internet, senza pubblicità, senza registrazione e senza raccolta dati. Tutto gratuito, niente bloccato.
 
-📖 34 traduzioni classiche in 29 lingue: Diodati 1649/1885, KJV 1611 con apocrifi, Webster 1833, Ginevra 1599, Reina-Valera 1909, Almeida TR, Lutero 1545, Martin 1744, Carlo XII 1703, danese 1819, Sinodale russa, slavo ecclesiastico, 明治元訳 giapponese, 和合本 cinese, e gli originali ebraico e greco.
+📖 33 traduzioni classiche in 29 lingue: Diodati 1649/1885, KJV 1611 con apocrifi, Webster 1833, Ginevra 1599, Reina-Valera 1909, Almeida TR, Lutero 1545, Martin 1744, Carlo XII 1703, danese 1819, Sinodale russa, slavo ecclesiastico, 明治元訳 giapponese, 和合本 cinese, e gli originali ebraico e greco.
 ✝️ La Buona Novella: il piano di salvezza di Dio passo dopo passo, solo Scrittura.
 🔴 Parole di Cristo in rosso.
 🎧 Audio: narrazione e sintesi vocale con evidenziazione dei versetti, riproduzione in sottofondo, timer.
@@ -586,13 +685,13 @@ Tutti i testi sono di pubblico dominio. L'app non raccoglie alcun dato.
 **タイトル:** Hexapla — 対照聖書
 
 **簡単な説明 (≤80):**
-オフライン聖書：古典訳34種・音声・通読計画・ストロング番号・原語対訳。
+オフライン聖書：古典訳33種・音声・通読計画・ストロング番号・原語対訳。
 
 **詳細な説明:**
 
 Hexapla（ヘクサプラ）— インターネット不要、広告なし、登録不要、データ収集なしの聖書アプリ。すべて無料、制限はありません。
 
-📖 29言語・34の古典訳：明治元訳（1880/87年、日本初の聖書）、欽定訳 KJV 1611（外典付き）、ウェブスター訳1833、ジュネーブ聖書1599、ディオダティ訳1649、レイナ・バレラ訳1909、ルター訳1545、中国語和合本1919（繁体・簡体）、ロシア語会堂訳ほか、ヘブライ語・ギリシア語原典も収録。
+📖 29言語・33の古典訳：明治元訳（1880/87年、日本初の聖書）、欽定訳 KJV 1611（外典付き）、ウェブスター訳1833、ジュネーブ聖書1599、ディオダティ訳1649、レイナ・バレラ訳1909、ルター訳1545、中国語和合本1919（繁体・簡体）、ロシア語会堂訳ほか、ヘブライ語・ギリシア語原典も収録。
 ✝️ 福音：神の救いのご計画を聖書の御言葉だけで、順を追って。
 🔴 キリストの言葉を赤字で表示。
 🎧 音声：朗読と読み上げ（節のハイライト付き）、バックグラウンド再生、スリープタイマー。
@@ -611,13 +710,13 @@ Hexapla（ヘクサプラ）— インターネット不要、広告なし、登
 **Nosaukums:** Hexapla — Paralēlā Bībele
 
 **Īsais apraksts (≤80):**
-Bībele bez interneta: 34 klasiski tulkojumi, audio, lasīšanas plāni, Strong.
+Bībele bez interneta: 33 klasiski tulkojumi, audio, lasīšanas plāni, Strong.
 
 **Pilnais apraksts:**
 
 Hexapla ir pilna Bībele — bez interneta, bez reklāmām, bez konta un bez datu vākšanas. Viss ir bez maksas, nekas nav slēgts.
 
-📖 34 klasiski tulkojumi 29 valodās: Glika Bībele 1685/1689, KJV 1611 ar apokrifiem, Webster 1833, Ženēvas Bībele 1599, Diodati 1649, Reina-Valera 1909, Lutera Bībele 1545, Martina Bībele 1744, Kārļa XII Bībele 1703, krievu Sinodālais tulkojums, baznīcslāvu valoda, japāņu Meidzi, ķīniešu Union versija (和合本), kā arī ebreju un grieķu oriģinālteksti.
+📖 33 klasiski tulkojumi 29 valodās: Glika Bībele 1685/1689, KJV 1611 ar apokrifiem, Webster 1833, Ženēvas Bībele 1599, Diodati 1649, Reina-Valera 1909, Lutera Bībele 1545, Martina Bībele 1744, Kārļa XII Bībele 1703, krievu Sinodālais tulkojums, baznīcslāvu valoda, japāņu Meidzi, ķīniešu Union versija (和合本), kā arī ebreju un grieķu oriģinālteksti.
 ✝️ Labā vēsts — Dieva pestīšanas plāns soli pa solim, tikai no Rakstiem.
 🔴 Kristus vārdi sarkanā krāsā.
 🎧 Audio: lasījums balsī un teksta pārvēršana runā ar panta izcelšanu, atskaņošana fonā, aizmigšanas taimeris.
@@ -636,13 +735,13 @@ Visi teksti ir sabiedrības īpašums. Lietotne nevāc nekādus datus.
 **Nazwa:** Hexapla — Biblia Równoległa
 
 **Krótki opis (≤80):**
-Biblia offline: 34 klasyczne przekłady, audio, plany czytania, Strong.
+Biblia offline: 33 klasyczne przekłady, audio, plany czytania, Strong.
 
 **Pełny opis:**
 
 Hexapla to kompletna Biblia — bez internetu, bez reklam, bez konta i bez zbierania danych. Wszystko za darmo, nic nie jest zablokowane.
 
-📖 34 klasyczne przekłady w 29 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
+📖 33 klasyczne przekłady w 29 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
 ✝️ Dobra Nowina — Boży plan zbawienia krok po kroku, wyłącznie na podstawie Pisma.
 🔴 Słowa Chrystusa zaznaczone na czerwono.
 🎧 Audio: lektor i synteza mowy z podświetlaniem wersetu, odtwarzanie w tle, minutnik snu.
@@ -661,13 +760,13 @@ Wszystkie teksty są w domenie publicznej. Aplikacja nie zbiera żadnych danych.
 **Título:** Hexapla — Bíblia Paralela
 
 **Descrição curta (≤80):**
-Bíblia offline: 34 traduções clássicas, áudio, planos de leitura, Strong.
+Bíblia offline: 33 traduções clássicas, áudio, planos de leitura, Strong.
 
 **Descrição completa:**
 
 Hexapla — a Bíblia completa sem internet, sem anúncios, sem cadastro e sem coleta de dados. Tudo gratuito, nada bloqueado.
 
-📖 34 traduções clássicas em 29 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+📖 33 traduções clássicas em 29 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
 ✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
 🔴 Palavras de Cristo em vermelho.
 🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
@@ -686,13 +785,13 @@ Todos os textos são de domínio público. O app não coleta nenhum dado.
 **Título:** Hexapla — Bíblia Paralela
 
 **Descrição curta (≤80):**
-Bíblia offline: 34 traduções clássicas, áudio, planos de leitura, Strong.
+Bíblia offline: 33 traduções clássicas, áudio, planos de leitura, Strong.
 
 **Descrição completa:**
 
 Hexapla — a Bíblia completa sem internet, sem anúncios, sem registo e sem recolha de dados. Tudo gratuito, nada bloqueado.
 
-📖 34 traduções clássicas em 29 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+📖 33 traduções clássicas em 29 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
 ✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
 🔴 Palavras de Cristo em vermelho.
 🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
@@ -711,13 +810,13 @@ Todos os textos são de domínio público. A aplicação não recolhe nenhum dad
 **Название:** Гексапла — параллельная Библия
 
 **Краткое описание (до 80 зн.):**
-Библия офлайн: 34 перевода, озвучка, планы чтения, симфония Стронга.
+Библия офлайн: 33 перевода, озвучка, планы чтения, симфония Стронга.
 
 **Полное описание:**
 
 Гексапла — полная Библия без интернета, без рекламы, без регистрации и без сбора данных. Всё бесплатно и ничего не заблокировано.
 
-📖 34 классических перевода на 29 языках: Синодальный, Елизаветинская Библия (церковнославянский), KJV 1611 с апокрифами, Библия Уэбстера 1833, Женевская 1599, Уиклиф, Тиндейл, Bible Martin 1744 (франц.), Библия Лютера 1545 (нем.), Карла XII 1703 (швед.), датская 1819, Рейна-Валера 1909 (исп.), Диодати 1649 (итал.), Bíblia Livre — Алмейда TR (порт.), 明治元訳 — первая японская Библия 1880/87, китайская 和合本 1919 (трад. и упрощ. иероглифы), древнееврейский текст (Ленинградский кодекс), греческий Новый Завет (византийский текст), санскритский Новый Завет 1851 года, тамильская Библия (IRV 2019, линия Бауэра 1871), латинская Вульгата (Климентина, 1592), нидерландская Statenvertaling 1637 года, арабская Библия Ван Дейка 1865 года и персидский Новый Завет в переводе Генри Мартина 1876 года — и другие.
+📖 33 классических перевода на 29 языках: Синодальный, Елизаветинская Библия (церковнославянский), KJV 1611 с апокрифами, Библия Уэбстера 1833, Женевская 1599, Уиклиф, Тиндейл, Bible Martin 1744 (франц.), Библия Лютера 1545 (нем.), Карла XII 1703 (швед.), датская 1819, Рейна-Валера 1909 (исп.), Диодати 1649 (итал.), Bíblia Livre — Алмейда TR (порт.), 明治元訳 — первая японская Библия 1880/87, китайская 和合本 1919 (трад. и упрощ. иероглифы), древнееврейский текст (Ленинградский кодекс), греческий Новый Завет (византийский текст), санскритский Новый Завет 1851 года, тамильская Библия (IRV 2019, линия Бауэра 1871), латинская Вульгата (Климентина, 1592), нидерландская Statenvertaling 1637 года, арабская Библия Ван Дейка 1865 года и персидский Новый Завет в переводе Генри Мартина 1876 года — и другие.
 
 ✝️ «Благая весть» — план спасения шаг за шагом, только стихи Писания.
 🔴 Слова Христа выделены красным.
@@ -739,13 +838,13 @@ Todos os textos são de domínio público. A aplicação não recolhe nenhum dad
 **Naziv:** Hexapla — Paralelna Biblija
 
 **Kratak opis (≤80):**
-Biblija bez interneta: 34 klasična prevoda, audio, planovi čitanja, Strong.
+Biblija bez interneta: 33 klasična prevoda, audio, planovi čitanja, Strong.
 
 **Pun opis:**
 
 Hexapla je kompletna Biblija — bez interneta, bez reklama, bez naloga i bez prikupljanja podataka. Sve je besplatno, ništa nije zaključano.
 
-📖 34 klasična prevoda na 29 jezika: Sveto pismo — Karadžić/Daničić, 1847/1865, KJV 1611 sa apokrifima, Webster 1833, Ženevska Biblija 1599, Diodati 1649, Reina-Valera 1909, Lutherova Biblija 1545, Martin 1744, Biblija Karla XII 1703, ruski Sinodalni prevod, crkvenoslovenski, japanski Meiji, kineska Union verzija (和合本), kao i hebrejski i grčki izvorni tekstovi.
+📖 33 klasična prevoda na 29 jezika: Sveto pismo — Karadžić/Daničić, 1847/1865, KJV 1611 sa apokrifima, Webster 1833, Ženevska Biblija 1599, Diodati 1649, Reina-Valera 1909, Lutherova Biblija 1545, Martin 1744, Biblija Karla XII 1703, ruski Sinodalni prevod, crkvenoslovenski, japanski Meiji, kineska Union verzija (和合本), kao i hebrejski i grčki izvorni tekstovi.
 ✝️ Dobra vest — Božji plan spasenja korak po korak, isključivo iz Svetog pisma.
 🔴 Hristove reči crvenim slovima.
 🎧 Audio: čitanje i sinteza govora sa isticanjem stiha, reprodukcija u pozadini, tajmer za spavanje.
@@ -764,13 +863,13 @@ Svi tekstovi su javno vlasništvo. Aplikacija ne prikuplja nikakve podatke.
 **Título:** Hexapla — Biblia paralela
 
 **Descripción corta:**
-Biblia sin conexión: 34 traducciones clásicas, audio, planes de lectura.
+Biblia sin conexión: 33 traducciones clásicas, audio, planes de lectura.
 
 **Descripción completa:**
 
 Hexapla es la Biblia completa — sin conexión, sin anuncios, sin cuentas y sin recopilar datos. Todo es gratis y nada está bloqueado.
 
-📖 34 traducciones clásicas en 29 idiomas, incluida la Reina-Valera 1909, la KJV 1611 y los originales hebreo y griego. ✝️ Las Buenas Nuevas: el plan de salvación de Dios paso a paso, solo Escritura. 🔴 Palabras de Cristo en rojo. 🎧 Audio con resaltado de versículos. 📚 Números Strong con léxico; interlineal griego/hebreo (análisis gramatical al tocar); diccionario Webster 1828 para las traducciones inglesas. 📅 Planes de lectura con progreso. ✏️ Marcadores, notas, resaltados, copia de seguridad.
+📖 33 traducciones clásicas en 29 idiomas, incluida la Reina-Valera 1909, la KJV 1611 y los originales hebreo y griego. ✝️ Las Buenas Nuevas: el plan de salvación de Dios paso a paso, solo Escritura. 🔴 Palabras de Cristo en rojo. 🎧 Audio con resaltado de versículos. 📚 Números Strong con léxico; interlineal griego/hebreo (análisis gramatical al tocar); diccionario Webster 1828 para las traducciones inglesas. 📅 Planes de lectura con progreso. ✏️ Marcadores, notas, resaltados, copia de seguridad.
 
 Todos los textos son de dominio público. La aplicación no recopila nada.
 
@@ -782,13 +881,13 @@ Todos los textos son de dominio público. La aplicación no recopila nada.
 **Titel:** Hexapla — Parallellbibel
 
 **Kort beskrivning (≤80):**
-Bibeln offline: 34 klassiska översättningar, ljud, läsplaner, Strong.
+Bibeln offline: 33 klassiska översättningar, ljud, läsplaner, Strong.
 
 **Fullständig beskrivning:**
 
 Hexapla — hela Bibeln utan internet, utan reklam, utan konto och utan datainsamling. Allt gratis, inget låst.
 
-📖 34 klassiska översättningar på 29 språk: Karl XII:s Bibel 1703, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, danska 1819, ryska synodala, kyrkoslaviska, japanska 明治元訳, kinesiska 和合本 samt hebreiska och grekiska grundtexterna.
+📖 33 klassiska översättningar på 29 språk: Karl XII:s Bibel 1703, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, danska 1819, ryska synodala, kyrkoslaviska, japanska 明治元訳, kinesiska 和合本 samt hebreiska och grekiska grundtexterna.
 ✝️ De goda nyheterna: Guds frälsningsplan steg för steg, endast Skriften.
 🔴 Kristi ord i rött.
 🎧 Ljud: uppläsning och talsyntes med versmarkering, bakgrundsuppspelning, insomningstimer.
@@ -807,13 +906,13 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 **Title:** Hexapla — இணை வேதாகமம்
 
 **Short description (≤80):**
-வேதாகமம் ஆஃப்லைன்: 34 மொழிபெயர்ப்புகள், ஒலி, திட்டங்கள், ஸ்ட்ராங்.
+வேதாகமம் ஆஃப்லைன்: 33 மொழிபெயர்ப்புகள், ஒலி, திட்டங்கள், ஸ்ட்ராங்.
 
 **Full description:**
 
 ஹெக்ஸாப்லா — முழு வேதாகமம்: இணையம் தேவையில்லை, விளம்பரம் இல்லை, பதிவு இல்லை, தரவு சேகரிப்பு இல்லை. எல்லாம் இலவசம், எதுவும் பூட்டப்படவில்லை.
 
-📖 29 மொழிகளில் 34 பாரம்பரிய மொழிபெயர்ப்புகள் — முழு தமிழ் வேதாகமம் (IRV 2019, 1871 பவர்/யூனியன் பாரம்பரியம்), எபிரெய தனக் (லெனின்கிராட் கோடெக்ஸ்), கிரேக்கப் புதிய ஏற்பாடு (பைசந்திய உரை), KJV 1611 (அப்போக்கிரிபாவுடன்), ஜெனீவா 1599, லூத்தர் 1545, சமஸ்கிருதப் புதிய ஏற்பாடு 1851 மற்றும் பல.
+📖 29 மொழிகளில் 33 பாரம்பரிய மொழிபெயர்ப்புகள் — முழு தமிழ் வேதாகமம் (IRV 2019, 1871 பவர்/யூனியன் பாரம்பரியம்), எபிரெய தனக் (லெனின்கிராட் கோடெக்ஸ்), கிரேக்கப் புதிய ஏற்பாடு (பைசந்திய உரை), KJV 1611 (அப்போக்கிரிபாவுடன்), ஜெனீவா 1599, லூத்தர் 1545, சமஸ்கிருதப் புதிய ஏற்பாடு 1851 மற்றும் பல.
 ✝️ நற்செய்தி — தேவனுடைய இரட்சிப்பின் திட்டம், படிப்படியாக, வேத வசனங்களே.
 🔴 கிறிஸ்துவின் வார்த்தைகள் சிவப்பில்.
 🎧 ஒலி: மனிதக் குரல் வாசிப்பு (LibriVox) மற்றும் பேச்சு மாற்றம் வசன ஒளிர்வுடன்; பின்னணி இயக்கம், தூக்க டைமர்.

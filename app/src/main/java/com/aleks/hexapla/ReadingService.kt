@@ -28,6 +28,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /** Cross-screen playback state, written by [ReadingService], observed by the UI. */
@@ -67,6 +68,8 @@ class ReadingService : Service() {
 
     private var sleepJob: Job? = null
     private var rateJob: Job? = null
+    private var prefetchJob: Job? = null   // caches upcoming generated chapters
+    private var followJob: Job? = null      // publishes current verse during recorded audio
     private var session: MediaSessionCompat? = null
     private var focusRequest: AudioFocusRequest? = null
     private var wakeLock: PowerManager.WakeLock? = null
@@ -233,7 +236,7 @@ class ReadingService : Service() {
     /** Entry point for playing the current chapter in whichever mode applies. */
     private fun startChapter(fromVerse: Int = 0) {
         val sec = sectionForCurrent()
-        if (sec != null) playSection(sec, sectionFraction(sec, chapterIdx, fromVerse))
+        if (sec != null) playSection(sec, sectionFraction(sec, chapterIdx, fromVerse), fromVerse)
         else speakCurrentChapter(fromVerse)
     }
 
@@ -257,7 +260,7 @@ class ReadingService : Service() {
         return if (total > 0) before.toFloat() / total else 0f
     }
 
-    private fun playSection(sec: AudioRepo.Section, fraction: Float = 0f) {
+    private fun playSection(sec: AudioRepo.Section, fraction: Float = 0f, startVerse: Int = 0) {
         tts?.stop()
         releasePlayer()
         if (!requestFocus()) { stopEverything(); return }
@@ -276,6 +279,7 @@ class ReadingService : Service() {
         updateSessionState(playing = true)
         updateNotification()
         scope.launch { Store.setLastPosition(this@ReadingService, bookIdx, chapterIdx) }
+        prefetchAhead(sec)
         scope.launch {
             // Source priority: an already-cached file (offline, instant) > a
             // live stream when the user opted out of saving (Settings) >
@@ -330,14 +334,23 @@ class ReadingService : Service() {
                 )
                 setDataSource(dataSource)
                 setOnPreparedListener { mp ->
-                    // Land a few seconds early so the target verse isn't clipped.
-                    val skipMs = (mp.duration * fraction).toInt() - 4000
+                    // Generated audio carries exact per-verse offsets → seek right
+                    // to the verse (small lead-in so its first word isn't clipped).
+                    // Otherwise fall back to the verse-count estimate, landing a
+                    // few seconds early so the target isn't overshot. Verse 0 seeks
+                    // nowhere → the chapter announcement plays.
+                    val offsets = sec.offsets
+                    val skipMs = if (offsets != null && startVerse in 1 until offsets.size)
+                        (offsets[startVerse] - 250).coerceAtLeast(0)
+                    else
+                        (mp.duration * fraction).toInt() - 4000
                     if (skipMs > 1000) mp.seekTo(skipMs)
                     try {
                         mp.playbackParams = mp.playbackParams.setSpeed(settings.speechRate)
                     } catch (_: Exception) { mp.start() }
                     updateSessionState(playing = true)
                     updateNotification()
+                    if (sec.generated) startVerseFollow(sec)
                 }
                 setOnCompletionListener { onSectionFinished(sec) }
                 setOnErrorListener { _, _, _ ->
@@ -366,11 +379,72 @@ class ReadingService : Service() {
     }
 
     private fun releasePlayer() {
+        followJob?.cancel(); followJob = null
+        prefetchJob?.cancel(); prefetchJob = null
         player?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
         player = null
         narrating = false
         currentSection = null
         downloadPercent = -1
+    }
+
+    /**
+     * Verse-following for recorded (generated) narration: poll the player's
+     * position and publish the current verse, so the reader highlights and
+     * auto-scrolls exactly as it does for per-verse TTS. Driven by the
+     * per-verse ms offsets carried on the section (audio_index_gen "o").
+     */
+    private fun startVerseFollow(sec: AudioRepo.Section) {
+        followJob?.cancel()
+        val offsets = sec.offsets
+        if (offsets.isNullOrEmpty()) return
+        followJob = scope.launch {
+            var lastV = -1
+            while (isActive) {
+                val pos = try { player?.currentPosition ?: break } catch (_: Exception) { break }
+                var v = 0
+                for (i in offsets.indices) { if (offsets[i] <= pos) v = i else break }
+                if (v != lastV) {
+                    lastV = v
+                    verseIdx = v
+                    Playback.verse.intValue = v
+                    Playback.wordStart.intValue = -1
+                    Playback.wordEnd.intValue = -1
+                }
+                delay(250)
+            }
+        }
+    }
+
+    /**
+     * While a generated chapter plays, quietly cache the next few chapters so
+     * auto-advance never waits on — or fails on — an on-demand download (the
+     * cause of recorded audio dropping to TTS mid-listen). Skipped in
+     * stream-don't-save mode and for LibriVox (multi-chapter) sections.
+     */
+    private fun prefetchAhead(sec: AudioRepo.Section, count: Int = 2) {
+        if (!sec.generated || settings.audioStream) return
+        val startBook = bookIdx
+        prefetchJob?.cancel()
+        prefetchJob = scope.launch {
+            delay(2000)  // let the current chapter's own download win first
+            var b = startBook
+            var c = sec.last  // 0-based chapter after this section
+            var got = 0
+            while (got < count && b < books.size) {
+                while (b < books.size && c >= books[b].chapters.size) { b++; c = 0 }
+                if (b >= books.size) break
+                val next = AudioRepo.sectionFor(audioSections[b], c)
+                if (next != null && next.generated) {
+                    try { AudioRepo.ensureDownloadedGen(this@ReadingService, next.url) }
+                    catch (_: Exception) {}
+                    got++
+                    c = next.last
+                } else {
+                    c += 1
+                }
+            }
+        }
     }
 
     /* ---- Background music bed: rotates softly through the bundled tracks

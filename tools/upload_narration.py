@@ -57,6 +57,9 @@ SETS = {
     "sv": {
         "identifier": "hexapla-audio-karlxii-1703",
         "title": "Karl XII:s Bibel (1703) — komplett ljudinspelning / complete audio narration",
+        # Used automatically while the set covers fewer than CANON_CHAPTERS.
+        "title_partial": "Karl XII:s Bibel (1703) — ljudinspelning / audio "
+                         "narration (pågår / in progress)",
         "translation": "Karl XII:s Bibel, 1703 (Swedish)",
         "language": "swe",
         "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
@@ -84,10 +87,15 @@ SETS = {
 # passes are done. Uploading a partially-defective corpus wastes the item's
 # reputation and everyone's bandwidth.
 
-DESCRIPTION = """<p>A complete chapter-by-chapter audio narration of
+# The 66-book Protestant canon. Used to decide whether a set may honestly be
+# called "complete" — an archive.org item is a public claim, and shipping a
+# partial render under a "complete audio narration" title would be false.
+CANON_CHAPTERS = 1189
+
+DESCRIPTION = """<p>{opening} chapter-by-chapter audio narration of
 <b>{translation}</b>, produced for <a href="{app}">Hexapla</a>, a free and
 offline parallel Bible app for Android.</p>
-
+{progress}
 <p>The underlying translation is in the <b>public domain</b> by age. The
 reading is <b>synthetic speech</b>, generated with {voice} — it is not a human
 performance, and no narrator is credited because none was involved.</p>
@@ -102,6 +110,13 @@ highlight verses or seek to them directly.</p>
 <p>{n_chapters} chapters. Free to use, copy and redistribute. The app that
 uses these files is free as well: no advertising, no purchases, no accounts,
 and no data collection.</p>"""
+
+PROGRESS_NOTE = """
+<p><b>This narration is still being produced: {n_chapters} of the 1,189
+chapters of the 66-book canon are available so far.</b> The remaining chapters
+are added to this item as they are rendered, so a book that is absent today may
+be present later. Nothing already uploaded changes.</p>
+"""
 
 
 def build(set_key, dry_run=False):
@@ -122,10 +137,17 @@ def build(set_key, dry_run=False):
         sys.exit(f"{len(missing)} chapters lack a .json sidecar: {missing[:5]}")
 
     total_bytes = sum(f.stat().st_size for f in oggs + jsons)
+    # Honesty gate: only a set covering the whole canon may say "complete".
+    is_partial = len(oggs) < CANON_CHAPTERS
+    if is_partial and "title_partial" not in meta_src:
+        sys.exit(f"{set_key}: {len(oggs)}/{CANON_CHAPTERS} chapters is a "
+                 f"PARTIAL set, but SETS['{set_key}'] has no 'title_partial'. "
+                 f"Add one rather than publishing a 'complete' title.")
+    title = meta_src["title_partial"] if is_partial else meta_src["title"]
     metadata = {
         "mediatype": "audio",
         "collection": "opensource_audio",
-        "title": meta_src["title"],
+        "title": title,
         # ⚠ project credit only — never the owner's personal name.
         "creator": "Hexapla (free offline parallel Bible app)",
         "language": meta_src["language"],
@@ -135,6 +157,9 @@ def build(set_key, dry_run=False):
                   "is machine-generated and placed in the public domain.",
         "originalurl": APP,
         "description": DESCRIPTION.format(
+            opening="An in-progress" if is_partial else "A complete",
+            progress=PROGRESS_NOTE.format(n_chapters=len(oggs))
+                     if is_partial else "",
             translation=meta_src["translation"], app=APP,
             voice=meta_src["voice"], n_chapters=len(oggs)),
     }

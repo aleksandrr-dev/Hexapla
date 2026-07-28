@@ -61,6 +61,9 @@ Die schwedische Karl-XII.-Bibel (1703) wird jetzt vorgelesen: das vollständige 
 <el-GR>
 Η σουηδική Βίβλος του Καρόλου ΙΒ΄ (1703) διαβάζεται πλέον φωναχτά: ολόκληρη η Καινή Διαθήκη μαζί με τη Γένεση, την Έξοδο και τους Ψαλμούς· και άλλα βιβλία προστίθενται σταδιακά. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει τώρα κάθε στίχο, ενώ η συνέχιση ξεκινά ακριβώς από τον στίχο που σταματήσατε. Διορθώσεις: η ανάγνωση δεν γυρίζει πια στη φωνητική σύνθεση της συσκευής στη μέση ενός βιβλίου και τα προγράμματα ανάγνωσης ανοίγουν στην τρέχουσα ημέρα.
 </el-GR>
+<en-IN>
+The Swedish Karl XII Bible (1703) is now read aloud: the complete New Testament plus Genesis, Exodus and the Psalms, with more books added over time. Recorded narration now follows and highlights each verse as it is read, and resuming continues from the exact verse you stopped on. Fixes: narration no longer drops back to the device's text-to-speech partway through a book, and reading plans now open on your current day.
+</en-IN>
 <es-419>
 La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
 </es-419>
@@ -119,7 +122,7 @@ A Bíblia sueca de Carlos XII (1703) passa a ser narrada: todo o Novo Testamento
 Karl XII:s Bibel (1703) läses nu upp: hela Nya testamentet samt Första och Andra Moseboken och Psaltaren; fler böcker läggs till efter hand. Den inlästa uppläsningen följer och markerar nu varje vers, och när du fortsätter startar den exakt vid versen där du slutade. Rättningar: uppläsningen växlar inte längre till enhetens talsyntes mitt i en bok, och läsplaner öppnas på din aktuella dag.
 </sv-SE>
 <ta-IN>
-கார்ல் பன்னிரண்டாம் மன்னரின் ஸ்வீடிஷ் விவிலியம் (1703) இப்போது ஒலிவடிவில் வாசிக்கப்படுகிறது: புதிய ஏற்பாடு முழுவதும், மேலும் ஆதியாகமம், யாத்திராகமம், சங்கீதம்; மற்ற புத்தகங்கள் படிப்படியாகச் சேர்க்கப்படும். பதிவுசெய்யப்பட்ட ஒலிவாசிப்பு இப்போது ஒவ்வொரு வசனத்தையும் பின்தொடர்ந்து சிறப்பித்துக் காட்டுகிறது; மீண்டும் தொடங்கும்போது நீங்கள் நிறுத்திய வசனத்திலிருந்தே தொடர்கிறது. சரிசெய்தவை: புத்தகத்தின் நடுவில் ஒலிவாசிப்பு சாதனத்தின் பேச்சுத்தொகுப்புக்கு மாறாது; வாசிப்புத் திட்டங்கள் தற்போதைய நாளில் திறக்கும்.
+கார்ல் பன்னிரண்டாம் மன்னரின் ஸ்வீடிஷ் விவிலியம் (1703) இப்போது ஒலிவடிவில் வாசிக்கப்படுகிறது: புதிய ஏற்பாடு முழுவதும், மேலும் ஆதியாகமம், யாத்திராகமம், சங்கீதம்; மற்ற புத்தகங்கள் படிப்படியாகச் சேர்க்கப்படும். பதிவுசெய்யப்பட்ட ஒலிவாசிப்பு இப்போது ஒவ்வொரு வசனத்தையும் பின்தொடர்ந்து சிறப்பித்துக் காட்டுகிறது; நிறுத்திய வசனத்திலிருந்தே மீண்டும் தொடர்கிறது. சரிசெய்தவை: புத்தகத்தின் நடுவில் ஒலிவாசிப்பு சாதனத்தின் பேச்சுத்தொகுப்புக்கு மாறாது; வாசிப்புத் திட்டங்கள் தற்போதைய நாளில் திறக்கும்.
 </ta-IN>
 <zh-CN>
 瑞典卡尔十二世圣经（1703年）现已支持朗读：新约全书，以及创世记、出埃及记和诗篇；其余各卷将陆续加入。录制朗读现在会逐节跟随并高亮显示，继续播放时会从你停下的那一节精确接续。修复：朗读不再在书卷中途退回设备的语音合成，读经计划现在会打开到你当前的日程。
@@ -130,13 +133,6 @@ Karl XII:s Bibel (1703) läses nu upp: hela Nya testamentet samt Första och And
 <zh-TW>
 瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
 </zh-TW>
-
-⚠ The Swedish narration ships PARTIAL by design (New Testament + Genesis,
-Exodus, Psalms). Books without audio fall back to Swedish TTS, which is why the
-notes say "more books added over time" rather than naming a count — the
-archive.org item grows without an app update. Re-check the wording if a later
-release completes the set.
-
 ## 1.6.0 release notes (paste per store)
 
 <en-US>

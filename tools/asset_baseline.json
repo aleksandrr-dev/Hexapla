@@ -1,0 +1,183 @@
+{
+ "_comment": "SHA-256 baseline for scripture and scripture-adjacent assets. Verify with tools/check_asset_integrity.py. A diff you did not intend is damage, not drift — investigate before running --update.",
+ "_note": "initial baseline, 2026-07-28, taken at commit 5ac750b (1.6.1 shipped)",
+ "_files": 44,
+ "files": {
+  "bibles/ar_vandyck.json": {
+   "sha256": "7ccb72dddec515d54970dc29ca8b7bfd05c007044beb5fc2f42181ec27261f1f",
+   "bytes": 7519809
+  },
+  "bibles/be_dzekuc.json": {
+   "sha256": "5056cc98bd88e294abb7fb0ebfdb0e2fb4ed201abb58f50a105225ccbfd2fff4",
+   "bytes": 1772854
+  },
+  "bibles/cs_kralicka.json": {
+   "sha256": "aa15011fcd90bd4f0dab8f79940c60d395f3ee8026dc85d94a2548e54f845a70",
+   "bytes": 3958212
+  },
+  "bibles/cu_elizabeth.json": {
+   "sha256": "1bee20ede04389c55615d830eefdf03996c3d16c3edd3d358c7fdd43e3992fa1",
+   "bytes": 6883622
+  },
+  "bibles/da_1819.json": {
+   "sha256": "96e9d7744068a5a13410e5400bc17c7ae45e82c07a2e3c007a0fd705a1472005",
+   "bytes": 3952973
+  },
+  "bibles/de_luther.json": {
+   "sha256": "af1a13a99573d482afdb69130735c7f5499780e56b51e4e1d5835d06eff8297e",
+   "bytes": 4165452
+  },
+  "bibles/el_vamvas.json": {
+   "sha256": "2315b28cd27ca97c68fb9f7d8f84cb03d3f6efbeafd507434d6715df201cb27b",
+   "bytes": 7645592
+  },
+  "bibles/en_geneva.json": {
+   "sha256": "d4966efffa1918c06410b0029db0774e2c5527605e3221b5406e0472af80ae54",
+   "bytes": 4284244
+  },
+  "bibles/en_kjv.json": {
+   "sha256": "68a7eb369555778da2533640fc4f3fefc68b7aa4cdc85cea9fc50bfff49e51b7",
+   "bytes": 5290961
+  },
+  "bibles/en_kjv_strongs.json": {
+   "sha256": "4b5eb38696c6c747306c83c96fe12b3e476d65c0c8b45b24763da0ef70cb16d7",
+   "bytes": 6408073
+  },
+  "bibles/en_tyndale.json": {
+   "sha256": "82cab30741beeaac8a0afb255897ea7068bff20dee9d5e34d34c331c7e75fa4d",
+   "bytes": 1779772
+  },
+  "bibles/en_webster.json": {
+   "sha256": "7e34cbe9f252424757c2321467a77a304e13c9d9058ee9e444f9e8c468f10e85",
+   "bytes": 4179270
+  },
+  "bibles/en_ylt.json": {
+   "sha256": "b1e922d1f3f10a7e397ed7bb1e622368f350e03c8ce60569fb0114a2e7c55dd8",
+   "bytes": 4206841
+  },
+  "bibles/enm_wycliffe.json": {
+   "sha256": "5e9bfabaaca20f937ad6ee05ec31532123ff83febd3c4656228df419a1beaf55",
+   "bytes": 4945620
+  },
+  "bibles/es_rv.json": {
+   "sha256": "c8b7500d868b79b4cfbae018310f8e23042d7b20324787036e8f53f03866cd20",
+   "bytes": 4005730
+  },
+  "bibles/fa_martyn.json": {
+   "sha256": "9846fd432b7b16e01d53ee61076666fba852a44774658e52e5e4e92314addc5b",
+   "bytes": 1432369
+  },
+  "bibles/fi_biblia1776.json": {
+   "sha256": "60367505815913ea17381e437155d9db01077c26ad25da50ee746205157bf1f7",
+   "bytes": 4341994
+  },
+  "bibles/fr_martin.json": {
+   "sha256": "c9052009df82c9c087ac3b9d996806800aa983f5db08de1ba62a42e9be5ceefe",
+   "bytes": 4743619
+  },
+  "bibles/grc_byz.json": {
+   "sha256": "e567e802b57c3a070230d536c345070f086018f374d4ceeb5051c9a925b13364",
+   "bytes": 1714266
+  },
+  "bibles/he_wlc.json": {
+   "sha256": "73329c88cf1bc8d077a7ca772726ba1852d90854cc1e7a6c4d73441b91f0ac91",
+   "bytes": 5469165
+  },
+  "bibles/hu_karoli.json": {
+   "sha256": "c478011fe0e9f0d192395b66a1bd5e633c755f9f0ae4a545a084c75306a26726",
+   "bytes": 4250806
+  },
+  "bibles/hy_west1853.json": {
+   "sha256": "9c7d1c77f3dda3c6a7b372496739ec768f683b7370634409580966202b0ca758",
+   "bytes": 1570938
+  },
+  "bibles/it_diodati.json": {
+   "sha256": "bbd840348d03320528cccbed6db75bc42ee4b3bf57e10eff0351a411d727ff03",
+   "bytes": 4387879
+  },
+  "bibles/ja_meiji.json": {
+   "sha256": "561aacb05ad89c9ef9a576807f30927d8b552a55a50520c1ad9f2a27ea579ce2",
+   "bytes": 4203427
+  },
+  "bibles/la_vulgata.json": {
+   "sha256": "3a43c0940c36301566077af146d14c9df971d11c32ceefe03b845ce3e11b43eb",
+   "bytes": 4148607
+  },
+  "bibles/lv_gluck.json": {
+   "sha256": "11c0b0cb06e2186c1c3b8066963adcb2f80f11b168d4d9410e000396e0c3fdc3",
+   "bytes": 5422792
+  },
+  "bibles/nl_staten.json": {
+   "sha256": "b22923c4964e2fac84552c069acbf57f6c01b6509c618c0cdd178624be710268",
+   "bytes": 4390053
+  },
+  "bibles/pl_gdanska.json": {
+   "sha256": "f9309ba473326d826f987e21e5fb738940306d5f11dc41bc44c22991fbfbe219",
+   "bytes": 4072462
+  },
+  "bibles/pt_almeida.json": {
+   "sha256": "92963fa4dab2473b1dd0012cd46cb53e894ce6ac13701b303deba45bb11914fa",
+   "bytes": 3957123
+  },
+  "bibles/ru_synodal.json": {
+   "sha256": "731ccadea78178f86fe27f38db676e8f638fa9db93de98eda25ccccfdbcf72d4",
+   "bytes": 7335953
+  },
+  "bibles/sa_nt.json": {
+   "sha256": "d1abc7b39fe8d41452762823bde8dcb4ddbd48d7355b738489cf426fc4c1e4d6",
+   "bytes": 2373259
+  },
+  "bibles/sr_karadzic.json": {
+   "sha256": "6570d9ab0bd8f1a2df0df3e83c13052a1d7071700256b4e629495c41ff21e6eb",
+   "bytes": 3361084
+  },
+  "bibles/sv_karlxii.json": {
+   "sha256": "41e497c9cf549c9c356f1730f26c0d2a80814e21884bc9e31049848a9770a28f",
+   "bytes": 4015830
+  },
+  "bibles/ta_irv.json": {
+   "sha256": "7c4b9d7b6d48a5fe5d13af9da5eda76e7d94a7c1225fa35f355bb3a4d894a4f2",
+   "bytes": 12581788
+  },
+  "bibles/zh_cuv_s.json": {
+   "sha256": "9ad8103b87141b06c35454c2b03dd35d2cb82d9f6bb65c010255fc7a3b6fba5f",
+   "bytes": 3294440
+  },
+  "bibles/zh_cuv_t.json": {
+   "sha256": "165627db8fb5f4b928bbf450cc3a918bc0b2a9d083cd3f787d5283bd68c129e5",
+   "bytes": 3294429
+  },
+  "versemap.json": {
+   "sha256": "b6d5d0a6772aef7271e457e55e45d869e3659f7a9aa399996d5a4c895bdbe17e",
+   "bytes": 43419
+  },
+  "red_letters.json": {
+   "sha256": "80574581fff03aa736a23a2ba66c3bd7b82844494701bc1bb0e12ce461d05660",
+   "bytes": 6102
+  },
+  "interlinear_gr.json": {
+   "sha256": "20f475a68e436a1d7188cd0d3ba53f04f584b1c1ced12528fc283e74e7181b2f",
+   "bytes": 1734703
+  },
+  "interlinear_he.json": {
+   "sha256": "149429dcdf325a0d9e3f9427b7e22bc9277fc3b9296ca73d2ce86ef0f3a0904f",
+   "bytes": 4156956
+  },
+  "rubrics_vul.json": {
+   "sha256": "a4cdce96e51a8e4beecf814a98b5d0870ab4183b17ad8071358ea6334786b381",
+   "bytes": 4630
+  },
+  "strongs_lexicon.json": {
+   "sha256": "2e3b4c57ae5ac3144246d05a8fca2a402fce08651ca41be4302f6b4d448ca995",
+   "bytes": 1926156
+  },
+  "webster1828.json": {
+   "sha256": "f9cffc96f52944d9feffcb8f32eb0d23339f5bebd3ddc89879eb9c80d7511847",
+   "bytes": 13024800
+  },
+  "xrefs.json": {
+   "sha256": "62b057485e778f286398d24b0283a0f86d1967384f9a85c79dd2dcd963ccdf5f",
+   "bytes": 2268679
+  }
+ }
+}

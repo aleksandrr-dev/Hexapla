@@ -251,7 +251,7 @@ Hexapla is the complete Bible — offline, ad-free, account-free, and it collect
 
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.
-🎧 Audio: human narration (LibriVox) and text-to-speech with verse and word highlighting, background playback, sleep timer, speed control.
+🎧 Audio: recorded narration (LibriVox readings and generated voices) and text-to-speech with verse and word highlighting, background playback, sleep timer, speed control.
 📚 Strong's numbers with the full Hebrew/Greek lexicon; Webster's 1828 dictionary — tap any word in the English translations.
 🔀 Read two translations side by side, verse-locked, or compare a verse across all translations.
 📜 Original-language interlinear: tap a word in the Greek or Hebrew text for its Strong's number and full grammatical parsing.
@@ -278,7 +278,7 @@ Hexapla is the complete Bible — offline, ad-free, account-free, and it collect
 📖 33 classic translations across 29 languages — including the **complete Tamil Bible** (IRV 2019, the TR-faithful 1871 Bower lineage), the **Sanskrit New Testament of 1851** (सत्यवेदः, Calcutta Baptist Mission, Devanagari), the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the KJV 1611 with Apocrypha, Geneva 1599, Wycliffe, Tyndale, Luther 1545, and more.
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.
-🎧 Audio: human narration (LibriVox) and text-to-speech with verse highlighting, background playback, sleep timer.
+🎧 Audio: recorded narration (LibriVox readings and generated voices) and text-to-speech with verse highlighting, background playback, sleep timer.
 📚 Strong's numbers with the full Hebrew/Greek lexicon; original-language interlinear — tap any Greek or Hebrew word for its parsing.
 🔀 Read two translations side by side, verse-locked, or compare a verse across all translations.
 📅 Reading plans with progress. 🔍 Search across all translations. ✏️ Bookmarks, notes, highlights, backup.
@@ -820,7 +820,7 @@ Todos os textos são de domínio público. A aplicação não recolhe nenhum dad
 
 ✝️ «Благая весть» — план спасения шаг за шагом, только стихи Писания.
 🔴 Слова Христа выделены красным.
-🎧 Озвучка: живое чтение (LibriVox) и синтез речи с подсветкой стиха и слова, фоновое воспроизведение, таймер сна, скорость.
+🎧 Озвучка: записанное чтение (записи LibriVox и сгенерированные голоса) и синтез речи с подсветкой стиха и слова, фоновое воспроизведение, таймер сна, скорость.
 📚 Номера Стронга с еврейско-греческим словарём; словарь Уэбстера 1828 — значение любого слова английских переводов по касанию.
 🔀 Параллельное чтение двух переводов стих в стих и сравнение стиха во всех переводах.
 📜 Подстрочник оригинала: коснитесь слова в греческом или еврейском тексте — номер Стронга и полный грамматический разбор.
@@ -915,7 +915,7 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 📖 29 மொழிகளில் 33 பாரம்பரிய மொழிபெயர்ப்புகள் — முழு தமிழ் வேதாகமம் (IRV 2019, 1871 பவர்/யூனியன் பாரம்பரியம்), எபிரெய தனக் (லெனின்கிராட் கோடெக்ஸ்), கிரேக்கப் புதிய ஏற்பாடு (பைசந்திய உரை), KJV 1611 (அப்போக்கிரிபாவுடன்), ஜெனீவா 1599, லூத்தர் 1545, சமஸ்கிருதப் புதிய ஏற்பாடு 1851 மற்றும் பல.
 ✝️ நற்செய்தி — தேவனுடைய இரட்சிப்பின் திட்டம், படிப்படியாக, வேத வசனங்களே.
 🔴 கிறிஸ்துவின் வார்த்தைகள் சிவப்பில்.
-🎧 ஒலி: மனிதக் குரல் வாசிப்பு (LibriVox) மற்றும் பேச்சு மாற்றம் வசன ஒளிர்வுடன்; பின்னணி இயக்கம், தூக்க டைமர்.
+🎧 ஒலி: பதிவுசெய்யப்பட்ட ஒலிவாசிப்பு (LibriVox வாசிப்புகள் மற்றும் உருவாக்கப்பட்ட குரல்கள்) மற்றும் பேச்சு மாற்றம் வசன ஒளிர்வுடன்; பின்னணி இயக்கம், தூக்க டைமர்.
 📚 ஸ்ட்ராங் எண்கள் முழு எபிரெய/கிரேக்க அகராதியுடன்; மூல மொழி இடைவரி — எந்தக் கிரேக்க அல்லது எபிரெய வார்த்தையையும் தொட்டால் முழு இலக்கண விளக்கம், தமிழிலேயே.
 🔀 இரண்டு மொழிபெயர்ப்புகளை அருகருகே வசனத்துக்கு வசனம் வாசியுங்கள்; அல்லது ஒரு வசனத்தை எல்லா மொழிபெயர்ப்புகளிலும் ஒப்பிடுங்கள்.
 📅 முன்னேற்றத்துடன் வாசிப்புத் திட்டங்கள். 🔍 எல்லா மொழிபெயர்ப்புகளிலும் தேடல். ✏️ அடையாளக்குறிகள், குறிப்புகள், வண்ணக் குறியீடுகள், காப்புப்பிரதி.

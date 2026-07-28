@@ -35,7 +35,8 @@ FONTS = {
     "el": ["segoeui.ttf"],
     "hy": ["sylfaen.ttf", "segoeui.ttf"],
 }
-LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl", "pl", "sr", "be"}
+LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl",
+         "pl", "sr", "be", "en_in"}
 # Scripts PIL cannot shape (Indic reordering, Arabic/Hebrew RTL+shaping) ->
 # WPF family names (render_text.ps1).
 COMPLEX = {"ta": "Nirmala UI", "ar": "Segoe UI", "he": "Segoe UI"}
@@ -74,6 +75,14 @@ TAGLINES = {
     # Belarusian (тарашкевіца), best-effort — same pending native review as
     # he/hy and the be listing text (get an orthography check before final).
     "be": ("Гэбрайская · Грэцкая · Дзекуць-Малей · KJV", "старажытныя тэксты побач"),
+    # en-IN: the listing is in ENGLISH but its selling point is the Indian
+    # texts, so the tagline stays English and swaps "Slavonic · English" for
+    # Tamil + Sanskrit. Do NOT reuse feature_1024x500_ta.png here — its
+    # subtitle is entirely Tamil script, which reads as a Tamil-language
+    # listing. Filename uses the underscore convention (cf. zh_cn/zh_tw);
+    # upload it to the en-IN listing.
+    "en_in": ("Hebrew · Greek · Tamil · Sanskrit · KJV",
+              "ancient texts, side by side"),
 }
 
 
@@ -90,6 +99,18 @@ def load_font(lang, size):
 
 
 def main():
+    # Optional language filter: `python make_feature_graphic.py en_in ta`
+    # regenerates ONLY those. With no argument every language in TAGLINES is
+    # rewritten — which needlessly churns 26 committed PNGs (and risks silent
+    # byte changes if the host's fonts ever differ) when you only wanted one.
+    import sys
+    only = [a for a in sys.argv[1:] if not a.startswith("-")]
+    unknown = [a for a in only if a not in TAGLINES]
+    if unknown:
+        raise SystemExit(f"unknown language(s): {unknown}\n"
+                         f"known: {sorted(TAGLINES)}")
+    wanted = {k: v for k, v in TAGLINES.items() if not only or k in only}
+
     base = Image.open(os.path.join(ASSETS, "feature_1024x500_en.png")).convert("RGB")
     gold = max(
         (base.getpixel((x, y)) for y in UNDERLINE_Y for x in range(460, 910, 10)),
@@ -98,7 +119,7 @@ def main():
     top_row = [base.getpixel((x, Y_CLEAN_TOP)) for x in range(X0, X1)]
     bot_row = [base.getpixel((x, Y_CLEAN_BOT)) for x in range(X0, X1)]
 
-    for lang, (line1, line2) in TAGLINES.items():
+    for lang, (line1, line2) in wanted.items():
         img = base.copy()
         px = img.load()
         for x in range(X0, X1):

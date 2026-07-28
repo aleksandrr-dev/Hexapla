@@ -38,6 +38,25 @@ share one Spanish text; fr-CA/fr-FR share one French text; zh-CN is
 Simplified, zh-HK/zh-TW are Traditional. Older release sections below predate
 this standard and keep their EN/RU/DE-only form (historical, do not reformat).
 
+★ **VALIDATE BEFORE PASTING — `python tools/check_release_notes.py`.**
+Both defects that hit the 1.6.1 paste were mechanical and invisible to reading:
+en-IN was missing (30 of Play's 31 locales — the block predated that locale
+being added to the account), and ta-IN was 507 against the 500 cap, because an
+earlier wording fix swapped a 19-character Tamil phrase for a 31-character one
+and only English was re-measured afterwards. ⚠ RE-RUN IT AFTER ANY EDIT THAT
+TOUCHES MORE THAN ONE LOCALE — a substitution that fits in English can push
+another language over. The check covers: locale set exactly matches Play's
+list, locale ORDER matches Play's (so the block pastes in one go), every entry
+≤ 500 chars, nothing empty or placeholder, and only ONE release block above
+the descriptions section.
+
+★ **ONLY THE CURRENT RELEASE'S NOTES LIVE AT THE TOP** (owner, 2026-07-28).
+When a release ships, move its block down under the
+`# ── ARCHIVE: older release notes (historical) ──` banner at the END of this
+file, newest-first, so the file opens on what you actually need to paste
+rather than on years of history. The validator fails if a second release block
+is left above the descriptions section.
+
 ## 1.6.1 release notes (paste per store)
 
 <en-US>
@@ -133,101 +152,6 @@ Karl XII:s Bibel (1703) läses nu upp: hela Nya testamentet samt Första och And
 <zh-TW>
 瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
 </zh-TW>
-## 1.6.0 release notes (paste per store)
-
-<en-US>
-New translation: the Persian New Testament in Henry Martyn's translation (1876) — now 33 translations in 29 languages. New narration: Webster's Bible (1833) is now read aloud in full, and the remaining King James books are narrated too. Audio saves for offline listening, or turn on streaming to save space.
-</en-US>
-<ar>
-ترجمة جديدة: العهد الجديد الفارسي بترجمة هنري مارتن (1876) — الآن 33 ترجمة في 29 لغة. صوت جديد: أصبحت نسخة وبستر (1833) مقروءة بالكامل، وأُضيفت قراءة صوتية لبقية أسفار الملك جيمس. يُحفظ الصوت للاستماع دون إنترنت، أو فعّل البث لتوفير المساحة.
-</ar>
-<be>
-Новы пераклад: персідскі Новы Запавет у перакладзе Гэнры Мартына (1876) — цяпер 33 пераклады на 29 мовах. Новая агучка: Біблія Ўэбстэра (1833) цалкам агучана, дададзена агучка астатніх кніг Кінга Джэймса. Аўдыё захоўваецца для афлайнавага праслухоўваньня, або ўключыце патокавы рэжым.
-</be>
-<cs-CZ>
-Nový překlad: perský Nový zákon v překladu Henryho Martyna (1876) — nyní 33 překladů ve 29 jazycích. Nové načtení: Websterova Bible (1833) je nyní celá namluvená a přibylo načtení zbývajících knih Bible krále Jakuba. Zvuk se ukládá pro offline poslech, nebo zapněte streamování.
-</cs-CZ>
-<da-DK>
-Ny oversættelse: Det Persiske Nye Testamente i Henry Martyns oversættelse (1876) — nu 33 oversættelser på 29 sprog. Ny oplæsning: Webster-Bibelen (1833) er nu læst helt op, og de øvrige King James-bøger er også indlæst. Lyd gemmes til offline-lytning, eller slå streaming til.
-</da-DK>
-<de-DE>
-Eine neue Übersetzung: das persische Neue Testament in der Übersetzung von Henry Martyn (1876) — jetzt 33 Übersetzungen in 29 Sprachen. Neue Audioausgabe: die Webster-Bibel (1833) wird vollständig vorgelesen, und die übrigen King-James-Bücher erhalten ebenfalls eine Vertonung. Audio wird offline gespeichert oder kann gestreamt werden.
-</de-DE>
-<el-GR>
-Νέα μετάφραση: η Περσική Καινή Διαθήκη στη μετάφραση του Χένρι Μάρτιν (1876) — τώρα 33 μεταφράσεις σε 29 γλώσσες. Νέα αφήγηση: η Βίβλος Webster (1833) διαβάζεται πλέον ολόκληρη, ενώ προστέθηκε αφήγηση και στα υπόλοιπα βιβλία της KJV. Ο ήχος αποθηκεύεται για ακρόαση εκτός σύνδεσης ή ενεργοποιήστε τη ροή.
-</el-GR>
-<es-419>
-Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
-</es-419>
-<es-ES>
-Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
-</es-ES>
-<es-US>
-Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
-</es-US>
-<fi-FI>
-Uusi käännös: persialainen Uusi testamentti Henry Martynin käännöksenä (1876) — nyt 33 käännöstä 29 kielellä. Uusi ääniluku: Websterin Raamattu (1833) luetaan nyt kokonaan, ja myös loput King James -kirjat on äänitetty. Ääni tallentuu offline-kuunteluun, tai ota suoratoisto käyttöön.
-</fi-FI>
-<fr-CA>
-Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 33 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
-</fr-CA>
-<fr-FR>
-Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 33 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
-</fr-FR>
-<hu-HU>
-Új fordítás: a perzsa Újszövetség Henry Martyn fordításában (1876) — most 33 fordítás 29 nyelven. Új felolvasás: a Webster-Biblia (1833) mostantól teljesen fel van olvasva, és a többi King James-könyv is hangot kapott. A hang letöltődik offline hallgatáshoz, vagy kapcsold be a streamelést.
-</hu-HU>
-<hy-AM>
-Նոր թարգմանութիւն՝ պարսկերէն Նոր Կտակարանը Հենրի Մարտինի թարգմանութեամբ (1876) — այժմ 33 թարգմանութիւն 29 լեզուներով։ Նոր ձայնագրութիւն՝ Ուեբսթերի Աստուածաշունչը (1833) այժմ ամբողջութեամբ ընթերցուած է, եւ ձայն ստացան նաեւ մնացեալ Քինգ Ջեյմս գրքերը։ Ձայնը պահւում է անցանց լսելու համար, կամ միացրէք հոսքը։
-</hy-AM>
-<it-IT>
-Nuova traduzione: il Nuovo Testamento persiano nella versione di Henry Martyn (1876) — ora 33 traduzioni in 29 lingue. Nuova narrazione: la Bibbia di Webster (1833) è ora letta per intero e sono stati narrati anche gli altri libri della King James. L'audio si salva per l'ascolto offline, oppure attiva lo streaming.
-</it-IT>
-<iw-IL>
-תרגום חדש: הברית החדשה הפרסית בתרגומו של הנרי מרטין (1876) — כעת 33 תרגומים ב-29 שפות. הקראה חדשה: תרגום וובסטר (1833) מוקרא כעת במלואו, ונוספה הקראה לשאר ספרי המלך ג'יימס. השמע נשמר להאזנה לא מקוונת, או הפעילו הזרמה.
-</iw-IL>
-<ja-JP>
-新しい翻訳：ヘンリー・マーティン訳のペルシア語新約聖書（1876年）を追加し、33訳・29言語になりました。新しい朗読：ウェブスター訳（1833年）が全編朗読になり、欽定訳の残りの書も朗読されます。音声はオフライン再生用に保存でき、ストリーミングも選べます。
-</ja-JP>
-<lv>
-Jauns tulkojums: persiešu Jaunā Derība Henrija Mārtina tulkojumā (1876) — tagad 33 tulkojumi 29 valodās. Jauns ieskaņojums: Vēbstera Bībele (1833) tagad ir pilnībā ierunāta, un ieskaņotas arī pārējās Karaļa Džeimsa grāmatas. Skaņu var saglabāt bezsaistes klausīšanai vai ieslēgt straumēšanu.
-</lv>
-<nl-NL>
-Nieuwe vertaling: het Perzische Nieuwe Testament in de vertaling van Henry Martyn (1876) — nu 33 vertalingen in 29 talen. Nieuwe voordracht: de Webster-Bijbel (1833) wordt nu volledig voorgelezen en ook de overige King James-boeken zijn ingesproken. Audio wordt opgeslagen voor offline luisteren, of schakel streamen in.
-</nl-NL>
-<pl-PL>
-Nowy przekład: perski Nowy Testament w tłumaczeniu Henry'ego Martyna (1876) — teraz 33 przekłady w 29 językach. Nowe nagranie: Biblia Webstera (1833) jest teraz w całości czytana, a pozostałe księgi King James również otrzymały narrację. Dźwięk zapisuje się do słuchania offline lub włącz strumieniowanie.
-</pl-PL>
-<pt-BR>
-Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 33 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) agora é narrada por completo, e os demais livros da King James também ganharam narração. O áudio é salvo para ouvir offline, ou ative a transmissão.
-</pt-BR>
-<pt-PT>
-Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 33 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) passa a ser narrada por completo, e os restantes livros da King James também têm narração. O áudio é guardado para ouvir offline, ou ative a transmissão.
-</pt-PT>
-<ru-RU>
-Один новый перевод: персидский Новый Завет в переводе Генри Мартина (1876) — теперь 33 перевода на 29 языках. Новая озвучка: Библия Уэбстера (1833) полностью озвучена, добавлена озвучка остальных книг Библии короля Якова. Аудио сохраняется для прослушивания офлайн, либо включите потоковый режим.
-</ru-RU>
-<sr>
-Novi prevod: persijski Novi zavet u prevodu Henrija Martina (1876) — sada 33 prevoda na 29 jezika. Nova naracija: Vebsterova Biblija (1833) sada je u celosti pročitana, a naraciju su dobile i preostale knjige Kralja Džejmsa. Zvuk se čuva za slušanje van mreže ili uključite strimovanje.
-</sr>
-<sv-SE>
-Ny översättning: Persiska Nya testamentet i Henry Martyns översättning (1876) — nu 33 översättningar på 29 språk. Ny inläsning: Webster-bibeln (1833) är nu helt inläst, och de övriga King James-böckerna har också fått inläsning. Ljudet sparas för offline-lyssning, eller slå på streaming.
-</sv-SE>
-<ta-IN>
-புதிய மொழிபெயர்ப்பு: ஹென்றி மார்ட்டின் மொழிபெயர்த்த பாரசீக புதிய ஏற்பாடு (1876) — இப்போது 29 மொழிகளில் 33 மொழிபெயர்ப்புகள். புதிய ஒலிவாசிப்பு: வெப்ஸ்டர் விவிலியம் (1833) இப்போது முழுமையாக வாசிக்கப்படுகிறது; மற்ற கிங் ஜேம்ஸ் புத்தகங்களுக்கும் ஒலிவாசிப்பு சேர்க்கப்பட்டது. ஒலியை ஆஃப்லைனில் கேட்கச் சேமிக்கலாம் அல்லது ஸ்ட்ரீமிங்கை இயக்கவும்.
-</ta-IN>
-<zh-CN>
-新增译本：亨利·马丁翻译的波斯语新约（1876年），现共33部译本、29种语言。新增朗读：韦伯斯特译本（1833年）现已全本朗读，钦定本其余各卷也已录制朗读。音频可保存供离线收听，也可开启流式播放。
-</zh-CN>
-<zh-HK>
-新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共33部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
-</zh-HK>
-<zh-TW>
-新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共33部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
-</zh-TW>
-
-*(Older release notes — 1.5.1 and earlier — are archived at the very end of this file to keep the current listing text near the top.)*
-
 ## Store descriptions (per language — English first, then alphabetical)
 
 *One block per listing language. Short line first, then the full 📖 description. Copy the block for the locale you're editing.*
@@ -919,6 +843,101 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 எல்லா உரைகளும் பொதுக் களம் (public domain). ஆப் எந்தத் தரவையும் சேகரிப்பதில்லை.
 
 # ── ARCHIVE: older release notes (historical) ──
+
+## 1.6.0 release notes (paste per store)
+
+<en-US>
+New translation: the Persian New Testament in Henry Martyn's translation (1876) — now 33 translations in 29 languages. New narration: Webster's Bible (1833) is now read aloud in full, and the remaining King James books are narrated too. Audio saves for offline listening, or turn on streaming to save space.
+</en-US>
+<ar>
+ترجمة جديدة: العهد الجديد الفارسي بترجمة هنري مارتن (1876) — الآن 33 ترجمة في 29 لغة. صوت جديد: أصبحت نسخة وبستر (1833) مقروءة بالكامل، وأُضيفت قراءة صوتية لبقية أسفار الملك جيمس. يُحفظ الصوت للاستماع دون إنترنت، أو فعّل البث لتوفير المساحة.
+</ar>
+<be>
+Новы пераклад: персідскі Новы Запавет у перакладзе Гэнры Мартына (1876) — цяпер 33 пераклады на 29 мовах. Новая агучка: Біблія Ўэбстэра (1833) цалкам агучана, дададзена агучка астатніх кніг Кінга Джэймса. Аўдыё захоўваецца для афлайнавага праслухоўваньня, або ўключыце патокавы рэжым.
+</be>
+<cs-CZ>
+Nový překlad: perský Nový zákon v překladu Henryho Martyna (1876) — nyní 33 překladů ve 29 jazycích. Nové načtení: Websterova Bible (1833) je nyní celá namluvená a přibylo načtení zbývajících knih Bible krále Jakuba. Zvuk se ukládá pro offline poslech, nebo zapněte streamování.
+</cs-CZ>
+<da-DK>
+Ny oversættelse: Det Persiske Nye Testamente i Henry Martyns oversættelse (1876) — nu 33 oversættelser på 29 sprog. Ny oplæsning: Webster-Bibelen (1833) er nu læst helt op, og de øvrige King James-bøger er også indlæst. Lyd gemmes til offline-lytning, eller slå streaming til.
+</da-DK>
+<de-DE>
+Eine neue Übersetzung: das persische Neue Testament in der Übersetzung von Henry Martyn (1876) — jetzt 33 Übersetzungen in 29 Sprachen. Neue Audioausgabe: die Webster-Bibel (1833) wird vollständig vorgelesen, und die übrigen King-James-Bücher erhalten ebenfalls eine Vertonung. Audio wird offline gespeichert oder kann gestreamt werden.
+</de-DE>
+<el-GR>
+Νέα μετάφραση: η Περσική Καινή Διαθήκη στη μετάφραση του Χένρι Μάρτιν (1876) — τώρα 33 μεταφράσεις σε 29 γλώσσες. Νέα αφήγηση: η Βίβλος Webster (1833) διαβάζεται πλέον ολόκληρη, ενώ προστέθηκε αφήγηση και στα υπόλοιπα βιβλία της KJV. Ο ήχος αποθηκεύεται για ακρόαση εκτός σύνδεσης ή ενεργοποιήστε τη ροή.
+</el-GR>
+<es-419>
+Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
+</es-419>
+<es-ES>
+Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
+</es-ES>
+<es-US>
+Nueva traducción: el Nuevo Testamento persa en la versión de Henry Martyn (1876): ahora 33 traducciones en 29 idiomas. Nueva narración: la Biblia de Webster (1833) ya se lee completa y se añadió narración para los demás libros de la King James. El audio se guarda para escuchar sin conexión, o activa la transmisión para ahorrar espacio.
+</es-US>
+<fi-FI>
+Uusi käännös: persialainen Uusi testamentti Henry Martynin käännöksenä (1876) — nyt 33 käännöstä 29 kielellä. Uusi ääniluku: Websterin Raamattu (1833) luetaan nyt kokonaan, ja myös loput King James -kirjat on äänitetty. Ääni tallentuu offline-kuunteluun, tai ota suoratoisto käyttöön.
+</fi-FI>
+<fr-CA>
+Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 33 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
+</fr-CA>
+<fr-FR>
+Nouvelle traduction : le Nouveau Testament persan dans la version d'Henry Martyn (1876) — désormais 33 traductions en 29 langues. Nouvelle narration : la Bible de Webster (1833) est maintenant lue en entier, et les autres livres de la King James sont aussi narrés. L'audio est enregistré pour une écoute hors ligne, ou activez la diffusion en continu.
+</fr-FR>
+<hu-HU>
+Új fordítás: a perzsa Újszövetség Henry Martyn fordításában (1876) — most 33 fordítás 29 nyelven. Új felolvasás: a Webster-Biblia (1833) mostantól teljesen fel van olvasva, és a többi King James-könyv is hangot kapott. A hang letöltődik offline hallgatáshoz, vagy kapcsold be a streamelést.
+</hu-HU>
+<hy-AM>
+Նոր թարգմանութիւն՝ պարսկերէն Նոր Կտակարանը Հենրի Մարտինի թարգմանութեամբ (1876) — այժմ 33 թարգմանութիւն 29 լեզուներով։ Նոր ձայնագրութիւն՝ Ուեբսթերի Աստուածաշունչը (1833) այժմ ամբողջութեամբ ընթերցուած է, եւ ձայն ստացան նաեւ մնացեալ Քինգ Ջեյմս գրքերը։ Ձայնը պահւում է անցանց լսելու համար, կամ միացրէք հոսքը։
+</hy-AM>
+<it-IT>
+Nuova traduzione: il Nuovo Testamento persiano nella versione di Henry Martyn (1876) — ora 33 traduzioni in 29 lingue. Nuova narrazione: la Bibbia di Webster (1833) è ora letta per intero e sono stati narrati anche gli altri libri della King James. L'audio si salva per l'ascolto offline, oppure attiva lo streaming.
+</it-IT>
+<iw-IL>
+תרגום חדש: הברית החדשה הפרסית בתרגומו של הנרי מרטין (1876) — כעת 33 תרגומים ב-29 שפות. הקראה חדשה: תרגום וובסטר (1833) מוקרא כעת במלואו, ונוספה הקראה לשאר ספרי המלך ג'יימס. השמע נשמר להאזנה לא מקוונת, או הפעילו הזרמה.
+</iw-IL>
+<ja-JP>
+新しい翻訳：ヘンリー・マーティン訳のペルシア語新約聖書（1876年）を追加し、33訳・29言語になりました。新しい朗読：ウェブスター訳（1833年）が全編朗読になり、欽定訳の残りの書も朗読されます。音声はオフライン再生用に保存でき、ストリーミングも選べます。
+</ja-JP>
+<lv>
+Jauns tulkojums: persiešu Jaunā Derība Henrija Mārtina tulkojumā (1876) — tagad 33 tulkojumi 29 valodās. Jauns ieskaņojums: Vēbstera Bībele (1833) tagad ir pilnībā ierunāta, un ieskaņotas arī pārējās Karaļa Džeimsa grāmatas. Skaņu var saglabāt bezsaistes klausīšanai vai ieslēgt straumēšanu.
+</lv>
+<nl-NL>
+Nieuwe vertaling: het Perzische Nieuwe Testament in de vertaling van Henry Martyn (1876) — nu 33 vertalingen in 29 talen. Nieuwe voordracht: de Webster-Bijbel (1833) wordt nu volledig voorgelezen en ook de overige King James-boeken zijn ingesproken. Audio wordt opgeslagen voor offline luisteren, of schakel streamen in.
+</nl-NL>
+<pl-PL>
+Nowy przekład: perski Nowy Testament w tłumaczeniu Henry'ego Martyna (1876) — teraz 33 przekłady w 29 językach. Nowe nagranie: Biblia Webstera (1833) jest teraz w całości czytana, a pozostałe księgi King James również otrzymały narrację. Dźwięk zapisuje się do słuchania offline lub włącz strumieniowanie.
+</pl-PL>
+<pt-BR>
+Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 33 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) agora é narrada por completo, e os demais livros da King James também ganharam narração. O áudio é salvo para ouvir offline, ou ative a transmissão.
+</pt-BR>
+<pt-PT>
+Nova tradução: o Novo Testamento persa na versão de Henry Martyn (1876) — agora 33 traduções em 29 idiomas. Nova narração: a Bíblia de Webster (1833) passa a ser narrada por completo, e os restantes livros da King James também têm narração. O áudio é guardado para ouvir offline, ou ative a transmissão.
+</pt-PT>
+<ru-RU>
+Один новый перевод: персидский Новый Завет в переводе Генри Мартина (1876) — теперь 33 перевода на 29 языках. Новая озвучка: Библия Уэбстера (1833) полностью озвучена, добавлена озвучка остальных книг Библии короля Якова. Аудио сохраняется для прослушивания офлайн, либо включите потоковый режим.
+</ru-RU>
+<sr>
+Novi prevod: persijski Novi zavet u prevodu Henrija Martina (1876) — sada 33 prevoda na 29 jezika. Nova naracija: Vebsterova Biblija (1833) sada je u celosti pročitana, a naraciju su dobile i preostale knjige Kralja Džejmsa. Zvuk se čuva za slušanje van mreže ili uključite strimovanje.
+</sr>
+<sv-SE>
+Ny översättning: Persiska Nya testamentet i Henry Martyns översättning (1876) — nu 33 översättningar på 29 språk. Ny inläsning: Webster-bibeln (1833) är nu helt inläst, och de övriga King James-böckerna har också fått inläsning. Ljudet sparas för offline-lyssning, eller slå på streaming.
+</sv-SE>
+<ta-IN>
+புதிய மொழிபெயர்ப்பு: ஹென்றி மார்ட்டின் மொழிபெயர்த்த பாரசீக புதிய ஏற்பாடு (1876) — இப்போது 29 மொழிகளில் 33 மொழிபெயர்ப்புகள். புதிய ஒலிவாசிப்பு: வெப்ஸ்டர் விவிலியம் (1833) இப்போது முழுமையாக வாசிக்கப்படுகிறது; மற்ற கிங் ஜேம்ஸ் புத்தகங்களுக்கும் ஒலிவாசிப்பு சேர்க்கப்பட்டது. ஒலியை ஆஃப்லைனில் கேட்கச் சேமிக்கலாம் அல்லது ஸ்ட்ரீமிங்கை இயக்கவும்.
+</ta-IN>
+<zh-CN>
+新增译本：亨利·马丁翻译的波斯语新约（1876年），现共33部译本、29种语言。新增朗读：韦伯斯特译本（1833年）现已全本朗读，钦定本其余各卷也已录制朗读。音频可保存供离线收听，也可开启流式播放。
+</zh-CN>
+<zh-HK>
+新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共33部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
+</zh-HK>
+<zh-TW>
+新增譯本：亨利·馬丁翻譯的波斯語新約（1876年），現共33部譯本、29種語言。新增朗讀：韋伯斯特譯本（1833年）現已全本朗讀，欽定本其餘各卷亦已錄製朗讀。音訊可儲存供離線收聽，亦可開啟串流播放。
+</zh-TW>
+
+*(Older release notes — 1.5.1 and earlier — are archived at the very end of this file to keep the current listing text near the top.)*
 
 These predate the 30-locale copy-paste standard and are kept only for reference; they use the old EN/RU/DE-per-line form. Do not reformat or reuse — new releases follow the STANDARD section at the top of this file.
 

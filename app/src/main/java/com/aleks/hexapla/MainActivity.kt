@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -60,10 +62,44 @@ object AppState {
     val scrollToVerse = mutableIntStateOf(-1)
     val initialized = mutableStateOf(false)
 
+    /**
+     * "Peek" mode: the reader was opened by a deep link (daily-verse reminder
+     * or widget) rather than by the reader's own navigation.
+     *
+     * While peeking, ReaderScreen does NOT overwrite the saved reading
+     * position — looking at tonight's verse must not cost you your place in
+     * Exodus — and offers a one-tap way back. Peeking ends the moment the
+     * reader moves off the linked chapter under its own steam, because
+     * reading onward from a notification IS a deliberate move and should
+     * become the new spot.
+     */
+    val peeking = mutableStateOf(false)
+    /** The chapter the deep link landed on; leaving it ends the peek. */
+    var peekBook = -1
+    var peekChapter = -1
+    /** The reading position to offer as "back to…" while peeking. */
+    val spotBook = mutableIntStateOf(0)
+    val spotChapter = mutableIntStateOf(0)
+    var spotVerse = -1
+
     fun open(book: Int, chapter: Int, verse: Int = -1) {
         this.book.intValue = book
         this.chapter.intValue = chapter
         this.scrollToVerse.intValue = verse
+    }
+
+    /** Open from a deep link, preserving the reader's saved spot. */
+    fun peek(book: Int, chapter: Int, verse: Int = -1) {
+        open(book, chapter, verse)
+        peekBook = book
+        peekChapter = chapter
+        peeking.value = true
+    }
+
+    fun endPeek() {
+        peeking.value = false
+        peekBook = -1
+        peekChapter = -1
     }
 }
 
@@ -104,20 +140,40 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         openFromIntent(intent)
     }
 
-    /** Deep link from the daily-verse notification. */
+    /**
+     * Deep link from the daily-verse notification.
+     *
+     * ⚠ The extras MUST be consumed. Android retains the Intent that started
+     * the task and hands it back from getIntent() every time the activity is
+     * recreated — so a deep link that is not cleared re-fires on every later
+     * launch, including plain taps from the app drawer. Combined with
+     * AppState's process-lifetime `initialized` latch (which then skips the
+     * saved-position restore in ReaderScreen), that pinned the reader to one
+     * notification's verse indefinitely: the owner's reader kept reopening at
+     * Psalms 41 while his saved position was Exodus 20 (2026-07-31).
+     */
     private fun openFromIntent(intent: Intent?) {
         if (intent == null) return
         val book = intent.getIntExtra(EXTRA_BOOK, -1)
         if (book < 0) return
-        AppState.open(
-            book,
-            intent.getIntExtra(EXTRA_CHAPTER, 0),
-            intent.getIntExtra(EXTRA_VERSE, 0)
-        )
+        val chapter = intent.getIntExtra(EXTRA_CHAPTER, 0)
+        val verse = intent.getIntExtra(EXTRA_VERSE, 0)
+        // EXTRA_PEEK distinguishes "show me this verse" (a reminder or the
+        // widget's quote — must not cost the reader its saved place) from
+        // "take me back to where I was" (the widget's Continue reading — a
+        // deliberate move that IS the reading position).
+        if (intent.getBooleanExtra(EXTRA_PEEK, true)) AppState.peek(book, chapter, verse)
+        else AppState.open(book, chapter, verse)
         AppState.initialized.value = true
+        // Consume it: a one-shot deep link, never a sticky destination.
+        intent.removeExtra(EXTRA_BOOK)
+        intent.removeExtra(EXTRA_CHAPTER)
+        intent.removeExtra(EXTRA_VERSE)
+        intent.removeExtra(EXTRA_PEEK)
     }
 
     /** Keep the widget's verse and continue-reading label fresh. */
@@ -138,6 +194,8 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_BOOK = "open_book"
         const val EXTRA_CHAPTER = "open_chapter"
         const val EXTRA_VERSE = "open_verse"
+        /** false = a deliberate move (widget "Continue reading"); true/absent = a peek. */
+        const val EXTRA_PEEK = "open_peek"
     }
 }
 
@@ -225,7 +283,16 @@ private fun AppScaffold(settings: AppSettings, startRoute: String = "read") {
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            // M3's default NavigationBar is 80dp of content PLUS the system
+            // navigation inset underneath — tall on a 3-button device. Take
+            // the inset off the bar itself and re-apply it as outside padding,
+            // so the bar can be a trimmer 64dp and still sit clear of the
+            // system buttons. 64dp keeps icon+label comfortably above the
+            // 48dp minimum touch target.
+            NavigationBar(
+                windowInsets = WindowInsets(0),
+                modifier = Modifier.navigationBarsPadding().height(64.dp)
+            ) {
                 destinations.forEach { d ->
                     NavigationBarItem(
                         selected = currentRoute == d.route,

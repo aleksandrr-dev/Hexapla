@@ -752,8 +752,12 @@ class ReadingService : Service() {
                 .apply { if (durationMs > 0) putLong(MediaMetadataCompat.METADATA_KEY_DURATION, durationMs) }
                 .build()
         )
+        // requestCode 2 — distinct from the widget (1) and the daily reminder
+        // (3). Sharing code 0 made the reminder's FLAG_UPDATE_CURRENT rewrite
+        // this notification's extras, so tapping the player opened the
+        // reminder's verse rather than what was playing (fixed 2026-07-31).
         val contentPi = PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java),
+            this, 2, Intent(this, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)

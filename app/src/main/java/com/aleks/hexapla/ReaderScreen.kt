@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -204,7 +205,27 @@ fun ReaderScreen(settings: AppSettings) {
             }
         else null
 
-    LaunchedEffect(book, chapter) { Store.setLastPosition(context, book, chapter) }
+    // Capture the spot to offer as "back to…" the moment a peek begins. Safe
+    // to read from settings here precisely because the guard below has not let
+    // the deep link overwrite it.
+    LaunchedEffect(AppState.peeking.value) {
+        if (AppState.peeking.value) {
+            AppState.spotBook.intValue = settings.lastBook
+            AppState.spotChapter.intValue = settings.lastChapter
+            AppState.spotVerse = settings.lastVerse
+        }
+    }
+
+    // Persist the reading position — but NOT while peeking at a deep-linked
+    // verse. Moving off the peeked chapter is the user navigating for
+    // themselves, which ends the peek and makes the new place the real spot.
+    LaunchedEffect(book, chapter) {
+        if (AppState.peeking.value) {
+            if (book == AppState.peekBook && chapter == AppState.peekChapter) return@LaunchedEffect
+            AppState.endPeek()
+        }
+        Store.setLastPosition(context, book, chapter)
+    }
 
     val bookmarks by Store.bookmarks(context).collectAsState(initial = emptyList())
     // Bookmarks store their SOURCE translation's own (chapter, verse); pivot each
@@ -281,7 +302,10 @@ fun ReaderScreen(settings: AppSettings) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collectLatest { verse ->
                 kotlinx.coroutines.delay(500)
-                Store.setLastVerse(context, verse)
+                // Scrolling around a peeked verse must not move the saved spot
+                // either — the chapter guard above would otherwise be undone
+                // one verse at a time.
+                if (!AppState.peeking.value) Store.setLastVerse(context, verse)
             }
     }
 
@@ -412,7 +436,17 @@ fun ReaderScreen(settings: AppSettings) {
     val ttsError = stringResource(R.string.tts_unavailable)
     val copiedMsg = stringResource(R.string.copied)
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbar) }) { pad ->
+    // ⚠ contentWindowInsets = WindowInsets(0) is REQUIRED, not cosmetic.
+    // This Scaffold is nested inside AppScaffold, which already applies the
+    // navigation-bar + system insets to the NavHost. A Scaffold adds its own
+    // contentWindowInsets on top, so the system nav-bar height was being
+    // reserved TWICE — an empty black strip between the last line of verse
+    // text and the bottom nav, with the text clipped mid-line above it
+    // (owner-reported 2026-07-31). The inner Scaffold must contribute none.
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
+        contentWindowInsets = WindowInsets(0)
+    ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
 
             Row(

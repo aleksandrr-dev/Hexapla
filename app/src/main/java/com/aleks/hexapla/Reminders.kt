@@ -104,8 +104,12 @@ class ReminderReceiver : BroadcastReceiver() {
                     putExtra(MainActivity.EXTRA_VERSE, it[2])
                 }
             }
+            // requestCode 3 — distinct from the widget (1) and the media
+            // notification (2). This is the PendingIntent that caused the
+            // damage: identity ignores extras, so at code 0 its
+            // FLAG_UPDATE_CURRENT overwrote the other two with this verse.
             val open = PendingIntent.getActivity(
-                context, 0, openIntent,
+                context, 3, openIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val notification = android.app.Notification.Builder(context, Reminders.CHANNEL_ID)

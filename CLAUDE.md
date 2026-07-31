@@ -1239,9 +1239,22 @@ must include them; owner should spot-check on-device before submitting.
   background while the current one plays (skipped in stream-don't-save mode
   and for LibriVox multi-chapter sections). followJob+prefetchJob cancelled
   in releasePlayer.
-  ⚠ STILL OPEN: audio_note string is KJV-worded ×13 (reword for generated
-  translations). ⚠ gnv/Geneva is NOT in audio_index_gen.json yet (render
-  paused 373/1189, never uploaded) — only wbt has generated audio today. Both audio items live on archive.org (webster-1833
+  ✅ RESOLVED (verified 2026-07-31): the audio_note string is NO LONGER
+  KJV-worded — all 25 locales now read generically ("recorded narration where
+  it exists, otherwise the device's text-to-speech"). Nothing to reword for a
+  new generated translation.
+  ⚠ gnv/Geneva is NOT in audio_index_gen.json yet — but the render is no
+  longer paused: it is at **995/1189 as of 2026-07-31** (remaining = Luke 23
+  onward), ETA ~2026-08-02. **Wiring is PREPARED**: the `gen1599` entry sits
+  commented in tools/build_audio_index_gen.py and the full activation sequence
+  is in **tools/GENEVA_AUDIO_RUNBOOK.md**. ⚠ Two gotchas recorded there: the
+  app id is **gen1599**, NOT the narration folder name `gnv` (keying the index
+  wrong yields audio the app silently never finds), and the entry must NOT be
+  uncommented until the archive.org item `hexapla-audio-geneva-1599` is public
+  (404s would burn 3 retries per chapter and drop to TTS). No Kotlin change is
+  needed — the audio path is index-driven. Karl XII (kxii, narration dir `sv`)
+  is indexed PARTIAL at 940/1189 and rendering.
+  Both audio items live on archive.org (webster-1833
   = wbt via audio_index_gen; hexapla-audio-en = 22 KJV Kokoro gap books via
   audio_index.json as kjv_<book>_<ch>.ogg, which also cache offline). Music bed rotates
   through `assets/music/` (Kevin MacLeod CC-BY, perceptual x² volume curve).
@@ -1257,6 +1270,43 @@ must include them; owner should spot-check on-device before submitting.
   (`red_letters.json`), book cover art (`assets/bookart/<bookIdx>.webp`,
   49 books, Doré + Schnorr, else generated title-page in BookArt.kt).
 - Widget shows daily verse + book art; deterministic date-seeded pick.
+- ★ **PendingIntent requestCodes MUST STAY DISTINCT** (fixed 2026-07-31,
+  owner-verified on device). PendingIntent identity IGNORES extras, so the
+  widget, the media notification and the daily reminder — all previously at
+  requestCode 0 — were literally the same object, and the reminder's
+  `FLAG_UPDATE_CURRENT` rewrote the others' extras. Symptom: the widget read
+  "Continue reading: Exodus 20" and opened Psalms 41. Allocation now:
+  **1 = widget continue · 2 = media notification · 3 = daily reminder ·
+  4 = widget verse**. Any new PendingIntent needs its own code.
+- **Deep-link extras are consumed in `openFromIntent`.** Android replays a
+  task's original Intent on every recreation, so an uncleared deep link
+  re-fires forever — including from the app drawer. That was the second half
+  of the Psalms-41 bug.
+- ⚠ **An inner Scaffold under `AppScaffold` must set
+  `contentWindowInsets = WindowInsets(0)`.** AppScaffold already applies the
+  navigation-bar inset to the NavHost; ReaderScreen's inner Scaffold added its
+  own on top, reserving the nav-bar height TWICE — text clipped mid-line with
+  a black bar below. Pre-existing since the nested Scaffold was introduced.
+- Widget tap targets: **quote / reference / cover art → the linked verse** (a
+  PEEK — `AppState.peek()`, which suppresses `setLastPosition` AND
+  `setLastVerse`, the latter because the verse write runs on a 500 ms scroll
+  debounce and would otherwise undo the chapter guard one scroll at a time);
+  **everything else → the saved spot** (`EXTRA_PEEK=false`). Peek ends when
+  the reader leaves the linked chapter.
+  ⚠ Peek is deliberately INVISIBLE. The owner asked for a "back to your spot"
+  bar and then rejected it as obtrusive; `PeekReturnBar` and `reader_back_to`
+  are deleted from all 25 locales. Do not reintroduce visible chrome without
+  asking.
+- Bottom navigation bar: content height pinned to **64.dp** with the system
+  inset moved outside the bar (`navigationBarsPadding()`); M3's 80dp default
+  plus inset was too tall on 3-button navigation.
+- ⚠ **The owner's phone runs a rustore DEBUG build.** A release APK is signed
+  with the upload key and will NOT install over it
+  (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). Use
+  `./gradlew assembleRustoreDebug` (~15-60 s) for device testing;
+  `assembleRustoreRelease` (~3 min) only for store artifacts. adb lives at
+  `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`; in Git Bash prefix
+  device-path commands with `MSYS_NO_PATHCONV=1` or `/sdcard/...` is mangled.
 
 ## Data pipelines (tools/)
 

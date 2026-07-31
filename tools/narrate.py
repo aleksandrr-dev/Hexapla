@@ -40,6 +40,15 @@ from pathlib import Path
 
 import soundfile as sf
 
+# Every subprocess.run() below launches a console-subsystem exe (python.exe,
+# ffmpeg.exe). Without this, Windows pops a NEW console window for each one
+# even though the parent (this script) may itself be running hidden under the
+# render supervisor — the parent's window style does not propagate to
+# children spawned this way. This fires once per verse for kokoro/ffmpeg, so
+# an unsuppressed flash here is far more disruptive than the supervisor's
+# occasional recycle. No-op on non-Windows.
+_NO_WINDOW = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
@@ -49,7 +58,33 @@ if str(HERE) not in sys.path:
 
 ASSETS = HERE.parent / "app" / "src" / "main" / "assets" / "bibles"
 OUTPUT = Path("C:/Projects/Hexapla-releases/narration")
-KOKORO_PYTHON = str(HERE / ".kokoro_venv" / "Scripts" / "python.exe")
+
+# ⚠ Do NOT invoke .kokoro_venv's own Scripts/python.exe. On this machine it is
+# a launcher that internally re-execs into a SECOND, separate OS process (the
+# base interpreter) rather than running in place — confirmed by watching
+# conhost.exe (Windows' console-window host) spawn as a child of that inner
+# process even when the outer subprocess.run() call is given
+# creationflags=CREATE_NO_WINDOW. That flag only covers the process WE
+# create; it does not propagate through the launcher's own internal re-exec,
+# so every kokoro/bark call was still popping a console. Fix: read the venv's
+# own pyvenv.cfg (the same file `venv` itself writes) to find the REAL base
+# interpreter, invoke that ONE process directly, and hand it PYTHONPATH so it
+# sees the venv's installed packages (kokoro, torch, soundfile, ...) without
+# needing the launcher hop at all.
+def _resolve_kokoro_python():
+    venv_dir = HERE / ".kokoro_venv"
+    cfg = venv_dir / "pyvenv.cfg"
+    home = None
+    for line in cfg.read_text(encoding="utf-8").splitlines():
+        if line.strip().startswith("home"):
+            home = line.split("=", 1)[1].strip()
+            break
+    base_python = str(Path(home) / "python.exe") if home else str(venv_dir / "Scripts" / "python.exe")
+    site_packages = str(venv_dir / "Lib" / "site-packages")
+    return base_python, site_packages
+
+
+KOKORO_PYTHON, KOKORO_SITE_PACKAGES = _resolve_kokoro_python()
 
 LIBRIVOX_GAP_BOOKS = [
     20, 27, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
@@ -599,6 +634,8 @@ print('OK')
         result = subprocess.run(
             [KOKORO_PYTHON, "-c", script],
             capture_output=True, timeout=120, text=True, encoding='utf-8',
+            creationflags=_NO_WINDOW,
+            env={**os.environ, "PYTHONPATH": KOKORO_SITE_PACKAGES},
         )
         if result.returncode != 0:
             print(f"    Kokoro error: {result.stderr[:300]}", file=sys.stderr)
@@ -665,6 +702,8 @@ print('OK')
         result = subprocess.run(
             [KOKORO_PYTHON, "-c", script],
             capture_output=True, timeout=300, text=True, encoding='utf-8',
+            creationflags=_NO_WINDOW,
+            env={**os.environ, "PYTHONPATH": KOKORO_SITE_PACKAGES},
         )
         if result.returncode != 0:
             print(f"    Bark error: {result.stderr[:300]}", file=sys.stderr)
@@ -1187,6 +1226,7 @@ def concatenate_with_silence(wav_files_and_durations, output_wav, silence_ms=600
         ["ffmpeg", "-y", "-f", "concat", "-safe", "0",
          "-i", str(concat_list), "-c", "copy", str(output_wav)],
         capture_output=True, timeout=120,
+        creationflags=_NO_WINDOW,
     )
     concat_list.unlink(missing_ok=True)
 
@@ -1205,6 +1245,7 @@ def loudnorm_and_encode(input_wav, output_ogg):
          "-af", "loudnorm=I=-19:TP=-1.5:LRA=11:print_format=json",
          "-f", "null", "-"],
         capture_output=True, timeout=300,
+        creationflags=_NO_WINDOW,
     )
 
     measured_i = "-19"
@@ -1238,6 +1279,7 @@ def loudnorm_and_encode(input_wav, output_ogg):
          "-af", af, "-b:a", "32k", "-c:a", "libopus", "-ac", "1",
          str(output_ogg)],
         capture_output=True, timeout=300,
+        creationflags=_NO_WINDOW,
     )
 
     if r2.returncode != 0:

@@ -12,6 +12,17 @@ must NOT appear anywhere in the metadata. Credit the project/app, never him.
 The account that performs the upload is inherently his, but nothing we WRITE
 names him.
 
+✅ ACCEPTED EXCEPTION (owner decision 2026-07-31, "just accept it, it's fine"):
+archive.org automatically stamps a publicly-visible `uploader` field with the
+uploading account's e-mail — verified live on hexapla-audio-webster-1833 as
+`uploader = aleksandr@tuta.com`. It is account-level and CANNOT be set,
+overridden or suppressed from here. The owner accepted this rather than
+running a second account. DO NOT re-raise it on every new narration set, and
+do NOT treat it as licence to relax the rule above: everything this script
+writes must still credit the project only. The same decision covers the
+`originalurl` / description link to the app's landing page, which carries his
+GitHub handle.
+
 Item layout mirrors tools/NARRATION_PLAN.md §6: files land as
 <bookIdx>/<chapter>.ogg plus the per-chapter <bookIdx>/<chapter>.json verse
 offset sidecars (small, and what makes verse highlighting / tap-to-seek

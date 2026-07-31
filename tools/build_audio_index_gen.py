@@ -38,6 +38,16 @@ SETS = [
     # re-upload) after each batch completes.
     {"tid": "kxii", "dir": "sv", "asset": "sv_karlxii.json",
      "item": "hexapla-audio-karlxii-1703", "partial": True},
+    # ── GENEVA 1599 — PREPARED 2026-07-31, ACTIVATE WHEN THE RENDER FINISHES ──
+    # ⚠ tid is "gen1599" (the app id in Bible.kt), NOT "gnv" (the narration
+    #   folder). Same tid/dir split as kxii — getting this wrong yields an
+    #   index the app silently never looks up.
+    # ⚠ DO NOT UNCOMMENT BEFORE THE ARCHIVE.ORG ITEM EXISTS AND IS PUBLIC.
+    #   The URLs would 404, and the app would retry 3x per chapter and then
+    #   fall back to TTS — worse than having no entry at all.
+    # Activation checklist lives in tools/GENEVA_AUDIO_RUNBOOK.md.
+    # {"tid": "gen1599", "dir": "gnv", "asset": "en_geneva.json",
+    #  "item": "hexapla-audio-geneva-1599", "partial": False},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 

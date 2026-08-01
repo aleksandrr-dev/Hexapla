@@ -191,8 +191,15 @@ def build(set_key, dry_run=False):
         return
 
     from internetarchive import upload
+    # checksum=True skips files already on the item whose MD5 matches, which
+    # makes a re-upload INCREMENTAL. This matters for any set published in
+    # stages: Karl XII was uploaded partial at ~940 chapters, so finishing it
+    # would otherwise re-send the whole ~1 GB (Geneva's full 1.03 GB took about
+    # four hours). A mismatched or missing file is still uploaded, so this
+    # cannot silently skip damaged content — and the metadata below is applied
+    # regardless, which is what flips a partial title to the complete one.
     res = upload(meta_src["identifier"], files=files, metadata=metadata,
-                 retries=6, retries_sleep=20, verbose=True)
+                 retries=6, retries_sleep=20, verbose=True, checksum=True)
     bad = [r for r in res if getattr(r, "status_code", 200) not in (200, None)]
     print(f"\nuploaded {len(res) - len(bad)}/{len(res)} requests, {len(bad)} failed")
     if bad:

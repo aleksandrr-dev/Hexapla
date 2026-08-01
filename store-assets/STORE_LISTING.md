@@ -53,105 +53,102 @@ the descriptions section.
 ★ **ONLY THE CURRENT RELEASE'S NOTES LIVE AT THE TOP** (owner, 2026-07-28).
 When a release ships, move its block down under the
 `# ── ARCHIVE: older release notes (historical) ──` banner at the END of this
-file, newest-first, so the file opens on what you actually need to paste
-rather than on years of history. The validator fails if a second release block
-is left above the descriptions section.
-
-## 1.6.1 release notes (paste per store)
+## 1.6.2 release notes (paste per store)
 
 <en-US>
-The Swedish Karl XII Bible (1703) is now read aloud: the complete New Testament plus Genesis, Exodus and the Psalms, with more books added over time. Recorded narration now follows and highlights each verse as it is read, and resuming continues from the exact verse you stopped on. Fixes: narration no longer drops back to the device's text-to-speech partway through a book, and reading plans now open on your current day.
+The Geneva Bible (1599) is now read aloud in full — all 66 books, every chapter. Recorded narration follows and highlights each verse, and resuming continues from the exact verse you stopped on. Fixes: the reader no longer reopens at the wrong chapter after using the widget or a reminder, the widget verse is now tappable, a black bar no longer appears beneath the text, and the bottom navigation bar is slimmer.
 </en-US>
 <ar>
-أصبح الكتاب المقدس السويدي بترجمة كارل الثاني عشر (1703) مقروءًا صوتيًا: العهد الجديد كاملًا مع سفر التكوين وسفر الخروج والمزامير، وستُضاف أسفار أخرى تباعًا. التلاوة المسجَّلة تتابع كل آية وتُبرزها أثناء القراءة، والاستئناف يبدأ من الآية نفسها التي توقفت عندها. إصلاحات: لم تعد التلاوة تعود إلى القراءة الآلية من الجهاز في منتصف السفر، وخطط القراءة تفتح الآن على يومك الحالي.
+الكتاب المقدس بترجمة جنيف (1599) أصبح مقروءًا صوتيًا بالكامل: جميع الأسفار الستة والستين، وكل إصحاح. التلاوة المسجَّلة تتابع كل آية وتُبرزها، والاستئناف يبدأ من الآية نفسها التي توقفت عندها. إصلاحات: لم يعد القارئ يفتح على إصحاح خاطئ بعد استخدام الأداة أو التذكير، وأصبحت آية الأداة قابلة للنقر، ولم يعد يظهر شريط أسود أسفل النص، وشريط التنقل السفلي أصبح أنحف.
 </ar>
 <be>
-Швэдзкая Біблія Карла XII (1703) цяпер агучана: увесь Новы Запавет, а таксама Быцьцё, Выхад і Псальмы; іншыя кнігі дадаюцца паступова. Запісаная агучка сочыць за кожным вершам і падсьвятляе яго, а працяг пачынаецца з таго самага верша, на якім вы спыніліся. Выпраўлена: агучка больш не пераходзіць на сынтэз маўленьня прылады пасярод кнігі, а планы чытаньня адкрываюцца на бягучым дні.
+Жэнеўская Біблія (1599) цяпер агучана цалкам: усе 66 кніг, кожны разьдзел. Запісаная агучка сочыць за кожным вершам і падсьвятляе яго, а працяг пачынаецца з таго самага верша, на якім вы спыніліся. Выпраўлена: чытач больш не адкрываецца на няправільным разьдзеле пасьля віджэта ці нагадваньня, верш у віджэце цяпер націскальны, чорная паласа пад тэкстам зьнікла, а ніжняя панэль навігацыі стала танчэйшай.
 </be>
 <cs-CZ>
-Švédská Bible Karla XII. (1703) je nyní namluvená: celý Nový zákon a k tomu Genesis, Exodus a Žalmy; další knihy přibývají postupně. Nahraná četba nyní sleduje a zvýrazňuje každý verš a pokračování naváže přesně na verši, kde jste skončili. Opravy: četba už uprostřed knihy nepřepne na hlasový výstup zařízení a plány čtení se otevírají na aktuálním dni.
+Ženevská Bible (1599) je nyní kompletně namluvená: všech 66 knih, každá kapitola. Nahraná četba sleduje a zvýrazňuje každý verš a pokračování naváže přesně na verši, kde jste skončili. Opravy: čtečka se už neotevírá ve špatné kapitole po použití widgetu nebo připomenutí, verš ve widgetu lze nyní klepnout, pod textem se už neobjevuje černý pruh a spodní navigační lišta je subtilnější.
 </cs-CZ>
 <da-DK>
-Den svenske Karl XII-bibel (1703) læses nu op: hele Det Nye Testamente samt 1. og 2. Mosebog og Salmerne; flere bøger kommer til løbende. Den indlæste oplæsning følger og fremhæver nu hvert vers, og når du fortsætter, starter den præcis ved det vers, du stoppede på. Rettelser: oplæsningen skifter ikke længere til enhedens talesyntese midt i en bog, og læseplaner åbner på din aktuelle dag.
+Genève-bibelen (1599) læses nu op i sin helhed: alle 66 bøger, hvert kapitel. Den indlæste oplæsning følger og fremhæver hvert vers, og når du fortsætter, starter den præcis ved det vers, du stoppede på. Rettelser: læseren åbner ikke længere i det forkerte kapitel efter en widget eller en påmindelse, verset i widgetten kan nu trykkes på, der vises ikke længere en sort bjælke under teksten, og den nederste navigationslinje er slankere.
 </da-DK>
 <de-DE>
-Die schwedische Karl-XII.-Bibel (1703) wird jetzt vorgelesen: das vollständige Neue Testament sowie Genesis, Exodus und die Psalmen; weitere Bücher kommen nach und nach hinzu. Die aufgenommene Lesung folgt nun jedem Vers und hebt ihn hervor, und beim Fortsetzen geht es genau bei dem Vers weiter, bei dem Sie aufgehört haben. Behoben: Die Lesung wechselt nicht mehr mitten im Buch zur Sprachausgabe des Geräts, und Lesepläne öffnen sich beim aktuellen Tag.
+Die Genfer Bibel (1599) wird jetzt vollständig vorgelesen: alle 66 Bücher, jedes Kapitel. Die aufgenommene Lesung folgt jedem Vers und hebt ihn hervor, und beim Fortsetzen geht es genau bei dem Vers weiter, bei dem Sie aufgehört haben. Behoben: Der Leser öffnet nach Widget oder Erinnerung nicht mehr im falschen Kapitel, der Vers im Widget ist jetzt antippbar, unter dem Text erscheint kein schwarzer Balken mehr, und die untere Navigationsleiste ist schmaler.
 </de-DE>
 <el-GR>
-Η σουηδική Βίβλος του Καρόλου ΙΒ΄ (1703) διαβάζεται πλέον φωναχτά: ολόκληρη η Καινή Διαθήκη μαζί με τη Γένεση, την Έξοδο και τους Ψαλμούς· και άλλα βιβλία προστίθενται σταδιακά. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει τώρα κάθε στίχο, ενώ η συνέχιση ξεκινά ακριβώς από τον στίχο που σταματήσατε. Διορθώσεις: η ανάγνωση δεν γυρίζει πια στη φωνητική σύνθεση της συσκευής στη μέση ενός βιβλίου και τα προγράμματα ανάγνωσης ανοίγουν στην τρέχουσα ημέρα.
+Η Βίβλος της Γενεύης (1599) διαβάζεται πλέον ολόκληρη: και τα 66 βιβλία, κάθε κεφάλαιο. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει κάθε στίχο, και η συνέχιση ξεκινά ακριβώς από τον στίχο όπου σταματήσατε. Διορθώσεις: ο αναγνώστης δεν ανοίγει πια σε λάθος κεφάλαιο μετά από widget ή υπενθύμιση, ο στίχος στο widget είναι πλέον πατήσιμος, δεν εμφανίζεται μαύρη μπάρα κάτω από το κείμενο και η κάτω μπάρα πλοήγησης είναι λεπτότερη.
 </el-GR>
 <en-IN>
-The Swedish Karl XII Bible (1703) is now read aloud: the complete New Testament plus Genesis, Exodus and the Psalms, with more books added over time. Recorded narration now follows and highlights each verse as it is read, and resuming continues from the exact verse you stopped on. Fixes: narration no longer drops back to the device's text-to-speech partway through a book, and reading plans now open on your current day.
+The Geneva Bible (1599) is now read aloud in full — all 66 books, every chapter. Recorded narration follows and highlights each verse, and resuming continues from the exact verse you stopped on. Fixes: the reader no longer reopens at the wrong chapter after using the widget or a reminder, the widget verse is now tappable, a black bar no longer appears beneath the text, and the bottom navigation bar is slimmer.
 </en-IN>
 <es-419>
-La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra de navegación inferior es más estrecha.
 </es-419>
 <es-ES>
-La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra de navegación inferior es más estrecha.
 </es-ES>
 <es-US>
-La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra de navegación inferior es más estrecha.
 </es-US>
 <fi-FI>
-Ruotsalainen Kaarle XII:n Raamattu (1703) luetaan nyt ääneen: koko Uusi testamentti sekä 1. ja 2. Mooseksen kirja ja Psalmit; lisää kirjoja tulee vähitellen. Äänitetty luenta seuraa ja korostaa nyt jokaista jaetta, ja jatkaminen alkaa täsmälleen siitä jakeesta, mihin jäit. Korjauksia: luenta ei enää vaihda laitteen puhesynteesiin kesken kirjan, ja lukusuunnitelmat avautuvat nykyiseen päivääsi.
+Geneven Raamattu (1599) luetaan nyt kokonaan ääneen: kaikki 66 kirjaa, jokainen luku. Äänitetty luenta seuraa ja korostaa jokaista jaetta, ja jatkaminen alkaa täsmälleen siitä jakeesta, mihin jäit. Korjauksia: lukunäkymä ei enää avaudu väärään lukuun widgetin tai muistutuksen jälkeen, widgetin jaetta voi nyt napauttaa, tekstin alle ei enää ilmesty mustaa palkkia ja alanavigointipalkki on kapeampi.
 </fi-FI>
 <fr-CA>
-La Bible suédoise de Charles XII (1703) est désormais lue à voix haute : tout le Nouveau Testament, ainsi que la Genèse, l'Exode et les Psaumes ; d'autres livres s'ajouteront progressivement. La narration enregistrée suit et surligne maintenant chaque verset, et la reprise repart exactement au verset où vous vous étiez arrêté. Corrections : la narration ne bascule plus vers la synthèse vocale de l'appareil au milieu d'un livre, et les plans de lecture s'ouvrent au jour en cours.
+La Bible de Genève (1599) est désormais lue en entier : les 66 livres, tous les chapitres. La narration enregistrée suit et met en évidence chaque verset, et la reprise repart exactement au verset où vous vous êtes arrêté. Corrections : le lecteur ne s ouvre plus au mauvais chapitre après un widget ou un rappel, le verset du widget est maintenant cliquable, plus de bande noire sous le texte et la barre de navigation inférieure est plus fine.
 </fr-CA>
 <fr-FR>
-La Bible suédoise de Charles XII (1703) est désormais lue à voix haute : tout le Nouveau Testament, ainsi que la Genèse, l'Exode et les Psaumes ; d'autres livres s'ajouteront progressivement. La narration enregistrée suit et surligne maintenant chaque verset, et la reprise repart exactement au verset où vous vous étiez arrêté. Corrections : la narration ne bascule plus vers la synthèse vocale de l'appareil au milieu d'un livre, et les plans de lecture s'ouvrent au jour en cours.
+La Bible de Genève (1599) est désormais lue en entier : les 66 livres, tous les chapitres. La narration enregistrée suit et met en évidence chaque verset, et la reprise repart exactement au verset où vous vous êtes arrêté. Corrections : le lecteur ne s ouvre plus au mauvais chapitre après un widget ou un rappel, le verset du widget est maintenant cliquable, plus de bande noire sous le texte et la barre de navigation inférieure est plus fine.
 </fr-FR>
 <hu-HU>
-A svéd XII. Károly-Biblia (1703) mostantól hangosan is olvasható: a teljes Újszövetség, valamint Mózes első és második könyve és a Zsoltárok; a többi könyv fokozatosan érkezik. A felvett felolvasás mostantól követi és kiemeli az egyes verseket, a folytatás pedig pontosan onnan indul, ahol abbahagytad. Javítások: a felolvasás már nem vált az eszköz beszédszintetizátorára a könyv közepén, az olvasótervek pedig az aktuális napon nyílnak meg.
+A Genfi Biblia (1599) mostantól teljes egészében hallgatható: mind a 66 könyv, minden fejezet. A felvett felolvasás követi és kiemeli az egyes verseket, a folytatás pedig pontosan annál a versnél indul, ahol abbahagyta. Javítások: az olvasó már nem rossz fejezetnél nyílik meg widget vagy emlékeztető után, a widget verse mostantól megérinthető, nem jelenik meg fekete sáv a szöveg alatt, és az alsó navigációs sáv keskenyebb.
 </hu-HU>
 <hy-AM>
-Շուէտական Կարլ ԺԲ.-ի Աստուածաշունչը (1703) այժմ ընթերցւում է բարձրաձայն՝ ամբողջ Նոր Կտակարանը, ինչպէս նաեւ Ծննդոց, Ելից եւ Սաղմոսներ գիրքերը. միւս գիրքերը կ՚աւելանան աստիճանաբար։ Ձայնագրուած ընթերցումն այժմ հետեւում է իւրաքանչիւր համարին եւ ընդգծում է այն, իսկ շարունակելիս սկսում է ճիշդ այն համարից, ուր կանգ էիք առել։ Ուղղումներ՝ ընթերցումն այլեւս գրքի կէսին չի անցնում սարքի խօսքի սինթեզի, եւ ընթերցանութեան ծրագրերը բացւում են ընթացիկ օրով։
+Ժնևի Աստվածաշունչը (1599) այժմ ամբողջությամբ ընթերցվում է ձայնով՝ բոլոր 66 գրքերը, բոլոր գլուխները։ Ձայնագրված ընթերցումը հետևում և ընդգծում է յուրաքանչյուր համար, իսկ շարունակելիս սկսվում է հենց այն համարից, որտեղ կանգ եք առել։ Ուղղումներ՝ ընթերցիչն այլևս սխալ գլխով չի բացվում վիջեթից կամ հիշեցումից հետո, վիջեթի համարն այժմ սեղմելի է, տեքստի տակ սև գոտի այլևս չի երևում, ներքևի նավիգացիոն գոտին ավելի բարակ է։
 </hy-AM>
 <it-IT>
-La Bibbia svedese di Carlo XII (1703) ora viene letta ad alta voce: tutto il Nuovo Testamento più Genesi, Esodo e i Salmi; altri libri saranno aggiunti nel tempo. La narrazione registrata ora segue ed evidenzia ogni versetto, e la ripresa riparte esattamente dal versetto in cui ti eri fermato. Correzioni: la narrazione non torna più alla sintesi vocale del dispositivo a metà libro e i piani di lettura si aprono al giorno corrente.
+La Bibbia di Ginevra (1599) ora si ascolta per intero: tutti i 66 libri, ogni capitolo. La narrazione registrata segue ed evidenzia ogni versetto e, riprendendo, riparte esattamente dal versetto in cui ti eri fermato. Correzioni: il lettore non si apre più al capitolo sbagliato dopo il widget o un promemoria, il versetto del widget ora è toccabile, non compare più una barra nera sotto il testo e la barra di navigazione inferiore è più sottile.
 </it-IT>
 <iw-IL>
-התרגום השוודי של קרל השנים־עשר (1703) מוקרא כעת בקול: כל הברית החדשה, וכן בראשית, שמות ותהילים; ספרים נוספים יתווספו בהדרגה. ההקראה המוקלטת עוקבת כעת אחר כל פסוק ומדגישה אותו, וההמשך מתחיל בדיוק בפסוק שבו הפסקתם. תיקונים: ההקראה כבר לא עוברת להקראה ממוחשבת של המכשיר באמצע ספר, ותוכניות הקריאה נפתחות ביום הנוכחי.
+התנך של ז׳נבה (1599) נקרא כעת בקול במלואו: כל 66 הספרים, כל פרק. ההקראה המוקלטת עוקבת ומדגישה כל פסוק, וההמשך מתחיל בדיוק בפסוק שבו הפסקת. תיקונים: הקורא כבר לא נפתח בפרק שגוי אחרי הווידג׳ט או תזכורת, אפשר כעת להקיש על הפסוק בווידג׳ט, לא מופיע עוד פס שחור מתחת לטקסט, וסרגל הניווט התחתון צר יותר.
 </iw-IL>
 <ja-JP>
-スウェーデン語のカール12世訳聖書（1703年）が朗読に対応しました。新約聖書全巻に加え、創世記・出エジプト記・詩篇が聴けます（他の書も順次追加）。録音朗読は各節を追って強調表示するようになり、再開すると止めた節から正確に続きます。修正：朗読が書の途中で端末の音声合成に戻らなくなり、通読プランは現在の日から開くようになりました。
+ジュネーヴ聖書（1599年）の朗読が全巻そろいました。全66巻、すべての章です。録音朗読は各節を追って強調し、再開すると中断した節から正確に続きます。修正: ウィジェットやリマインダーの後に誤った章が開く問題、ウィジェットの聖句をタップできない問題、本文の下に黒い帯が出る問題を修正し、下部のナビゲーションバーを細くしました。
 </ja-JP>
 <lv>
-Zviedru Kārļa XII Bībele (1703) tagad ir ierunāta: visa Jaunā Derība, kā arī 1. un 2. Mozus grāmata un Psalmi; pārējās grāmatas tiks pievienotas pakāpeniski. Ieskaņotā lasīšana tagad seko katram pantam un to izceļ, bet, turpinot atskaņošanu, tā sākas tieši no tā panta, kurā apstājāties. Labojumi: lasīšana vairs nepārslēdzas uz ierīces runas sintēzi grāmatas vidū, un lasīšanas plāni atveras pašreizējā dienā.
+Ženēvas Bībele (1599) tagad ir pilnībā ieskaņota: visas 66 grāmatas, katra nodaļa. Ierakstītais lasījums seko katram pantam un to izceļ, bet, turpinot, sākas tieši no tā panta, kurā apstājāties. Labojumi: lasītājs vairs neatveras nepareizā nodaļā pēc logrīka vai atgādinājuma, logrīka pantam tagad var pieskarties, zem teksta vairs neparādās melna josla, un apakšējā navigācijas josla ir šaurāka.
 </lv>
 <nl-NL>
-De Zweedse Karel XII-Bijbel (1703) wordt nu voorgelezen: het volledige Nieuwe Testament plus Genesis, Exodus en de Psalmen; meer boeken volgen geleidelijk. De opgenomen voordracht volgt en markeert nu elk vers, en bij hervatten gaat het verder bij precies het vers waar u stopte. Opgelost: de voordracht schakelt niet meer halverwege een boek terug naar de spraakuitvoer van het apparaat, en leesplannen openen op uw huidige dag.
+De Geneefse Bijbel (1599) wordt nu volledig voorgelezen: alle 66 boeken, elk hoofdstuk. De opgenomen voorlezing volgt en markeert elk vers, en bij hervatten gaat het precies verder bij het vers waar u stopte. Opgelost: de lezer opent niet meer in het verkeerde hoofdstuk na de widget of een herinnering, het vers in de widget is nu aantikbaar, er verschijnt geen zwarte balk meer onder de tekst en de onderste navigatiebalk is smaller.
 </nl-NL>
 <pl-PL>
-Szwedzka Biblia Karola XII (1703) jest teraz czytana na głos: cały Nowy Testament oraz Księga Rodzaju, Księga Wyjścia i Psalmy; kolejne księgi będą dodawane stopniowo. Nagrane czytanie śledzi teraz każdy werset i go podświetla, a wznowienie zaczyna się dokładnie od wersetu, na którym przerwano. Poprawki: czytanie nie wraca już do syntezatora mowy urządzenia w środku księgi, a plany czytania otwierają się na bieżącym dniu.
+Biblia genewska (1599) jest teraz w całości czytana na głos: wszystkie 66 ksiąg, każdy rozdział. Nagrane czytanie śledzi i podświetla każdy werset, a wznowienie zaczyna się dokładnie od wersetu, na którym przerwano. Poprawki: czytnik nie otwiera się już w niewłaściwym rozdziale po użyciu widżetu lub przypomnienia, werset w widżecie można teraz kliknąć, pod tekstem nie pojawia się czarny pasek, a dolny pasek nawigacji jest węższy.
 </pl-PL>
 <pt-BR>
-A Bíblia sueca de Carlos XII (1703) agora é narrada: todo o Novo Testamento, além de Gênesis, Êxodo e os Salmos; outros livros serão acrescentados aos poucos. A narração gravada agora acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo em que você parou. Correções: a narração não volta mais para a síntese de voz do aparelho no meio de um livro, e os planos de leitura abrem no seu dia atual.
+A Bíblia de Genebra (1599) já é lida por completo em voz alta: todos os 66 livros, todos os capítulos. A narração gravada acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo onde parou. Correções: o leitor já não abre no capítulo errado depois do widget ou de um lembrete, o versículo do widget agora pode ser tocado, deixou de aparecer uma barra preta sob o texto e a barra de navegação inferior está mais fina.
 </pt-BR>
 <pt-PT>
-A Bíblia sueca de Carlos XII (1703) passa a ser narrada: todo o Novo Testamento, além de Génesis, Êxodo e os Salmos; outros livros serão acrescentados gradualmente. A narração gravada acompanha agora cada versículo e destaca-o, e ao retomar continua exatamente no versículo em que parou. Correções: a narração já não volta à síntese de voz do aparelho a meio de um livro, e os planos de leitura abrem no seu dia atual.
+A Bíblia de Genebra (1599) já é lida por completo em voz alta: todos os 66 livros, todos os capítulos. A narração gravada acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo onde parou. Correções: o leitor já não abre no capítulo errado depois do widget ou de um lembrete, o versículo do widget agora pode ser tocado, deixou de aparecer uma barra preta sob o texto e a barra de navegação inferior está mais fina.
 </pt-PT>
 <ru-RU>
-Шведская Библия Карла XII (1703) теперь озвучена: весь Новый Завет, а также Бытие, Исход и Псалтирь; остальные книги добавляются постепенно. Записанная озвучка теперь следит за каждым стихом и подсвечивает его, а при продолжении воспроизведение начинается ровно с того стиха, на котором вы остановились. Исправлено: озвучка больше не переключается на синтезатор речи устройства посреди книги, а планы чтения открываются на текущем дне.
+Женевская Библия (1599) теперь озвучена полностью: все 66 книг, каждая глава. Записанная озвучка следует за каждым стихом и подсвечивает его, а продолжение начинается ровно с того стиха, на котором вы остановились. Исправлено: чтение больше не открывается не на той главе после виджета или напоминания, стих в виджете теперь нажимается, под текстом больше нет чёрной полосы, а нижняя панель навигации стала тоньше.
 </ru-RU>
 <sr>
-Švedska Biblija Karla XII (1703) sada se čita naglas: ceo Novi zavet, kao i Postanje, Izlazak i Psalmi; ostale knjige dodaju se postepeno. Snimljena naracija sada prati i ističe svaki stih, a nastavak počinje tačno od stiha na kom ste stali. Ispravke: naracija više ne prelazi na sintezu govora uređaja usred knjige, a planovi čitanja otvaraju se na tekućem danu.
+Ženevska Biblija (1599) sada se čita naglas u celini: svih 66 knjiga, svako poglavlje. Snimljeno čitanje prati i ističe svaki stih, a nastavak počinje tačno od stiha na kome ste stali. Ispravke: čitač se više ne otvara na pogrešnom poglavlju posle vidžeta ili podsetnika, stih u vidžetu sada je moguće dodirnuti, ispod teksta se više ne pojavljuje crna traka, a donja navigaciona traka je tanja.
 </sr>
 <sv-SE>
-Karl XII:s Bibel (1703) läses nu upp: hela Nya testamentet samt Första och Andra Moseboken och Psaltaren; fler böcker läggs till efter hand. Den inlästa uppläsningen följer och markerar nu varje vers, och när du fortsätter startar den exakt vid versen där du slutade. Rättningar: uppläsningen växlar inte längre till enhetens talsyntes mitt i en bok, och läsplaner öppnas på din aktuella dag.
+Genèvebibeln (1599) läses nu upp i sin helhet: alla 66 böcker, varje kapitel. Den inspelade uppläsningen följer och markerar varje vers, och när du fortsätter börjar den exakt vid versen där du slutade. Rättningar: läsaren öppnas inte längre i fel kapitel efter widgeten eller en påminnelse, versen i widgeten går nu att trycka på, ingen svart list visas under texten och den nedre navigeringsraden är smalare.
 </sv-SE>
 <ta-IN>
-கார்ல் பன்னிரண்டாம் மன்னரின் ஸ்வீடிஷ் விவிலியம் (1703) இப்போது ஒலிவடிவில் வாசிக்கப்படுகிறது: புதிய ஏற்பாடு முழுவதும், மேலும் ஆதியாகமம், யாத்திராகமம், சங்கீதம்; மற்ற புத்தகங்கள் படிப்படியாகச் சேர்க்கப்படும். பதிவுசெய்யப்பட்ட ஒலிவாசிப்பு இப்போது ஒவ்வொரு வசனத்தையும் பின்தொடர்ந்து சிறப்பித்துக் காட்டுகிறது; நிறுத்திய வசனத்திலிருந்தே மீண்டும் தொடர்கிறது. சரிசெய்தவை: புத்தகத்தின் நடுவில் ஒலிவாசிப்பு சாதனத்தின் பேச்சுத்தொகுப்புக்கு மாறாது; வாசிப்புத் திட்டங்கள் தற்போதைய நாளில் திறக்கும்.
+ஜெனீவா பைபிள் (1599) இப்போது முழுமையாக ஒலிவடிவில்: 66 புத்தகங்கள், அனைத்து அதிகாரங்களும். பதிவு செய்யப்பட்ட வாசிப்பு ஒவ்வொரு வசனத்தையும் தொடர்ந்து சிறப்பித்துக் காட்டும்; நிறுத்திய வசனத்திலிருந்தே தொடரும். சரிசெய்தவை: விட்ஜெட் அல்லது நினைவூட்டலுக்குப் பிறகு தவறான அதிகாரம் திறக்காது, விட்ஜெட் வசனத்தைத் தொடலாம், உரைக்குக் கீழே கருப்புப் பட்டை இல்லை, கீழ் வழிசெலுத்தல் பட்டை மெலிந்துள்ளது.
 </ta-IN>
 <zh-CN>
-瑞典卡尔十二世圣经（1703年）现已支持朗读：新约全书，以及创世记、出埃及记和诗篇；其余各卷将陆续加入。录制朗读现在会逐节跟随并高亮显示，继续播放时会从你停下的那一节精确接续。修复：朗读不再在书卷中途退回设备的语音合成，读经计划现在会打开到你当前的日程。
+日内瓦圣经（1599）现已完整朗读：全部66卷，每一章。录制朗读会跟随并高亮每一节经文，继续播放时会从你停下的那一节精确接续。修复：使用小组件或提醒后阅读器不再打开错误的章节；小组件中的经文现在可点按；正文下方不再出现黑条；底部导航栏更纤细。
 </zh-CN>
 <zh-HK>
-瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
+日內瓦聖經（1599）現已完整朗讀：全部66卷，每一章。錄製朗讀會跟隨並標示每一節經文，繼續播放時會從你停下的那一節精確接續。修復：使用小工具或提醒後閱讀器不再開啟錯誤的章節；小工具中的經文現在可點按；內文下方不再出現黑條；底部導覽列更纖細。
 </zh-HK>
 <zh-TW>
-瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
+日內瓦聖經（1599）現已完整朗讀：全部66卷，每一章。錄製朗讀會跟隨並標示每一節經文，繼續播放時會從你停下的那一節精確接續。修復：使用小工具或提醒後閱讀器不再開啟錯誤的章節；小工具中的經文現在可點按；內文下方不再出現黑條；底部導覽列更纖細。
 </zh-TW>
+
 ## Store descriptions (per language — English first, then alphabetical)
 
 *One block per listing language. Short line first, then the full 📖 description. Copy the block for the locale you're editing.*
@@ -843,6 +840,106 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 எல்லா உரைகளும் பொதுக் களம் (public domain). ஆப் எந்தத் தரவையும் சேகரிப்பதில்லை.
 
 # ── ARCHIVE: older release notes (historical) ──
+
+## 1.6.1 release notes (paste per store)
+
+<en-US>
+The Swedish Karl XII Bible (1703) is now read aloud: the complete New Testament plus Genesis, Exodus and the Psalms, with more books added over time. Recorded narration now follows and highlights each verse as it is read, and resuming continues from the exact verse you stopped on. Fixes: narration no longer drops back to the device's text-to-speech partway through a book, and reading plans now open on your current day.
+</en-US>
+<ar>
+أصبح الكتاب المقدس السويدي بترجمة كارل الثاني عشر (1703) مقروءًا صوتيًا: العهد الجديد كاملًا مع سفر التكوين وسفر الخروج والمزامير، وستُضاف أسفار أخرى تباعًا. التلاوة المسجَّلة تتابع كل آية وتُبرزها أثناء القراءة، والاستئناف يبدأ من الآية نفسها التي توقفت عندها. إصلاحات: لم تعد التلاوة تعود إلى القراءة الآلية من الجهاز في منتصف السفر، وخطط القراءة تفتح الآن على يومك الحالي.
+</ar>
+<be>
+Швэдзкая Біблія Карла XII (1703) цяпер агучана: увесь Новы Запавет, а таксама Быцьцё, Выхад і Псальмы; іншыя кнігі дадаюцца паступова. Запісаная агучка сочыць за кожным вершам і падсьвятляе яго, а працяг пачынаецца з таго самага верша, на якім вы спыніліся. Выпраўлена: агучка больш не пераходзіць на сынтэз маўленьня прылады пасярод кнігі, а планы чытаньня адкрываюцца на бягучым дні.
+</be>
+<cs-CZ>
+Švédská Bible Karla XII. (1703) je nyní namluvená: celý Nový zákon a k tomu Genesis, Exodus a Žalmy; další knihy přibývají postupně. Nahraná četba nyní sleduje a zvýrazňuje každý verš a pokračování naváže přesně na verši, kde jste skončili. Opravy: četba už uprostřed knihy nepřepne na hlasový výstup zařízení a plány čtení se otevírají na aktuálním dni.
+</cs-CZ>
+<da-DK>
+Den svenske Karl XII-bibel (1703) læses nu op: hele Det Nye Testamente samt 1. og 2. Mosebog og Salmerne; flere bøger kommer til løbende. Den indlæste oplæsning følger og fremhæver nu hvert vers, og når du fortsætter, starter den præcis ved det vers, du stoppede på. Rettelser: oplæsningen skifter ikke længere til enhedens talesyntese midt i en bog, og læseplaner åbner på din aktuelle dag.
+</da-DK>
+<de-DE>
+Die schwedische Karl-XII.-Bibel (1703) wird jetzt vorgelesen: das vollständige Neue Testament sowie Genesis, Exodus und die Psalmen; weitere Bücher kommen nach und nach hinzu. Die aufgenommene Lesung folgt nun jedem Vers und hebt ihn hervor, und beim Fortsetzen geht es genau bei dem Vers weiter, bei dem Sie aufgehört haben. Behoben: Die Lesung wechselt nicht mehr mitten im Buch zur Sprachausgabe des Geräts, und Lesepläne öffnen sich beim aktuellen Tag.
+</de-DE>
+<el-GR>
+Η σουηδική Βίβλος του Καρόλου ΙΒ΄ (1703) διαβάζεται πλέον φωναχτά: ολόκληρη η Καινή Διαθήκη μαζί με τη Γένεση, την Έξοδο και τους Ψαλμούς· και άλλα βιβλία προστίθενται σταδιακά. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει τώρα κάθε στίχο, ενώ η συνέχιση ξεκινά ακριβώς από τον στίχο που σταματήσατε. Διορθώσεις: η ανάγνωση δεν γυρίζει πια στη φωνητική σύνθεση της συσκευής στη μέση ενός βιβλίου και τα προγράμματα ανάγνωσης ανοίγουν στην τρέχουσα ημέρα.
+</el-GR>
+<en-IN>
+The Swedish Karl XII Bible (1703) is now read aloud: the complete New Testament plus Genesis, Exodus and the Psalms, with more books added over time. Recorded narration now follows and highlights each verse as it is read, and resuming continues from the exact verse you stopped on. Fixes: narration no longer drops back to the device's text-to-speech partway through a book, and reading plans now open on your current day.
+</en-IN>
+<es-419>
+La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+</es-419>
+<es-ES>
+La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+</es-ES>
+<es-US>
+La Biblia sueca de Carlos XII (1703) ya se lee en voz alta: el Nuevo Testamento completo más Génesis, Éxodo y los Salmos; se irán añadiendo más libros. La narración grabada ahora sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: la narración ya no vuelve a la síntesis de voz del dispositivo a mitad de un libro y los planes de lectura se abren en tu día actual.
+</es-US>
+<fi-FI>
+Ruotsalainen Kaarle XII:n Raamattu (1703) luetaan nyt ääneen: koko Uusi testamentti sekä 1. ja 2. Mooseksen kirja ja Psalmit; lisää kirjoja tulee vähitellen. Äänitetty luenta seuraa ja korostaa nyt jokaista jaetta, ja jatkaminen alkaa täsmälleen siitä jakeesta, mihin jäit. Korjauksia: luenta ei enää vaihda laitteen puhesynteesiin kesken kirjan, ja lukusuunnitelmat avautuvat nykyiseen päivääsi.
+</fi-FI>
+<fr-CA>
+La Bible suédoise de Charles XII (1703) est désormais lue à voix haute : tout le Nouveau Testament, ainsi que la Genèse, l'Exode et les Psaumes ; d'autres livres s'ajouteront progressivement. La narration enregistrée suit et surligne maintenant chaque verset, et la reprise repart exactement au verset où vous vous étiez arrêté. Corrections : la narration ne bascule plus vers la synthèse vocale de l'appareil au milieu d'un livre, et les plans de lecture s'ouvrent au jour en cours.
+</fr-CA>
+<fr-FR>
+La Bible suédoise de Charles XII (1703) est désormais lue à voix haute : tout le Nouveau Testament, ainsi que la Genèse, l'Exode et les Psaumes ; d'autres livres s'ajouteront progressivement. La narration enregistrée suit et surligne maintenant chaque verset, et la reprise repart exactement au verset où vous vous étiez arrêté. Corrections : la narration ne bascule plus vers la synthèse vocale de l'appareil au milieu d'un livre, et les plans de lecture s'ouvrent au jour en cours.
+</fr-FR>
+<hu-HU>
+A svéd XII. Károly-Biblia (1703) mostantól hangosan is olvasható: a teljes Újszövetség, valamint Mózes első és második könyve és a Zsoltárok; a többi könyv fokozatosan érkezik. A felvett felolvasás mostantól követi és kiemeli az egyes verseket, a folytatás pedig pontosan onnan indul, ahol abbahagytad. Javítások: a felolvasás már nem vált az eszköz beszédszintetizátorára a könyv közepén, az olvasótervek pedig az aktuális napon nyílnak meg.
+</hu-HU>
+<hy-AM>
+Շուէտական Կարլ ԺԲ.-ի Աստուածաշունչը (1703) այժմ ընթերցւում է բարձրաձայն՝ ամբողջ Նոր Կտակարանը, ինչպէս նաեւ Ծննդոց, Ելից եւ Սաղմոսներ գիրքերը. միւս գիրքերը կ՚աւելանան աստիճանաբար։ Ձայնագրուած ընթերցումն այժմ հետեւում է իւրաքանչիւր համարին եւ ընդգծում է այն, իսկ շարունակելիս սկսում է ճիշդ այն համարից, ուր կանգ էիք առել։ Ուղղումներ՝ ընթերցումն այլեւս գրքի կէսին չի անցնում սարքի խօսքի սինթեզի, եւ ընթերցանութեան ծրագրերը բացւում են ընթացիկ օրով։
+</hy-AM>
+<it-IT>
+La Bibbia svedese di Carlo XII (1703) ora viene letta ad alta voce: tutto il Nuovo Testamento più Genesi, Esodo e i Salmi; altri libri saranno aggiunti nel tempo. La narrazione registrata ora segue ed evidenzia ogni versetto, e la ripresa riparte esattamente dal versetto in cui ti eri fermato. Correzioni: la narrazione non torna più alla sintesi vocale del dispositivo a metà libro e i piani di lettura si aprono al giorno corrente.
+</it-IT>
+<iw-IL>
+התרגום השוודי של קרל השנים־עשר (1703) מוקרא כעת בקול: כל הברית החדשה, וכן בראשית, שמות ותהילים; ספרים נוספים יתווספו בהדרגה. ההקראה המוקלטת עוקבת כעת אחר כל פסוק ומדגישה אותו, וההמשך מתחיל בדיוק בפסוק שבו הפסקתם. תיקונים: ההקראה כבר לא עוברת להקראה ממוחשבת של המכשיר באמצע ספר, ותוכניות הקריאה נפתחות ביום הנוכחי.
+</iw-IL>
+<ja-JP>
+スウェーデン語のカール12世訳聖書（1703年）が朗読に対応しました。新約聖書全巻に加え、創世記・出エジプト記・詩篇が聴けます（他の書も順次追加）。録音朗読は各節を追って強調表示するようになり、再開すると止めた節から正確に続きます。修正：朗読が書の途中で端末の音声合成に戻らなくなり、通読プランは現在の日から開くようになりました。
+</ja-JP>
+<lv>
+Zviedru Kārļa XII Bībele (1703) tagad ir ierunāta: visa Jaunā Derība, kā arī 1. un 2. Mozus grāmata un Psalmi; pārējās grāmatas tiks pievienotas pakāpeniski. Ieskaņotā lasīšana tagad seko katram pantam un to izceļ, bet, turpinot atskaņošanu, tā sākas tieši no tā panta, kurā apstājāties. Labojumi: lasīšana vairs nepārslēdzas uz ierīces runas sintēzi grāmatas vidū, un lasīšanas plāni atveras pašreizējā dienā.
+</lv>
+<nl-NL>
+De Zweedse Karel XII-Bijbel (1703) wordt nu voorgelezen: het volledige Nieuwe Testament plus Genesis, Exodus en de Psalmen; meer boeken volgen geleidelijk. De opgenomen voordracht volgt en markeert nu elk vers, en bij hervatten gaat het verder bij precies het vers waar u stopte. Opgelost: de voordracht schakelt niet meer halverwege een boek terug naar de spraakuitvoer van het apparaat, en leesplannen openen op uw huidige dag.
+</nl-NL>
+<pl-PL>
+Szwedzka Biblia Karola XII (1703) jest teraz czytana na głos: cały Nowy Testament oraz Księga Rodzaju, Księga Wyjścia i Psalmy; kolejne księgi będą dodawane stopniowo. Nagrane czytanie śledzi teraz każdy werset i go podświetla, a wznowienie zaczyna się dokładnie od wersetu, na którym przerwano. Poprawki: czytanie nie wraca już do syntezatora mowy urządzenia w środku księgi, a plany czytania otwierają się na bieżącym dniu.
+</pl-PL>
+<pt-BR>
+A Bíblia sueca de Carlos XII (1703) agora é narrada: todo o Novo Testamento, além de Gênesis, Êxodo e os Salmos; outros livros serão acrescentados aos poucos. A narração gravada agora acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo em que você parou. Correções: a narração não volta mais para a síntese de voz do aparelho no meio de um livro, e os planos de leitura abrem no seu dia atual.
+</pt-BR>
+<pt-PT>
+A Bíblia sueca de Carlos XII (1703) passa a ser narrada: todo o Novo Testamento, além de Génesis, Êxodo e os Salmos; outros livros serão acrescentados gradualmente. A narração gravada acompanha agora cada versículo e destaca-o, e ao retomar continua exatamente no versículo em que parou. Correções: a narração já não volta à síntese de voz do aparelho a meio de um livro, e os planos de leitura abrem no seu dia atual.
+</pt-PT>
+<ru-RU>
+Шведская Библия Карла XII (1703) теперь озвучена: весь Новый Завет, а также Бытие, Исход и Псалтирь; остальные книги добавляются постепенно. Записанная озвучка теперь следит за каждым стихом и подсвечивает его, а при продолжении воспроизведение начинается ровно с того стиха, на котором вы остановились. Исправлено: озвучка больше не переключается на синтезатор речи устройства посреди книги, а планы чтения открываются на текущем дне.
+</ru-RU>
+<sr>
+Švedska Biblija Karla XII (1703) sada se čita naglas: ceo Novi zavet, kao i Postanje, Izlazak i Psalmi; ostale knjige dodaju se postepeno. Snimljena naracija sada prati i ističe svaki stih, a nastavak počinje tačno od stiha na kom ste stali. Ispravke: naracija više ne prelazi na sintezu govora uređaja usred knjige, a planovi čitanja otvaraju se na tekućem danu.
+</sr>
+<sv-SE>
+Karl XII:s Bibel (1703) läses nu upp: hela Nya testamentet samt Första och Andra Moseboken och Psaltaren; fler böcker läggs till efter hand. Den inlästa uppläsningen följer och markerar nu varje vers, och när du fortsätter startar den exakt vid versen där du slutade. Rättningar: uppläsningen växlar inte längre till enhetens talsyntes mitt i en bok, och läsplaner öppnas på din aktuella dag.
+</sv-SE>
+<ta-IN>
+கார்ல் பன்னிரண்டாம் மன்னரின் ஸ்வீடிஷ் விவிலியம் (1703) இப்போது ஒலிவடிவில் வாசிக்கப்படுகிறது: புதிய ஏற்பாடு முழுவதும், மேலும் ஆதியாகமம், யாத்திராகமம், சங்கீதம்; மற்ற புத்தகங்கள் படிப்படியாகச் சேர்க்கப்படும். பதிவுசெய்யப்பட்ட ஒலிவாசிப்பு இப்போது ஒவ்வொரு வசனத்தையும் பின்தொடர்ந்து சிறப்பித்துக் காட்டுகிறது; நிறுத்திய வசனத்திலிருந்தே மீண்டும் தொடர்கிறது. சரிசெய்தவை: புத்தகத்தின் நடுவில் ஒலிவாசிப்பு சாதனத்தின் பேச்சுத்தொகுப்புக்கு மாறாது; வாசிப்புத் திட்டங்கள் தற்போதைய நாளில் திறக்கும்.
+</ta-IN>
+<zh-CN>
+瑞典卡尔十二世圣经（1703年）现已支持朗读：新约全书，以及创世记、出埃及记和诗篇；其余各卷将陆续加入。录制朗读现在会逐节跟随并高亮显示，继续播放时会从你停下的那一节精确接续。修复：朗读不再在书卷中途退回设备的语音合成，读经计划现在会打开到你当前的日程。
+</zh-CN>
+<zh-HK>
+瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
+</zh-HK>
+<zh-TW>
+瑞典卡爾十二世聖經（1703年）現已支援朗讀：新約全書，以及創世記、出埃及記和詩篇；其餘各卷將陸續加入。錄製朗讀現在會逐節跟隨並高亮顯示，繼續播放時會從你停下的那一節精確接續。修復：朗讀不再在書卷中途退回裝置的語音合成，讀經計劃現在會開啟到你目前的日程。
+</zh-TW>
+
+file, newest-first, so the file opens on what you actually need to paste
+rather than on years of history. The validator fails if a second release block
+is left above the descriptions section.
 
 ## 1.6.0 release notes (paste per store)
 

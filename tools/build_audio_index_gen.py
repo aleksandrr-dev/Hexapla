@@ -42,12 +42,12 @@ SETS = [
     # ⚠ tid is "gen1599" (the app id in Bible.kt), NOT "gnv" (the narration
     #   folder). Same tid/dir split as kxii — getting this wrong yields an
     #   index the app silently never looks up.
-    # ⚠ DO NOT UNCOMMENT BEFORE THE ARCHIVE.ORG ITEM EXISTS AND IS PUBLIC.
-    #   The URLs would 404, and the app would retry 3x per chapter and then
-    #   fall back to TTS — worse than having no entry at all.
+    # ✅ ACTIVATED 2026-08-01. Render finished 1189/1189; item uploaded
+    #   (2379/2379 requests, 0 failed) and verified public — chapter URLs
+    #   0/0.ogg, 42/0.ogg and 65/21.ogg all fetch HTTP 200.
     # Activation checklist lives in tools/GENEVA_AUDIO_RUNBOOK.md.
-    # {"tid": "gen1599", "dir": "gnv", "asset": "en_geneva.json",
-    #  "item": "hexapla-audio-geneva-1599", "partial": False},
+    {"tid": "gen1599", "dir": "gnv", "asset": "en_geneva.json",
+     "item": "hexapla-audio-geneva-1599", "partial": False},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 
@@ -97,8 +97,13 @@ def build_set(s, errors):
         # Complete sets must cover the whole grid — catches a broken upload.
         if total != expected:
             errors.append(f"{tid}: {total} chapters built, grid expects {expected}")
-        if len(entry) != len(counts):
-            errors.append(f"{tid}: {len(entry)} books built, grid has {len(counts)}")
+        # Compare against books that actually HAVE chapters: an asset may carry
+        # empty apocrypha slots (en_geneva has 83 slots, 66 of them non-empty),
+        # and those can never have audio. Counting raw slots false-fails them
+        # while still catching a genuinely missing book.
+        grid_books = sum(1 for c in counts if c)
+        if len(entry) != grid_books:
+            errors.append(f"{tid}: {len(entry)} books built, grid has {grid_books} non-empty")
     tag = " (partial)" if partial else ""
     print(f"{tid}: {total}/{expected} chapters across "
           f"{len(entry)}/{len(counts)} books{tag}")

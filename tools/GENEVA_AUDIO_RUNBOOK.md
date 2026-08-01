@@ -1,5 +1,39 @@
 # Geneva 1599 generated narration — wiring runbook
 
+## ✅ COMPLETED 2026-08-01 — this runbook has been executed. Kept as the model
+## for the next narration set (Karl XII / kxii, and the Russian re-render).
+
+    render      1189/1189 · preflight clean · 31,104 verse offsets, all
+                monotonic, every chapter matching the asset's verse count
+    upload      2379/2379 requests, 0 failed → hexapla-audio-geneva-1599
+    verified    0/0.ogg · 42/0.ogg · 65/21.ogg · 0/0.json all HTTP 200
+    index       gen1599 activated: 66 books, 1189 chapters, offsets embedded
+    build       1.6.2 (code 15), Play AAB + RuStore APK, yoomoney check 0/1
+    ⚠ ONE BUG FOUND AND FIXED during activation — see "the 83-slot trap" below.
+
+### ⚠ THE 83-SLOT TRAP — the completeness guard false-failed Geneva
+`build_audio_index_gen.py` asserted `len(entry) != len(counts)` for complete
+sets, i.e. it compared books-with-audio against **every grid slot**. The Geneva
+asset carries **83 slots — 66 canon plus 17 EMPTY apocrypha slots** — so a
+perfectly complete 1189-chapter set failed with
+`gen1599: 66 books built, grid has 83`.
+▶ Fixed to compare against **non-empty** grid books
+(`sum(1 for c in counts if c)`), which still catches a genuinely missing book
+(the guard's actual purpose) but does not punish empty apocrypha slots.
+★ Webster never tripped this because its asset has only 66 book slots. **Any
+future translation whose asset carries apocrypha slots would have hit it too.**
+
+### ★ THE DONATION CHECK MUST HAVE A POSITIVE CONTROL
+`unzip -p <play> "base/dex/classes*.dex" | grep -ac yoomoney` printed **0** —
+but a 0 is only meaningful if the same command finds the string where it SHOULD
+be. Running it against the RuStore APK printed **1**. Always run both; a broken
+path or a wrong dex glob yields 0 in the Play artifact for the wrong reason.
+⚠ Note the path differs by format: `classes*.dex` in an APK,
+`base/dex/classes*.dex` in an AAB.
+
+---
+
+
 Prepared 2026-07-31, while the render was at **995/1189**. Everything below is
 verified against the tree as it stood that day; re-verify the numbers before
 acting, don't trust them.

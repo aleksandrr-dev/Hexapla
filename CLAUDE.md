@@ -1243,16 +1243,22 @@ must include them; owner should spot-check on-device before submitting.
   KJV-worded — all 25 locales now read generically ("recorded narration where
   it exists, otherwise the device's text-to-speech"). Nothing to reword for a
   new generated translation.
-  ⚠ gnv/Geneva is NOT in audio_index_gen.json yet — but the render is no
-  longer paused: it is at **995/1189 as of 2026-07-31** (remaining = Luke 23
-  onward), ETA ~2026-08-02. **Wiring is PREPARED**: the `gen1599` entry sits
-  commented in tools/build_audio_index_gen.py and the full activation sequence
-  is in **tools/GENEVA_AUDIO_RUNBOOK.md**. ⚠ Two gotchas recorded there: the
-  app id is **gen1599**, NOT the narration folder name `gnv` (keying the index
-  wrong yields audio the app silently never finds), and the entry must NOT be
-  uncommented until the archive.org item `hexapla-audio-geneva-1599` is public
-  (404s would burn 3 retries per chapter and drop to TTS). No Kotlin change is
-  needed — the audio path is index-driven. Karl XII (kxii, narration dir `sv`)
+  ✅ **GENEVA 1599 SHIPPED 2026-08-01 in 1.6.2 (code 15).** Render finished
+  1189/1189; uploaded to archive.org `hexapla-audio-geneva-1599` (2379/2379
+  requests, 0 failed) and verified public; `gen1599` activated in
+  tools/build_audio_index_gen.py — 66 books, 1189 chapters, 31,104 verse
+  offsets embedded. No Kotlin change was needed; the audio path is index-driven,
+  exactly as the runbook predicted. Full record + two bugs found during
+  activation: **tools/GENEVA_AUDIO_RUNBOOK.md** (now marked COMPLETED and kept
+  as the model for the next narration set).
+  ⚠ Two things that will recur for any FUTURE narration set:
+  (a) the index completeness guard compared books-with-audio against ALL grid
+      slots, so an asset with empty apocrypha slots (Geneva has 83 slots, 66
+      non-empty) false-failed a complete set — fixed to count non-empty books;
+  (b) the yoomoney donation check needs a POSITIVE CONTROL — 0 in the Play AAB
+      only means something because the same grep returns 1 on the RuStore APK.
+      Path differs: `classes*.dex` (APK) vs `base/dex/classes*.dex` (AAB).
+  Karl XII (kxii, narration dir `sv`)
   is indexed PARTIAL at 940/1189 and rendering.
   Both audio items live on archive.org (webster-1833
   = wbt via audio_index_gen; hexapla-audio-en = 22 KJV Kokoro gap books via

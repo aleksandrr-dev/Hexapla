@@ -28,6 +28,7 @@ Options:
 import argparse
 import io
 import json
+import logging
 import math
 import os
 import re
@@ -847,6 +848,84 @@ def _get_chatterbox():
     return _chatterbox_model
 
 
+def _trim_and_fade(audio, sr, thresh=0.0025, keep_ms=40,
+                   fade_in_ms=12, fade_out_ms=45):
+    """Trim near-silent head/tail, then fade both ends to zero.
+
+    ⚠ WHY THIS EXISTS. Verses are synthesized separately and stitched by
+    `ffmpeg concat -c copy` against 600 ms of DIGITAL SILENCE. Chatterbox does
+    not end a clip at zero — and it frequently stops early: the owner's Genesis
+    1 test logged 34 forced-EOS events across 31 verses (6 token_repetition,
+    28 long_tail). A waveform that ends mid-amplitude spliced onto absolute
+    silence is a click; a low-level vocoder tail left before the gap is the
+    "weird whirr" he reported at 2:36, and a clip that starts mid-amplitude is
+    the abrupt "and GOD" he heard at v8. Owner-reported artifacts at 0:46,
+    2:17 and 2:36 all sat at or near verse joins, which is what pointed here.
+
+    Trimming is deliberately gentle (keeps 40 ms of room) so no consonant onset
+    is clipped — losing the start of a word would be far worse than a click.
+    """
+    import numpy as np
+    loud = np.nonzero(np.abs(audio) > thresh)[0]
+    if len(loud) == 0:
+        return audio
+    keep = int(sr * keep_ms / 1000)
+    start = max(0, loud[0] - keep)
+    end = min(len(audio), loud[-1] + keep)
+    audio = audio[start:end].copy()
+    fi = int(sr * fade_in_ms / 1000)
+    fo = int(sr * fade_out_ms / 1000)
+    if fi and len(audio) > fi:
+        audio[:fi] *= np.linspace(0.0, 1.0, fi, dtype=audio.dtype)
+    if fo and len(audio) > fo:
+        audio[-fo:] *= np.linspace(1.0, 0.0, fo, dtype=audio.dtype)
+    return audio
+
+
+class _EOSWatcher(logging.Handler):
+    """Record Chatterbox's own forced-EOS warnings against the verse being
+    rendered, so a re-render can target verses instead of whole chapters.
+
+    Chatterbox emits ~4 sampling passes per verse, so warning ORDER cannot be
+    used to infer the verse — an earlier attempt to map them that way produced
+    a plainly wrong verse list. Attributing them at the call site is the only
+    reliable way, and it is what makes QA possible across 451 chapters, where
+    listening to everything is not an option and duration checks cannot see
+    this defect class at all.
+    """
+    def __init__(self):
+        super().__init__()
+        self.current = None
+        self.hits = {}
+
+    def emit(self, record):
+        msg = record.getMessage()
+        if "forcing EOS" not in msg or self.current is None:
+            return
+        kinds = [k for k in ("token_repetition", "long_tail",
+                             "alignment_repetition") if f"{k}=tensor(True)" in msg
+                 or f"{k}=True" in msg]
+        if kinds:
+            self.hits.setdefault(self.current, []).extend(kinds)
+
+
+def _repetition_flagged(verse_idx):
+    """True if Chatterbox reported REPETITION for this verse.
+
+    Deliberately ignores long_tail: it fired on 30 of 31 verses in the Tyndale
+    Genesis 1 test, i.e. it is ordinary end-of-clip behaviour and useless as a
+    defect signal. token_repetition fired on 6, two of which are exactly where
+    the owner heard artifacts by ear (v18 at 2:11, v21 at 2:35).
+    """
+    kinds = _eos_watcher.hits.get(verse_idx, [])
+    return "token_repetition" in kinds or "alignment_repetition" in kinds
+
+
+_eos_watcher = _EOSWatcher()
+logging.getLogger("chatterbox").addHandler(_eos_watcher)
+logging.getLogger("chatterbox").setLevel(logging.WARNING)
+
+
 def synthesize_chatterbox(text, cfg, output_wav):
     """Synthesize one verse with Chatterbox Multilingual (zero-shot clone,
     no transcript needed). Params come from the ear-test-picked config."""
@@ -861,6 +940,7 @@ def synthesize_chatterbox(text, cfg, output_wav):
         )
         import numpy as np
         audio = np.clip(wav.squeeze(0).cpu().numpy(), -1.0, 1.0)
+        audio = _trim_and_fade(audio, model.sr)
         # PCM_16 to match make_silence_wav()'s gaps (same reason as CosyVoice).
         sf.write(str(output_wav), (audio * 32767).astype(np.int16),
                  model.sr, subtype="PCM_16")
@@ -1394,9 +1474,40 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
                       f"(limit {hdr_limit_ms}ms) — keeping shortest take", flush=True)
 
             pairs = []
+            _eos_watcher.hits.clear()
+            retried = []
             for i, v_text in enumerate(verses):
+                _eos_watcher.current = i        # attribute warnings to THIS verse
                 wav_path, dur = synthesize_verse(v_text, lang, tmp, i, book_idx)
+                # ── AUTO-RETRY ON REPETITION ────────────────────────────────
+                # The stutter/whirr/repeat class is stochastic, so the SAME
+                # prompt usually comes back clean on another draw. Retrying
+                # here — while the verse is in hand — is what makes 451
+                # chapters possible: nobody can listen to 2.7 days of audio to
+                # find six bad verses, and a duration check cannot see this
+                # (a forced EOS makes the clip SHORTER, not longer).
+                # Only token/alignment repetition triggers a retry. long_tail
+                # fires on ~97% of verses and means nothing (measured: 30 of 31
+                # in Tyndale Gen 1) — retrying on it would triple render time
+                # for no gain.
+                if _repetition_flagged(i):
+                    for attempt in range(2, 4):
+                        _eos_watcher.hits.pop(i, None)
+                        alt, alt_dur = synthesize_verse(v_text, lang, tmp, i,
+                                                        book_idx)
+                        if alt and not _repetition_flagged(i):
+                            wav_path, dur = alt, alt_dur
+                            retried.append((i + 1, attempt, "clean"))
+                            break
+                    else:
+                        retried.append((i + 1, 3, "still flagged"))
                 pairs.append((wav_path, dur))
+            _eos_watcher.current = None
+            if retried:
+                ok_n = sum(1 for _, _, s in retried if s == "clean")
+                print(f"    retried {len(retried)} repetition-flagged verse(s), "
+                      f"{ok_n} cleared: "
+                      + ", ".join(f"v{v}({s})" for v, _, s in retried))
             pairs = repace_outliers(verses, pairs, lang, tmp, book_idx)
         except Exception as e:
             print(f" FAILED (duration: {e})")
@@ -1425,6 +1536,28 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
 
     size_kb = ogg_file.stat().st_size // 1024
     print(f" OK ({size_kb} KB)")
+    # Verses where Chatterbox forced an early stop. These are the ONLY
+    # machine-visible marker of the glitch/whirr/stutter class — duration
+    # heuristics cannot see it, because a forced EOS makes the clip SHORTER
+    # rather than longer. Recorded next to the audio so a QA pass can re-render
+    # named verses instead of guessing, or re-listening to 451 chapters.
+    # ⚠ FILTER ON token_repetition ONLY. Measured on Tyndale Genesis 1:
+    # long_tail fired on 30 of 31 verses — it is ordinary behaviour (the
+    # analyzer closing a clip once speech ends), so treating it as a defect
+    # marker would flag 97% of the corpus and be worth nothing. token_repetition
+    # fired on 6, and TWO of them are exactly where the owner heard artifacts
+    # by ear: v18 at 2:11 ("weird sound before 'and to rule the day'") and v21
+    # at 2:35 ("weird whirr"). That is the signal worth acting on.
+    if _eos_watcher.hits:
+        flagged = {str(k): sorted(set(v)) for k, v in sorted(_eos_watcher.hits.items())}
+        with open(str(json_file).replace(".json", ".eos.json"), "w",
+                  encoding="utf-8") as f:
+            json.dump(flagged, f, separators=(",", ":"))
+        suspect = sorted(k for k, v in _eos_watcher.hits.items()
+                         if "token_repetition" in v or "alignment_repetition" in v)
+        if suspect:
+            print(f"    ⚠ repetition-flagged verses: "
+                  f"{', '.join(str(k + 1) for k in suspect)}")
     return True
 
 

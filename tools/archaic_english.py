@@ -361,6 +361,47 @@ _NORMALIZERS = {
     "wycliffe": (_WYCLIFFE_DICT, _WYCLIFFE_RULES),
 }
 
+# ── Generated Tyndale pronunciation map ──────────────────────────────────
+# Tyndale's final -e was already SILENT by the 1520s, but TTS voices it as a
+# syllable: "depe" -> "dee-pee", "herbe" -> "her-bee", "kyndes" -> "kin-dees".
+# The owner heard this immediately. Measured over the asset it is the DOMINANT
+# audio problem: 3,458 distinct unknown -e words, 36,477 occurrences, 11% of
+# all tokens — far bigger than any individual glitch.
+# tools/build_tyndale_pron.py derives the map and corroborates every entry
+# against the KJV parallel verse; the hand-checked exceptions live there too.
+# The curated _TYNDALE_DICT is applied AFTER, so it always wins.
+try:
+    from tyndale_pron import TYNDALE_PRON, TYNDALE_ROMAN
+except ImportError:          # generator not run yet
+    TYNDALE_PRON, TYNDALE_ROMAN = {}, {}
+
+# ".vij." — lower-case roman between full stops, as printed. Spoken letter by
+# letter otherwise ("vee eye jay"), and common: 133 "vij", 137 "ij".
+# ⚠ A lookup table is not enough: Tyndale prints arbitrary combinations
+# (".lxxv." = 75, ".CCCC." = 400), so the value is PARSED. The trailing "j" is
+# the period's long-i, so ij = ii = 2 and vij = vii = 7.
+_ROMAN_RE = re.compile(r"\.\s*([ivxlcdmIVXLCDMj]+)\s*\.")
+_ROMAN_VAL = {"i": 1, "v": 5, "x": 10, "l": 50, "c": 100, "d": 500, "m": 1000}
+
+
+def _roman_value(s):
+    s = s.lower().replace("j", "i")
+    if not s or any(c not in _ROMAN_VAL for c in s):
+        return None
+    total = 0
+    for i, c in enumerate(s):
+        v = _ROMAN_VAL[c]
+        nxt = _ROMAN_VAL.get(s[i + 1]) if i + 1 < len(s) else None
+        total += -v if nxt and nxt > v else v
+    return total or None
+
+
+def _expand_roman(text):
+    def sub(m):
+        v = _roman_value(m.group(1))
+        return f" {v} " if v else m.group(0)
+    return _ROMAN_RE.sub(sub, text)
+
 
 def _apply_dict(text, word_dict):
     """Replace whole words using dictionary (case-preserving)."""
@@ -384,12 +425,18 @@ def _apply_rules(text, rules):
     return text
 
 
-def normalize(text, dialect):
+def normalize(text, dialect, use_generated=True):
     """Normalize archaic English spelling for TTS.
 
     Args:
         text: original verse text
         dialect: "geneva", "tyndale", or "wycliffe"
+        use_generated: apply the derived TYNDALE_PRON map.
+            ⚠ tools/build_tyndale_pron.py MUST pass False. It calls this to
+            decide which words still need mapping; with the generated table
+            applied, its own previous output hides the very words it is looking
+            for. Regenerating that way collapsed the table from 1,708 entries
+            to 132 and silently un-fixed "depe" and "darcknesse".
 
     Returns:
         text with spellings normalized for modern TTS pronunciation
@@ -397,6 +444,13 @@ def normalize(text, dialect):
     if dialect not in _NORMALIZERS:
         return text
     word_dict, rules = _NORMALIZERS[dialect]
+    if dialect == "tyndale" and use_generated:
+        # Roman numerals first (they are delimited by the full stops that later
+        # stages would disturb), then the generated silent-e map, and finally
+        # the hand-curated dict so a curated entry always overrides a derived
+        # one.
+        text = _expand_roman(text)
+        text = _apply_dict(text, TYNDALE_PRON)
     text = _apply_dict(text, word_dict)
     text = _apply_rules(text, rules)
     return text

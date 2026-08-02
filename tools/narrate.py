@@ -198,14 +198,49 @@ LANG_CONFIG = {
         "default_books": None,
         "normalizer": "geneva",
     },
+    # ── ENGLISH CLONED VOICE (owner's own reading, 2026-08-02) ──────────────
+    # Owner picked variant E of the sweep: cfg_weight 0.5, exaggeration 1.0.
+    #
+    # ⚠ HONEST RESULT, so nobody re-runs this hoping for more: the
+    # `exaggeration` knob is effectively INAUDIBLE on this voice. Two rounds,
+    # 0.4 / 0.5 / 0.7 / 1.0 / 1.2 / 1.5 — nearly 4x — over both a calm passage
+    # (Ps 23) and a declamatory one (1 Cor 15:54-57, "O death, where is thy
+    # sting?"), and the owner heard "all about the same" every time. Looser
+    # adherence (cfg 0.3) did not unlock it either. The parameters DO affect
+    # pacing (exag 1.5 ran 21.9s vs 23.2s at 0.5) but not perceived emotion.
+    # So this buys the owner's OWN VOICE in place of a stock synthetic one —
+    # NOT the expressive range CosyVoice3 gives Russian. Do not promise
+    # expression in any listing copy.
+    #
+    # ⚠ Chatterbox embeds Resemble's inaudible Perth watermark. upload_
+    # narration.py discloses it automatically for sets flagged "watermark".
+    # The set must also be flagged "cloned" so the description does not claim
+    # "no narrator was involved" — a real person's voice is the source.
+    # ⚠ RUN UNDER tools\.chatterbox_venv (in-process model). GPU: ~4 GB, must
+    # NOT share the 8 GB card with a live CosyVoice render.
     "tyn": {
         "asset": "en_tyndale.json",
-        "engine": "kokoro",
-        "voice": "am_adam",
+        "engine": "chatterbox",
+        # Trimmed from the owner's eng.wav (KJV portion, 16.7s), levelled to
+        # match _sv_ref_norm.wav: -1.0 dB peak, ~0.33s lead-in so the opening
+        # is not garbled the way the raw Swedish take was.
+        "voice": str(OUTPUT / "_en_ref_kjv.wav"),
+        "language_id": "en",
+        "cfg_weight": 0.5,
+        "exaggeration": 1.0,
         "strip_notes": True,
         "default_books": None,
         "normalizer": "tyndale",
+        # Previous config, kept for a quick revert: engine "kokoro",
+        # voice "am_adam", no language_id/cfg_weight/exaggeration.
     },
+    # ⚠ STILL kokoro ON PURPOSE. Tyndale (451 ch, ~2.7 days) is the trial set;
+    # Wycliffe is 1197 chapters / ~a week, so it waits until the owner has
+    # heard a real Tyndale chapter rather than a 25-second sample.
+    # ★ When it does switch, use `_en_ref_wyc.wav`, NOT the KJV reference: the
+    # owner deliberately recorded a second take reading WYCLIFFE, and a reader
+    # already in Middle English cadence is the better prompt for this text.
+    # Same E parameters (cfg 0.5 / exaggeration 1.0) plus language_id "en".
     "wyc": {
         "asset": "enm_wycliffe.json",
         "engine": "kokoro",

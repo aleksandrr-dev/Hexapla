@@ -49,8 +49,28 @@ SETS = [
     # Activation checklist lives in tools/GENEVA_AUDIO_RUNBOOK.md.
     {"tid": "gen1599", "dir": "gnv", "asset": "en_geneva.json",
      "item": "hexapla-audio-geneva-1599", "partial": False},
+
+    # ── RUSSIAN SYNODAL — PREPARED 2026-08-02, ACTIVATE WHEN THE RENDER ENDS ──
+    # Values below are checked against the tree; uncomment when ru is done.
+    # ⚠ tid is "syn" (the app id in Bible.kt), dir is "ru" (the narration
+    #   folder) — the same tid/dir split as kxii and gen1599.
+    # ⚠ ru's canon is 1192 chapters, NOT 1189: Psalm 151, and Daniel 13-14 for
+    #   the LXX additions. Do not sanity-check it against the KJV total.
+    # ⚠ ru_synodal.json has 83 slots of which 78 are NON-EMPTY — the Synodal
+    #   deuterocanon is real text, unlike Geneva's empty apocrypha slots. The
+    #   canon-only restriction in build_set() is what makes `partial: False`
+    #   reachable here; without it a complete canon fails the guard.
+    # ⚠ Do NOT activate before the leak re-render is finished AND the set has
+    #   been ASR spot-checked. Duration heuristics cannot see an instruction
+    #   leak — that defect replaces the verse rather than lengthening it.
+    # {"tid": "syn", "dir": "ru", "asset": "ru_synodal.json",
+    #  "item": "hexapla-audio-synodal-1876", "partial": False},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
+
+# Book slots 0-65 are the Protestant canon; 66+ are apocrypha, which no
+# narration set renders. See the note in build_set().
+CANON_BOOKS = 66
 
 
 def bible_chapter_counts(asset_name):
@@ -70,7 +90,14 @@ def build_set(s, errors):
     if not src.is_dir():
         errors.append(f"{tid}: no narration dir at {src}")
         return None
-    counts = bible_chapter_counts(asset_name)
+    # Only the 66-book canon is ever rendered, so only the canon is indexed.
+    # ⚠ Restricting this matters for assets whose apocrypha slots are POPULATED
+    # rather than empty. en_geneva carries 83 slots with 17 EMPTY ones, so the
+    # older "count non-empty books" guard was enough for it. ru_synodal carries
+    # 83 slots with 78 NON-EMPTY (the Synodal deuterocanon is real text), so
+    # that same guard would demand audio for 78 books, get 66, and fail a
+    # perfectly complete canon — the 83-slot trap wearing a different hat.
+    counts = bible_chapter_counts(asset_name)[:CANON_BOOKS]
     base = f"{ARCHIVE_BASE}/{item_id}"
     entry = {}
     total = 0

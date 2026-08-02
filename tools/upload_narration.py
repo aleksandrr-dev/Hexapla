@@ -42,6 +42,7 @@ APP = "https://aleksandrr-dev.github.io/Hexapla/"
 # reading is synthetic, and that everything is free.
 SETS = {
     "wbt": {
+        "asset": "en_webster.json",
         "identifier": "hexapla-audio-webster-1833",
         "title": "The Holy Bible, Webster's Revision (1833) — complete audio narration",
         "translation": "Webster's Revision of the King James Bible, 1833",
@@ -52,6 +53,7 @@ SETS = {
                     "hexapla", "audio bible"],
     },
     "gnv": {
+        "asset": "en_geneva.json",
         "identifier": "hexapla-audio-geneva-1599",
         "title": "The Geneva Bible (1599) — complete audio narration",
         "translation": "Geneva Bible, 1599",
@@ -66,9 +68,10 @@ SETS = {
     # no-personal-names rule covers them BOTH — credit the consent, never
     # the person. Do not "improve" these descriptions with anyone's name.
     "sv": {
+        "asset": "sv_karlxii.json",
         "identifier": "hexapla-audio-karlxii-1703",
         "title": "Karl XII:s Bibel (1703) — komplett ljudinspelning / complete audio narration",
-        # Used automatically while the set covers fewer than CANON_CHAPTERS.
+        # Used automatically while the set covers fewer than its own canon.
         "title_partial": "Karl XII:s Bibel (1703) — ljudinspelning / audio "
                          "narration (pågår / in progress)",
         "translation": "Karl XII:s Bibel, 1703 (Swedish)",
@@ -83,6 +86,7 @@ SETS = {
                     "text to speech", "hexapla", "audio bible"],
     },
     "ru": {
+        "asset": "ru_synodal.json",
         "identifier": "hexapla-audio-synodal-1876",
         "title": "Синодальный перевод (1876) — полная аудиозапись / complete audio narration",
         "translation": "Russian Synodal Bible, 1876",
@@ -104,7 +108,24 @@ SETS = {
 # The 66-book Protestant canon. Used to decide whether a set may honestly be
 # called "complete" — an archive.org item is a public claim, and shipping a
 # partial render under a "complete audio narration" title would be false.
-CANON_CHAPTERS = 1189
+#
+# ⚠ 1189 IS THE *KJV-GRID* COUNT AND IS NOT UNIVERSAL. A translation on its own
+# native versification has its own total: the Russian Synodal canon is 1192
+# chapters (Psalm 151, and Daniel 13-14 for the LXX additions), and Slavonic is
+# the same shape. Hardcoding 1189 would have flipped ru to the "complete" title
+# three chapters early — the honesty gate inverted in the DANGEROUS direction,
+# claiming a finished Bible while Psalm 151 and the end of Daniel were missing.
+# The real total is therefore read from each set's own asset.
+BIBLES = Path("C:/Projects/Hexapla/app/src/main/assets/bibles")
+KJV_CANON_CHAPTERS = 1189
+
+
+def canon_chapters(asset_name):
+    """Chapters in the 66-book canon of this asset, on its OWN versification.
+    Apocrypha slots (indexes 66+) are excluded: no set renders them today."""
+    data = json.loads((BIBLES / asset_name).read_text(encoding="utf-8"))
+    books = data["books"] if isinstance(data, dict) else data
+    return sum(len(b["chapters"]) for b in books[:66])
 
 DESCRIPTION = """<p>{opening} chapter-by-chapter audio narration of
 <b>{translation}</b>, produced for <a href="{app}">Hexapla</a>, a free and
@@ -174,9 +195,10 @@ def build(set_key, dry_run=False):
 
     total_bytes = sum(f.stat().st_size for f in oggs + jsons)
     # Honesty gate: only a set covering the whole canon may say "complete".
-    is_partial = len(oggs) < CANON_CHAPTERS
+    expected = canon_chapters(meta_src["asset"])
+    is_partial = len(oggs) < expected
     if is_partial and "title_partial" not in meta_src:
-        sys.exit(f"{set_key}: {len(oggs)}/{CANON_CHAPTERS} chapters is a "
+        sys.exit(f"{set_key}: {len(oggs)}/{expected} chapters is a "
                  f"PARTIAL set, but SETS['{set_key}'] has no 'title_partial'. "
                  f"Add one rather than publishing a 'complete' title.")
     title = meta_src["title_partial"] if is_partial else meta_src["title"]

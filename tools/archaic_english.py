@@ -83,7 +83,17 @@ _GENEVA_RULES = [
 _TYNDALE_DICT = {
     **_GENEVA_DICT,
     "yf": "if", "ytt": "it",
-    "ye": "the", "yt": "it",
+    # ⚠ "ye" is NOT mapped. It is the thorn abbreviation for "the" in SOME
+    # places and the second-person pronoun in others; the unconditional
+    # "ye"->"the" that used to live here spoke every genuine "ye" as "the"
+    # ("Ye men and brethren" -> "The men and brethren"). The unambiguous cases
+    # were expanded in the asset itself by tools/fix_tyndale_thorn.py, so what
+    # remains here (2,965 occurrences) is overwhelmingly the pronoun and must
+    # be read as written.
+    # "yt" was mapped to "it", which is simply wrong — it is þt, "that".
+    # The 314 left in the asset are those that failed the clause test, where
+    # "that" is still the best spoken guess.
+    "yt": "that",
     "youre": "your", "oure": "our",
     # ⚠ "lyve" was read aloud as /laɪv/ ("live broadcast") instead of /lɪv/
     # — owner caught it in the Genesis 1 test render, Gen 1:21 "creatures that

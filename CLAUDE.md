@@ -1258,8 +1258,26 @@ must include them; owner should spot-check on-device before submitting.
   (b) the yoomoney donation check needs a POSITIVE CONTROL — 0 in the Play AAB
       only means something because the same grep returns 1 on the RuStore APK.
       Path differs: `classes*.dex` (APK) vs `base/dex/classes*.dex` (AAB).
-  Karl XII (kxii, narration dir `sv`)
-  is indexed PARTIAL at 940/1189 and rendering.
+  ✅ **KARL XII 1703 SHIPPED 2026-08-01 in the same 1.6.2 (code 15).** Render
+  finished 1189/1189; uploaded to `hexapla-audio-karlxii-1703` (2379/2379
+  requests, 0 failed — only 1378 files actually sent, the rest skipped by
+  `checksum=True` since the set had been published partial at ~940). `kxii`
+  is now `partial: False` in tools/build_audio_index_gen.py — 66 books, 1189
+  chapters, 31,102 verse offsets. Version was deliberately NOT bumped (owner:
+  reuse 1.6.2 / code 15); the staged artifacts were rebuilt in place.
+  ⚠⚠ **A BUG THAT WILL BITE EVERY FUTURE NARRATION SET — upload metadata does
+  not reach an EXISTING item.** `internetarchive.upload(metadata=…)` applies
+  metadata only when it CREATES the item; on a pre-existing one archive.org
+  ignores the headers. Karl XII therefore finished complete but stayed
+  publicly titled «(pågår / in progress)» — the exact inversion the honesty
+  gate exists to prevent, and invisible behind a clean `0 failed`. Geneva
+  looked fine only because its item was brand new. FIXED: upload_narration.py
+  now calls `modify_metadata()` explicitly and re-reads the live title to
+  verify. **Any set published in stages (ru is next) hits this.**
+  ⚠ Also fixed there: the description said "no narrator is credited because
+  none was involved" — false for sv and ru, whose voices are cloned from
+  consenting volunteers. Now branches on a `cloned` flag, plus a `watermark`
+  flag disclosing the inaudible Perth watermark Chatterbox embeds.
   Both audio items live on archive.org (webster-1833
   = wbt via audio_index_gen; hexapla-audio-en = 22 KJV Kokoro gap books via
   audio_index.json as kjv_<book>_<ch>.ogg, which also cache offline). Music bed rotates

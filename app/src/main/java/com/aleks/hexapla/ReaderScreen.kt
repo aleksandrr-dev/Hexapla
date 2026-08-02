@@ -57,6 +57,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -117,6 +118,7 @@ import java.text.Normalizer
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.collectLatest
@@ -1459,6 +1461,87 @@ private fun searchNorm(s: String): String =
         .replace(Regex("\\p{Mn}+"), "")
         .lowercase()
 
+/** Most hits we will collect before stopping. */
+private const val SEARCH_CAP = 300
+
+/** Scripts written without spaces between words. Hangul is deliberately NOT
+ *  here — Korean does use spaces, so it tokenizes like any Latin text. */
+private val spacelessScript = Regex("[\\p{IsHan}\\p{IsHiragana}\\p{IsKatakana}]")
+
+/** Query terms for the loose (out-of-order) fallback.
+ *
+ *  Space-delimited scripts split on whitespace. Chinese and Japanese do not put
+ *  spaces between words, so a whole phrase arrives as ONE token: the "every
+ *  term appears somewhere" fallback could never fire, and those readers would
+ *  silently get exact-match-only search while everyone else got a forgiving
+ *  one. A CJK run is therefore decomposed into individual CHARACTERS.
+ *
+ *  ⚠ Character bigrams — the usual way to index CJK — were tried first and are
+ *  WRONG for this job, measured over the shipped zh and ja assets: reordering a
+ *  phrase invents a bigram at the seam that appears nowhere in the verse, so
+ *  requiring every bigram rejected the very queries the fallback exists to
+ *  catch (found 1/16). Characters found 16/16, and stayed precise — a median of
+ *  1-2 hits, because a Han character carries about as much meaning as a whole
+ *  word does in English. Latin-script tokens are left alone; only tokens that
+ *  actually contain CJK are decomposed. */
+private fun searchTerms(q: String): List<String> {
+    val out = LinkedHashSet<String>()
+    for (tok in q.split(' ')) {
+        if (tok.isBlank()) continue
+        if (!spacelessScript.containsMatchIn(tok)) { out.add(tok); continue }
+        val run = StringBuilder()
+        for (ch in tok) {
+            when {
+                spacelessScript.matches(ch.toString()) -> {
+                    if (run.isNotEmpty()) { out.add(run.toString()); run.clear() }
+                    out.add(ch.toString())
+                }
+                ch.isLetterOrDigit() -> run.append(ch)      // e.g. Latin inside a CJK phrase
+                else -> if (run.isNotEmpty()) { out.add(run.toString()); run.clear() }
+            }
+        }
+        if (run.isNotEmpty()) out.add(run.toString())
+    }
+    return out.toList()
+}
+
+/** Scan one translation.
+ *
+ *  Exact phrase first, then a fallback for verses containing every term of the
+ *  query in any order (see [searchTerms]). Substring-only search fails as soon
+ *  as a remembered phrase drifts by a word — which is how people actually
+ *  search for verses — so the fallback is what makes a half-remembered quote
+ *  findable. Exact hits are always listed before loose ones. */
+private fun scanBooks(
+    text: List<Book>,
+    label: String?,
+    phrase: String,
+    words: List<String>,
+    cap: Int
+): List<SearchHit> {
+    if (cap <= 0) return emptyList()
+    val exact = ArrayList<SearchHit>()
+    val loose = ArrayList<SearchHit>()
+    for (b in text.indices) {
+        val chapters = text[b].chapters
+        for (c in chapters.indices) {
+            val vs = chapters[c]
+            for (v in vs.indices) {
+                val n = searchNorm(vs[v])
+                if (n.contains(phrase)) {
+                    exact.add(SearchHit(b, c, v, vs[v], label))
+                    if (exact.size >= cap) return exact
+                } else if (words.size > 1 && loose.size < cap &&
+                    words.all { w -> n.contains(w) }
+                ) {
+                    loose.add(SearchHit(b, c, v, vs[v], label))
+                }
+            }
+        }
+    }
+    return if (exact.size >= cap) exact else (exact + loose).take(cap)
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchDialog(
@@ -1471,34 +1554,56 @@ private fun SearchDialog(
     var allTranslations by remember { mutableStateOf(false) }
     var results by remember { mutableStateOf<List<SearchHit>>(emptyList()) }
     var searched by remember { mutableStateOf(false) }
+    var scanning by remember { mutableStateOf(false) }
+    var scanDone by remember { mutableStateOf(0) }
+    var scanTotal by remember { mutableStateOf(0) }
 
     LaunchedEffect(query, allTranslations) {
-        if (query.trim().length < 2) {
-            results = emptyList(); searched = false
+        val raw = query.trim()
+        if (raw.length < 2) {
+            results = emptyList(); searched = false; scanning = false
             return@LaunchedEffect
         }
-        val q = searchNorm(query.trim())
-        val sources: List<Pair<String?, List<Book>>> = if (allTranslations)
-            BibleRepo.ordered().map { t -> t.label to BibleRepo.load(context, t.id) }
-        else listOf(null to books)
-        results = withContext(Dispatchers.Default) {
-            val hits = ArrayList<SearchHit>()
-            outer@ for ((label, text) in sources) {
-                for (b in text.indices) {
-                    val chapters = text[b].chapters
-                    for (c in chapters.indices) {
-                        val vs = chapters[c]
-                        for (v in vs.indices) {
-                            if (searchNorm(vs[v]).contains(q)) {
-                                hits.add(SearchHit(b, c, v, vs[v], label))
-                                if (hits.size >= 300) break@outer
-                            }
-                        }
-                    }
-                }
+        // Debounce. Without this every keystroke cancelled and restarted the
+        // whole pass, and with "all translations" that meant re-reading up to
+        // 154 MB of JSON per character typed — the scan never survived long
+        // enough to produce a result, so the dialog just sat empty.
+        delay(300)
+        val q = searchNorm(raw)
+        val words = searchTerms(q)
+        results = emptyList(); searched = false
+        scanning = true; scanDone = 0
+
+        if (!allTranslations) {
+            scanTotal = 1
+            results = withContext(Dispatchers.Default) {
+                scanBooks(books, null, q, words, SEARCH_CAP)
             }
-            hits
+            scanDone = 1
+        } else {
+            val list = BibleRepo.ordered()
+            scanTotal = list.size
+            val acc = ArrayList<SearchHit>()
+            for (t in list) {
+                // One translation resident at a time (see loadForScan). A
+                // missing or unreadable asset must not abort the whole search.
+                val text = try {
+                    BibleRepo.loadForScan(context, t.id)
+                } catch (e: Exception) {
+                    Log.w("Hexapla", "search: cannot load ${t.id}", e); emptyList()
+                }
+                val part = withContext(Dispatchers.Default) {
+                    scanBooks(text, t.label, q, words, SEARCH_CAP - acc.size)
+                }
+                acc.addAll(part)
+                // Publish after each translation, so the first hits appear in
+                // about a second rather than after the entire library.
+                results = ArrayList(acc)
+                scanDone++
+                if (acc.size >= SEARCH_CAP) break
+            }
         }
+        scanning = false
         searched = true
     }
 
@@ -1529,7 +1634,31 @@ private fun SearchDialog(
                     Switch(checked = allTranslations, onCheckedChange = { allTranslations = it })
                 }
                 Spacer(Modifier.height(4.dp))
-                if (searched && results.isEmpty()) {
+                // Numeric-only on purpose: it needs no new string in 25 locales,
+                // and an empty list with no spinner is exactly what made a slow
+                // search indistinguishable from a broken one.
+                if (scanning) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
+                    ) {
+                        LinearProgressIndicator(
+                            progress = {
+                                if (scanTotal == 0) 0f else scanDone / scanTotal.toFloat()
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                        if (scanTotal > 1) {
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "$scanDone / $scanTotal",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+                if (searched && !scanning && results.isEmpty()) {
                     Text(
                         stringResource(R.string.no_results),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

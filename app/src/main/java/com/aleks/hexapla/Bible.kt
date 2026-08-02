@@ -120,6 +120,22 @@ object BibleRepo {
         }
     }
 
+    /** Text for a one-off pass over a translation the user is not reading —
+     *  currently only "search all translations".
+     *
+     *  ⚠ Deliberately does NOT populate [cache]. The corpus is ~154 MB of JSON
+     *  across 36 assets; parsed into String objects that is several hundred MB
+     *  of heap, far past what a phone will give us. Searching every
+     *  translation through load() therefore cached the entire library and
+     *  OOM-ed or thrashed. Callers here scan and drop, so peak residency stays
+     *  at roughly one translation. An already-resident translation is reused. */
+    suspend fun loadForScan(context: Context, id: String): List<Book> {
+        mutex.withLock { cache[id] }?.let { return it }
+        return withContext(Dispatchers.IO) {
+            parseAsset(context, translation(id).assetFile)
+        }
+    }
+
     // "{In: or, For}"-style translator margin notes: drop whole group. Braces
     // without a colon mark supplied (italicized) words: keep the words.
     // The group captures the note body so parseAsset can retain it for the

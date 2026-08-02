@@ -32,12 +32,13 @@ OUT = ASSETS / "audio_index_gen.json"
 SETS = [
     {"tid": "wbt", "dir": "wbt", "asset": "en_webster.json",
      "item": "hexapla-audio-webster-1833", "partial": False},
-    # Swedish Karl XII 1703: narration folder 'sv', app id 'kxii'. PARTIAL —
-    # Genesis, Exodus, Psalms and the NT render first (for the friend's
-    # deadline), the rest of the OT fills in later. Rebuild this index (and
-    # re-upload) after each batch completes.
+    # Swedish Karl XII 1703: narration folder 'sv', app id 'kxii'.
+    # COMPLETE 2026-08-01 — 1189/1189 rendered, so `partial` flipped to False.
+    # That makes the coverage assertion active: it hard-fails on any missing
+    # .ogg or sidecar, which is exactly the check we want now that the set
+    # claims completeness in the app and in its archive.org title.
     {"tid": "kxii", "dir": "sv", "asset": "sv_karlxii.json",
-     "item": "hexapla-audio-karlxii-1703", "partial": True},
+     "item": "hexapla-audio-karlxii-1703", "partial": False},
     # ── GENEVA 1599 — PREPARED 2026-07-31, ACTIVATE WHEN THE RENDER FINISHES ──
     # ⚠ tid is "gen1599" (the app id in Bible.kt), NOT "gnv" (the narration
     #   folder). Same tid/dir split as kxii — getting this wrong yields an

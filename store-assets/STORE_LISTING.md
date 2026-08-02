@@ -56,97 +56,97 @@ When a release ships, move its block down under the
 ## 1.6.2 release notes (paste per store)
 
 <en-US>
-The Geneva Bible (1599) is now read aloud in full — all 66 books, every chapter. Recorded narration follows and highlights each verse, and resuming continues from the exact verse you stopped on. Fixes: the reader no longer reopens at the wrong chapter after using the widget or a reminder, the widget verse is now tappable, a black bar no longer appears beneath the text, and the bottom navigation bar is slimmer.
+The Geneva Bible (1599) is now read aloud in full — all 66 books, every chapter. Recorded narration follows and highlights each verse, and resuming continues from the exact verse you stopped on. Fixes: the reader no longer reopens at the wrong chapter after using the widget or a reminder, the widget verse is now tappable, a black bar no longer appears beneath the text, and the bottom navigation bar is slimmer. The Swedish Karl XII Bible (1703) is now complete too.
 </en-US>
 <ar>
-الكتاب المقدس بترجمة جنيف (1599) أصبح مقروءًا صوتيًا بالكامل: جميع الأسفار الستة والستين، وكل إصحاح. التلاوة المسجَّلة تتابع كل آية وتُبرزها، والاستئناف يبدأ من الآية نفسها التي توقفت عندها. إصلاحات: لم يعد القارئ يفتح على إصحاح خاطئ بعد استخدام الأداة أو التذكير، وأصبحت آية الأداة قابلة للنقر، ولم يعد يظهر شريط أسود أسفل النص، وشريط التنقل السفلي أصبح أنحف.
+الكتاب المقدس بترجمة جنيف (1599) أصبح مقروءًا صوتيًا بالكامل: جميع الأسفار الستة والستين، وكل إصحاح. التلاوة المسجَّلة تتابع كل آية وتُبرزها، والاستئناف يبدأ من الآية نفسها التي توقفت عندها. إصلاحات: لم يعد القارئ يفتح على إصحاح خاطئ بعد استخدام الأداة أو التذكير، وأصبحت آية الأداة قابلة للنقر، ولم يعد يظهر شريط أسود أسفل النص، وشريط التنقل السفلي أصبح أنحف. كما اكتمل الكتاب المقدس السويدي (1703).
 </ar>
 <be>
-Жэнеўская Біблія (1599) цяпер агучана цалкам: усе 66 кніг, кожны разьдзел. Запісаная агучка сочыць за кожным вершам і падсьвятляе яго, а працяг пачынаецца з таго самага верша, на якім вы спыніліся. Выпраўлена: чытач больш не адкрываецца на няправільным разьдзеле пасьля віджэта ці нагадваньня, верш у віджэце цяпер націскальны, чорная паласа пад тэкстам зьнікла, а ніжняя панэль навігацыі стала танчэйшай.
+Жэнеўская Біблія (1599) цяпер агучана цалкам: усе 66 кніг, кожны разьдзел. Запісаная агучка сочыць за кожным вершам і падсьвятляе яго, а працяг пачынаецца з таго самага верша, на якім вы спыніліся. Выпраўлена: чытач больш не адкрываецца на няправільным разьдзеле пасьля віджэта ці нагадваньня, верш у віджэце цяпер націскальны, чорная паласа пад тэкстам зьнікла, а ніжняя панэль навігацыі стала танчэйшай. Швэдзкая Біблія Карла XII (1703) таксама завершана.
 </be>
 <cs-CZ>
-Ženevská Bible (1599) je nyní kompletně namluvená: všech 66 knih, každá kapitola. Nahraná četba sleduje a zvýrazňuje každý verš a pokračování naváže přesně na verši, kde jste skončili. Opravy: čtečka se už neotevírá ve špatné kapitole po použití widgetu nebo připomenutí, verš ve widgetu lze nyní klepnout, pod textem se už neobjevuje černý pruh a spodní navigační lišta je subtilnější.
+Ženevská Bible (1599) je nyní kompletně namluvená: všech 66 knih, každá kapitola. Nahraná četba sleduje a zvýrazňuje každý verš a pokračování naváže přesně na verši, kde jste skončili. Opravy: čtečka se už neotevírá ve špatné kapitole po použití widgetu nebo připomenutí, verš ve widgetu lze nyní klepnout, pod textem se už neobjevuje černý pruh a spodní navigační lišta je subtilnější. Švédská Bible Karla XII. (1703) je nyní kompletní.
 </cs-CZ>
 <da-DK>
-Genève-bibelen (1599) læses nu op i sin helhed: alle 66 bøger, hvert kapitel. Den indlæste oplæsning følger og fremhæver hvert vers, og når du fortsætter, starter den præcis ved det vers, du stoppede på. Rettelser: læseren åbner ikke længere i det forkerte kapitel efter en widget eller en påmindelse, verset i widgetten kan nu trykkes på, der vises ikke længere en sort bjælke under teksten, og den nederste navigationslinje er slankere.
+Genève-bibelen (1599) læses nu op i sin helhed: alle 66 bøger, hvert kapitel. Den indlæste oplæsning følger og fremhæver hvert vers, og når du fortsætter, starter den præcis ved det vers, du stoppede på. Rettelser: læseren åbner ikke længere i det forkerte kapitel efter en widget eller en påmindelse, verset i widgetten kan nu trykkes på, der vises ikke længere en sort bjælke under teksten, og den nederste navigationslinje er slankere. Karl XII-bibelen (1703) er nu komplet.
 </da-DK>
 <de-DE>
-Die Genfer Bibel (1599) wird jetzt vollständig vorgelesen: alle 66 Bücher, jedes Kapitel. Die aufgenommene Lesung folgt jedem Vers und hebt ihn hervor, und beim Fortsetzen geht es genau bei dem Vers weiter, bei dem Sie aufgehört haben. Behoben: Der Leser öffnet nach Widget oder Erinnerung nicht mehr im falschen Kapitel, der Vers im Widget ist jetzt antippbar, unter dem Text erscheint kein schwarzer Balken mehr, und die untere Navigationsleiste ist schmaler.
+Die Genfer Bibel (1599) wird jetzt vollständig vorgelesen: alle 66 Bücher, jedes Kapitel. Die aufgenommene Lesung folgt jedem Vers und hebt ihn hervor, und beim Fortsetzen geht es genau bei dem Vers weiter, bei dem Sie aufgehört haben. Behoben: Der Leser öffnet nach Widget oder Erinnerung nicht mehr im falschen Kapitel, der Vers im Widget ist jetzt antippbar, unter dem Text erscheint kein schwarzer Balken mehr, und die untere Leiste ist schmaler. Karl XII. (1703) ist nun komplett.
 </de-DE>
 <el-GR>
-Η Βίβλος της Γενεύης (1599) διαβάζεται πλέον ολόκληρη: και τα 66 βιβλία, κάθε κεφάλαιο. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει κάθε στίχο, και η συνέχιση ξεκινά ακριβώς από τον στίχο όπου σταματήσατε. Διορθώσεις: ο αναγνώστης δεν ανοίγει πια σε λάθος κεφάλαιο μετά από widget ή υπενθύμιση, ο στίχος στο widget είναι πλέον πατήσιμος, δεν εμφανίζεται μαύρη μπάρα κάτω από το κείμενο και η κάτω μπάρα πλοήγησης είναι λεπτότερη.
+Η Βίβλος της Γενεύης (1599) διαβάζεται πλέον ολόκληρη: και τα 66 βιβλία, κάθε κεφάλαιο. Η ηχογραφημένη ανάγνωση ακολουθεί και επισημαίνει κάθε στίχο, και η συνέχιση ξεκινά ακριβώς από τον στίχο όπου σταματήσατε. Διορθώσεις: ο αναγνώστης δεν ανοίγει πια σε λάθος κεφάλαιο μετά από widget ή υπενθύμιση, ο στίχος στο widget είναι πλέον πατήσιμος, δεν εμφανίζεται μαύρη μπάρα κάτω από το κείμενο και η κάτω μπάρα πλοήγησης είναι λεπτότερη. Ολοκληρώθηκε και η Βίβλος του Καρόλου ΙΒ΄ (1703).
 </el-GR>
 <en-IN>
-The Geneva Bible (1599) is now read aloud in full — all 66 books, every chapter. Recorded narration follows and highlights each verse, and resuming continues from the exact verse you stopped on. Fixes: the reader no longer reopens at the wrong chapter after using the widget or a reminder, the widget verse is now tappable, a black bar no longer appears beneath the text, and the bottom navigation bar is slimmer.
+The Geneva Bible (1599) is now read aloud in full — all 66 books, every chapter. Recorded narration follows and highlights each verse, and resuming continues from the exact verse you stopped on. Fixes: the reader no longer reopens at the wrong chapter after using the widget or a reminder, the widget verse is now tappable, a black bar no longer appears beneath the text, and the bottom navigation bar is slimmer. The Swedish Karl XII Bible (1703) is now complete too.
 </en-IN>
 <es-419>
-La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra de navegación inferior es más estrecha.
+La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra inferior es más estrecha. Karl XII (1703) ya está completa.
 </es-419>
 <es-ES>
-La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra de navegación inferior es más estrecha.
+La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra inferior es más estrecha. Karl XII (1703) ya está completa.
 </es-ES>
 <es-US>
-La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra de navegación inferior es más estrecha.
+La Biblia de Ginebra (1599) ya se lee en voz alta por completo: los 66 libros, todos los capítulos. La narración grabada sigue y resalta cada versículo, y al reanudar continúa exactamente en el versículo donde lo dejaste. Correcciones: el lector ya no se abre en el capítulo equivocado tras usar el widget o un recordatorio, el versículo del widget ahora se puede tocar, ya no aparece una barra negra bajo el texto y la barra inferior es más estrecha. Karl XII (1703) ya está completa.
 </es-US>
 <fi-FI>
-Geneven Raamattu (1599) luetaan nyt kokonaan ääneen: kaikki 66 kirjaa, jokainen luku. Äänitetty luenta seuraa ja korostaa jokaista jaetta, ja jatkaminen alkaa täsmälleen siitä jakeesta, mihin jäit. Korjauksia: lukunäkymä ei enää avaudu väärään lukuun widgetin tai muistutuksen jälkeen, widgetin jaetta voi nyt napauttaa, tekstin alle ei enää ilmesty mustaa palkkia ja alanavigointipalkki on kapeampi.
+Geneven Raamattu (1599) luetaan nyt kokonaan ääneen: kaikki 66 kirjaa, jokainen luku. Äänitetty luenta seuraa ja korostaa jokaista jaetta, ja jatkaminen alkaa täsmälleen siitä jakeesta, mihin jäit. Korjauksia: lukunäkymä ei enää avaudu väärään lukuun widgetin tai muistutuksen jälkeen, widgetin jaetta voi nyt napauttaa, tekstin alle ei enää ilmesty mustaa palkkia ja alanavigointipalkki on kapeampi. Kaarle XII:n Raamattu (1703) on nyt valmis.
 </fi-FI>
 <fr-CA>
-La Bible de Genève (1599) est désormais lue en entier : les 66 livres, tous les chapitres. La narration enregistrée suit et met en évidence chaque verset, et la reprise repart exactement au verset où vous vous êtes arrêté. Corrections : le lecteur ne s ouvre plus au mauvais chapitre après un widget ou un rappel, le verset du widget est maintenant cliquable, plus de bande noire sous le texte et la barre de navigation inférieure est plus fine.
+La Bible de Genève (1599) est désormais lue en entier : les 66 livres, tous les chapitres. La narration enregistrée suit et met en évidence chaque verset, et la reprise repart exactement au verset où vous vous êtes arrêté. Corrections : le lecteur ne s ouvre plus au mauvais chapitre après un widget ou un rappel, le verset du widget est maintenant cliquable, plus de bande noire sous le texte et la barre de navigation inférieure est plus fine. Karl XII (1703) est désormais complète.
 </fr-CA>
 <fr-FR>
-La Bible de Genève (1599) est désormais lue en entier : les 66 livres, tous les chapitres. La narration enregistrée suit et met en évidence chaque verset, et la reprise repart exactement au verset où vous vous êtes arrêté. Corrections : le lecteur ne s ouvre plus au mauvais chapitre après un widget ou un rappel, le verset du widget est maintenant cliquable, plus de bande noire sous le texte et la barre de navigation inférieure est plus fine.
+La Bible de Genève (1599) est désormais lue en entier : les 66 livres, tous les chapitres. La narration enregistrée suit et met en évidence chaque verset, et la reprise repart exactement au verset où vous vous êtes arrêté. Corrections : le lecteur ne s ouvre plus au mauvais chapitre après un widget ou un rappel, le verset du widget est maintenant cliquable, plus de bande noire sous le texte et la barre de navigation inférieure est plus fine. Karl XII (1703) est désormais complète.
 </fr-FR>
 <hu-HU>
-A Genfi Biblia (1599) mostantól teljes egészében hallgatható: mind a 66 könyv, minden fejezet. A felvett felolvasás követi és kiemeli az egyes verseket, a folytatás pedig pontosan annál a versnél indul, ahol abbahagyta. Javítások: az olvasó már nem rossz fejezetnél nyílik meg widget vagy emlékeztető után, a widget verse mostantól megérinthető, nem jelenik meg fekete sáv a szöveg alatt, és az alsó navigációs sáv keskenyebb.
+A Genfi Biblia (1599) mostantól teljes egészében hallgatható: mind a 66 könyv, minden fejezet. A felvett felolvasás követi és kiemeli az egyes verseket, a folytatás pedig pontosan annál a versnél indul, ahol abbahagyta. Javítások: az olvasó már nem rossz fejezetnél nyílik meg widget vagy emlékeztető után, a widget verse mostantól megérinthető, nem jelenik meg fekete sáv a szöveg alatt, és az alsó navigációs sáv keskenyebb. A Károly XII. Biblia (1703) is elkészült.
 </hu-HU>
 <hy-AM>
-Ժնևի Աստվածաշունչը (1599) այժմ ամբողջությամբ ընթերցվում է ձայնով՝ բոլոր 66 գրքերը, բոլոր գլուխները։ Ձայնագրված ընթերցումը հետևում և ընդգծում է յուրաքանչյուր համար, իսկ շարունակելիս սկսվում է հենց այն համարից, որտեղ կանգ եք առել։ Ուղղումներ՝ ընթերցիչն այլևս սխալ գլխով չի բացվում վիջեթից կամ հիշեցումից հետո, վիջեթի համարն այժմ սեղմելի է, տեքստի տակ սև գոտի այլևս չի երևում, ներքևի նավիգացիոն գոտին ավելի բարակ է։
+Ժնևի Աստվածաշունչը (1599) այժմ ամբողջությամբ ընթերցվում է ձայնով՝ բոլոր 66 գրքերը, բոլոր գլուխները։ Ձայնագրված ընթերցումը հետևում և ընդգծում է յուրաքանչյուր համար, իսկ շարունակելիս սկսվում է հենց այն համարից, որտեղ կանգ եք առել։ Ուղղումներ՝ ընթերցիչն այլևս սխալ գլխով չի բացվում վիջեթից կամ հիշեցումից հետո, վիջեթի համարն այժմ սեղմելի է, տեքստի տակ սև գոտի այլևս չի երևում, ներքևի նավիգացիոն գոտին ավելի բարակ է։ Կարլ XII-ի Աստվածաշունչը (1703) նույնպես ավարտված է։
 </hy-AM>
 <it-IT>
-La Bibbia di Ginevra (1599) ora si ascolta per intero: tutti i 66 libri, ogni capitolo. La narrazione registrata segue ed evidenzia ogni versetto e, riprendendo, riparte esattamente dal versetto in cui ti eri fermato. Correzioni: il lettore non si apre più al capitolo sbagliato dopo il widget o un promemoria, il versetto del widget ora è toccabile, non compare più una barra nera sotto il testo e la barra di navigazione inferiore è più sottile.
+La Bibbia di Ginevra (1599) ora si ascolta per intero: tutti i 66 libri, ogni capitolo. La narrazione registrata segue ed evidenzia ogni versetto e, riprendendo, riparte esattamente dal versetto in cui ti eri fermato. Correzioni: il lettore non si apre più al capitolo sbagliato dopo il widget o un promemoria, il versetto del widget ora è toccabile, non compare più una barra nera sotto il testo e la barra di navigazione inferiore è più sottile. Anche Karl XII (1703) è ora completa.
 </it-IT>
 <iw-IL>
-התנך של ז׳נבה (1599) נקרא כעת בקול במלואו: כל 66 הספרים, כל פרק. ההקראה המוקלטת עוקבת ומדגישה כל פסוק, וההמשך מתחיל בדיוק בפסוק שבו הפסקת. תיקונים: הקורא כבר לא נפתח בפרק שגוי אחרי הווידג׳ט או תזכורת, אפשר כעת להקיש על הפסוק בווידג׳ט, לא מופיע עוד פס שחור מתחת לטקסט, וסרגל הניווט התחתון צר יותר.
+התנך של ז׳נבה (1599) נקרא כעת בקול במלואו: כל 66 הספרים, כל פרק. ההקראה המוקלטת עוקבת ומדגישה כל פסוק, וההמשך מתחיל בדיוק בפסוק שבו הפסקת. תיקונים: הקורא כבר לא נפתח בפרק שגוי אחרי הווידג׳ט או תזכורת, אפשר כעת להקיש על הפסוק בווידג׳ט, לא מופיע עוד פס שחור מתחת לטקסט, וסרגל הניווט התחתון צר יותר. גם תנך קרל השנים־עשר (1703) הושלם.
 </iw-IL>
 <ja-JP>
-ジュネーヴ聖書（1599年）の朗読が全巻そろいました。全66巻、すべての章です。録音朗読は各節を追って強調し、再開すると中断した節から正確に続きます。修正: ウィジェットやリマインダーの後に誤った章が開く問題、ウィジェットの聖句をタップできない問題、本文の下に黒い帯が出る問題を修正し、下部のナビゲーションバーを細くしました。
+ジュネーヴ聖書（1599年）の朗読が全巻そろいました。全66巻、すべての章です。録音朗読は各節を追って強調し、再開すると中断した節から正確に続きます。修正: ウィジェットやリマインダーの後に誤った章が開く問題、ウィジェットの聖句をタップできない問題、本文の下に黒い帯が出る問題を修正し、下部のナビゲーションバーを細くしました。 カール12世聖書（1703年）も全巻そろいました。
 </ja-JP>
 <lv>
-Ženēvas Bībele (1599) tagad ir pilnībā ieskaņota: visas 66 grāmatas, katra nodaļa. Ierakstītais lasījums seko katram pantam un to izceļ, bet, turpinot, sākas tieši no tā panta, kurā apstājāties. Labojumi: lasītājs vairs neatveras nepareizā nodaļā pēc logrīka vai atgādinājuma, logrīka pantam tagad var pieskarties, zem teksta vairs neparādās melna josla, un apakšējā navigācijas josla ir šaurāka.
+Ženēvas Bībele (1599) tagad ir pilnībā ieskaņota: visas 66 grāmatas, katra nodaļa. Ierakstītais lasījums seko katram pantam un to izceļ, bet, turpinot, sākas tieši no tā panta, kurā apstājāties. Labojumi: lasītājs vairs neatveras nepareizā nodaļā pēc logrīka vai atgādinājuma, logrīka pantam tagad var pieskarties, zem teksta vairs neparādās melna josla, un apakšējā navigācijas josla ir šaurāka. Kārļa XII Bībele (1703) tagad ir pabeigta.
 </lv>
 <nl-NL>
-De Geneefse Bijbel (1599) wordt nu volledig voorgelezen: alle 66 boeken, elk hoofdstuk. De opgenomen voorlezing volgt en markeert elk vers, en bij hervatten gaat het precies verder bij het vers waar u stopte. Opgelost: de lezer opent niet meer in het verkeerde hoofdstuk na de widget of een herinnering, het vers in de widget is nu aantikbaar, er verschijnt geen zwarte balk meer onder de tekst en de onderste navigatiebalk is smaller.
+De Geneefse Bijbel (1599) wordt nu volledig voorgelezen: alle 66 boeken, elk hoofdstuk. De opgenomen voorlezing volgt en markeert elk vers, en bij hervatten gaat het precies verder bij het vers waar u stopte. Opgelost: de lezer opent niet meer in het verkeerde hoofdstuk na de widget of een herinnering, het vers in de widget is nu aantikbaar, er verschijnt geen zwarte balk meer onder de tekst en de onderste navigatiebalk is smaller. Karl XII (1703) is nu ook compleet.
 </nl-NL>
 <pl-PL>
-Biblia genewska (1599) jest teraz w całości czytana na głos: wszystkie 66 ksiąg, każdy rozdział. Nagrane czytanie śledzi i podświetla każdy werset, a wznowienie zaczyna się dokładnie od wersetu, na którym przerwano. Poprawki: czytnik nie otwiera się już w niewłaściwym rozdziale po użyciu widżetu lub przypomnienia, werset w widżecie można teraz kliknąć, pod tekstem nie pojawia się czarny pasek, a dolny pasek nawigacji jest węższy.
+Biblia genewska (1599) jest teraz w całości czytana na głos: wszystkie 66 ksiąg, każdy rozdział. Nagrane czytanie śledzi i podświetla każdy werset, a wznowienie zaczyna się dokładnie od wersetu, na którym przerwano. Poprawki: czytnik nie otwiera się już w niewłaściwym rozdziale po użyciu widżetu lub przypomnienia, werset w widżecie można teraz kliknąć, pod tekstem nie pojawia się czarny pasek, a dolny pasek nawigacji jest węższy. Biblia Karola XII (1703) jest już kompletna.
 </pl-PL>
 <pt-BR>
-A Bíblia de Genebra (1599) já é lida por completo em voz alta: todos os 66 livros, todos os capítulos. A narração gravada acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo onde parou. Correções: o leitor já não abre no capítulo errado depois do widget ou de um lembrete, o versículo do widget agora pode ser tocado, deixou de aparecer uma barra preta sob o texto e a barra de navegação inferior está mais fina.
+A Bíblia de Genebra (1599) já é lida por completo em voz alta: todos os 66 livros, todos os capítulos. A narração gravada acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo onde parou. Correções: o leitor já não abre no capítulo errado depois do widget ou de um lembrete, o versículo do widget agora pode ser tocado, deixou de aparecer uma barra preta sob o texto e a barra de navegação inferior está mais fina. Karl XII (1703) está agora completa.
 </pt-BR>
 <pt-PT>
-A Bíblia de Genebra (1599) já é lida por completo em voz alta: todos os 66 livros, todos os capítulos. A narração gravada acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo onde parou. Correções: o leitor já não abre no capítulo errado depois do widget ou de um lembrete, o versículo do widget agora pode ser tocado, deixou de aparecer uma barra preta sob o texto e a barra de navegação inferior está mais fina.
+A Bíblia de Genebra (1599) já é lida por completo em voz alta: todos os 66 livros, todos os capítulos. A narração gravada acompanha e destaca cada versículo, e ao retomar continua exatamente no versículo onde parou. Correções: o leitor já não abre no capítulo errado depois do widget ou de um lembrete, o versículo do widget agora pode ser tocado, deixou de aparecer uma barra preta sob o texto e a barra de navegação inferior está mais fina. Karl XII (1703) está agora completa.
 </pt-PT>
 <ru-RU>
-Женевская Библия (1599) теперь озвучена полностью: все 66 книг, каждая глава. Записанная озвучка следует за каждым стихом и подсвечивает его, а продолжение начинается ровно с того стиха, на котором вы остановились. Исправлено: чтение больше не открывается не на той главе после виджета или напоминания, стих в виджете теперь нажимается, под текстом больше нет чёрной полосы, а нижняя панель навигации стала тоньше.
+Женевская Библия (1599) теперь озвучена полностью: все 66 книг, каждая глава. Записанная озвучка следует за каждым стихом и подсвечивает его, а продолжение начинается ровно с того стиха, на котором вы остановились. Исправлено: чтение больше не открывается не на той главе после виджета или напоминания, стих в виджете теперь нажимается, под текстом больше нет чёрной полосы, а нижняя панель навигации стала тоньше. Библия Карла XII (1703) тоже завершена.
 </ru-RU>
 <sr>
-Ženevska Biblija (1599) sada se čita naglas u celini: svih 66 knjiga, svako poglavlje. Snimljeno čitanje prati i ističe svaki stih, a nastavak počinje tačno od stiha na kome ste stali. Ispravke: čitač se više ne otvara na pogrešnom poglavlju posle vidžeta ili podsetnika, stih u vidžetu sada je moguće dodirnuti, ispod teksta se više ne pojavljuje crna traka, a donja navigaciona traka je tanja.
+Ženevska Biblija (1599) sada se čita naglas u celini: svih 66 knjiga, svako poglavlje. Snimljeno čitanje prati i ističe svaki stih, a nastavak počinje tačno od stiha na kome ste stali. Ispravke: čitač se više ne otvara na pogrešnom poglavlju posle vidžeta ili podsetnika, stih u vidžetu sada je moguće dodirnuti, ispod teksta se više ne pojavljuje crna traka, a donja navigaciona traka je tanja. I Biblija Karla XII (1703) sada je kompletna.
 </sr>
 <sv-SE>
-Genèvebibeln (1599) läses nu upp i sin helhet: alla 66 böcker, varje kapitel. Den inspelade uppläsningen följer och markerar varje vers, och när du fortsätter börjar den exakt vid versen där du slutade. Rättningar: läsaren öppnas inte längre i fel kapitel efter widgeten eller en påminnelse, versen i widgeten går nu att trycka på, ingen svart list visas under texten och den nedre navigeringsraden är smalare.
+Genèvebibeln (1599) läses nu upp i sin helhet: alla 66 böcker, varje kapitel. Den inspelade uppläsningen följer och markerar varje vers, och när du fortsätter börjar den exakt vid versen där du slutade. Rättningar: läsaren öppnas inte längre i fel kapitel efter widgeten eller en påminnelse, versen i widgeten går nu att trycka på, ingen svart list visas under texten och den nedre navigeringsraden är smalare. Karl XII:s Bibel (1703) är nu komplett.
 </sv-SE>
 <ta-IN>
-ஜெனீவா பைபிள் (1599) இப்போது முழுமையாக ஒலிவடிவில்: 66 புத்தகங்கள், அனைத்து அதிகாரங்களும். பதிவு செய்யப்பட்ட வாசிப்பு ஒவ்வொரு வசனத்தையும் தொடர்ந்து சிறப்பித்துக் காட்டும்; நிறுத்திய வசனத்திலிருந்தே தொடரும். சரிசெய்தவை: விட்ஜெட் அல்லது நினைவூட்டலுக்குப் பிறகு தவறான அதிகாரம் திறக்காது, விட்ஜெட் வசனத்தைத் தொடலாம், உரைக்குக் கீழே கருப்புப் பட்டை இல்லை, கீழ் வழிசெலுத்தல் பட்டை மெலிந்துள்ளது.
+ஜெனீவா பைபிள் (1599) இப்போது முழுமையாக ஒலிவடிவில்: 66 புத்தகங்கள், அனைத்து அதிகாரங்களும். பதிவு செய்யப்பட்ட வாசிப்பு ஒவ்வொரு வசனத்தையும் தொடர்ந்து சிறப்பித்துக் காட்டும்; நிறுத்திய வசனத்திலிருந்தே தொடரும். சரிசெய்தவை: விட்ஜெட் அல்லது நினைவூட்டலுக்குப் பிறகு தவறான அதிகாரம் திறக்காது, விட்ஜெட் வசனத்தைத் தொடலாம், உரைக்குக் கீழே கருப்புப் பட்டை இல்லை, கீழ் வழிசெலுத்தல் பட்டை மெலிந்துள்ளது. கார்ல் XII பைபிளும் (1703) இப்போது முழுமையானது.
 </ta-IN>
 <zh-CN>
-日内瓦圣经（1599）现已完整朗读：全部66卷，每一章。录制朗读会跟随并高亮每一节经文，继续播放时会从你停下的那一节精确接续。修复：使用小组件或提醒后阅读器不再打开错误的章节；小组件中的经文现在可点按；正文下方不再出现黑条；底部导航栏更纤细。
+日内瓦圣经（1599）现已完整朗读：全部66卷，每一章。录制朗读会跟随并高亮每一节经文，继续播放时会从你停下的那一节精确接续。修复：使用小组件或提醒后阅读器不再打开错误的章节；小组件中的经文现在可点按；正文下方不再出现黑条；底部导航栏更纤细。 卡尔十二世圣经（1703）也已完整。
 </zh-CN>
 <zh-HK>
-日內瓦聖經（1599）現已完整朗讀：全部66卷，每一章。錄製朗讀會跟隨並標示每一節經文，繼續播放時會從你停下的那一節精確接續。修復：使用小工具或提醒後閱讀器不再開啟錯誤的章節；小工具中的經文現在可點按；內文下方不再出現黑條；底部導覽列更纖細。
+日內瓦聖經（1599）現已完整朗讀：全部66卷，每一章。錄製朗讀會跟隨並標示每一節經文，繼續播放時會從你停下的那一節精確接續。修復：使用小工具或提醒後閱讀器不再開啟錯誤的章節；小工具中的經文現在可點按；內文下方不再出現黑條；底部導覽列更纖細。 卡爾十二世聖經（1703）也已完整。
 </zh-HK>
 <zh-TW>
-日內瓦聖經（1599）現已完整朗讀：全部66卷，每一章。錄製朗讀會跟隨並標示每一節經文，繼續播放時會從你停下的那一節精確接續。修復：使用小工具或提醒後閱讀器不再開啟錯誤的章節；小工具中的經文現在可點按；內文下方不再出現黑條；底部導覽列更纖細。
+日內瓦聖經（1599）現已完整朗讀：全部66卷，每一章。錄製朗讀會跟隨並標示每一節經文，繼續播放時會從你停下的那一節精確接續。修復：使用小工具或提醒後閱讀器不再開啟錯誤的章節；小工具中的經文現在可點按；內文下方不再出現黑條；底部導覽列更纖細。 卡爾十二世聖經（1703）也已完整。
 </zh-TW>
 
 ## Store descriptions (per language — English first, then alphabetical)

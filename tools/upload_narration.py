@@ -76,6 +76,8 @@ SETS = {
         "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
                  "from a consented reference recording by a native Swedish "
                  "volunteer",
+        "cloned": True,
+        "watermark": True,   # Chatterbox embeds Resemble's Perth watermark
         "subject": ["bible", "audiobook", "karl xii bibel", "svenska",
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
@@ -87,6 +89,7 @@ SETS = {
         "language": "rus",
         "voice": "Fun-CosyVoice3 — synthetic speech cloned from a consented "
                  "reference recording by a native Russian volunteer",
+        "cloned": True,      # CosyVoice3 embeds no watermark
         "subject": ["bible", "audiobook", "синодальный перевод", "библия",
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
@@ -109,7 +112,7 @@ offline parallel Bible app for Android.</p>
 {progress}
 <p>The underlying translation is in the <b>public domain</b> by age. The
 reading is <b>synthetic speech</b>, generated with {voice} — it is not a human
-performance, and no narrator is credited because none was involved.</p>
+performance.{provenance}</p>
 
 <p>Files are one Ogg audio file per chapter, laid out as
 <code>&lt;book&gt;/&lt;chapter&gt;.ogg</code> using the standard 66-book
@@ -121,6 +124,28 @@ highlight verses or seek to them directly.</p>
 <p>{n_chapters} chapters. Free to use, copy and redistribute. The app that
 uses these files is free as well: no advertising, no purchases, no accounts,
 and no data collection.</p>"""
+
+# The provenance clause differs by how the voice was made, and getting it wrong
+# is a public false statement either way:
+#   · stock synthetic voice (kokoro am_adam) -> nobody's voice is involved.
+#   · CLONED from a consenting volunteer (sv, ru) -> a real person's voice IS
+#     the source. Saying "no narrator was involved" there would be false, and
+#     it would also contradict the {voice} clause in the same sentence.
+# Set "cloned": True on any set whose reference recording came from a person.
+PROVENANCE_STOCK = (" No narrator is credited because none was involved.")
+# NB: the {voice} clause already states that the voice was cloned from a
+# consented recording, so this must not repeat it — it adds only what {voice}
+# does not say: the volunteer never read these chapters, and is not named.
+PROVENANCE_CLONED = (
+    " The volunteer whose voice it reproduces did not read these chapters, "
+    "and is not credited by name.")
+# Chatterbox (ResembleAI) embeds Resemble's inaudible "Perth" watermark in
+# every file it generates. Disclosing it is an obligation recorded in the
+# project notes, not an optional nicety — listeners and re-users are entitled
+# to know the audio carries a watermark.
+WATERMARK_NOTE = (
+    " The generated audio carries Resemble AI's inaudible &quot;Perth&quot; "
+    "watermark, embedded by the synthesis engine.")
 
 PROGRESS_NOTE = """
 <p><b>This narration is still being produced: {n_chapters} of the 1,189
@@ -172,6 +197,9 @@ def build(set_key, dry_run=False):
             progress=PROGRESS_NOTE.format(n_chapters=len(oggs))
                      if is_partial else "",
             translation=meta_src["translation"], app=APP,
+            provenance=(PROVENANCE_CLONED if meta_src.get("cloned")
+                        else PROVENANCE_STOCK)
+                       + (WATERMARK_NOTE if meta_src.get("watermark") else ""),
             voice=meta_src["voice"], n_chapters=len(oggs)),
     }
 
@@ -196,8 +224,17 @@ def build(set_key, dry_run=False):
     # stages: Karl XII was uploaded partial at ~940 chapters, so finishing it
     # would otherwise re-send the whole ~1 GB (Geneva's full 1.03 GB took about
     # four hours). A mismatched or missing file is still uploaded, so this
-    # cannot silently skip damaged content — and the metadata below is applied
-    # regardless, which is what flips a partial title to the complete one.
+    # cannot silently skip damaged content.
+    #
+    # ⚠ THE metadata= ARGUMENT ONLY TAKES EFFECT WHEN upload() *CREATES* THE
+    # ITEM. On an item that already exists, archive.org ignores the
+    # x-archive-meta headers entirely. An earlier version of this comment
+    # claimed metadata was "applied regardless, which is what flips a partial
+    # title to the complete one" — that was FALSE, and it failed exactly where
+    # it mattered: Karl XII finished at 1189/1189 on 2026-08-01 and stayed
+    # publicly titled "(pågår / in progress)", the precise inversion the
+    # honesty gate exists to prevent. Geneva looked fine only because it was a
+    # brand-new item. Metadata must be written explicitly, below.
     res = upload(meta_src["identifier"], files=files, metadata=metadata,
                  retries=6, retries_sleep=20, verbose=True, checksum=True)
     bad = [r for r in res if getattr(r, "status_code", 200) not in (200, None)]
@@ -206,6 +243,27 @@ def build(set_key, dry_run=False):
         for r in bad[:10]:
             print("  FAILED:", getattr(r, "url", "?"), getattr(r, "status_code", "?"))
         sys.exit(1)
+    # Write metadata explicitly, so it lands on new AND pre-existing items.
+    # Verified afterwards rather than trusted: a stale "in progress" title on a
+    # finished set is a public false claim, and it is the one thing here that
+    # no amount of successful file uploads would reveal.
+    from internetarchive import get_item
+    item = get_item(meta_src["identifier"])
+    r = item.modify_metadata(metadata)
+    code = getattr(r, "status_code", None)
+    if code not in (200, None):
+        print(f"\nMETADATA WRITE FAILED: HTTP {code}")
+        sys.exit(1)
+    live = get_item(meta_src["identifier"]).metadata.get("title", "")
+    if live != title:
+        print("\n⚠ metadata written but the live title does not match yet:")
+        print(f"    want: {title}")
+        print(f"    live: {live}")
+        print("  archive.org applies metadata edits through its task queue;")
+        print("  re-check before treating the item as published.")
+    else:
+        print(f"\ntitle verified: {live}")
+
     print(f"\nDONE -> https://archive.org/details/{meta_src['identifier']}")
 
 

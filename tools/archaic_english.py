@@ -85,6 +85,15 @@ _TYNDALE_DICT = {
     "yf": "if", "ytt": "it",
     "ye": "the", "yt": "it",
     "youre": "your", "oure": "our",
+    # ⚠ "lyve" was read aloud as /laɪv/ ("live broadcast") instead of /lɪv/
+    # — owner caught it in the Genesis 1 test render, Gen 1:21 "creatures that
+    # lyve and moue". The dict had lyfe->life but nothing for the VERB, so it
+    # passed through unmapped. u/v are interchangeable in this orthography, so
+    # both spellings of every form are needed.
+    "lyve": "live", "lyue": "live", "lyves": "lives", "lyues": "lives",
+    "lyved": "lived", "lyued": "lived", "lyveth": "liveth", "lyueth": "liveth",
+    "lyvynge": "living", "lyuynge": "living", "lyvinge": "living",
+    "lyuinge": "living", "lyvest": "livest", "lyuest": "livest",
     "lyfe": "life", "wyfe": "wife", "knyfe": "knife",
     "stryfe": "strife",
     "synne": "sin", "synnes": "sins", "synned": "sinned",

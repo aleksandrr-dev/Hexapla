@@ -107,6 +107,15 @@ object Pronounce {
         for ((from, to) in t.phrases) {
             s = s.replace(Regex("\\b" + Regex.escape(from) + "\\b", RegexOption.IGNORE_CASE), to)
         }
+        // ⚠ HYPHENATED PROPER NAMES. Geneva splits them for typesetting —
+        // "Nebuchad-nezzar", "Beth-el", "Beer-sheba" — and a voice reads the
+        // hyphen as a word break, which is why the owner heard "nebe chad …
+        // nazar". 668 such tokens in Geneva, 547 of which join into a real KJV
+        // word. Restricted to CAPITALISED tokens so ordinary hyphenated
+        // compounds keep their break.
+        s = Regex("\\b([A-Z][A-Za-z]*)-([A-Za-z]+)").replace(s) { m ->
+            m.groupValues[1] + m.groupValues[2]
+        }
         // Roman numerals before words, since the full stops delimiting them
         // would otherwise be treated as sentence ends.
         s = ROMAN_RE.replace(s) { m ->

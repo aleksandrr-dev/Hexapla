@@ -238,7 +238,16 @@ fun SettingsScreen(settings: AppSettings) {
                             packBusy = 0 to 0
                             packDone = MusicRepo.downloadedCount(context)
                         }
-                    }) { Text(stringResource(R.string.music_pack)) }
+                    }) {
+                        // A part-downloaded pack must say so. Falling back to a
+                        // bare "Download music pack" after a partial run looks
+                        // like the previous download vanished.
+                        Text(
+                            if (packDone > 0)
+                                stringResource(R.string.music_pack_partial, packDone, packTotal)
+                            else stringResource(R.string.music_pack)
+                        )
+                    }
                     Text(
                         stringResource(R.string.music_pack_note, packTotal, 213),
                         style = MaterialTheme.typography.bodySmall,

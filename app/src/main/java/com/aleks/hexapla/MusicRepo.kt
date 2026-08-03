@@ -121,11 +121,17 @@ object MusicRepo {
     ): Int = withContext(Dispatchers.IO) {
         val all = allTracks()
         var ok = 0
-        all.forEachIndexed { i, t ->
+        // ⚠ PROGRESS COUNTS SUCCESSES, NOT ATTEMPTS. Reporting the loop index
+        // made the UI show "80 of 80" while a third of the downloads had
+        // 404'd (the pack was still uploading), and the count then dropped
+        // back to what was really on disk — which reads as "it lost my
+        // download". A progress bar that cannot fail is a progress bar that
+        // lies.
+        all.forEach { t ->
             val dest = cacheFile(context, t.file)
             if (dest.exists() && dest.length() > 0) ok++
             else if (AudioRepo.downloadMusic(urlFor(t.file), dest)) ok++
-            onProgress(i + 1, all.size)
+            onProgress(ok, all.size)
         }
         ok
     }

@@ -122,6 +122,46 @@ object AudioRepo {
         return File(audioDir(context), key)
     }
 
+    /**
+     * Per-word timings for one generated chapter: verse index → words, each
+     * `[startMs, endMs, charStart, charEnd]`, where the character range indexes
+     * the DISPLAYED verse text. Null entries are verses the aligner could not
+     * place; those keep verse-level highlighting only.
+     *
+     * Deliberately NOT carried in audio_index_gen.json: word timings run about
+     * 17 KB per chapter, so a whole translation is ~17 MB against that index's
+     * present 724 KB for four sets. They live beside the .ogg on archive.org as
+     * `<chapter>.w.json`, and download-and-cache on the same path as the audio.
+     *
+     * Produced by tools/align_words.py. Absent for any chapter not yet aligned,
+     * which is the normal state for a set whose audio shipped first — callers
+     * must treat null as "verse-level only", never as an error.
+     */
+    suspend fun words(context: Context, section: Section): List<List<IntArray>?>? {
+        if (!section.generated) return null
+        val url = wordsUrl(section.url)
+        val f = downloadTo(url, generatedFile(context, url)) {} ?: return null
+        return withContext(Dispatchers.IO) {
+            try {
+                val arr = org.json.JSONObject(f.readText()).getJSONArray("v")
+                (0 until arr.length()).map { i ->
+                    val verse = arr.optJSONArray(i) ?: return@map null
+                    (0 until verse.length()).map { j ->
+                        val w = verse.getJSONArray(j)
+                        intArrayOf(w.getInt(0), w.getInt(1), w.getInt(2), w.getInt(3))
+                    }
+                }
+            } catch (_: Exception) {
+                // A truncated or malformed sidecar must not break playback; the
+                // chapter simply falls back to verse-level following.
+                f.delete()
+                null
+            }
+        }
+    }
+
+    fun wordsUrl(oggUrl: String): String = oggUrl.removeSuffix(".ogg") + ".w.json"
+
     fun isDownloaded(context: Context, url: String): Boolean =
         localFile(context, url).let { it.exists() && it.length() > 0 }
 

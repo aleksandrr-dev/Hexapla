@@ -416,20 +416,55 @@ class ReadingService : Service() {
         val offsets = sec.offsets
         if (offsets.isNullOrEmpty()) return
         followJob = scope.launch {
+            // Word timings are fetched in the background: verse-following must
+            // start on the first poll rather than wait on a network round trip,
+            // so `words` stays null until (and unless) the sidecar arrives.
+            var words: List<List<IntArray>?>? = null
+            launch {
+                words = try { AudioRepo.words(this@ReadingService, sec) } catch (_: Exception) { null }
+            }
             var lastV = -1
+            var lastW = -1
             while (isActive) {
                 val pos = try { player?.currentPosition ?: break } catch (_: Exception) { break }
                 var v = 0
                 for (i in offsets.indices) { if (offsets[i] <= pos) v = i else break }
                 if (v != lastV) {
                     lastV = v
+                    lastW = -1
                     verseIdx = v
                     Playback.verse.intValue = v
                     Playback.wordStart.intValue = -1
                     Playback.wordEnd.intValue = -1
                     updateMusicForPassage()   // mid-chapter turns, as for TTS
                 }
-                delay(250)
+                // Word-level highlighting, matching what TTS publishes from
+                // onRangeStart: character ranges into the displayed verse text.
+                val vw = words?.getOrNull(v)
+                if (vw != null) {
+                    // Linear from the last hit, not a fresh scan: playback moves
+                    // forward, so this is O(1) per poll in the common case and
+                    // still correct after a seek, which resets lastW via lastV.
+                    var w = -1
+                    for (i in vw.indices) { if (vw[i][0] <= pos) w = i else break }
+                    if (w != lastW) {
+                        lastW = w
+                        if (w >= 0 && pos <= vw[w][1]) {
+                            Playback.wordStart.intValue = vw[w][2]
+                            Playback.wordEnd.intValue = vw[w][3]
+                        } else {
+                            // In a gap between words (a pause, or past the last
+                            // word): drop the highlight rather than leave it
+                            // stuck on a word that has finished.
+                            Playback.wordStart.intValue = -1
+                            Playback.wordEnd.intValue = -1
+                        }
+                    }
+                }
+                // A word lasts ~300ms, so the 250ms verse cadence would visibly
+                // lag or skip words entirely. Poll faster only when there is
+                // word data to justify the extra wakeups.
+                delay(if (vw != null) 60 else 250)
             }
         }
     }

@@ -348,6 +348,17 @@ def main():
     if dupes:
         census.anomaly("book-marker-repeated", "corpus", str(sorted(set(dupes))))
 
+    # Non-numeric chapter labels are MEANINGFUL and must never be silent: the
+    # contiguity check below only looks at digit keys, so an asterisked block
+    # would pass unnoticed while carrying real scripture. Three exist:
+    #   Prov. 24* / 30* / 31* — Septuagint-order continuation blocks
+    #   Cant. 8a              — a 6-verse unit after ch 8's full 14
+    #   Abd.  _               — TITUS's empty label for a 1-chapter book
+    for b, chs in books.items():
+        for c in sorted(c for c in chs if not c.isdigit()):
+            census.anomaly("non-numeric-chapter-label", b,
+                           "chapter %r holds %d verses" % (c, len(chs[c])))
+
     # Chapters must be 1..N contiguous within each book.
     for b, chs in books.items():
         got = sorted(int(c) for c in chs if c.isdigit())

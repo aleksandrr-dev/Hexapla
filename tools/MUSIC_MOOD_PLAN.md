@@ -390,3 +390,59 @@ Same layer trap as the Van Dyck tashkeel. CC-BY and CC0 are acceptable; **NC
 and ND are not** (ND additionally forbids the re-encoding above).
 Attribution obligations join `sources_text`, which is REQUIRED-and-PROMISED
 credits only — MacLeod is already there.
+
+---
+
+## OWNER DECISIONS — 2026-08-03 (supersede the "gate" language above)
+
+### Marine Band: RISK ACCEPTED, ship it
+Owner: implement now, remove if anyone ever contacts him. The email draft at
+`store-assets/marine_band_email_draft.txt` is marked SUPERSEDED — do not send
+it unless he asks.
+Credit line, exactly this and no more:
+
+    Performed by "The President's Own" United States Marine Band.
+
+⚠ FOR ANY FUTURE SESSION: a RISK ACCEPTANCE, **not** a rights finding.
+17 U.S.C. §105 removes US copyright ONLY; the worldwide position is
+unestablished. Never cite this as evidence the recordings are PD worldwide.
+⚠ Real acoustic harp in the whole catalogue is EXACTLY TWO TRACKS, both
+Debussy, both from this set. Reversing this decision collapses `tender`.
+
+### Scott Buckley: PROCEED, no email
+Owner: same risk acceptance, no email first.
+★ The ground is FIRMER here than the Marine Band case, and the distinction
+matters if it is ever revisited:
+ · He grants **CC BY 4.0**, which explicitly and irrevocably permits
+   redistribution. That is a licence, not a silence.
+ · His site's "License Restrictions" sit under a PRICING TABLE, immediately
+   after "If you can find a way to credit me, then the CC-BY license still
+   stands, and it's free" — they read as governing the PURCHASED tier.
+ · The synchronisation requirement is tied to **resale** ("cannot be resold in
+   isolation — any resale must have the music synchronised"). We do not sell.
+ · The redistribution clause enumerates DistroKid, Artist.io, CDBaby, Spotify,
+   iTunes — commercial distribution channels. An archive.org asset pack is not
+   one of those.
+▶ MITIGATION, cheap and worth doing: name and describe the archive item as an
+APP ASSET PACK ("background music pack for the Hexapla Bible app"), not as a
+music release. That keeps it plainly in the spirit of "synchronised with other
+media" rather than looking like a standalone music publication.
+⚠ Still an ambiguity call, not a clean bill of health. If he ever objects, drop
+the tracks — MacLeod alone can carry the catalogue.
+
+### Gaps recorded from the sourcing pass (research/music_shortlist.md)
+⛔ **SOLO LUTE AT BED LENGTH DOES NOT EXIST under an acceptable licence** — the
+owner's TOP instrumentation priority is the one thing that could not be filled.
+All clean acoustic lute audio found anywhere totals under 8 minutes, longest
+single track 2:45. Every "lute" in the shortlist is a SAMPLED lute (MacLeod),
+an ORCHESTRAL SETTING of lute music (Respighi), or a viol consort standing in.
+▶ The only real route is commissioning a recording. Best target: the Dalitz
+ricercars over Genevan psalm tunes — the SCORE is already CC BY-SA, so a
+commissioned performance would clear layer 1 by licence and layer 2 outright.
+· `praise` is structurally weak: doxology is written to build, and a bed must
+  not. Only one genuinely level candidate was found.
+· Three claims in the SOURCING section above did NOT survive verification:
+  Aria Rita is on Bandcamp (not Commons) and her CC0 tag is contradicted by her
+  own prose; Dalitz's Psalm 143 recording is **0:57**, unusable as a bed; Serna
+  has no Manchester Gamba Book file and no Dowland *Lachrimae* (only 34 of his
+  99 files reach 3:00). Trust the shortlist over this section where they differ.

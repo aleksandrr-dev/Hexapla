@@ -381,6 +381,27 @@ try:
 except ImportError:          # generator not run yet
     TYNDALE_PRON, TYNDALE_ROMAN = {}, {}
 
+# ⚠ The GENERATED Geneva/Wycliffe maps live only as app assets, because they
+# are consumed by Pronounce.kt. The RENDER pipeline must load the same files,
+# or a re-render would use the thin hand dictionaries and reproduce the very
+# mispronunciations the maps exist to fix ("begate" for begat).
+import json as _json
+import os as _os
+
+def _load_asset_map(name):
+    path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                         "..", "app", "src", "main", "assets", name)
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return _json.load(fh).get("words", {})
+    except Exception:
+        return {}
+
+_GENERATED = {
+    "geneva": _load_asset_map("pron_gnv.json"),
+    "wycliffe": _load_asset_map("pron_wyc.json"),
+}
+
 # ".vij." — lower-case roman between full stops, as printed. Spoken letter by
 # letter otherwise ("vee eye jay"), and common: 133 "vij", 137 "ij".
 # ⚠ A lookup table is not enough: Tyndale prints arbitrary combinations
@@ -429,6 +450,8 @@ def _apply_dict(text, word_dict):
 # voice must not drift apart; that applies to the RULES as much as the words.
 _EM_EXCEPTIONS = {"deuel", "geuel", "euodias", "iim", "reuel"}
 _EM_VOWELS = "aeiou"
+# Geneva splits proper names for typesetting: Nebuchad-nezzar, Beth-el.
+_JOIN_HYPHEN = re.compile(r"([A-Z][A-Za-z]*)-([A-Za-z]+)")
 
 
 def early_modern(w):
@@ -483,6 +506,8 @@ def normalize(text, dialect, use_generated=True):
         # one.
         text = _expand_roman(text)
         text = _apply_dict(text, TYNDALE_PRON)
+    if dialect in _GENERATED and use_generated:
+        text = _apply_dict(text, _GENERATED[dialect])
     text = _apply_dict(text, word_dict)
     text = _apply_rules(text, rules)
     if dialect == "tyndale" and use_generated:
@@ -492,4 +517,20 @@ def normalize(text, dialect, use_generated=True):
         # every earlier fix and were still mispronounced. Re-applying the map
         # after the rules catches the whole class, not just these two.
         text = _apply_dict(text, TYNDALE_PRON)
+
+    # ⚠⚠ THE LAST STAGE, AND THE ONE THAT WAS MISSING WHEN GENEVA WAS RENDERED.
+    # ASR of the SHIPPED Geneva narration (archive.org, 2026-08-03) found:
+    #     Gen 1:1  "God created the HORN and the earth"      (heauen)
+    #     Gen 1:2  "the spirit of God MOO-YUED"              (moued)
+    #     Dan 3:1  "in the PROANCE of Babel"                 (prouince)
+    #     Dan 3:2  "the GAUERNERS of the Proances"           (gouernours)
+    # The dictionaries covered a few dozen u/v words by hand and missed the
+    # rest, because the alternation appears in every other word of the text.
+    # Rules finish what a word list cannot, and they run LAST so they also
+    # catch forms the earlier stages minted.
+    # Hyphen joining is included for the same reason: Geneva prints
+    # "Nebuchad-nezzar" and "Beth-el" split for typesetting.
+    if dialect in ("geneva", "tyndale", "wycliffe"):
+        text = _JOIN_HYPHEN.sub(lambda m: m.group(1) + m.group(2), text)
+        text = re.sub(r"[A-Za-z]+", lambda m: early_modern(m.group(0)), text)
     return text

@@ -174,6 +174,12 @@ _TYNDALE_DICT = {
 }
 
 _TYNDALE_RULES = [
+    # ⚠ "gedder" NEVER means "gather". Every one of its 39 occurrences is the
+    # phrase "to gedder" = TOGETHER ("God hath cuppled to gedder", "before they
+    # came to dwell to gedder"). Mapping the bare word to "gather" — which is
+    # what similarity matching proposes — would change the meaning of the
+    # sentence. It has to be a phrase rule, applied before word-level lookup.
+    (re.compile(r'\bto\s+gedder\b', re.I), 'together'),
     (re.compile(r'\byf\b', re.I), 'if'),
     (re.compile(r'(\w)ynne\b', re.I), r'\1in'),
     (re.compile(r'(\w)ynge\b', re.I), r'\1ing'),

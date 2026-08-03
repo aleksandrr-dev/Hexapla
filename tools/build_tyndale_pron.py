@@ -54,6 +54,8 @@ MIN_SUPPORT = 0.55        # share of parallel KJV verses containing the candidat
 # to be corroborated by the parallel verse, so lowering the frequency does not
 # lower the standard of evidence.
 MIN_FREQ = 2
+HI_SIM = 0.83          # tier B: similarity strong enough to stand alone
+HI_SIM_SUPPORT = 0.15  # ...with only token corroboration
 
 # Contractions of two words. Never derivable by single-token similarity.
 MULTIWORD = {
@@ -128,6 +130,52 @@ OVERRIDE = {
     "uncleane": "unclean", "unclene": "unclean", "untyll": "until",
     "untill": "until", "moreouer": "moreover", "habitacion": "habitation",
     "stonde": "stand", "fre": "free", "ioye": "joy", "iuda": "Judah",
+    # ── Third pass, 2026-08-03: the frequent low-similarity residue that both
+    # gates reject. Each verified in context first — two of them would have
+    # been wrong on the obvious guess:
+    #   "gedder" is ALWAYS "to gedder" = TOGETHER, never "gather". Handled by
+    #     a phrase rule in archaic_english, not here.
+    #   "eue" covers "but eue once more" AND "when eue was come" — "even"
+    #     serves both, and matches the KJV's own "when even was come".
+    "eue": "even", "gentyls": "gentiles", "gentyl": "gentile",
+    "goost": "ghost", "goste": "ghost", "leuites": "levites",
+    "leuite": "levite", "goote": "goat", "gootes": "goats",
+    "blynde": "blind", "vayne": "vain", "seruyce": "service",
+    "sylfe": "self", "saynctes": "saints", "sayncte": "saint",
+    "swerde": "sword", "swerdes": "swords", "ryche": "rich",
+    "dede": "deed", "euell": "evil", "sayeth": "saith", "saue": "save",
+    "synoffering": "sin offering", "synneoffering": "sin offering",
+    "meatoffering": "meat offering", "burntoffering": "burnt offering",
+    "sycles": "shekels", "sicles": "shekels", "cubettes": "cubits",
+    "vayle": "veil", "contre": "country", "contrees": "countries",
+    "yee": "ye", "moo": "more", "wynde": "wind", "ryuer": "river",
+    "ryuers": "rivers", "lytell": "little", "whyll": "while",
+    "counsell": "counsel", "meanes": "means", "harde": "hard",
+    "backe": "back", "housses": "houses", "frutes": "fruits",
+    "straunge": "strange", "understonde": "understand",
+    "remembraunce": "remembrance", "halowed": "hallowed",
+    "perisshe": "perish", "ordeyned": "ordained", "heedes": "heads",
+    "felowe": "fellow", "els": "else", "howe": "how", "warde": "ward",
+    "commeth": "cometh", "bonde": "bond", "lawes": "laws",
+    "rynges": "rings", "helpe": "help",
+    # ── Fourth pass: proper names in i/j orthography, plus the last frequent
+    # ordinary words. Names matter more than their frequency suggests — "ihon"
+    # read as "ee-hon" instead of "John" is jarring in a Bible in a way that a
+    # slightly odd common word is not. The generator's own NAME GUARD refuses
+    # to derive these (it blocks lower-case words mapping onto capitalised KJV
+    # entries, which is right in general), so they belong here.
+    "ihon": "John", "iordayne": "Jordan", "iordan": "Jordan",
+    "ionas": "Jonas", "iosua": "Joshua", "iamin": "Jamin",
+    "helyas": "Elias", "iewe": "Jew", "iewes": "Jews",
+    "iacyncte": "jacinth", "sethim": "shittim", "ester": "Esther",
+    "soch": "such", "nombre": "number", "meane": "mean", "syt": "sit",
+    "wayte": "wait", "lyeth": "lieth", "secrettes": "secrets",
+    "swearde": "sword", "rayne": "rain", "hyd": "hid", "hyll": "hill",
+    "fyue": "five", "sycle": "shekel", "delyuer": "deliver",
+    "behynde": "behind", "slee": "slay", "hayle": "hail",
+    "charettes": "chariots", "comen": "come", "reioyse": "rejoice",
+    "fyrste": "first", "bitwene": "between", "lykewyse": "likewise",
+    "wyues": "wives", "fett": "fetch",
 }
 
 # ⚠ ROMAN NUMERALS. Tyndale prints numbers as ".vij." / ".ij." — lower-case
@@ -163,21 +211,29 @@ def main():
     freq = collections.Counter()
     co = collections.defaultdict(collections.Counter)
     kjv_vocab = collections.Counter()
+    kjv_caps = collections.Counter()
+    caps = collections.Counter()
     tmp = []
     for bi in range(min(len(tb), len(kb))):
         tch, kch = tb[bi].get("chapters", []), kb[bi].get("chapters", [])
         for ci in range(min(len(tch), len(kch))):
             for vi in range(min(len(tch[ci]), len(kch[ci]))):
-                tw = [w.lower() for w in re.findall(
-                    r"[A-Za-z]+", normalize(clean(tch[ci][vi]), "tyndale", use_generated=False))]
-                kw = [w.lower() for w in re.findall(r"[A-Za-z]+", clean(kch[ci][vi]))]
-                for w in kw:
-                    kjv_vocab[w] += 1
+                tw = re.findall(
+                    r"[A-Za-z]+", normalize(clean(tch[ci][vi]), "tyndale", use_generated=False))
+                kraw = re.findall(r"[A-Za-z]+", clean(kch[ci][vi]))
+                kw = [w.lower() for w in kraw]
+                for w in kraw:
+                    kjv_vocab[w.lower()] += 1
+                    if w[0].isupper():
+                        kjv_caps[w.lower()] += 1
                 tmp.append((tw, set(kw)))
     known = heads | set(kjv_vocab)
     for tw, kws in tmp:
         for w in tw:
-            if w not in known and w not in MULTIWORD:
+            if w.lower() not in known and w.lower() not in MULTIWORD:
+                if w[0].isupper():
+                    caps[w.lower()] += 1
+                w = w.lower()
                 freq[w] += 1
                 for k in kws:
                     co[w][k] += 1
@@ -192,7 +248,26 @@ def main():
                 continue
             sim = SequenceMatcher(None, w, cand).ratio()
             sup = c / n
-            if sim >= MIN_SIM and sup >= MIN_SUPPORT:
+            # ⚠ NAME GUARD. A candidate that is almost always capitalised in
+            # the KJV is a proper name; mapping a lower-case common word onto
+            # one would rename things ("moo" -> "Moab"). Allow it only when the
+            # source is itself usually capitalised.
+            if (kjv_caps.get(cand, 0) / max(1, kjv_vocab[cand]) > 0.7
+                    and caps.get(w, 0) / n < 0.5):
+                continue
+            # TIER A: moderate spelling similarity, strongly corroborated.
+            # TIER B: very high similarity with weak corroboration — added
+            # 2026-08-03. Support is low for ordinary words simply because the
+            # KJV often chooses a different synonym in the same verse, so
+            # demanding both gates left obvious variants unmapped
+            # ("counsell"/counsel 0.93 sim but 0.34 support,
+            #  "remembraunce"/remembrance 0.96/0.49). Similarity that high IS
+            # the evidence; the junk pairs this must exclude
+            # ("eue"->"the", "goote"->"the", "wayte"->"the") all sit at 0.33-0.50,
+            # far below the tier-B floor.
+            ok = (sim >= MIN_SIM and sup >= MIN_SUPPORT) or \
+                 (sim >= HI_SIM and sup >= HI_SIM_SUPPORT)
+            if ok:
                 score = sim * 0.7 + sup * 0.3
                 if best is None or score > best[0]:
                     best = (score, cand, sim, sup)

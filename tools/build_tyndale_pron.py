@@ -47,7 +47,13 @@ NOTE = re.compile(r"\s*\{[^{}]*:[^{}]*\}")
 
 MIN_SIM = 0.75
 MIN_SUPPORT = 0.55        # share of parallel KJV verses containing the candidate
-MIN_FREQ = 4
+# ⚠ Was 4, lowered to 2 on 2026-08-03. Genesis 1 alone still had 31 unmapped
+# words after the first pass, because chapter-specific vocabulary ("whalles",
+# "federed", "sterres") is rare corpus-wide and never reached the old floor.
+# The KJV-support gate is what keeps a low floor safe — a rare word still has
+# to be corroborated by the parallel verse, so lowering the frequency does not
+# lower the standard of evidence.
+MIN_FREQ = 2
 
 # Contractions of two words. Never derivable by single-token similarity.
 MULTIWORD = {
@@ -97,6 +103,31 @@ OVERRIDE = {
     "neverthelesse": "nevertheless", "assone": "as soon",
     "untyll": "until", "thorowe": "through", "selues": "selves",
     "soeuer": "soever", "axed": "asked", "hyr": "her", "oxen": "oxen",
+    # ── Owner ear-check, Genesis 1 test render, 2026-08-03 ──────────────
+    # ★ "domynyon" is why he heard "do-MINE-yon". It looked like the model
+    #   mispronouncing an ordinary word — "dominion" is spelled correctly
+    #   ELSEWHERE in the asset (3x) — but Genesis 1 spells it "domynyon".
+    #   Check the actual spelling before blaming the engine.
+    "domynyon": "dominion", "dominacio": "dominion",
+    "dominacion": "dominion", "dominio": "dominion",
+    "lycknesse": "likeness", "liknesse": "likeness", "likenesse": "likeness",
+    "yow": "you",
+    "devyde": "divide", "devyded": "divided", "devydeth": "divideth",
+    "togyther": "together", "frutefull": "fruitful", "sowenge": "sowing",
+    "sygnes": "signs", "shyne": "shine", "sterres": "stars",
+    "foules": "fowls", "whalles": "whales", "federed": "feathered",
+    "kindes": "kinds", "fyll": "fill", "fyfth": "fifth", "syxth": "sixth",
+    "leth": "let", "thir": "their", "catell": "cattle", "wormes": "worms",
+    "symilitude": "similitude", "ayre": "air", "crepe": "creep",
+    "crepeth": "creepeth", "creping": "creeping", "exceading": "exceeding",
+    "gatheringe": "gathering", "bering": "bearing", "sonder": "sunder",
+    "growe": "grow", "lesse": "less", "moch": "much", "seate": "seat",
+    "drynke": "drink", "dedes": "deeds", "syghte": "sight", "prayse": "praise",
+    "devyll": "devil", "preastes": "priests", "feldes": "fields",
+    "slayne": "slain", "ordinaunces": "ordinances", "kynredes": "kindreds",
+    "uncleane": "unclean", "unclene": "unclean", "untyll": "until",
+    "untill": "until", "moreouer": "moreover", "habitacion": "habitation",
+    "stonde": "stand", "fre": "free", "ioye": "joy", "iuda": "Judah",
 }
 
 # ⚠ ROMAN NUMERALS. Tyndale prints numbers as ".vij." / ".ij." — lower-case

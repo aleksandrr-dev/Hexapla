@@ -223,9 +223,19 @@ def phase_screen(args, res, books):
             chapter_idx = int(ogg.stem)
             key = f"{book_idx}/{chapter_idx}"
             rec = res["chapters"].get(key, {})
-            if "screen" in rec:
+            # ⚠ CACHE INVALIDATION. The resume check used to be "is there a
+            # 'screen' record for this key?", with nothing tied to the FILE.
+            # After the instruction-leak quarantine and re-render, that made
+            # the tool report "777 already done" while every one of those 814
+            # chapters was different audio from the one it had scanned — a
+            # confident verdict about files that no longer existed. Cache the
+            # audio's size+mtime and rescan whenever they move.
+            stamp = f"{ogg.stat().st_size}:{int(ogg.stat().st_mtime)}"
+            if "screen" in rec and rec.get("audio_stamp") == stamp:
                 done += 1
                 continue
+            rec["audio_stamp"] = stamp
+            rec.pop("verify", None)      # ASR verdict describes the OLD audio
             side = ogg.with_suffix(".json")
             if not side.exists():
                 rec["screen"] = {"error": "no sidecar json"}
@@ -314,7 +324,7 @@ def get_model(name):
     if _MODEL is None:
         from faster_whisper import WhisperModel
         _MODEL = WhisperModel(name, device="cpu", compute_type="int8",
-                              cpu_threads=3, num_workers=1)
+                              cpu_threads=2, num_workers=1)
     return _MODEL
 
 
@@ -378,7 +388,18 @@ def phase_verify(args, res, books):
         ver = rec.setdefault("verify", {})
         book_idx, chapter_idx = (int(x) for x in key.split("/"))
         ogg = NARRATION / args.lang / str(book_idx) / f"{chapter_idx}.ogg"
-        with open(ogg.with_suffix(".json"), encoding="utf-8") as f:
+        # ⚠ A LIVE RENDER MAY BE WRITING THIS CHAPTER RIGHT NOW. The .ogg is
+        # created before its sidecar, so scanning a set that is still rendering
+        # hits a window where the audio exists and the .json does not — which
+        # killed a verify run outright on ru 23/31 after 54 of 83 segments,
+        # losing the whole pass. Skip anything incomplete or very recently
+        # written rather than crashing; a later run picks it up.
+        side = ogg.with_suffix(".json")
+        if not ogg.exists() or not side.exists():
+            continue
+        if time.time() - ogg.stat().st_mtime < 120:      # still settling
+            continue
+        with open(side, encoding="utf-8") as f:
             offsets = json.load(f)["offsets"]
         exp = expected_texts(books, args.lang, book_idx, chapter_idx)
         for fl in flags:

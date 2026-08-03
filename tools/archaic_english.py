@@ -453,4 +453,11 @@ def normalize(text, dialect, use_generated=True):
         text = _apply_dict(text, TYNDALE_PRON)
     text = _apply_dict(text, word_dict)
     text = _apply_rules(text, rules)
+    if dialect == "tyndale" and use_generated:
+        # ⚠ The regex rules run LAST and MINT NEW WORDS: "-ynge" -> "-ing"
+        # turns "berynge" into "bering" and "exceadynge" into "exceading",
+        # neither of which any dictionary stage has seen. Those two survived
+        # every earlier fix and were still mispronounced. Re-applying the map
+        # after the rules catches the whole class, not just these two.
+        text = _apply_dict(text, TYNDALE_PRON)
     return text

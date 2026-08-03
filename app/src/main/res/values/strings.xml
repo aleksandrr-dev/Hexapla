@@ -208,6 +208,8 @@
     <string name="share_app_link">Send link</string>
     <string name="music_title">Background music while listening</string>
     <string name="music_volume">Music volume</string>
+    <string name="music_uniform">Same music throughout</string>
+    <string name="music_uniform_note">Off by default: the music changes to suit what is being read, and falls silent at a few passages where no music is better.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">noun</string>
     <string name="morph_adjective">adjective</string>

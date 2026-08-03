@@ -142,6 +142,7 @@ class ReadingService : Service() {
                             .coerceIn(0, (chapterVerses.size - 1).coerceAtLeast(0))
                         verseIdx = v
                         Playback.verse.intValue = v
+                        updateMusicForPassage()
                         if (Playback.playing.value) speakVerse(v)
                     }
                     updateSessionState(Playback.playing.value)
@@ -162,6 +163,11 @@ class ReadingService : Service() {
                             Playback.verse.intValue = v
                             Playback.wordStart.intValue = -1
                             Playback.wordEnd.intValue = -1
+                            // Anchors can turn mid-chapter (Ps 22 at v22,
+                            // Lk 23 at the crucifixion), so the bed is checked
+                            // per verse; updateMusicForPassage() is a no-op
+                            // unless the mood actually changed.
+                            updateMusicForPassage()
                             updateSessionState(Playback.playing.value)
                             updateNotification()
                         }
@@ -207,6 +213,14 @@ class ReadingService : Service() {
                     voicePrefs = Store.voicePrefs(this@ReadingService).first()
                     translationId = settings.primaryId
                     books = BibleRepo.load(this@ReadingService, translationId)
+                    // The mood map is keyed to canonical KJV coordinates, so it
+                    // is useless without VerseMap to pivot through. Load both,
+                    // and never let either failure stop playback — the bed
+                    // falls back to the uniform rotation.
+                    try {
+                        VerseMap.load(this@ReadingService)
+                        MoodMap.load(this@ReadingService)
+                    } catch (_: Exception) { }
                     // kjv → LibriVox sections; other translations → self-generated
                     // per-chapter narration (Webster etc.) streamed from archive.org.
                     audioSections = if (settings.audioNarration)
@@ -275,6 +289,7 @@ class ReadingService : Service() {
         Playback.chapter.intValue = chapterIdx
         Playback.verse.intValue = -1
         Playback.wordStart.intValue = -1
+        updateMusicForPassage()
         Playback.wordEnd.intValue = -1
         updateSessionState(playing = true)
         updateNotification()
@@ -410,6 +425,7 @@ class ReadingService : Service() {
                     Playback.verse.intValue = v
                     Playback.wordStart.intValue = -1
                     Playback.wordEnd.intValue = -1
+                    updateMusicForPassage()   // mid-chapter turns, as for TTS
                 }
                 delay(250)
             }
@@ -460,6 +476,85 @@ class ReadingService : Service() {
     }
     private var musicIndex = 0
 
+    /* ---- Scene-matched beds -------------------------------------------
+       The bundled four are the offline fallback for EVERY mood, so nobody
+       loses music by being offline. Until the downloadable pack lands, a mood
+       simply picks deterministically among them: the same mood always draws
+       the same track, so a chapter's bed is stable and a mood CHANGE is
+       audible, which is the whole point of the feature.
+       ⚠ `silence` is a real value, not a failure. It must be distinguishable
+       from "the track could not be loaded", which falls back to a bundled
+       track instead. ---- */
+
+    private var currentMood: String? = null
+    private var musicFading: MediaPlayer? = null
+    private var fadeJob: Job? = null
+
+    /** Which bundled track stands in for a mood. Stable per mood, not random. */
+    private fun bundledFor(mood: String): String? {
+        if (musicTracks.isEmpty()) return null
+        // Hash the mood name rather than using an index, so adding a mood later
+        // does not reshuffle every other mood's track.
+        val h = mood.fold(7) { acc, c -> acc * 31 + c.code }
+        return musicTracks[((h % musicTracks.size) + musicTracks.size) % musicTracks.size]
+    }
+
+    /** Resolve the bed for what is playing now, honouring the uniform-bed setting. */
+    private fun bedNow(): MoodMap.Bed? {
+        if (settings.uniformBed || !MoodMap.isLoaded) return null
+        return MoodMap.moodFor(translationId, bookIdx, chapterIdx, Playback.verse.intValue)
+    }
+
+    /**
+     * Called when the passage moves. Swaps the bed only when the MOOD changes —
+     * a bed that changes constantly is worse than one that is slightly generic.
+     */
+    private fun updateMusicForPassage() {
+        if (!settings.musicEnabled) return
+        val bed = bedNow() ?: return
+        if (bed.mood == currentMood) return
+        currentMood = bed.mood
+        if (bed.mood == MoodMap.SILENCE) {
+            crossfadeTo(null)
+            return
+        }
+        crossfadeTo(bed.track?.let { "music/$it.mp3" } ?: bundledFor(bed.mood))
+    }
+
+    /**
+     * Fade the current bed out while the new one fades in.
+     * ⚠ MediaPlayer cannot crossfade, so this runs two players and ramps their
+     * volumes. Hard-swapping at a mood change is jarring, which is why the
+     * pre-existing behaviour only ever swapped on track COMPLETION.
+     * Both ramps respect the perceptual musicVol() curve.
+     */
+    private fun crossfadeTo(asset: String?, ms: Long = 2500) {
+        fadeJob?.cancel()
+        val outgoing = musicPlayer
+        musicPlayer = null
+        musicFading = outgoing
+
+        if (asset != null) playMusicAsset(asset, startVolume = 0f)
+
+        fadeJob = scope.launch {
+            val target = musicVol()
+            val steps = 25
+            for (i in 1..steps) {
+                val t = i / steps.toFloat()
+                val out = target * (1f - t)
+                val inn = target * t
+                try { musicFading?.setVolume(out, out) } catch (_: Exception) { }
+                try { musicPlayer?.setVolume(inn, inn) } catch (_: Exception) { }
+                delay(ms / steps)
+            }
+            musicFading?.let { p ->
+                try { p.stop() } catch (_: Exception) { }
+                p.release()
+            }
+            musicFading = null
+        }
+    }
+
     private fun startMusic() {
         if (!settings.musicEnabled || musicTracks.isEmpty()) return
         val vol = musicVol()
@@ -467,7 +562,40 @@ class ReadingService : Service() {
             try { it.setVolume(vol, vol); if (!it.isPlaying) it.start() } catch (_: Exception) { }
             return
         }
+        val bed = bedNow()
+        if (bed != null) {
+            currentMood = bed.mood
+            if (bed.mood == MoodMap.SILENCE) return
+            val asset = bed.track?.let { "music/$it.mp3" } ?: bundledFor(bed.mood)
+            if (asset != null) { playMusicAsset(asset, vol); return }
+        }
         playMusicTrack(musicIndex)
+    }
+
+    /** Start one specific asset as the bed. Falls back to the rotation on error. */
+    private fun playMusicAsset(asset: String, startVolume: Float) {
+        try {
+            val afd = assets.openFd(asset)
+            musicPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                afd.close()
+                setVolume(startVolume, startVolume)
+                isLooping = true          // a mood lasts as long as the passage does
+                setOnPreparedListener { if (Playback.playing.value) it.start() }
+                prepareAsync()
+            }
+        } catch (_: Exception) {
+            // A missing track is NOT silence — fall back to the bundled rotation
+            // so the reader still gets a bed.
+            musicPlayer = null
+            playMusicTrack(musicIndex)
+        }
     }
 
     private fun playMusicTrack(index: Int) {
@@ -505,8 +633,16 @@ class ReadingService : Service() {
     }
 
     private fun releaseMusic() {
+        // ⚠ A crossfade leaves a SECOND player alive. Releasing only musicPlayer
+        // would leak it and keep the outgoing bed audible after the reader
+        // stopped — the fade job holds the reference, not the field.
+        fadeJob?.cancel()
+        fadeJob = null
+        musicFading?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
+        musicFading = null
         musicPlayer?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
         musicPlayer = null
+        currentMood = null
     }
 
     private var chapterVerses: List<String> = emptyList()

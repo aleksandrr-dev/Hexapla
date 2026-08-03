@@ -197,6 +197,18 @@ fun SettingsScreen(settings: AppSettings) {
                 onValueChange = { scope.launch { Store.setMusicVolume(context, it) } },
                 valueRange = 0.1f..1f
             )
+            // Phrased as the OPT-OUT it is: scene-matched is the new default,
+            // and this restores the single unchanging bed for anyone who
+            // preferred it. Named for what the listener hears, not for the
+            // mechanism behind it.
+            SwitchRow(stringResource(R.string.music_uniform), settings.uniformBed) {
+                scope.launch { Store.setUniformBed(context, it) }
+            }
+            Text(
+                stringResource(R.string.music_uniform_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
         Spacer(Modifier.height(8.dp))

@@ -57,6 +57,10 @@ data class AppSettings(
     val welcomeSeen: Boolean = true,
     val musicEnabled: Boolean = false,
     val musicVolume: Float = 0.45f,
+    // When true, keep the pre-1.6.3 behaviour: one rotating bed for everything,
+    // regardless of what is being read. Some people prefer an unchanging bed,
+    // and a scene-matched one is a bigger change than it sounds.
+    val uniformBed: Boolean = false,
     val lastPlanId: String = ""
 )
 
@@ -93,6 +97,7 @@ object Store {
     private val HIDE_NUMBERS = booleanPreferencesKey("hide_numbers")
     private val WELCOME_SEEN = booleanPreferencesKey("welcome_seen")
     private val MUSIC_ON = booleanPreferencesKey("music_on")
+    private val MUSIC_UNIFORM = booleanPreferencesKey("music_uniform")
     private val MUSIC_VOL = floatPreferencesKey("music_vol")
     private val BOOKMARKS = stringSetPreferencesKey("bookmarks")
 
@@ -125,6 +130,7 @@ object Store {
             hideVerseNumbers = p[HIDE_NUMBERS] ?: false,
             welcomeSeen = p[WELCOME_SEEN] ?: false,
             musicEnabled = p[MUSIC_ON] ?: false,
+            uniformBed = p[MUSIC_UNIFORM] ?: false,
             musicVolume = p[MUSIC_VOL] ?: 0.45f,
             lastPlanId = p[LAST_PLAN] ?: ""
         )
@@ -195,6 +201,7 @@ object Store {
     suspend fun setWelcomeSeen(c: Context) = c.dataStore.edit { it[WELCOME_SEEN] = true }
     suspend fun setMusicEnabled(c: Context, v: Boolean) = c.dataStore.edit { it[MUSIC_ON] = v }
     suspend fun setMusicVolume(c: Context, v: Float) = c.dataStore.edit { it[MUSIC_VOL] = v }
+    suspend fun setUniformBed(c: Context, v: Boolean) = c.dataStore.edit { it[MUSIC_UNIFORM] = v }
 
     /** Bumps the daily reading streak; call once per app open. */
     suspend fun touchStreak(c: Context) = c.dataStore.edit { p ->

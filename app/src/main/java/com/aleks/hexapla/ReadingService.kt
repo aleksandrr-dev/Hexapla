@@ -220,6 +220,7 @@ class ReadingService : Service() {
                     try {
                         VerseMap.load(this@ReadingService)
                         MoodMap.load(this@ReadingService)
+                        Pronounce.load(this@ReadingService, translationId)
                     } catch (_: Exception) { }
                     // kjv → LibriVox sections; other translations → self-generated
                     // per-chapter narration (Webster etc.) streamed from archive.org.
@@ -651,7 +652,13 @@ class ReadingService : Service() {
         val engine = tts ?: return
         if (i >= chapterVerses.size) { onChapterFinished(); return }
         verseIdx = i
-        engine.speak(chapterVerses[i], TextToSpeech.QUEUE_FLUSH, null, "v:$i")
+        // ⚠ SPEAK the normalized form, DISPLAY the original. Without this the
+        // device voice reads Tyndale/Geneva/Wycliffe spelling literally —
+        // "yow", "lickness", and "heauen" as "hoenn".
+        engine.speak(
+            Pronounce.forSpeech(translationId, chapterVerses[i]),
+            TextToSpeech.QUEUE_FLUSH, null, "v:$i"
+        )
     }
 
     private fun speakCurrentChapter(fromVerse: Int = 0) {

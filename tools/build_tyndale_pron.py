@@ -43,6 +43,11 @@ from archaic_english import normalize            # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 A = ROOT / "app/src/main/assets"
 OUT = ROOT / "tools/tyndale_pron.py"
+# ⚠ ALSO emitted as an APP ASSET. The Python map only ever fixed PRE-RENDERED
+# narration; the app's live TTS read the raw asset text and still said "yow"
+# and "lickness" (owner, 2026-08-03). Shipping the same table means the device
+# voice and the recorded voice pronounce the text identically.
+OUT_ASSET = ROOT / "app/src/main/assets/pron_tyndale.json"
 NOTE = re.compile(r"\s*\{[^{}]*:[^{}]*\}")
 
 MIN_SIM = 0.75
@@ -306,6 +311,15 @@ def main():
             f.write(f'    {k!r}: {ROMAN[k]!r},\n')
         f.write("}\n")
     print(f"\nwrote {OUT}")
+    # The same table as an app asset, so the DEVICE TTS pronounces the text the
+    # way the rendered narration does. Without this the app read the raw asset
+    # aloud — "yow", "lickness", "do-MINE-yon" — while the rendered audio was
+    # already correct, which is exactly what the owner heard on 2026-08-03.
+    with open(OUT_ASSET, "w", encoding="utf-8") as f:
+        json.dump({"words": table, "roman": ROMAN,
+                   "phrases": {"to gedder": "together"}},
+                  f, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+    print(f"wrote {OUT_ASSET} ({OUT_ASSET.stat().st_size // 1024} KB)")
 
 
 if __name__ == "__main__":

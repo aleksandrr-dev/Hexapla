@@ -246,15 +246,29 @@ def parse_file(n, census, state, stats, strict):
         "%s: %d <!Level> comments but %d markers (+%d listed)" % (
             where, n_comments, len(marks), n_skipped)
 
+    # ⚠ THE FOOTER CUT MUST BE VISIBLE TO THE VERSE WALK, NOT JUST TO THE TAIL
+    # CHECK. It was originally local to the tail check, so the LAST verse of a
+    # file ran to len(doc) and swallowed TITUS's copyright boilerplate as
+    # scripture: «…ապաշաւեսջիր ։ This text is part of the TITUS edition …
+    # Copyright TITUS Project, Frankfurt a/M». One contaminated verse per file
+    # x 1,048 files. Same defect class as the ru_synodal escaped-OSIS and
+    # la_vulgata marker leaks, and invisible to the tail check because the
+    # boilerplate is English — the check only looks for ARMENIAN escaping the
+    # units, never for English leaking into them.
+    footer_cut = len(doc)
+    if marks:
+        for pat in ('<DIV ALIGN=RIGHT>', 'This text is part'):
+            i = doc.find(pat, marks[-1]["end"])
+            if i != -1:
+                footer_cut = min(footer_cut, i)
+        if footer_cut == len(doc):
+            census.anomaly("no-footer-found", where, "verse text may run to EOF")
+
     # Head/tail must carry no Armenian scripture — proof nothing was cut off.
     if marks:
         head = clean_text(re.sub(r'(?is)<script.*?</script>', ' ',
                                  doc[:marks[0]["start"]]), where + "(head)")
-        cut = len(doc)
-        for pat in ('<DIV ALIGN=RIGHT>', '<HR><BR>This text is part'):
-            i = doc.find(pat, marks[-1]["end"])
-            if i != -1:
-                cut = min(cut, i)
+        cut = footer_cut
         tail = clean_text(doc[cut:], where + "(tail)")
         for nm, sl in (("head", head), ("tail", tail)):
             if ARM_RE.search(sl):
@@ -281,7 +295,7 @@ def parse_file(n, census, state, stats, strict):
                 census.anomaly("non-numeric-verse-label", where, mk["value"])
             # Text runs to the next STRUCTURAL marker; Section/Paragraph
             # markers sit inside verses and are stripped with the tags.
-            end = len(doc)
+            end = footer_cut
             for nxt in marks[i + 1:]:
                 if nxt["level"] in STRUCTURAL:
                     end = nxt["start"]

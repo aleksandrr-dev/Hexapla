@@ -83,7 +83,7 @@
   "judgment",
   "judgment",
   "narrative",
-  "narrative",
+  "judgment",
   "narrative",
   "narrative",
   "wisdom",
@@ -1906,6 +1906,14 @@
    "book": 65,
    "chapter": 21,
    "mood": "hope"
+  }
+ ],
+ "trackPin": [
+  {
+   "book": 18,
+   "chapter": 142,
+   "track": "dalitz_ricercar_ps143",
+   "why": "lute ricercar on the Genevan tune for this very psalm"
   }
  ]
 }

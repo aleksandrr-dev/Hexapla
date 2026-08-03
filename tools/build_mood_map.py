@@ -152,6 +152,21 @@ BOOK_DEFAULT = {
 # where a whole book is plainly a different genre. Present so that a
 # translation carrying these slots (vul, lut, kxii, glk...) never falls
 # through to nothing.
+# ⚠⚠ APOCRYPHA ARE DELIBERATELY BOOK-LEVEL ONLY — no ranges, no anchors.
+# Not an oversight, and please do not "finish" it by adding chapter overrides.
+# The canon sits on the KJV grid and pivots through VerseMap, so a canonical
+# chapter number means the same passage in every translation. The apocrypha do
+# NOT: the arrangements genuinely differ between the KJV slots, the Vulgate,
+# the Slavonic and Luther, and versemap.json does not map them (Esther 10:4-16:24
+# and Daniel 13-14 are recorded there as unmapped additions). Measured across
+# the shipped assets, five apocrypha books have MORE chapters in some
+# translation than in the KJV slot — Church Slavonic carries 3 Maccabees at 7
+# chapters where the KJV slot is empty, and Glück has 2 chapters where the KJV
+# has 1. A chapter-level override keyed to "canonical apocrypha" would
+# therefore land on a different passage depending on what the reader has open.
+# A book-level mood is translation-agnostic and cannot be wrong that way.
+# The four single-chapter books (Manasses, Azariah, Susanna, Bel) get chapter
+# precision for free, because the book IS the chapter.
 APOCRYPHA_DEFAULT = "narrative"
 APOCRYPHA_BOOK = {
     "Wis": "wisdom",
@@ -160,7 +175,30 @@ APOCRYPHA_BOOK = {
     "LJe": "judgment",    # a polemic against idols
     "Man": "lament",      # a penitential prayer
     "PrA": "praise",      # the Song of the Three Children
+    # 2 Esdras is overwhelmingly apocalyptic — the eagle vision, the woes, the
+    # signs of the end — and reads far closer to Revelation than to the
+    # chronicle of 1 Esdras beside it.
+    "2Es": "judgment",
 }
+
+# --------------------------------------------------------- track pins
+# A specific TRACK for a specific chapter, overriding the mood's normal pool.
+# Reserved for the rare case where one recording belongs to one passage and
+# nowhere else — not a way to hand-pick music generally, which would defeat
+# the mood system.
+#
+# ★ Dalitz's ricercar is built on the GENEVAN PSALM TUNE FOR PSALM 143, so
+# under a reading of Psalm 143 the bed is literally that psalm's own melody.
+# It is also the only genuine solo-lute recording in the whole catalogue with
+# a clean grant (CC BY-SA 4.0; composer = performer = uploader). At 0:57
+# against roughly 1:33 of narration it loops once, which is acceptable for a
+# short contemplative piece and is why the pin carries `loop`.
+# ⚠ His other five ricercars (Psalms 5, 65, 96, 132, 138) exist only as SCORES.
+# If a recording of any of them ever appears, pin it here the same way.
+TRACK_PINS = [
+    ("Psa", 143, "dalitz_ricercar_ps143",
+     "lute ricercar on the Genevan tune for this very psalm"),
+]
 
 # ---------------------------------------------------------------- tier 2
 # (book, first chapter, last chapter, mood, why) — 1-BASED, inclusive.
@@ -597,6 +635,34 @@ def main():
     for a in APOCRYPHA_BOOK:
         assert IDX[a] >= 66, f"{a} is not an apocrypha slot"
 
+    # --- apocrypha coverage ---------------------------------------------
+    # The 1189 assertion below covers the CANON ONLY, so without this the
+    # apocrypha were unguarded: a future edit could drop a slot and nothing
+    # would notice. They resolve by book default alone (see the note on
+    # APOCRYPHA_BOOK), so what has to hold is simply that every slot the app
+    # can open has a mood, and that no range or anchor strays into one.
+    n_apoc = len(BOOKS) - 66
+    assert n_apoc == 17, f"expected 17 apocrypha slots, found {n_apoc}"
+    for b in range(66, len(BOOKS)):
+        mood = APOCRYPHA_BOOK.get(BOOKS[b], APOCRYPHA_DEFAULT)
+        assert mood in MOODS, f"apocrypha slot {b} has mood {mood!r}"
+    for abbr, _lo, _hi, _m, _w in RANGES:
+        assert IDX[abbr] < 66, (
+            f"range on apocrypha book {abbr}: apocrypha are book-level only, "
+            f"because chapter numbering differs by translation and versemap "
+            f"does not map them")
+    for abbr, _ch, _segs, _w in ANCHORS:
+        assert IDX[abbr] < 66, (
+            f"anchor on apocrypha book {abbr}: apocrypha are book-level only "
+            f"(same reason as ranges)")
+    # A translation may carry MORE apocrypha chapters than the KJV slot — the
+    # Slavonic has 3 Maccabees at 7 where the KJV slot is empty. Book-level
+    # resolution handles any chapter index, but assert the app can never ask
+    # for a book slot we have not defined.
+    assert len(BOOKS) == 83, (
+        f"{len(BOOKS)} book slots; the shipped assets top out at index 82, so "
+        f"bookDefault must cover 0..82")
+
     # --- tier 2: bounds + no overlap within a tier -----------------------
     resolved = {}          # (book, chapter1) -> mood
     hit_by_range = {}      # (book, chapter1) -> range index, for collision reports
@@ -693,6 +759,10 @@ def main():
              **({"turns": [{"verse": v - 1, "mood": m} for v, m in segs[1:]]}
                 if len(segs) > 1 else {})}
             for a, ch, segs, _ in ANCHORS
+        ],
+        "trackPin": [
+            {"book": IDX[a], "chapter": ch - 1, "track": t, "why": w}
+            for a, ch, t, w in TRACK_PINS
         ],
     }
     with open(OUT, "w", encoding="utf-8") as f:

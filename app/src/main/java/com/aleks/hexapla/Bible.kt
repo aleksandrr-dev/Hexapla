@@ -54,6 +54,15 @@ object BibleRepo {
         Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale("ta")),
         Translation("vd", "bibles/ar_vandyck.json", "الكتاب المقدس — Van Dyck, 1865 (AR)", Locale("ar")),
         Translation("arm", "bibles/hy_west1853.json", "Նոր Կտակարան — արեւմտահայերէն NT, 1853 (HY)", Locale("hy")),
+        // Classical Armenian OT, from the TITUS edition under Prof. Jost
+        // Gippert's 2026-07-20 grant (credit condition honoured in
+        // sources_text). OT-ONLY by owner decision: the Zohrab NT
+        // authentically lacks the Comma Johanneum, and "arm" above is the
+        // app's Armenian NT — the two are complements, which is also why
+        // defaultPrimaryId("hy") deliberately stays on "arm" (a newcomer
+        // tapping "just start reading" opens John, and must not land in an
+        // empty chapter).
+        Translation("zoh", "bibles/hy_zohrab.json", "Աստուածաշունչ — Զոհրապեան ՀՆ, 1805 (HY)", Locale("hy")),
         Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la")),
         Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale("be")),
         // Transcribed by this project from the 1876 BFBS reprint's page scans

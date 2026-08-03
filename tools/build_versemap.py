@@ -58,6 +58,7 @@ IDS = {
     "bkr": "cs_kralicka",
     "arm": "hy_west1853",
     "glk": "lv_gluck",
+    "zoh": "hy_zohrab",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -438,6 +439,24 @@ VUL_PSALTER = {
     16: [(16, 10, 11, 15, 10, 10)],
 }
 
+# Zohrab's psalter is the Vulgate's EXCEPT at four LXX psalms (58, 71, 83,
+# 119). Two of those break the title-offset engine because zoh has FEWER
+# verses than the KJV, and both were read in Armenian before being curated:
+#   KJV 72  — zoh 71:18/19 ARE KJV 72:18/19 («Օրհնեալ տէր աստուած իսրաէլի…»,
+#             «եւ օրհնեալ է անուն սուրբ փառաց նորա յաւիտեան»), and KJV 72:20
+#             ("The prayers of David the son of Jesse are ended") is simply
+#             ABSENT — zoh 19 closes with a stichometry colophon instead.
+#             So 1-19 map straight across and 20 stays unmapped.
+#   KJV 120 — a genuine 3-into-2 merge: zoh 119:5 carries KJV 5 + 6a and
+#             zoh 119:6 carries KJV 6b + 7.
+# ⚠ The runs must be COMPLETE for an overridden psalm: an override replaces
+# straight() entirely, and because the psalm NUMBERS differ (KJV 72 = LXX 71)
+# anything left unmapped would fall back to identity and land on the WRONG
+# psalm — not merely lose alignment.
+ZOH_PSALTER = dict(VUL_PSALTER)
+ZOH_PSALTER[72] = [(72, 1, 19, 71, 1, 19)]
+ZOH_PSALTER[120] = [(120, 1, 4, 119, 1, 4), (120, 5, 7, 119, 5, 6)]
+
 
 def load(n):
     return json.load(open(os.path.join(BIBLES, n + ".json"), encoding="utf-8"))
@@ -537,6 +556,7 @@ def lxx_psalter_runs(trans, kjv, overrides=None):
 def main():
     kjv = load("en_kjv")
     out = {}
+    incomplete = {}
     for tid, fname in IDS.items():
         trans = load(fname)
         books = {}
@@ -550,7 +570,7 @@ def main():
             kcounts = counts(kjv, bi)
             if not any(tcounts):
                 continue
-            if tid in ("syn", "csl", "vul") and bi == 26:
+            if tid in ("syn", "csl", "vul", "zoh") and bi == 26:
                 continue  # LXX Daniel handled below
             if bi in curated:
                 runs = list(curated[bi])
@@ -565,7 +585,9 @@ def main():
                 # LXX/Vulgate psalter arrangement (Ps 9 = MT 9+10 ...)
                 try:
                     books[bi] = lxx_psalter_runs(
-                        trans, kjv, VUL_PSALTER if tid == "vul" else None)
+                        trans, kjv,
+                        ZOH_PSALTER if tid == "zoh" else
+                        (VUL_PSALTER if tid == "vul" else None))
                 except AssertionError as e:
                     if tid != "wyc":
                         raise
@@ -589,14 +611,40 @@ def main():
             # other shape must be curated — fail loudly, except for the
             # rough Middle-English Wycliffe where identity is accepted.
             deficits = [ci + 1 for ci in range(nch) if tcounts[ci] < kcounts[ci]]
-            if deficits and tid != "wyc":
+            if deficits and tid not in ("wyc", "zoh"):
                 raise SystemExit(f"{tid} book {bi}: unhandled shape (short chapters {deficits})")
             if deficits:
-                print(f"  note: wyc book {bi} left identity (chapters {deficits} differ)")
+                # ⚠ zoh (Zohrab Armenian OT) is DELIBERATELY INCOMPLETE as of
+                # 2026-08-03. Its seam curation is a dedicated pass: 32 books /
+                # 87 differing chapters, the scale Karoli (176 runs) and
+                # Gdanska each got as their own session. Psalms and Daniel —
+                # the two whose misalignment would be glaring — ARE mapped and
+                # text-verified; the rest degrade to identity, exactly as
+                # Wycliffe's 16 rough books do, rather than shipping runs that
+                # were generated but never read.
+                incomplete.setdefault(tid, []).append(bi)
+                print(f"  note: {tid} book {bi} left identity (chapters {deficits} differ)")
         # LXX Daniel: ch13-14 (Susanna, Bel) are additions with no KJV
         # counterpart; ch3 carries the Song of the Three (3:24-90) so
         # KJV 3:24-30 sit at 3:91-97 and KJV 4:1-3 at 3:98-100, with
         # ch4 holding KJV 4:4-37 as 4:1-34.
+        if tid == "zoh":
+            # Same SHAPE as the Vulgate's Daniel but different OFFSETS: the
+            # Song of the Three runs 3:24-88 here (65 verses) against the
+            # Vulgate's 67, so everything after it sits two verses earlier.
+            # Every seam below was read in Armenian against the KJV:
+            #   zoh 3:89 «Եւ նաբուքոդոնոսոր իբրեւ լուաւ … զարմացաւ»  = KJV 3:24
+            #   zoh 3:95 «Յայնժամ թագաւորն առաւել շքեղացոյց …»        = KJV 3:30
+            #   zoh 3:96 «Նաբուքոդոնոսոր արքայ, առ ամենայն ազգս …»    = KJV 4:1
+            #   zoh 4:1  «Ես նաբուքոդոնոսոր ուրախ էի ի տան իմում»     = KJV 4:4
+            # Susanna and Bel are NOT here: build_zohrab.py puts them in the
+            # apocrypha slots 80/81, so zoh's Daniel is 12 chapters.
+            tdan, kdan = counts(trans, 26), counts(kjv, 26)
+            assert len(tdan) == 12, ("zoh Daniel should be 12 chapters", len(tdan))
+            assert tdan[2] == 98 and tdan[3] == 34, ("zoh Dan 3/4", tdan[2:4])
+            books[26] = [(3, 24, 30, 3, 89, 95),
+                         (4, 1, 3, 3, 96, 98),
+                         (4, 4, 37, 4, 1, 34)]
         if tid in ("syn", "csl", "vul"):
             tdan, kdan = counts(trans, 26), counts(kjv, 26)
             for ci in range(12):
@@ -609,6 +657,12 @@ def main():
                          (4, 1, 3, 3, 98, 100),
                          (4, 4, 37, 4, 1, 34)]
         out[tid] = {str(b): [list(r) for r in rs] for b, rs in sorted(books.items()) if rs}
+
+    if incomplete:
+        print("")
+        print("  INCOMPLETE versemaps (identity fallback, curation pending):")
+        for tid, bs in incomplete.items():
+            print(f"      {tid}: {len(bs)} books -> {bs}")
 
     # ---- validation ----
     for tid, fname in IDS.items():

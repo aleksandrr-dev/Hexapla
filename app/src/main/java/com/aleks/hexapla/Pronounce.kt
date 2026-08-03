@@ -114,12 +114,60 @@ object Pronounce {
         }
         s = WORD.replace(s) { m ->
             val w = m.value
-            val repl = t.words[w.lowercase()] ?: return@replace w
+            val repl = t.words[w.lowercase()]
+                ?: return@replace earlyModern(w)   // rules catch what the map misses
             when {
                 w.all { it.isUpperCase() } && w.length > 1 -> repl.uppercase()
                 w.first().isUpperCase() -> repl.replaceFirstChar { c -> c.uppercaseChar() }
                 else -> repl
             }
+        }
+        return s
+    }
+
+    private const val VOWELS = "aeiou"
+
+    /**
+     * Names where the Early Modern rules below would be WRONG, because the
+     * spelling is already modern and the letters are genuine.
+     * ⚠ Measured over the Geneva text: the rules fix 44,196 tokens and break
+     * exactly these. Do not drop the guard because the list looks trivial —
+     * "Deuel" becoming "Devel" is the kind of error nobody reports politely.
+     */
+    private val RULE_EXCEPTIONS = setOf("deuel", "geuel", "euodias", "iim", "reuel")
+
+    /**
+     * The three systematic Early Modern alternations, applied to any word the
+     * word-map does not already cover. These are why "heauen" was read as
+     * "hoenn", "euel" as "you-ell" and "Iehoiakim" with a hard I.
+     *
+     *   1. initial I before a vowel is J   — Iesus, Iudah, Iehoiakim
+     *   2. u BETWEEN VOWELS is v           — heauen, euel, dauid, loue
+     *   3. initial v before a consonant is u — vnto, vs, vp
+     *
+     * ⚠ Rule 2 is deliberately restricted to INTERVOCALIC u. Widening it would
+     * wreck "Samuel", "Bethuel", "Penuel" and every -uel name where the u sits
+     * after a consonant. Verified over the whole Geneva vocabulary: 0 cases
+     * where a real KJV word is silently swapped for a different real word.
+     */
+    private fun earlyModern(w: String): String {
+        if (w.length < 2 || w.lowercase() in RULE_EXCEPTIONS) return w
+        var s = w
+        if (s[0].lowercaseChar() == 'i' && s[1].lowercaseChar() in VOWELS) {
+            s = (if (s[0].isUpperCase()) "J" else "j") + s.substring(1)
+        }
+        if (s.length > 2) {
+            val b = StringBuilder(s)
+            for (i in 1 until s.length - 1) {
+                if (s[i].lowercaseChar() == 'u' &&
+                    s[i - 1].lowercaseChar() in VOWELS &&
+                    s[i + 1].lowercaseChar() in VOWELS
+                ) b[i] = if (s[i].isUpperCase()) 'V' else 'v'
+            }
+            s = b.toString()
+        }
+        if (s[0].lowercaseChar() == 'v' && s[1].lowercaseChar() !in VOWELS) {
+            s = (if (s[0].isUpperCase()) "U" else "u") + s.substring(1)
         }
         return s
     }

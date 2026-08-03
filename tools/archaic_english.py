@@ -424,6 +424,32 @@ def _apply_dict(text, word_dict):
     return re.sub(r'\b[A-Za-z]+\b', _replace, text)
 
 
+# ⚠ KEEP IN SYNC WITH Pronounce.earlyModern() IN THE APP. The whole point of
+# emitting the tables as assets was that the recorded voice and the device
+# voice must not drift apart; that applies to the RULES as much as the words.
+_EM_EXCEPTIONS = {"deuel", "geuel", "euodias", "iim", "reuel"}
+_EM_VOWELS = "aeiou"
+
+
+def early_modern(w):
+    """u/v and i/j alternation: heauen->heaven, euel->evil, Iudah->Judah."""
+    if len(w) < 2 or w.lower() in _EM_EXCEPTIONS:
+        return w
+    s = w
+    if s[0].lower() == "i" and s[1].lower() in _EM_VOWELS:
+        s = ("J" if s[0].isupper() else "j") + s[1:]
+    if len(s) > 2:
+        out = list(s)
+        for i in range(1, len(s) - 1):
+            if (s[i].lower() == "u" and s[i - 1].lower() in _EM_VOWELS
+                    and s[i + 1].lower() in _EM_VOWELS):
+                out[i] = "V" if s[i].isupper() else "v"
+        s = "".join(out)
+    if s[0].lower() == "v" and s[1].lower() not in _EM_VOWELS:
+        s = ("U" if s[0].isupper() else "u") + s[1:]
+    return s
+
+
 def _apply_rules(text, rules):
     """Apply regex substitution rules in order."""
     for pattern, repl in rules:

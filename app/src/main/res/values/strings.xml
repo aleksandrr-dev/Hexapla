@@ -183,7 +183,7 @@
     <string name="audio_stream_note" tools:ignore="MissingTranslation">Play audio as it loads instead of downloading it. Uses less storage but needs a connection each time; chapters you already downloaded still play offline.</string>
     <string name="audio_downloading">Downloading audio… %1$d%%</string>
     <string name="audio_narrated">Narrated audio</string>
-    <string name="audio_storage">Downloaded audio: %1$d MB</string>
+    <string name="audio_storage">Downloaded narration: %1$d MB</string>
     <string name="audio_clear">Clear</string>
     <string name="strongs_title">Strong\'s numbers (KJV)</string>
     <string name="strongs_note">Shows Strong\'s concordance numbers in the KJV text. Tap a number to see the original Hebrew or Greek word and its definition.</string>
@@ -210,7 +210,7 @@
     <string name="music_volume">Music volume</string>
     <string name="music_pack">Download music pack</string>
     <string name="music_pack_note">%1$d tracks, about %2$d MB. More variety than the music built into the app, which keeps working offline either way.</string>
-    <string name="music_pack_have">Music pack downloaded (%1$d of %2$d tracks)</string>
+    <string name="music_pack_have">Music pack downloaded: %1$d tracks, %2$d MB</string>
     <string name="music_pack_delete">Delete downloaded music</string>
     <string name="music_pack_progress">Downloading %1$d of %2$d…</string>
     <string name="music_uniform">Same music throughout</string>

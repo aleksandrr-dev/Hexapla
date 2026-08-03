@@ -211,8 +211,20 @@ fun SettingsScreen(settings: AppSettings) {
                         style = MaterialTheme.typography.bodySmall
                     )
                 } else if (packDone >= packTotal) {
+                    // ⚠ Music lives in filesDir/music, NOT the audio cache, so
+                    // the narration figure above never included it. Report its
+                    // size here rather than folding the two together: they are
+                    // separately downloadable and separately deletable, and a
+                    // single combined number would hide which one is large.
+                    var packBytes by remember { mutableStateOf(0L) }
+                    LaunchedEffect(packDone) {
+                        packBytes = withContext(Dispatchers.IO) {
+                            MusicRepo.downloadedBytes(context)
+                        }
+                    }
                     Text(
-                        stringResource(R.string.music_pack_have, packDone, packTotal),
+                        stringResource(R.string.music_pack_have, packDone,
+                                       (packBytes / 1048576L).toInt()),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

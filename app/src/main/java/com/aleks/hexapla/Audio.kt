@@ -139,6 +139,15 @@ object AudioRepo {
         onProgress: (Int) -> Unit = {}
     ): File? = downloadTo(url, generatedFile(context, url), onProgress)
 
+    /**
+     * Music-pack download. Same transport as narration — including the 3x
+     * retry with backoff that fixed the "reverts to TTS after some chapters"
+     * bug — so the music pack inherits that resilience instead of
+     * reimplementing it.
+     */
+    suspend fun downloadMusic(url: String, dest: File): Boolean =
+        downloadTo(url, dest) { } != null
+
     /** Download [url] to [dest] if not already cached; local file or null. */
     private suspend fun downloadTo(
         url: String,

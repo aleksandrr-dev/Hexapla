@@ -208,6 +208,11 @@
     <string name="share_app_link">Send link</string>
     <string name="music_title">Background music while listening</string>
     <string name="music_volume">Music volume</string>
+    <string name="music_pack">Download music pack</string>
+    <string name="music_pack_note">%1$d tracks, about %2$d MB. More variety than the music built into the app, which keeps working offline either way.</string>
+    <string name="music_pack_have">Music pack downloaded (%1$d of %2$d tracks)</string>
+    <string name="music_pack_delete">Delete downloaded music</string>
+    <string name="music_pack_progress">Downloading %1$d of %2$d…</string>
     <string name="music_uniform">Same music throughout</string>
     <string name="music_uniform_note">Off by default: the music changes to suit what is being read, and falls silent at a few passages where no music is better.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->

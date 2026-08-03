@@ -26,10 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -201,6 +197,43 @@ fun SettingsScreen(settings: AppSettings) {
             // and this restores the single unchanging bed for anyone who
             // preferred it. Named for what the listener hears, not for the
             // mechanism behind it.
+            // Download pack: opt-in, size stated up front. The bundled four
+            // keep working with or without it, so this is variety, not a
+            // dependency — worth saying plainly in the note.
+            var packDone by remember { mutableStateOf(MusicRepo.downloadedCount(context)) }
+            var packBusy by remember { mutableStateOf(0 to 0) }
+            LaunchedEffect(Unit) { MusicRepo.load(context) }
+            val packTotal = MusicRepo.trackCount()
+            if (packTotal > 0) {
+                if (packBusy.second > 0) {
+                    Text(
+                        stringResource(R.string.music_pack_progress, packBusy.first, packBusy.second),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                } else if (packDone >= packTotal) {
+                    Text(
+                        stringResource(R.string.music_pack_have, packDone, packTotal),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    TextButton(onClick = {
+                        MusicRepo.deleteAll(context); packDone = 0
+                    }) { Text(stringResource(R.string.music_pack_delete)) }
+                } else {
+                    TextButton(onClick = {
+                        scope.launch {
+                            MusicRepo.downloadAll(context) { d, tot -> packBusy = d to tot }
+                            packBusy = 0 to 0
+                            packDone = MusicRepo.downloadedCount(context)
+                        }
+                    }) { Text(stringResource(R.string.music_pack)) }
+                    Text(
+                        stringResource(R.string.music_pack_note, packTotal, 213),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
             SwitchRow(stringResource(R.string.music_uniform), settings.uniformBed) {
                 scope.launch { Store.setUniformBed(context, it) }
             }

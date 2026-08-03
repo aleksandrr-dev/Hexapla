@@ -106,15 +106,33 @@ TRACKS = [
 PINNED_ONLY = {"Dragon and Toast"}
 
 CREDIT = {
-    "km": 'Kevin MacLeod (incompetech.com), CC BY 4.0',
+    "km": "Kevin MacLeod (incompetech.com), CC BY 4.0",
+    "sb": "Scott Buckley (scottbuckley.com.au), CC BY 4.0",
+    "usmb": 'Performed by "The President\'s Own" United States Marine Band.',
 }
+
+# Tracks resolved by tools/build_pron... no — by the curation pass recorded in
+# Hexapla-releases/research/music_shortlist.md (ADDENDUM). Each row carries a
+# RESOLVED url (Commons/Buckley) or an explicit catalogue filename (MacLeod).
+# ⚠ Commons URLs must NOT be rebuilt from the filename: the /x/xy/ shard is an
+# MD5 of the underscored name, and three of these filenames mix a typographic
+# apostrophe (U+2019) with an ASCII one inside the same title.
+EXTRA = json.loads((ROOT / "tools/music_tracks.json").read_text(encoding="utf-8"))
+
+# ⚠ Buckley's server runs mod_security and answers 406 to a default
+# urllib/curl user agent. Not a block on us — it refuses the UA, not the
+# request — but a fetch without this looks like a dead link.
+UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Hexapla-music-pack/1.0 "
+      "(+https://aleksandrr-dev.github.io/Hexapla/)")
 
 
 def slug(title):
     return re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
 
 
-def source_url(title, src):
+def source_url(title, src, explicit_file=None):
+    if src == "km" and explicit_file:
+        return KM_URL.format(urllib.parse.quote(explicit_file))
     if src == "km":
         rec = km_index().get(title)
         if not rec:
@@ -140,15 +158,19 @@ def fetch():
     SRC_DIR.mkdir(parents=True, exist_ok=True)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     total_in = total_out = 0
-    for mood, title, src in TRACKS:
-        raw = SRC_DIR / f"{slug(title)}.src.mp3"
+    rows = [(m, ti, s, None, None) for m, ti, s in TRACKS] + [
+        (r["mood"], r["title"], r["src"], r.get("url"), r.get("file"))
+        for r in EXTRA]
+    for mood, title, src, explicit_url, explicit_file in rows:
+        raw = SRC_DIR / f"{slug(title)}.src"
         dest_dir = OUT_DIR / mood
         dest_dir.mkdir(parents=True, exist_ok=True)
         dest = dest_dir / f"{slug(title)}.mp3"
         if not raw.exists():
-            url = source_url(title, src)
+            url = explicit_url or source_url(title, src, explicit_file)
             try:
-                with urllib.request.urlopen(url, timeout=120) as r, open(raw, "wb") as f:
+                req = urllib.request.Request(url, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=180) as r, open(raw, "wb") as f:
                     f.write(r.read())
             except Exception as e:
                 print(f"  FAILED {title}: {e}")
@@ -167,7 +189,7 @@ def fetch():
         # Integrity: the encoded file must match the catalogue's own duration.
         # Catches a wrong-file fetch, a truncated download and a failed encode
         # in one check — none of which a size test would notice.
-        exp = expected_ms(title, src)
+        exp = expected_ms(title, src) if not explicit_url else None
         got = duration_ms(dest)
         if exp and abs(exp - got) > 2000:
             print(f"  ⚠ DURATION MISMATCH {title}: catalogue {exp/1000:.0f}s, "
@@ -196,7 +218,9 @@ def build_index():
     base = f"https://archive.org/download/{ARCHIVE_ITEM}"
     out = {"base": base, "moods": {}, "credits": sorted(set(CREDIT.values()))}
     missing = []
-    for mood, title, src in TRACKS:
+    rows = [(m, ti, s) for m, ti, s in TRACKS] + [
+        (r["mood"], r["title"], r["src"]) for r in EXTRA]
+    for mood, title, src in rows:
         f = OUT_DIR / mood / f"{slug(title)}.mp3"
         if not f.exists():
             missing.append(f"{mood}/{slug(title)}")
@@ -217,7 +241,7 @@ def build_index():
               f"{missing[:5]}")
     # ⚠ A mood with no downloadable track is NOT an error — the bundled four
     # cover every mood offline. But it should be visible, not silent.
-    from_plan = {m for m, _, _ in TRACKS}
+    from_plan = {m for m, _, _ in rows}
     for m in sorted(from_plan - set(out["moods"])):
         print(f"⚠ mood {m!r} has no track in the pack; it will use a bundled one")
     INDEX.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n",

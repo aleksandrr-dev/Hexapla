@@ -13,6 +13,24 @@
     "t": "Infinite Perspective",
     "ms": 345077,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "awe/beethoven_symphony_no_1_ii_andante_cantabile_con_moto.mp3",
+    "t": "Beethoven, Symphony No. 1 — II. Andante cantabile con moto",
+    "ms": 535153,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "awe/mozart_gran_partita_iii_adagio.mp3",
+    "t": "Mozart, Gran Partita — III. Adagio",
+    "ms": 332521,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "awe/passage_of_time.mp3",
+    "t": "Passage of Time",
+    "ms": 271380,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
    }
   ],
   "narrative": [
@@ -27,6 +45,90 @@
     "t": "Angevin",
     "ms": 280555,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/respighi_ancient_airs_suite_1_villanella.mp3",
+    "t": "Respighi, Ancient Airs Suite 1 — Villanella",
+    "ms": 292411,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "narrative/grieg_holberg_suite_ii_sarabande.mp3",
+    "t": "Grieg, Holberg Suite — II. Sarabande",
+    "ms": 252287,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "narrative/elgar_the_crown_of_india_4_intermezzo.mp3",
+    "t": "Elgar, The Crown of India — 4. Intermezzo",
+    "ms": 209057,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "narrative/respighi_passo_mezzo_e_mascherada.mp3",
+    "t": "Respighi, Passo mezzo e mascherada",
+    "ms": 241217,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "narrative/meditation_impromptu_02.mp3",
+    "t": "Meditation Impromptu 02",
+    "ms": 249077,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/meditation_impromptu_03.mp3",
+    "t": "Meditation Impromptu 03",
+    "ms": 255216,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/virtutes_instrumenti.mp3",
+    "t": "Virtutes Instrumenti",
+    "ms": 262060,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/moonstone.mp3",
+    "t": "Moonstone",
+    "ms": 255137,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/touching_moments_five_circle.mp3",
+    "t": "Touching Moments Five - Circle",
+    "ms": 203598,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/danse_morialta.mp3",
+    "t": "Danse Morialta",
+    "ms": 236329,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/facile.mp3",
+    "t": "Facile",
+    "ms": 212062,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/clear_air.mp3",
+    "t": "Clear Air",
+    "ms": 183797,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/parting_of_the_ways_part_1.mp3",
+    "t": "Parting of the Ways - Part 1",
+    "ms": 563722,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/wisps_of_whorls.mp3",
+    "t": "Wisps of Whorls",
+    "ms": 856058,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
    }
   ],
   "lament": [
@@ -40,6 +142,54 @@
     "f": "lament/plaint.mp3",
     "t": "Plaint",
     "ms": 196545,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "lament/bruch_kol_nidrei_op_47.mp3",
+    "t": "Bruch, Kol Nidrei, Op. 47",
+    "ms": 625053,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "lament/granados_intermezzo_from_goyescas.mp3",
+    "t": "Granados, Intermezzo from Goyescas",
+    "ms": 327079,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "lament/the_long_dark.mp3",
+    "t": "The Long Dark",
+    "ms": 439792,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "lament/cryptic_sorrow.mp3",
+    "t": "Cryptic Sorrow",
+    "ms": 480052,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "lament/music_for_funeral_home_part_11.mp3",
+    "t": "Music for Funeral Home - Part 11",
+    "ms": 453328,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "lament/wounded.mp3",
+    "t": "Wounded",
+    "ms": 201000,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "lament/blue_feather.mp3",
+    "t": "Blue Feather",
+    "ms": 278073,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "lament/on_the_passing_of_time.mp3",
+    "t": "On the Passing of Time",
+    "ms": 225044,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
    }
   ],
@@ -61,6 +211,60 @@
     "t": "Long Note Three",
     "ms": 192052,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/respighi_pines_of_rome_pines_near_a_catacomb.mp3",
+    "t": "Respighi, Pines of Rome — Pines near a Catacomb",
+    "ms": 379680,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "judgment/b_hme_sextet_in_e_minor_iii_andante_cantabile.mp3",
+    "t": "Böhme, Sextet in E♭ minor — III. Andante cantabile",
+    "ms": 249953,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "judgment/shadows_and_dust.mp3",
+    "t": "Shadows and Dust",
+    "ms": 408380,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "judgment/long_note_one_lowercase_n.mp3",
+    "t": "Long note One ⚠ lowercase n",
+    "ms": 440058,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/lost_frontier.mp3",
+    "t": "Lost Frontier",
+    "ms": 264933,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/metaphysik.mp3",
+    "t": "Metaphysik",
+    "ms": 277942,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/spacial_harvest.mp3",
+    "t": "Spacial Harvest",
+    "ms": 654053,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/long_note_two.mp3",
+    "t": "Long Note Two",
+    "ms": 462053,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/satiate_only_strings.mp3",
+    "t": "Satiate - only strings",
+    "ms": 192052,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
    }
   ],
   "praise": [
@@ -75,6 +279,30 @@
     "t": "Procession of the King",
     "ms": 184058,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "praise/holst_first_suite_in_e_chaconne.mp3",
+    "t": "Holst, First Suite in E♭ — Chaconne",
+    "ms": 290086,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "praise/where_stars_fall.mp3",
+    "t": "Where Stars Fall",
+    "ms": 270677,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "praise/clarion.mp3",
+    "t": "Clarion",
+    "ms": 195765,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "praise/victor_lux.mp3",
+    "t": "Victor Lux",
+    "ms": 202309,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
    }
   ],
   "wisdom": [
@@ -82,6 +310,60 @@
     "f": "wisdom/enchanted_journey.mp3",
     "t": "Enchanted Journey",
     "ms": 269557,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/bach_violin_concerto_no_1_in_a_minor_ii_andante.mp3",
+    "t": "Bach, Violin Concerto No. 1 in A minor — II. Andante",
+    "ms": 392256,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "wisdom/grieg_holberg_suite_iv_air.mp3",
+    "t": "Grieg, Holberg Suite — IV. Air",
+    "ms": 316882,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "wisdom/cirrus.mp3",
+    "t": "Cirrus",
+    "ms": 418380,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/at_the_end_of_all_things.mp3",
+    "t": "At The End Of All Things",
+    "ms": 316988,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/mesmerize.mp3",
+    "t": "Mesmerize",
+    "ms": 424071,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/promises_to_keep.mp3",
+    "t": "Promises to Keep",
+    "ms": 304065,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/immersed.mp3",
+    "t": "Immersed",
+    "ms": 248973,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/sovereign_quarter.mp3",
+    "t": "Sovereign Quarter",
+    "ms": 291395,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "wisdom/smoother_move.mp3",
+    "t": "Smoother Move",
+    "ms": 278073,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
    }
   ],
@@ -91,6 +373,66 @@
     "t": "Frozen Star",
     "ms": 221304,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "hope/mozart_gran_partita_v_romance_adagio.mp3",
+    "t": "Mozart, Gran Partita — V. Romance. Adagio",
+    "ms": 428234,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "hope/respighi_pines_of_rome_the_pines_of_the_janiculum.mp3",
+    "t": "Respighi, Pines of Rome — The Pines of the Janiculum",
+    "ms": 411672,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "hope/this_too_shall_pass.mp3",
+    "t": "This Too Shall Pass",
+    "ms": 447058,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "hope/unraveling.mp3",
+    "t": "Unraveling",
+    "ms": 444023,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "hope/amberlight.mp3",
+    "t": "Amberlight",
+    "ms": 282905,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "hope/wildflowers.mp3",
+    "t": "Wildflowers",
+    "ms": 322169,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "hope/numinous_shine.mp3",
+    "t": "Numinous Shine",
+    "ms": 258194,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "hope/aretes.mp3",
+    "t": "Aretes",
+    "ms": 276432,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "hope/new_direction.mp3",
+    "t": "New Direction",
+    "ms": 679549,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "hope/simple_duet.mp3",
+    "t": "Simple Duet",
+    "ms": 199344,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
    }
   ],
   "passion": [
@@ -99,6 +441,12 @@
     "t": "Lost Time",
     "ms": 227395,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "passion/penumbra.mp3",
+    "t": "Penumbra",
+    "ms": 449757,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
    }
   ],
   "tender": [
@@ -107,11 +455,49 @@
     "t": "Canon in D for Two Renaissance Harps",
     "ms": 339617,
     "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "tender/debussy_danse_sacr_e.mp3",
+    "t": "Debussy, Danse sacrée",
+    "ms": 290168,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "tender/debussy_danse_profane.mp3",
+    "t": "Debussy, Danse profane",
+    "ms": 340480,
+    "by": "Performed by \"The President's Own\" United States Marine Band."
+   },
+   {
+    "f": "tender/eidolon.mp3",
+    "t": "Eidolon",
+    "ms": 190534,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "tender/first_snow.mp3",
+    "t": "First Snow",
+    "ms": 213358,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "tender/invocation.mp3",
+    "t": "Invocation",
+    "ms": 214212,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
+   },
+   {
+    "f": "tender/reawakening.mp3",
+    "t": "Reawakening",
+    "ms": 254702,
+    "by": "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
    }
   ]
  },
  "credits": [
-  "Kevin MacLeod (incompetech.com), CC BY 4.0"
+  "Kevin MacLeod (incompetech.com), CC BY 4.0",
+  "Performed by \"The President's Own\" United States Marine Band.",
+  "Scott Buckley (scottbuckley.com.au), CC BY 4.0"
  ],
  "pinned": {
   "dragon_and_toast": {

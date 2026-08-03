@@ -1,0 +1,386 @@
+[
+ {
+  "mood": "awe",
+  "title": "Beethoven, Symphony No. 1 — II. Andante cantabile con moto",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Symphony_No._1_in_C_-_II._Andante_cantabile_con_moto_-_Chamber_Orchestra_-_United_States_Marine_Band.opus"
+ },
+ {
+  "mood": "awe",
+  "title": "Mozart, Gran Partita — III. Adagio",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/6/60/Mozart%27s_Serenade_No._10_%22Grand_Partita%22_-_III._Adagio._Andante_-_United_States_Marine_Band.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Respighi, Ancient Airs Suite 1 — Villanella",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/8/85/Villanella.ogg"
+ },
+ {
+  "mood": "narrative",
+  "title": "Grieg, Holberg Suite — II. Sarabande",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/2/20/Grieg%27s_Suite_for_Strings%2C_Op._40%2C_%22From_Holberg%E2%80%99s_Time%22_-_II._Sarabande_-_Chamber_Orchestra_-_United_States_Marine_Band.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Elgar, The Crown of India — 4. Intermezzo",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/42/The_Crown_of_India_Suite%2C_4._Intermezzo_-_U.S._Marine_Band.ogg"
+ },
+ {
+  "mood": "narrative",
+  "title": "Respighi, Passo mezzo e mascherada",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Passo_mezzo_e_mascherada.ogg"
+ },
+ {
+  "mood": "lament",
+  "title": "Bruch, Kol Nidrei, Op. 47",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Kol_Nidrei_-_Chamber_Orchestra_-_United_States_Marine_Band.opus"
+ },
+ {
+  "mood": "lament",
+  "title": "Granados, Intermezzo from Goyescas",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/Intermezzo_from_Goyescas_-_U.S._Marine_Band.ogg"
+ },
+ {
+  "mood": "judgment",
+  "title": "Respighi, Pines of Rome — Pines near a Catacomb",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/3/35/Respighi_Pines_near_a_catacomb.ogg"
+ },
+ {
+  "mood": "judgment",
+  "title": "Böhme, Sextet in E♭ minor — III. Andante cantabile",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Sextet_in_E-flat_minor_-_III._Andante_cantabile_-_Brass_Sextet_-_United_States_Marine_Band.opus"
+ },
+ {
+  "mood": "praise",
+  "title": "Holst, First Suite in E♭ — Chaconne",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Holst_First_Suite_Chaconne.ogg"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Bach, Violin Concerto No. 1 in A minor — II. Andante",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Violin_Concerto_No.1_in_A_minor_-_II._Andante_-_Chamber_Orchestra_-_United_States_Marine_Band.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Grieg, Holberg Suite — IV. Air",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Grieg%27s_Suite_for_Strings%2C_Op._40%2C_%22From_Holberg%E2%80%99s_Time%22_-_IV._Air_-_Chamber_Orchestra_-_United_States_Marine_Band.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Mozart, Gran Partita — V. Romance. Adagio",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Mozart%27s_Serenade_No._10_%22Grand_Partita%22_-_V._Romance._Adagio_-_United_States_Marine_Band.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Respighi, Pines of Rome — The Pines of the Janiculum",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/42/Respighi_Pines_of_the_Janiculum.ogg"
+ },
+ {
+  "mood": "tender",
+  "title": "Debussy, Danse sacrée",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Danse_Sacr%C3%A9e.ogg"
+ },
+ {
+  "mood": "tender",
+  "title": "Debussy, Danse profane",
+  "src": "usmb",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Danse_Profane.ogg"
+ },
+ {
+  "mood": "awe",
+  "title": "Passage of Time",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2022/01/PassageOfTime.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Shadows and Dust",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2023/11/ShadowsAndDust.mp3"
+ },
+ {
+  "mood": "praise",
+  "title": "Where Stars Fall",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2021/02/sb_wherestarsfall.mp3"
+ },
+ {
+  "mood": "praise",
+  "title": "Clarion",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2020/09/sb_clarion.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Cirrus",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2023/03/Cirrus.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "This Too Shall Pass",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2021/01/sb_thistooshallpass.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Unraveling",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2026/05/Unraveling.mp3"
+ },
+ {
+  "mood": "passion",
+  "title": "Penumbra",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2025/07/Penumbra.mp3"
+ },
+ {
+  "mood": "tender",
+  "title": "Eidolon",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2016/01/sb_eidolon.mp3"
+ },
+ {
+  "mood": "tender",
+  "title": "First Snow",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2022/12/FirstSnow.mp3"
+ },
+ {
+  "mood": "praise",
+  "title": "Victor Lux",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2023/05/VictorLux.mp3"
+ },
+ {
+  "mood": "lament",
+  "title": "The Long Dark",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2023/01/TheLongDark.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "At The End Of All Things",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2024/06/AtTheEndOfAllThings.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Amberlight",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2025/03/Amberlight.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Wildflowers",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2025/12/Wildflowers.mp3"
+ },
+ {
+  "mood": "tender",
+  "title": "Invocation",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/wp-content/audio/sb_invocation.mp3"
+ },
+ {
+  "mood": "tender",
+  "title": "Reawakening",
+  "src": "sb",
+  "url": "https://www.scottbuckley.com.au/library/wp-content/uploads/2023/05/Reawakening.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Meditation Impromptu 02",
+  "src": "km",
+  "file": "Meditation Impromptu 02.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Meditation Impromptu 03",
+  "src": "km",
+  "file": "Meditation Impromptu 03.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Virtutes Instrumenti",
+  "src": "km",
+  "file": "Virtutes Instrumenti.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Moonstone",
+  "src": "km",
+  "file": "Moonstone.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Touching Moments Five - Circle",
+  "src": "km",
+  "file": "Touching Moments Five - Circle.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Danse Morialta",
+  "src": "km",
+  "file": "Danse Morialta.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Facile",
+  "src": "km",
+  "file": "Facile.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Clear Air",
+  "src": "km",
+  "file": "Clear Air.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Parting of the Ways - Part 1",
+  "src": "km",
+  "file": "Parting of the Ways - Part 1.mp3"
+ },
+ {
+  "mood": "narrative",
+  "title": "Wisps of Whorls",
+  "src": "km",
+  "file": "Wisps of Whorls.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Long note One ⚠ lowercase n",
+  "src": "km",
+  "file": "Long Note One.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Lost Frontier",
+  "src": "km",
+  "file": "Lost Frontier.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Metaphysik",
+  "src": "km",
+  "file": "Metaphysik.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Spacial Harvest",
+  "src": "km",
+  "file": "Spacial Harvest.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Long Note Two",
+  "src": "km",
+  "file": "Long Note Two.mp3"
+ },
+ {
+  "mood": "judgment",
+  "title": "Satiate - only strings",
+  "src": "km",
+  "file": "Satiate Strings.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Mesmerize",
+  "src": "km",
+  "file": "Mesmerize.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Promises to Keep",
+  "src": "km",
+  "file": "Promises to Keep.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Immersed",
+  "src": "km",
+  "file": "Immersed.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Sovereign Quarter",
+  "src": "km",
+  "file": "Sovereign Quarter.mp3"
+ },
+ {
+  "mood": "wisdom",
+  "title": "Smoother Move",
+  "src": "km",
+  "file": "Smoother Move.mp3"
+ },
+ {
+  "mood": "lament",
+  "title": "Cryptic Sorrow",
+  "src": "km",
+  "file": "Cryptic Sorrow.mp3"
+ },
+ {
+  "mood": "lament",
+  "title": "Music for Funeral Home - Part 11",
+  "src": "km",
+  "file": "Music for Funeral Home - Part 11.mp3"
+ },
+ {
+  "mood": "lament",
+  "title": "Wounded",
+  "src": "km",
+  "file": "Wounded.mp3"
+ },
+ {
+  "mood": "lament",
+  "title": "Blue Feather",
+  "src": "km",
+  "file": "Blue Feather.mp3"
+ },
+ {
+  "mood": "lament",
+  "title": "On the Passing of Time",
+  "src": "km",
+  "file": "On the Passing of Time.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Numinous Shine",
+  "src": "km",
+  "file": "Numinous Shine.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Aretes",
+  "src": "km",
+  "file": "Aretes.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "New Direction",
+  "src": "km",
+  "file": "New Direction.mp3"
+ },
+ {
+  "mood": "hope",
+  "title": "Simple Duet",
+  "src": "km",
+  "file": "Simple Duet.mp3"
+ }
+]

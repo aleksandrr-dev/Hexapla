@@ -221,6 +221,7 @@ class ReadingService : Service() {
                         VerseMap.load(this@ReadingService)
                         MoodMap.load(this@ReadingService)
                         Pronounce.load(this@ReadingService, translationId)
+                        MusicRepo.load(this@ReadingService)
                     } catch (_: Exception) { }
                     // kjv → LibriVox sections; other translations → self-generated
                     // per-chapter narration (Webster etc.) streamed from archive.org.
@@ -519,7 +520,14 @@ class ReadingService : Service() {
             crossfadeTo(null)
             return
         }
-        crossfadeTo(bed.track?.let { "music/$it.mp3" } ?: bundledFor(bed.mood))
+        // A pinned track wins, then a downloaded track for the mood, then the
+        // bundled stand-in. ⚠ Only `silence` may produce no bed: a missing
+        // download must never be mistaken for a deliberate silence.
+        val pinned = bed.track?.let { MusicRepo.cachedPinned(this, it) }
+        val downloaded = pinned
+            ?: MusicRepo.cachedFor(this, bed.mood, bookIdx * 1000 + chapterIdx)
+        if (downloaded != null) crossfadeToFile(downloaded)
+        else crossfadeTo(bundledFor(bed.mood))
     }
 
     /**
@@ -529,6 +537,32 @@ class ReadingService : Service() {
      * pre-existing behaviour only ever swapped on track COMPLETION.
      * Both ramps respect the perceptual musicVol() curve.
      */
+    /** Crossfade to a downloaded file rather than a bundled asset. */
+    private fun crossfadeToFile(file: java.io.File, ms: Long = 2500) {
+        fadeJob?.cancel()
+        val outgoing = musicPlayer
+        musicPlayer = null
+        musicFading = outgoing
+        try {
+            musicPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                setDataSource(file.path)
+                setVolume(0f, 0f)
+                isLooping = true
+                setOnPreparedListener { if (Playback.playing.value) it.start() }
+                prepareAsync()
+            }
+        } catch (_: Exception) {
+            musicPlayer = null
+        }
+        rampFade(ms)
+    }
+
     private fun crossfadeTo(asset: String?, ms: Long = 2500) {
         fadeJob?.cancel()
         val outgoing = musicPlayer
@@ -536,7 +570,11 @@ class ReadingService : Service() {
         musicFading = outgoing
 
         if (asset != null) playMusicAsset(asset, startVolume = 0f)
+        rampFade(ms)
+    }
 
+    /** Ramp the outgoing bed down and the incoming one up over [ms]. */
+    private fun rampFade(ms: Long) {
         fadeJob = scope.launch {
             val target = musicVol()
             val steps = 25

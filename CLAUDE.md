@@ -1189,6 +1189,25 @@ must include them; owner should spot-check on-device before submitting.
   differ only by stripped umlauts with no markup to match. Silent damage needs
   a REFERENCE TEXT, not a pattern.
 
+## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-03.md first
+
+1.6.2 (code 15) is LIVE in Play and RuStore. Next is 1.6.3 / code 16.
+
+★ **GENEVA'S SHIPPED NARRATION IS DEFECTIVE** — ASR-proven: Genesis 1:1 says
+"God created the HORN and the earth" ("heauen"), plus "MOO-YUED" for moued and
+"PROANCE" for prouince. The fix is in the pipeline; a re-render of all 1,189
+chapters is pending an owner decision on timing. Do not ship new English
+narration without re-reading that section of the handoff.
+
+★ **THE APP NOW NORMALIZES SPELLING FOR TTS** (Pronounce.kt + pron_*.json).
+Before 2026-08-03 it did not, so the device voice read archaic spelling
+literally while rendered audio was correct. Regenerate the assets whenever
+tools/archaic_english.py or the generated maps change, or the two voices drift.
+
+★ **MUSIC BY MOOD is built but not shipped**: mood_map.json (1,189 chapters),
+a 79-track archive.org pack, MusicRepo + crossfade. 24 locales of strings are
+still missing.
+
 ## Architecture notes (beyond README)
 
 - `ReadingService`: foreground media service. Backends — TTS (per-verse

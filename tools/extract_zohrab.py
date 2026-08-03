@@ -282,6 +282,23 @@ def parse_file(n, census, state, stats, strict):
             state["book"] = mk["value"]
             state["book_files"].setdefault(mk["value"], where)
             state["book_order"].append(mk["value"])
+            # The print's OWN Armenian book heading sits between the Book
+            # marker and the first Chapter marker, after TITUS's Latin-script
+            # entry credits («entered by N. Cantladze, Tbilisi, 2005; TITUS
+            # version by J. Gippert…»). Capture the ARMENIAN run only.
+            # Derived, never invented: shipping hand-recalled book names is
+            # how de_luther and el_vamvas ended up with English ones, and
+            # inventing Armenian from memory is the ru_stress failure mode.
+            nxt = next((n["start"] for n in marks[i + 1:]
+                        if n["level"] in STRUCTURAL), footer_cut)
+            seg = clean_text(doc[mk["end"]:nxt], where + "(heading)")
+            runs = re.findall(r'[%s\sՙ-՟]+' % ARM, seg)
+            runs = [r.strip() for r in runs if ARM_RE.search(r)]
+            if runs:
+                state["book_headings"].setdefault(
+                    mk["value"], max(runs, key=len).strip())
+            else:
+                census.anomaly("no-armenian-book-heading", where, mk["value"])
         elif lvl == 3:
             if state["book"] is None:
                 census.anomaly("chapter-before-book", where, mk["value"])
@@ -319,7 +336,14 @@ def parse_file(n, census, state, stats, strict):
                 if nxt["level"] in STRUCTURAL:
                     end = nxt["start"]
                     break
-            raw = doc[mk["end"]:end]
+            # ⚠ Section/Paragraph markers sit INSIDE verses, and stripping
+            # tags is not enough to remove them: TAG_RE deletes the <span> and
+            # the <!Level 5> comment but leaves their LABEL TEXT behind, so
+            # «Section: 12» ended up inside 230 verses of Isaiah, Lamentations,
+            # Jeremiah and Wisdom as if it were scripture. Remove the whole
+            # marker. Safe here because structural markers already bound the
+            # slice, so anything MARK_RE finds inside it is level 5 or 6.
+            raw = MARK_RE.sub(' ', doc[mk["end"]:end])
             txt = clean_text(raw, "%s v%s" % (where, mk["value"]))
             txt = strip_brackets(txt, stats)
             b, c, v = state["book"], state["chapter"], mk["value"]
@@ -374,7 +398,7 @@ def main():
              "data": defaultdict(lambda: defaultdict(dict)),
              "anchors": {}, "book_files": {}, "book_order": [],
              "collisions": [], "provenance": {},
-             "chapter_owner": {}, "restart_off": 0}
+             "chapter_owner": {}, "restart_off": 0, "book_headings": {}}
     stats = Counter()
 
     # 'at' must be tried before 'a', or armatNNN.htm never matches and only the
@@ -425,6 +449,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, "zohrab_raw.json"), "w", encoding="utf-8") as f:
         json.dump({"books": books, "anchors": state["anchors"],
+                   "book_headings": state["book_headings"],
                    "collisions": state["collisions"],
                    "book_order": state["book_order"],
                    "book_first_file": state["book_files"]},

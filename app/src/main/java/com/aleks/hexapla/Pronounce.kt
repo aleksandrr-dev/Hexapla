@@ -39,6 +39,29 @@ object Pronounce {
         "wyc" to "pron_wyc.json",
     )
 
+    /** Every English translation, including ones with no spelling map. */
+    private val ENGLISH = setOf("kjv", "gnv", "tyn", "wyc", "ylt", "wbt")
+
+    /**
+     * Words spelled CORRECTLY that the device voice still says wrong.
+     *
+     * ⚠ A DIFFERENT KIND OF FIX FROM EVERYTHING ELSE IN THIS FILE, and the
+     * only one that is a guess. The spelling maps and the u/v-i/j rules are
+     * provably right: they turn a form that is not a word into the word it
+     * stands for, checked against the KJV. These are RESPELLINGS aimed at one
+     * TTS engine's pronunciation, so:
+     *   · they can be wrong on another device's voice,
+     *   · they must stay FEW and only be added when a real listener reports
+     *     the word, never speculatively,
+     *   · they must never change a word into a DIFFERENT word — only into a
+     *     phonetic spelling of the same one.
+     * Owner-reported: "Babel" read as "babe-el" rather than /ˈbæbəl/.
+     */
+    private val PHONETIC = mapOf(
+        "babel" to "Babbel",
+        "babels" to "Babbels",
+    )
+
     private val loaded = HashMap<String, Table>()
 
     private class Table(
@@ -99,7 +122,14 @@ object Pronounce {
      * translation has no map, which is every translation but Tyndale today.
      */
     fun forSpeech(translationId: String, text: String): String {
-        val t = loaded[translationId] ?: return text
+        // Phonetic hints apply to EVERY English translation, because the
+        // problem is the voice, not the spelling — "Babel" is spelled the same
+        // in the KJV. They must not touch non-English text.
+        val english = translationId in ENGLISH
+        val t = loaded[translationId]
+        if (t == null) {
+            return if (english) applyPhonetic(text) else text
+        }
         var s = text
 
         // Phrases first: "to gedder" is TOGETHER, and "gedder" alone is never
@@ -131,8 +161,16 @@ object Pronounce {
                 else -> repl
             }
         }
-        return s
+        return if (english) applyPhonetic(s) else s
     }
+
+    /** Respell the few words the voice mispronounces despite correct spelling. */
+    private fun applyPhonetic(text: String): String =
+        WORD.replace(text) { m ->
+            val hint = PHONETIC[m.value.lowercase()] ?: return@replace m.value
+            if (m.value.first().isUpperCase()) hint
+            else hint.replaceFirstChar { c -> c.lowercaseChar() }
+        }
 
     private const val VOWELS = "aeiou"
 

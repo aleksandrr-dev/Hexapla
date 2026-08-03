@@ -286,7 +286,26 @@ def parse_file(n, census, state, stats, strict):
             if state["book"] is None:
                 census.anomaly("chapter-before-book", where, mk["value"])
                 continue
-            state["chapter"] = mk["value"]
+            # ⚠ A CHAPTER LABEL IS NOT A UNIQUE KEY. In Esther, TITUS's
+            # "Chapter:" value is effectively a SECTION counter: armat442/443/
+            # 444 are labelled 5, 6 and 7 but are all canonical Esther 4, while
+            # armat448 is labelled 5 again and IS canonical Esther 5. Keying on
+            # the label alone composited two different chapters into one — the
+            # dump's Esther 5 was verses 1-5,7,8 from armat442 plus verse 6
+            # from armat448, a chapter that exists in no edition.
+            # A label re-declared by a DIFFERENT file therefore opens its own
+            # block, suffixed with that file. The converter maps blocks; it
+            # must never inherit TITUS's labels as chapter numbers.
+            label = mk["value"]
+            key = label
+            if state["chapter_owner"].get((state["book"], key), where) != where:
+                key = "%s@%s" % (label, where)
+                census.anomaly("chapter-label-reused", where,
+                               "%s chapter %r re-declared; block keyed %r"
+                               % (state["book"], label, key))
+            state["chapter_owner"][(state["book"], key)] = where
+            state["chapter"] = key
+            state["restart_off"] = 0
         elif lvl == 4:
             if state["book"] is None or state["chapter"] is None:
                 census.anomaly("verse-before-chapter", where, mk["value"])
@@ -304,7 +323,25 @@ def parse_file(n, census, state, stats, strict):
             txt = clean_text(raw, "%s v%s" % (where, mk["value"]))
             txt = strip_brackets(txt, stats)
             b, c, v = state["book"], state["chapter"], mk["value"]
-            if v in state["data"][b][c]:
+            target = state["data"][b][c]
+            # SAME-FILE verse restarts are a different phenomenon from the
+            # cross-file label reuse above: an LXX psalm that merges two
+            # Masoretic psalms restarts numbering at the seam (Ps 9 = MT 9+10,
+            # Ps 113 = MT 114+115), and Prov 24 restarts for the LXX plus
+            # 24:22a-f. The app's asset format is a flat verse list, so two
+            # verse-1s cannot coexist; renumber the second run continuously.
+            # This reproduces syn/csl/vul exactly: Ps 9 -> 39, Ps 113 -> 26.
+            if state["restart_off"]:
+                v = str(int(v) + state["restart_off"]) if v.isdigit() else v
+            elif v in target:
+                nums = [int(x) for x in target if x.isdigit()]
+                state["restart_off"] = max(nums) if nums else 0
+                new_v_lbl = str(int(v) + state["restart_off"]) if v.isdigit() else v
+                census.anomaly("verse-restart-renumbered", where,
+                               "%s %s: restart at v%s -> v%s (+%d)"
+                               % (b, c, v, new_v_lbl, state["restart_off"]))
+                v = new_v_lbl
+            if v in target:
                 # ⚠ NEVER overwrite. Esther's chapters 5-8 and 11 each occur
                 # TWICE in the file sequence, because TITUS interleaves the
                 # Greek Additions (numbered as chapters 11-16, Vulgate style)
@@ -321,7 +358,7 @@ def parse_file(n, census, state, stats, strict):
                      "text": txt})
                 census.anomaly("duplicate-verse", where, "%s %s:%s" % (b, c, v))
                 continue
-            state["data"][b][c][v] = txt
+            target[v] = txt
             state["provenance"]["%s|%s|%s" % (b, c, v)] = where
             state["anchors"]["%s|%s|%s" % (b, c, v)] = mk["anchor"]
             stats["verses"] += 1
@@ -336,7 +373,8 @@ def main():
     state = {"book": None, "chapter": None,
              "data": defaultdict(lambda: defaultdict(dict)),
              "anchors": {}, "book_files": {}, "book_order": [],
-             "collisions": [], "provenance": {}}
+             "collisions": [], "provenance": {},
+             "chapter_owner": {}, "restart_off": 0}
     stats = Counter()
 
     # 'at' must be tried before 'a', or armatNNN.htm never matches and only the

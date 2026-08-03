@@ -96,7 +96,14 @@ TRACKS = [
     ("hope",      "Frozen Star",          "km"),
     ("passion",   "Lost Time",            "km"),
     ("tender",    "Canon in D for Two Renaissance Harps", "km"),
+    # Pinned to Bel and the Dragon by mood_map.json rather than drawn from a
+    # mood pool, so it is fetched but deliberately not offered for `narrative`.
+    ("narrative", "Dragon and Toast",     "km"),
 ]
+
+# Tracks reserved for a specific passage by mood_map.json's trackPin list.
+# They ship in the pack but must NOT be picked at random for their mood.
+PINNED_ONLY = {"Dragon and Toast"}
 
 CREDIT = {
     "km": 'Kevin MacLeod (incompetech.com), CC BY 4.0',
@@ -193,6 +200,11 @@ def build_index():
         f = OUT_DIR / mood / f"{slug(title)}.mp3"
         if not f.exists():
             missing.append(f"{mood}/{slug(title)}")
+            continue
+        if title in PINNED_ONLY:
+            out.setdefault("pinned", {})[slug(title)] = {
+                "f": f"{mood}/{slug(title)}.mp3", "t": title,
+                "ms": duration_ms(f), "by": CREDIT[src]}
             continue
         out["moods"].setdefault(mood, []).append({
             "f": f"{mood}/{slug(title)}.mp3",

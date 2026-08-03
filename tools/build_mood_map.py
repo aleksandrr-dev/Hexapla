@@ -204,6 +204,20 @@ APOCRYPHA_BOOK = {
 TRACK_PINS = [
     ("Psa", 143, "dalitz_ricercar_ps143",
      "lute ricercar on the Genevan tune for this very psalm"),
+    # Owner's suggestion, 2026-08-03, and it holds up on the MUSIC rather than
+    # the pun: MacLeod's "Dragon and Toast" is tagged Dark / Eerie / Intense /
+    # Mystical / Unnerving and described as a minimalist piece — which is the
+    # right register for nocturnal deception (Daniel scattering ashes to catch
+    # the priests' footprints), an idol exposed, and a second spell in the
+    # lions' den. The title matching the book is a coincidence, not the reason.
+    # ⚠ NEEDS AN EAR: its instrument list includes Percussion, and "no
+    # percussion events" is a stated requirement for a bed. Drop this pin if it
+    # pokes through the narration.
+    # ⚠ Bel is a DIVERGENT apocrypha book (KJV 1 chapter, Glück 2), so this pin
+    # lands on chapter 1 only. That is correct for every edition that keeps it
+    # as a single chapter, which is all of them but Glück.
+    ("Bel", 1, "dragon_and_toast",
+     "dark minimalist piece for the idol, the dragon and the lions' den"),
 ]
 
 # ---------------------------------------------------------------- tier 2

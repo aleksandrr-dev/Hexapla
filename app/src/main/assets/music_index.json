@@ -1,0 +1,116 @@
+{
+ "base": "https://archive.org/download/hexapla-music-pack",
+ "moods": {
+  "awe": [
+   {
+    "f": "awe/ever_mindful.mp3",
+    "t": "Ever Mindful",
+    "ms": 1599059,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "awe/infinite_perspective.mp3",
+    "t": "Infinite Perspective",
+    "ms": 345077,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "narrative": [
+   {
+    "f": "narrative/teller_of_the_tales.mp3",
+    "t": "Teller of the Tales",
+    "ms": 212375,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "narrative/angevin.mp3",
+    "t": "Angevin",
+    "ms": 280555,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "lament": [
+   {
+    "f": "lament/lamentation.mp3",
+    "t": "Lamentation",
+    "ms": 197616,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "lament/plaint.mp3",
+    "t": "Plaint",
+    "ms": 196545,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "judgment": [
+   {
+    "f": "judgment/dark_times.mp3",
+    "t": "Dark Times",
+    "ms": 183695,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/oppressive_gloom.mp3",
+    "t": "Oppressive Gloom",
+    "ms": 199392,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "judgment/long_note_three.mp3",
+    "t": "Long Note Three",
+    "ms": 192052,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "praise": [
+   {
+    "f": "praise/jesu_joy_of_man_s_desiring.mp3",
+    "t": "Jesu, Joy of Man's Desiring",
+    "ms": 193253,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   },
+   {
+    "f": "praise/procession_of_the_king.mp3",
+    "t": "Procession of the King",
+    "ms": 184058,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "wisdom": [
+   {
+    "f": "wisdom/enchanted_journey.mp3",
+    "t": "Enchanted Journey",
+    "ms": 269557,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "hope": [
+   {
+    "f": "hope/frozen_star.mp3",
+    "t": "Frozen Star",
+    "ms": 221304,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "passion": [
+   {
+    "f": "passion/lost_time.mp3",
+    "t": "Lost Time",
+    "ms": 227395,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ],
+  "tender": [
+   {
+    "f": "tender/canon_in_d_for_two_renaissance_harps.mp3",
+    "t": "Canon in D for Two Renaissance Harps",
+    "ms": 339617,
+    "by": "Kevin MacLeod (incompetech.com), CC BY 4.0"
+   }
+  ]
+ },
+ "credits": [
+  "Kevin MacLeod (incompetech.com), CC BY 4.0"
+ ]
+}

@@ -103,7 +103,21 @@ EXTRA = {
         28: [(3, 16, 16, 3, 16, 17), (3, 17, 21, 3, 18, 22)],       # S Joel 3:16
         29: [(4, 13, 13, 4, 13, 14)],                               # S Amos 4:13
         30: [(1, 1, 1, 1, 1, 2), (1, 2, 21, 1, 3, 22)],             # Obadiah's expanded title verse
-        4:  [(27, 24, 26, 27, 23, 25)],                             # Deut 27 runs one short from v23 on; KJV 23 left unmapped
+        4:  [(27, 24, 26, 27, 23, 25)],                             # Deut 27 (KJV 23 unmapped)
+        14: [(4, 8, 9, 4, 8, 8),        # Ezra 4: the Armenian recasts the letter's
+             (4, 10, 10, 4, 9, 9),      #   framing. zoh 8 opens it ("and these are the
+             (4, 11, 14, 4, 10, 11),    #   words of the letter they sent to king
+             (4, 15, 16, 4, 12, 13),    #   Arsasas"), zoh 9 = KJV 10 (Asnappar's
+             (4, 17, 24, 4, 14, 21)],   #   nations); the tail is exact from KJV 17 on.
+                                        #   Middle kept COARSE on purpose - a finer
+                                        #   split was not verifiable. KJV 14 unmapped.
+        16: [(4, 7, 7, 4, 6, 6),        # Esther 4, read verse by verse:
+             (4, 8, 8, 4, 7, 8),        #   KJV 8 spans zoh 7-8 (the decree copy | the
+             (4, 9, 17, 4, 11, 19)],    #   charge to go in). zoh 9-10 are the LXX PLUS
+                                        #   ("remember the days of thy low estate",
+                                        #   "pray to the Lord God") and stay unmapped;
+                                        #   from KJV 9 on it is exact. KJV 6 (Hatach
+                                        #   going out to the street) is absent here.                             # Deut 27 runs one short from v23 on; KJV 23 left unmapped
                                                                     #   rather than guessed at a merge point.
         19: [(15, 5, 6, 15, 5, 5), (15, 7, 33, 15, 6, 32),          # M Prov 15:5+6
              (24, 23, 34, 24, 28, 39)],                             # Prov 24: LXX plus 22a-f sits at 23-27, KJV 23-34 at 28-39

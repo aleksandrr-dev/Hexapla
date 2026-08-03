@@ -102,6 +102,126 @@
  ],
  "ranges": [
   {
+   "book": 66,
+   "from": 3,
+   "to": 3,
+   "mood": "wisdom"
+  },
+  {
+   "book": 67,
+   "from": 13,
+   "to": 13,
+   "mood": "hope"
+  },
+  {
+   "book": 68,
+   "from": 2,
+   "to": 2,
+   "mood": "lament"
+  },
+  {
+   "book": 68,
+   "from": 5,
+   "to": 7,
+   "mood": "tender"
+  },
+  {
+   "book": 68,
+   "from": 12,
+   "to": 12,
+   "mood": "praise"
+  },
+  {
+   "book": 69,
+   "from": 8,
+   "to": 8,
+   "mood": "lament"
+  },
+  {
+   "book": 69,
+   "from": 12,
+   "to": 12,
+   "mood": "judgment"
+  },
+  {
+   "book": 69,
+   "from": 15,
+   "to": 15,
+   "mood": "praise"
+  },
+  {
+   "book": 70,
+   "from": 1,
+   "to": 1,
+   "mood": "passion"
+  },
+  {
+   "book": 70,
+   "from": 2,
+   "to": 2,
+   "mood": "hope"
+  },
+  {
+   "book": 70,
+   "from": 4,
+   "to": 4,
+   "mood": "judgment"
+  },
+  {
+   "book": 70,
+   "from": 9,
+   "to": 11,
+   "mood": "narrative"
+  },
+  {
+   "book": 70,
+   "from": 12,
+   "to": 14,
+   "mood": "judgment"
+  },
+  {
+   "book": 71,
+   "from": 23,
+   "to": 23,
+   "mood": "praise"
+  },
+  {
+   "book": 71,
+   "from": 43,
+   "to": 49,
+   "mood": "praise"
+  },
+  {
+   "book": 71,
+   "from": 50,
+   "to": 50,
+   "mood": "praise"
+  },
+  {
+   "book": 75,
+   "from": 0,
+   "to": 1,
+   "mood": "judgment"
+  },
+  {
+   "book": 75,
+   "from": 2,
+   "to": 8,
+   "mood": "narrative"
+  },
+  {
+   "book": 76,
+   "from": 6,
+   "to": 6,
+   "mood": "lament"
+  },
+  {
+   "book": 77,
+   "from": 5,
+   "to": 5,
+   "mood": "praise"
+  },
+  {
    "book": 0,
    "from": 0,
    "to": 0,

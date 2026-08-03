@@ -152,21 +152,27 @@ BOOK_DEFAULT = {
 # where a whole book is plainly a different genre. Present so that a
 # translation carrying these slots (vul, lut, kxii, glk...) never falls
 # through to nothing.
-# ⚠⚠ APOCRYPHA ARE DELIBERATELY BOOK-LEVEL ONLY — no ranges, no anchors.
-# Not an oversight, and please do not "finish" it by adding chapter overrides.
-# The canon sits on the KJV grid and pivots through VerseMap, so a canonical
-# chapter number means the same passage in every translation. The apocrypha do
-# NOT: the arrangements genuinely differ between the KJV slots, the Vulgate,
-# the Slavonic and Luther, and versemap.json does not map them (Esther 10:4-16:24
-# and Daniel 13-14 are recorded there as unmapped additions). Measured across
-# the shipped assets, five apocrypha books have MORE chapters in some
-# translation than in the KJV slot — Church Slavonic carries 3 Maccabees at 7
-# chapters where the KJV slot is empty, and Glück has 2 chapters where the KJV
-# has 1. A chapter-level override keyed to "canonical apocrypha" would
-# therefore land on a different passage depending on what the reader has open.
-# A book-level mood is translation-agnostic and cannot be wrong that way.
-# The four single-chapter books (Manasses, Azariah, Susanna, Bel) get chapter
-# precision for free, because the book IS the chapter.
+# APOCRYPHA. An earlier version of this file forbade chapter overrides here
+# outright, reasoning that apocrypha arrangements differ between the KJV slots,
+# the Vulgate, the Slavonic and Luther, and that versemap.json does not map
+# them (it records Esther 10:4-16:24 and Daniel 13-14 as unmapped additions).
+# ▶ MEASURED, and the blanket rule was WRONG: 13 of the 17 slots have an
+# IDENTICAL chapter count in every shipped translation that carries them —
+# including all the large ones (Sirach 51, Wisdom 19, Judith 16, Tobit 14,
+# 1 and 2 Maccabees, 1 and 2 Esdras). Chapter overrides are safe there, and a
+# whole book of Sirach under one unchanging bed was a real loss.
+# Only these four genuinely diverge, and they stay book-level:
+DIVERGENT_APOCRYPHA = {
+    "Bar",   # KJV 6 chapters, Slavonic/Synodal 5 — the Epistle of Jeremiah is
+             # Baruch 6 in some traditions and a separate book in others
+    "AEs",   # Additions to Esther: KJV 16, Glück 7
+    "PrA",   # Prayer of Azariah: KJV 1, Glück 2
+    "Bel",   # Bel and the Dragon: KJV 1, Glück 2
+}
+# ⚠ Re-run the alignment check before adding an override to any apocrypha book,
+# and before shipping a new translation that carries apocrypha — a new asset
+# with a different arrangement moves a book from aligned to divergent, and the
+# assertion below is what will catch it.
 APOCRYPHA_DEFAULT = "narrative"
 APOCRYPHA_BOOK = {
     "Wis": "wisdom",
@@ -204,6 +210,34 @@ TRACK_PINS = [
 # (book, first chapter, last chapter, mood, why) — 1-BASED, inclusive.
 # Departures from the book default only. No two entries may overlap.
 RANGES = [
+    # ── apocrypha, aligned books only (see DIVERGENT_APOCRYPHA) ──────────
+    ("1Es", 4, 4, "wisdom", "the contest of the three guardsmen: 'great is truth'"),
+    ("2Es", 14, 14, "hope", "Ezra restores the burnt scriptures"),
+    ("Tob", 3, 3, "lament", "the two prayers — Tobit blind, Sarah reproached"),
+    ("Tob", 6, 8, "tender", "Tobias and Sarah; 'not for lust, but in truth'"),
+    ("Tob", 13, 13, "praise", "Tobit's hymn: 'blessed be God that liveth ever'"),
+    ("Jdt", 9, 9, "lament", "Judith's prayer before she goes out"),
+    ("Jdt", 13, 13, "judgment", "the death of Holofernes"),
+    ("Jdt", 16, 16, "praise", "the song of Judith"),
+    # ⚠ Wisdom 2 is the wicked plotting against the righteous — "let us condemn
+    # him with a shameful death" — read as a passion prophecy since the early
+    # church. It is the one apocryphal chapter that earns `passion`.
+    ("Wis", 2, 2, "passion", "'let us lie in wait for the righteous'"),
+    ("Wis", 3, 3, "hope", "'the souls of the righteous are in the hand of God'"),
+    ("Wis", 5, 5, "judgment", "the wicked see the righteous vindicated"),
+    ("Wis", 10, 12, "narrative", "wisdom retold through the history of Israel"),
+    ("Wis", 13, 15, "judgment", "the polemic against idols"),
+    ("Sir", 24, 24, "praise", "wisdom praises herself: 'I came out of the mouth'"),
+    ("Sir", 44, 50, "praise", "'let us now praise famous men' — the encomium"),
+    ("Sir", 51, 51, "praise", "the closing prayer of Jesus son of Sirach"),
+    ("1Ma", 1, 2, "judgment", "the desolation of the sanctuary; Mattathias"),
+    ("1Ma", 3, 9, "narrative", "the campaigns of Judas"),
+    # ⚠ 2 Maccabees 7 is the mother and her seven sons. `lament` rather than
+    # `passion`: passion is reserved for the cross, and stretching it here
+    # would blur the one place it means something.
+    ("2Ma", 7, 7, "lament", "the mother and her seven sons"),
+    ("3Ma", 6, 6, "praise", "the deliverance and the feast"),
+
     ("Gen", 1, 1, "awe", "creation"),
     ("Gen", 2, 2, "tender", "the garden; the making of the woman"),
     ("Gen", 3, 3, "lament", "the fall and the expulsion"),
@@ -615,8 +649,37 @@ def load_counts():
     return kjv, [len(b["chapters"]) for b in kjv]
 
 
+def widest_apocrypha_counts():
+    """Max chapter count per apocrypha slot across EVERY shipped translation.
+
+    The KJV slot is not the authority here: 3 Maccabees is 0 chapters in the
+    KJV and 7 in the Slavonic, and the Epistle of Jeremiah is 0 and 1. Bounds
+    for an apocrypha range have to allow for the widest arrangement the app
+    can actually display, or a legitimate override would be rejected for a
+    book the KJV happens not to carry.
+    """
+    import glob
+    widest = {}
+    for f in glob.glob(os.path.join(ASSETS, "bibles", "*.json")):
+        if "strongs" in os.path.basename(f):
+            continue
+        try:
+            with open(f, encoding="utf-8") as fh:
+                d = json.load(fh)
+        except Exception:
+            continue
+        books = d["books"] if isinstance(d, dict) else d
+        for b in range(66, min(len(books), len(BOOKS))):
+            entry = books[b]
+            ch = entry.get("chapters", []) if isinstance(entry, dict) else entry
+            if len(ch) > widest.get(b, 0):
+                widest[b] = len(ch)
+    return widest
+
+
 def main():
     kjv, counts = load_counts()
+    APOC_WIDEST = widest_apocrypha_counts()
     canon = counts[:66]
     assert sum(canon) == 1189, f"canon grid is {sum(canon)} chapters, expected 1189"
 
@@ -647,14 +710,13 @@ def main():
         mood = APOCRYPHA_BOOK.get(BOOKS[b], APOCRYPHA_DEFAULT)
         assert mood in MOODS, f"apocrypha slot {b} has mood {mood!r}"
     for abbr, _lo, _hi, _m, _w in RANGES:
-        assert IDX[abbr] < 66, (
-            f"range on apocrypha book {abbr}: apocrypha are book-level only, "
-            f"because chapter numbering differs by translation and versemap "
-            f"does not map them")
+        assert abbr not in DIVERGENT_APOCRYPHA, (
+            f"range on {abbr}: this apocrypha book has a DIFFERENT chapter "
+            f"count in different translations, so a canonical chapter number "
+            f"does not identify the same passage. Keep it book-level.")
     for abbr, _ch, _segs, _w in ANCHORS:
-        assert IDX[abbr] < 66, (
-            f"anchor on apocrypha book {abbr}: apocrypha are book-level only "
-            f"(same reason as ranges)")
+        assert abbr not in DIVERGENT_APOCRYPHA, (
+            f"anchor on {abbr}: divergent apocrypha book (same reason as ranges)")
     # A translation may carry MORE apocrypha chapters than the KJV slot — the
     # Slavonic has 3 Maccabees at 7 where the KJV slot is empty. Book-level
     # resolution handles any chapter index, but assert the app can never ask
@@ -669,23 +731,37 @@ def main():
     for b in range(66):
         for c in range(1, canon[b] + 1):
             resolved[(b, c)] = BOOK_DEFAULT[BOOKS[b]]
+    # Apocrypha resolve alongside the canon but are tallied separately: the
+    # 1189 figure below is a CANON count and must not silently absorb them.
+    apoc_resolved = {}
+    for b in range(66, len(BOOKS)):
+        n_ch = max(counts[b], APOC_WIDEST.get(b, 0))
+        for c in range(1, n_ch + 1):
+            apoc_resolved[(b, c)] = APOCRYPHA_BOOK.get(BOOKS[b], APOCRYPHA_DEFAULT)
     for n, (abbr, lo, hi, mood, _why) in enumerate(RANGES):
         b = IDX[abbr]
-        assert b < 66, f"range {abbr} {lo}-{hi} is not a canon book"
-        assert 1 <= lo <= hi <= canon[b], \
-            f"range out of bounds: {abbr} {lo}-{hi} (book has {canon[b]} chapters)"
+        # ⚠ Bounds for an apocrypha book come from the WIDEST arrangement any
+        # shipped translation carries, not the KJV slot — 3 Maccabees is 0 in
+        # the KJV and 7 in the Slavonic, so a KJV-only bound would reject a
+        # legitimate override on a book the reader can actually open.
+        limit = canon[b] if b < 66 else max(counts[b], APOC_WIDEST.get(b, 0))
+        assert 1 <= lo <= hi <= limit, \
+            f"range out of bounds: {abbr} {lo}-{hi} (book has {limit} chapters)"
         for c in range(lo, hi + 1):
             prev = hit_by_range.get((b, c))
             assert prev is None, (
                 f"tier-2 collision at {abbr} {c}: ranges #{prev} and #{n}")
             hit_by_range[(b, c)] = n
-            resolved[(b, c)] = mood
+            (resolved if b < 66 else apoc_resolved)[(b, c)] = mood
 
     # --- tier 3: unique chapters, ordered segments, in bounds ------------
     seen_anchor = set()
     for abbr, ch, segs, _why in ANCHORS:
         b = IDX[abbr]
-        assert b < 66, f"anchor {abbr} {ch} is not a canon book"
+        assert b < 66, (
+            f"anchor {abbr} {ch}: anchors carry VERSE-level turns, and verse "
+            f"numbering inside the apocrypha is not mapped by versemap. Use a "
+            f"range instead.")
         assert 1 <= ch <= canon[b], f"anchor out of bounds: {abbr} {ch}"
         assert (b, ch) not in seen_anchor, f"tier-3 collision: {abbr} {ch} anchored twice"
         seen_anchor.add((b, ch))

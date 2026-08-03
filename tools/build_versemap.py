@@ -80,7 +80,6 @@ EXTRA = {
         1:  [(10, 28, 28, 10, 28, 29), (10, 29, 29, 10, 30, 30)],   # S Ex 10:28 "get thee from me" / "see my face"
         2:  [(23, 25, 26, 23, 25, 25), (23, 27, 44, 23, 26, 43)],   # M Lev 23:25+26 (the "and the LORD spake" clause rides on 25)
         3:  [(9, 18, 18, 9, 18, 19), (9, 19, 23, 9, 20, 24)],       # S Num 9:18 (encamped/journeyed | all the days the cloud abode)
-        5:  [(18, 24, 24, 18, 24, 25), (18, 25, 28, 18, 26, 29)],   # S Jos 18:24 (city list | "twelve cities and their villages")
         10: [(5, 17, 18, 5, 17, 17), (5, 19, 18, 5, 18, 17),        # M 1Kgs 5:17+18
              (6, 31, 32, 6, 31, 31), (6, 33, 38, 6, 32, 37)],       # M 1Kgs 6:31+32
         13: [(3, 16, 17, 3, 16, 16),                                # M 2Chr 3:16+17 (pillars set up rides on 16)
@@ -88,12 +87,26 @@ EXTRA = {
         17: [(1, 21, 21, 1, 21, 22), (1, 22, 22, 1, 23, 23),        # S Job 1:21 (naked came I | the LORD gave)
              (19, 28, 29, 19, 28, 28),                              # M Job 19:28+29
              (34, 36, 37, 34, 36, 36)],                             # M Job 34:36+37
-        19: [(15, 5, 6, 15, 5, 5), (15, 7, 33, 15, 6, 32)],         # M Prov 15:5+6 (LXX form of v6)
-        22: [(48, 21, 22, 48, 21, 21),                              # M Isa 48:21+22 ("no peace to the wicked" rides on 21)
-             (66, 23, 24, 66, 23, 23)],                             # M Isa 66:23+24
         23: [(12, 10, 11, 12, 10, 10), (12, 12, 17, 12, 11, 16),    # M Jer 12:10+11
-             (45, 1, 2, 45, 1, 1), (45, 3, 5, 45, 2, 4)],           # M Jer 45:1+2
-        25: [(35, 15, 15, 35, 15, 16)],                             # S Ezek 35:15
+             (45, 1, 2, 45, 1, 1), (45, 3, 5, 45, 2, 4),            # M Jer 45:1+2
+             (48, 47, 47, 48, 47, 48)],                             # S Jer 48:47 — KJV packs the colophon
+                                                                    #   "Thus far is the judgment of Moab"
+                                                                    #   into v47; zoh gives it verse 48.
+        25: [(35, 15, 15, 35, 15, 16),                              # S Ezek 35:15
+             (39, 10, 10, 39, 10, 11), (39, 11, 29, 39, 12, 30)],   # S Ezek 39:10
+        5:  [(18, 24, 24, 18, 24, 25), (18, 25, 28, 18, 26, 29),    # S Jos 18:24
+             (12, 19, 20, 12, 19, 19), (12, 21, 24, 12, 20, 23)],   # M Jos 12:19+20 (king list)
+        12: [(27, 24, 25, 27, 24, 24), (27, 26, 34, 27, 25, 33)],   # M 1Chr 27:24+25
+        22: [(48, 21, 22, 48, 21, 21),                              # M Isa 48:21+22
+             (66, 23, 24, 66, 23, 23),                              # M Isa 66:23+24
+             (45, 23, 23, 45, 23, 24), (45, 24, 25, 45, 25, 26)],   # S Isa 45:23
+        28: [(3, 16, 16, 3, 16, 17), (3, 17, 21, 3, 18, 22)],       # S Joel 3:16
+        29: [(4, 13, 13, 4, 13, 14)],                               # S Amos 4:13
+        30: [(1, 1, 1, 1, 1, 2), (1, 2, 21, 1, 3, 22)],             # Obadiah's expanded title verse
+        4:  [(27, 24, 26, 27, 23, 25)],                             # Deut 27 runs one short from v23 on; KJV 23 left unmapped
+                                                                    #   rather than guessed at a merge point.
+        19: [(15, 5, 6, 15, 5, 5), (15, 7, 33, 15, 6, 32),          # M Prov 15:5+6
+             (24, 23, 34, 24, 28, 39)],                             # Prov 24: LXX plus 22a-f sits at 23-27, KJV 23-34 at 28-39
     },
     # Byzantine/Slavonic Romans doxology at 14:24-26
     ("grc", "syn", "csl"): {
@@ -669,9 +682,15 @@ def main():
             tdan, kdan = counts(trans, 26), counts(kjv, 26)
             assert len(tdan) == 12, ("zoh Daniel should be 12 chapters", len(tdan))
             assert tdan[2] == 98 and tdan[3] == 34, ("zoh Dan 3/4", tdan[2:4])
+            # ⚠ ASSIGNS book 26 — the curated EXTRA table cannot reach Daniel
+            # for zoh (the book loop skips it), so ch 8 has to live here or it
+            # is silently dropped. It was: zoh 2 «Ես դանիէլ յետ տեսլեանն
+            # առաջնոյ» / zoh 3 «էի ՛ի շաւշ յապարանսն» split the KJV's v2.
             books[26] = [(3, 24, 30, 3, 89, 95),
                          (4, 1, 3, 3, 96, 98),
-                         (4, 4, 37, 4, 1, 34)]
+                         (4, 4, 37, 4, 1, 34),
+                         (8, 2, 2, 8, 2, 3),
+                         (8, 3, 27, 8, 4, 28)]
         if tid == "zoh":
             # ADOPT THE VULGATE'S ALREADY-VERIFIED RUNS, but only per CHAPTER
             # and only where zoh's verse count for that chapter equals vul's.
@@ -693,13 +712,16 @@ def main():
                 pv = counts(vt, bi)
                 if not any(pz):
                     continue
-                have = {r[0] for r in books.get(bi, [])}
+                have = {r[0] for r in books.get(bi, [])} |                        {r[3] for r in books.get(bi, [])}
                 for ci in range(min(len(pz), len(pk))):
                     if pz[ci] == pk[ci] or (ci + 1) in have:
                         continue
                     if ci < len(pv) and pz[ci] == pv[ci]:
+                        # Match on EITHER side's chapter: Job's Vulgate reflow
+                        # crosses chapters (KJV 40:1-5 lives in ch 39), so
+                        # filtering on the KJV chapter alone silently missed it.
                         cov = [tuple(r) for r in vruns.get(str(bi), [])
-                               if r[0] == ci + 1]
+                               if r[0] == ci + 1 or r[3] == ci + 1]
                         if cov:
                             books.setdefault(bi, []).extend(cov)
                             adopted += 1
@@ -707,14 +729,24 @@ def main():
             # Anything still uncovered is reported per CHAPTER, so a partly
             # curated book cannot hide its unmapped chapters behind the
             # book-level "curated" flag.
+            # Chapters where zoh merely APPENDS material after the KJV's last
+            # verse — identity is already correct and no run is needed. Each
+            # was read: Judg 17 and 2 Kgs 7 carry one extra closing verse;
+            # Esther 10 continues into Addition F; Job 42 ends with the LXX
+            # colophon ("this is translated from the Syriac book... he dwelt
+            # in the land of Ausis"); Eccl 4 and Song 5 carry trailing extras.
+            IDENTITY_OK = {(6, 17), (11, 7), (16, 10), (17, 42), (20, 4), (21, 5)}
             still = []
             for bi in range(39):
                 pz, pk = counts(trans, bi), counts(kjv, bi)
                 if not any(pz):
                     continue
-                have = {r[0] for r in books.get(bi, [])}
+                # Both sides again: Job 39 IS covered, by a run whose KJV side
+                # is chapter 40 — testing only r[0] reported it as unmapped.
+                have = {r[0] for r in books.get(bi, [])} |                        {r[3] for r in books.get(bi, [])}
                 still += [(bi, ci + 1) for ci in range(min(len(pz), len(pk)))
-                          if pz[ci] != pk[ci] and (ci + 1) not in have]
+                          if pz[ci] != pk[ci] and (ci + 1) not in have
+                          and (bi, ci + 1) not in IDENTITY_OK]
             if still:
                 incomplete["zoh"] = still
 

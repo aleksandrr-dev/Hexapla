@@ -118,6 +118,38 @@ NAMES = {
 }
 
 
+# ── Editorial rubrics (spec §7 / owner decision 2026-08-03) ────────────────
+# Three lines in Ezekiel are not verses but SECTION RUBRICS occupying verse
+# slots — «Դարձեալ ՛Ի վերայ Եգիպտոսի ։» ("Again, concerning Egypt"),
+# «Ողբք ՛ի վերայ Փարաւոնի եւ Եգիպտոսի ։» ("Lamentation over Pharaoh and
+# Egypt"). They are genuinely IN the 1805 print, so they are not discarded:
+# following the Clementine precedent (build_vul_rubrics.py / Rubrics.kt) they
+# are lifted OUT of the verse flow into rubrics_zoh.json and rendered as
+# headings, which is what the print does typographically.
+#
+# ⚠ This is the opposite call from `Cant. 8a`, and deliberately so: 8a is an
+# editorial VARIANT READING supplied from another exemplar, which the app has
+# no business presenting as scripture at all, whereas these rubrics are the
+# edition's own structure.
+#
+# Removing them also makes Ezekiel fall onto the KJV grid with no versemap
+# curation at all: 29 22->21, 30 27->26, 32 33->32 — each exactly the KJV.
+#
+# ⚠ VERIFIED NOT TO INCLUDE look-alikes. Job 27:1, 29:1, 40:1, Isaiah 13:1 and
+# Joel 1:1 open with the same words but ARE scripture (they are the KJV's own
+# verses) and their chapter counts already match. Do not widen this table by
+# pattern — it is a curated list of three, each read.
+RUBRICS = {
+    (25, 29, 17): "Դարձեալ ՛Ի վերայ Եգիպտոսի ։",
+    (25, 30, 20): "Դարձեալ ՛ի վերայ Եգիպտոսի ։",
+    (25, 32, 17): "Ողբք ՛ի վերայ Փարաւոնի եւ Եգիպտոսի ։",
+    # Found the same way, while curating Jeremiah 49's seam: a bare
+    # «Concerning Elam» heading standing in a verse slot. Removing it makes
+    # Jer 49 land on the KJV grid too (40 -> 39).
+    (23, 49, 34): "՛Ի վերայ ելամայ ։",
+}
+
+
 def numeric(d):
     """{verse-label: text} -> [(int, text)] sorted, non-numeric dropped."""
     out = [(int(k), v) for k, v in d.items() if k.isdigit()]
@@ -292,13 +324,29 @@ def main():
     add[12] = place(b4 + numeric(es["13"]), report, "EsthAdd 13")
     slots[78]["chapters"] = add
 
+    # ── lift the editorial rubrics out of the verse flow ───────────────────
+    rubrics = {}
+    for (bslot, ch, vs), label in sorted(RUBRICS.items()):
+        chapter = slots[bslot]["chapters"][ch - 1]
+        got = chapter[vs - 1].strip()
+        assert got == label.strip(), (
+            "rubric moved: expected %r at %d:%d:%d, found %r"
+            % (label, bslot, ch, vs, got[:60]))
+        del chapter[vs - 1]
+        # The rubric heads the section that FOLLOWS it, which after removal is
+        # the verse now occupying its index.
+        rubrics["%d:%d:%d" % (bslot, ch, vs)] = [[0, label.rstrip(" ։").strip()]]
+    (ASSETS.parent / "rubrics_zoh.json").write_text(
+        json.dumps(rubrics, ensure_ascii=False, indent=1), encoding="utf-8")
+    print("rubrics lifted  : %d -> rubrics_zoh.json" % len(rubrics))
+
     # ── assertions ─────────────────────────────────────────────────────────
     assert len(slots) == 83
     assert all(not any(c) for b in slots[39:66] for c in b["chapters"]), \
         "NT slots must be empty — this asset is OT-only"
     total = sum(1 for b in slots for c in b["chapters"] for v in c if v)
     # Every extracted verse must land somewhere, minus the deliberate drops.
-    dropped = len(books["Cant."]["8a"])
+    dropped = len(books["Cant."]["8a"]) + len(RUBRICS)
     src = sum(len(v) for bk in books.values() for v in bk.values())
     assert total == src - dropped, \
         "verse loss: %d placed, %d source, %d deliberately dropped" % (

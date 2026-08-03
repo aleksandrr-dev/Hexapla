@@ -69,6 +69,32 @@ STD_TAIL = [  # continental 3 John split + Rev 12:18
     (65, [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)]),
 ]
 EXTRA = {
+    # ── Zohrab Armenian OT (added 2026-08-03) ─────────────────────────────
+    # Each run below was located by length-alignment against the Latin (same
+    # textual tradition) and then CONFIRMED BY READING THE ARMENIAN at the
+    # seam. The proposal step got three chapters wrong (Deut 27, Josh 12,
+    # 1 Chr 27) — those are deliberately NOT here; they are left identity
+    # rather than curated on a guess.
+    # M = KJV v,v+1 merged into one zoh verse. S = one KJV verse split in two.
+    ("zoh",): {
+        1:  [(10, 28, 28, 10, 28, 29), (10, 29, 29, 10, 30, 30)],   # S Ex 10:28 "get thee from me" / "see my face"
+        2:  [(23, 25, 26, 23, 25, 25), (23, 27, 44, 23, 26, 43)],   # M Lev 23:25+26 (the "and the LORD spake" clause rides on 25)
+        3:  [(9, 18, 18, 9, 18, 19), (9, 19, 23, 9, 20, 24)],       # S Num 9:18 (encamped/journeyed | all the days the cloud abode)
+        5:  [(18, 24, 24, 18, 24, 25), (18, 25, 28, 18, 26, 29)],   # S Jos 18:24 (city list | "twelve cities and their villages")
+        10: [(5, 17, 18, 5, 17, 17), (5, 19, 18, 5, 18, 17),        # M 1Kgs 5:17+18
+             (6, 31, 32, 6, 31, 31), (6, 33, 38, 6, 32, 37)],       # M 1Kgs 6:31+32
+        13: [(3, 16, 17, 3, 16, 16),                                # M 2Chr 3:16+17 (pillars set up rides on 16)
+             (28, 26, 27, 28, 26, 26)],                             # M 2Chr 28:26+27 (Ahaz slept rides on 26)
+        17: [(1, 21, 21, 1, 21, 22), (1, 22, 22, 1, 23, 23),        # S Job 1:21 (naked came I | the LORD gave)
+             (19, 28, 29, 19, 28, 28),                              # M Job 19:28+29
+             (34, 36, 37, 34, 36, 36)],                             # M Job 34:36+37
+        19: [(15, 5, 6, 15, 5, 5), (15, 7, 33, 15, 6, 32)],         # M Prov 15:5+6 (LXX form of v6)
+        22: [(48, 21, 22, 48, 21, 21),                              # M Isa 48:21+22 ("no peace to the wicked" rides on 21)
+             (66, 23, 24, 66, 23, 23)],                             # M Isa 66:23+24
+        23: [(12, 10, 11, 12, 10, 10), (12, 12, 17, 12, 11, 16),    # M Jer 12:10+11
+             (45, 1, 2, 45, 1, 1), (45, 3, 5, 45, 2, 4)],           # M Jer 45:1+2
+        25: [(35, 15, 15, 35, 15, 16)],                             # S Ezek 35:15
+    },
     # Byzantine/Slavonic Romans doxology at 14:24-26
     ("grc", "syn", "csl"): {
         44: [(16, 25, 27, 14, 24, 26)],
@@ -622,7 +648,8 @@ def main():
                 # text-verified; the rest degrade to identity, exactly as
                 # Wycliffe's 16 rough books do, rather than shipping runs that
                 # were generated but never read.
-                incomplete.setdefault(tid, []).append(bi)
+                if tid != "zoh":      # zoh reports per-chapter, below
+                    incomplete.setdefault(tid, []).append(bi)
                 print(f"  note: {tid} book {bi} left identity (chapters {deficits} differ)")
         # LXX Daniel: ch13-14 (Susanna, Bel) are additions with no KJV
         # counterpart; ch3 carries the Song of the Three (3:24-90) so
@@ -645,6 +672,52 @@ def main():
             books[26] = [(3, 24, 30, 3, 89, 95),
                          (4, 1, 3, 3, 96, 98),
                          (4, 4, 37, 4, 1, 34)]
+        if tid == "zoh":
+            # ADOPT THE VULGATE'S ALREADY-VERIFIED RUNS, but only per CHAPTER
+            # and only where zoh's verse count for that chapter equals vul's.
+            # zoh and the Clementine are the same textual tradition, and where
+            # both hold a chapter in the same number of verses they divide it
+            # the same way — spot-verified by reading three of them:
+            #   Gen 49:31 — zoh 31 carries KJV 31+32 («there they buried
+            #               Abraham … in the possession of the field»)
+            #   Job 16:4  — zoh 4/5 split KJV 4 exactly where vul's run says
+            #   Eccl 6:12 — lands at zoh 7:1, as vul's run says
+            # ⚠ Count equality is the WHOLE justification here. Where the
+            # counts differ, vul's run would be wrong for zoh — Daniel is the
+            # standing proof: same shape, offsets two verses apart.
+            vt = load("la_vulgata")
+            vruns = out.get("vul", {})
+            adopted = 0
+            for bi in range(39):
+                pz, pk = counts(trans, bi), counts(kjv, bi)
+                pv = counts(vt, bi)
+                if not any(pz):
+                    continue
+                have = {r[0] for r in books.get(bi, [])}
+                for ci in range(min(len(pz), len(pk))):
+                    if pz[ci] == pk[ci] or (ci + 1) in have:
+                        continue
+                    if ci < len(pv) and pz[ci] == pv[ci]:
+                        cov = [tuple(r) for r in vruns.get(str(bi), [])
+                               if r[0] == ci + 1]
+                        if cov:
+                            books.setdefault(bi, []).extend(cov)
+                            adopted += 1
+            print(f"  zoh: adopted {adopted} chapters of verified vul runs")
+            # Anything still uncovered is reported per CHAPTER, so a partly
+            # curated book cannot hide its unmapped chapters behind the
+            # book-level "curated" flag.
+            still = []
+            for bi in range(39):
+                pz, pk = counts(trans, bi), counts(kjv, bi)
+                if not any(pz):
+                    continue
+                have = {r[0] for r in books.get(bi, [])}
+                still += [(bi, ci + 1) for ci in range(min(len(pz), len(pk)))
+                          if pz[ci] != pk[ci] and (ci + 1) not in have]
+            if still:
+                incomplete["zoh"] = still
+
         if tid in ("syn", "csl", "vul"):
             tdan, kdan = counts(trans, 26), counts(kjv, 26)
             for ci in range(12):
@@ -662,7 +735,8 @@ def main():
         print("")
         print("  INCOMPLETE versemaps (identity fallback, curation pending):")
         for tid, bs in incomplete.items():
-            print(f"      {tid}: {len(bs)} books -> {bs}")
+            unit = "chapters" if tid == "zoh" else "books"
+            print(f"      {tid}: {len(bs)} {unit} -> {bs}")
 
     # ---- validation ----
     for tid, fname in IDS.items():

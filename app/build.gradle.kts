@@ -19,8 +19,8 @@ android {
         applicationId = "com.aleks.hexapla"
         minSdk = 26
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.6.2"
+        versionCode = 16
+        versionName = "1.6.3"
     }
 
     buildFeatures {

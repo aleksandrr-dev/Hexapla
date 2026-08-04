@@ -291,6 +291,101 @@ NO_SPLIT = {(18, 118, 74), (18, 34, 8)}
 # only sites repaired positionally are the ones a reader verified.
 TYPO_CASCADE = {(63, "4")}
 
+# ------------------------------------------------------------------- seams
+# Chapters where the print repeats a verse number, resolved by READING the
+# text against a reference grid — never by arithmetic, which cannot settle
+# them (for most of these sites both "the dup is the next verse" and "the dup
+# is the second half of this verse" produce a self-consistent chapter; the
+# difference is only whether a passage is one verse or two).
+#
+# The table gives an explicit verse number PER UNIT, keyed by the print's own
+# label. Units are consumed in document order and two units assigned the SAME
+# number are concatenated in that order — so a rejoin, a renumber and a shift
+# are all expressed the same auditable way. Only labels whose number differs
+# from their own stem need listing; anything unlisted keeps its printed number.
+#
+# A value of "RUBRIC" moves the unit out of scripture into rubrics_bak.json.
+# Evidence for each site is in research/BAKAR_BUILD_LOG.md.
+SEAM = {
+    # Joshua 17 — TWO independent defects that together land the chapter on
+    # exactly 18 verses, the KJV's count. «2#dup2» is the opening clause of
+    # verse 3 (Zelophehad had no sons) and «3» its closing clause (the
+    # daughters' names), one KJV sentence the print broke in two; and the
+    # stray late «1» is verse 11, whose number the print never printed at all
+    # — its content is the Bethshean/Dor list, and the label stream's only gap
+    # is [11].
+    (13, "17"): {"2#dup2": 3, "3": 3, "1#dup2": 11},
+    # 1 Samuel 23 — the chapter runs 1-28 with no gap, so the trailing stray
+    # «1» is necessarily the last verse; its text is «დავით … ენღადისასა»,
+    # David dwelling in the strongholds of Engedi = KJV 23:29.
+    (16, "23"): {"1#dup2": 29},
+    # 3 Kingdoms 4 — [25] closes on the proverb/song count and the dup opens a
+    # new subject (trees, beasts, birds, fishes), so it is the next verse, not
+    # a continuation; the three units run one-to-one onto KJV 4:32, 33, 34.
+    (18, "4"): {"25#dup2": 26, "26": 27},
+    # 3 Kingdoms 10 — the census independently records this: a «10» printed at
+    # the POSITION OF VERSE 2, which is why the chapter's only gap is [2]. The
+    # unit's content is the queen of Sheba arriving at Jerusalem with camels
+    # and spices (KJV 10:2); the later «10» is the true verse 10 (the 120
+    # talents of gold). Relabelling the first closes the gap and the dup at
+    # once. ⚠ This chapter's OTHER repeat, «23#dup2», is NOT resolved — see
+    # the unresolved list in the build log.
+    (18, "10"): {"10": 2, "10#dup2": 10},
+    # 3 Kingdoms 21 — a textbook mid-sentence split: [29] is the bare speech
+    # tag «და ჰრქუა უფალმან» ("And the LORD said:"), twenty characters with no
+    # reported speech at all, and the dup supplies the oracle KJV 21:29
+    # contains. Same number = concatenated.
+    (18, "21"): {"29#dup2": 29},
+    # Proverbs 17 — two different answers in one chapter. «6#dup2» completes a
+    # noun phrase [6] leaves hanging («crown of old men» → «…of grandchildren»)
+    # and then carries the LXX-only addition at 17:6a, so it rejoins verse 6.
+    # «12#dup2» is an unrelated complete sentence matching KJV 17:13, and the
+    # label 13 is missing from the stream — so it takes it.
+    (33, "17"): {"6#dup2": 6, "12#dup2": 13},
+    # Luke 1 — the base «50» is not scripture: «გარდახედ ღმრთის მშობლისასა»,
+    # "turn to [the reading of] the Mother of God", is a lectionary rubric the
+    # print left unbracketed, phrased almost exactly like the bracketed ხ55ხ
+    # rubric a few lines later. Moving it to the rubric file leaves 80 verses
+    # — the KJV's count — with the dup as the real verse 50 (God's mercy on
+    # them that fear him).
+    (63, "1"): {"50": "RUBRIC", "50#dup2": 50},
+    # Genesis 41 and Deuteronomy 32 — REJOIN, and note this contradicts the
+    # first reading of both. The reader proposed shifting the dup to the next
+    # number, but its OWN verse-by-verse alignment shows the unit AFTER the
+    # duplicate already matches the KJV ([50] = KJV 41:50; [24] = KJV 32:24).
+    # Shifting would push that unit off its match and leave a permanent offset
+    # for the rest of the chapter, whereas rejoining absorbs the +1 the
+    # chapter had been carrying since an earlier split — and lands Genesis 41
+    # on exactly the KJV's 57. The alignment table is evidence; the verdict
+    # label was a summary of it, so the table wins.
+    (8, "41"): {"49#dup2": 49},
+    (12, "32"): {"23#dup2": 23},
+    # Exodus 8 — the chapter runs a consistent +1 against the KJV from an
+    # earlier split at v16 and nothing follows the dup to contradict it, so
+    # the extra final verse stands: 33 native against the KJV's 32.
+    (9, "8"): {"32#dup2": 33},
+    # Exodus 31 — three units carrying three sequential, non-overlapping
+    # contents ([16] = KJV 16 without its tail, the dup = that tail plus
+    # KJV 17, the second dup = KJV 18) running to the chapter's natural end.
+    # Lands on exactly 18 verses, the KJV's count.
+    (9, "31"): {"15#dup2": 17, "16#dup2": 18},
+    # Daniel 6 — the tail runs consistently one behind from the dup onward
+    # ([21] = KJV 22 … [27] = KJV 28), so the whole tail shifts up one and the
+    # chapter closes on 28, the KJV's count. «O king, live for ever» is a
+    # complete verse, not a continuation of the king's cry.
+    (45, "6"): {"20#dup2": 21, "21": 22, "22": 23, "23": 24, "24": 25,
+                "25": 26, "26": 27, "27": 28},
+    # ★ Sirach 37 and 41 — the best-corroborated sites in the whole pass, and
+    # a different defect from all the others: each chapter carries a stray
+    # «35» in the position where 3 belongs, and each chapter's label stream is
+    # missing exactly [3]. Reading it as a two-digit slip for «3» makes BOTH
+    # chapters perfectly contiguous (37 → 1..34, 41 → 1..29) and closes six
+    # census gaps at once. The content confirms it: Sirach 37's unit is the
+    # whole of «O wicked imagination, whence camest thou…» = KJV 37:3.
+    (37, "37"): {"35": 3},
+    (37, "41"): {"35": 3},
+}
+
 # ------------------------------------------------------- chapter preambles
 # Every chapter whose preamble carries something beyond the print's «თავი , N.»
 # heading, resolved individually. Actions:
@@ -520,6 +615,26 @@ def main():
                     t = re.sub(r"^%d\s+" % num, "", t)
                     stats["reg3_relabelled"] += 1
                 else:
+                    seam = SEAM.get((n, ck), {})
+                    if vk in seam:
+                        if seam[vk] == "RUBRIC":
+                            rubrics.append({"book": slot, "chapter": cnum - 1,
+                                            "verse": 0, "kind": "lection",
+                                            "text": t})
+                            stats["rubrics"] += 1
+                            stats["seam_units_moved_to_rubrics"] += 1
+                            continue
+                        num = seam[vk]
+                        stats["seam_units_renumbered"] += 1
+                        order.append((num, t))
+                        stats["to_verse_stream"] += 1
+                        if num in verses:
+                            verses[num] = (verses[num] + " " + t).strip()
+                            stats["seam_units_rejoined"] += 1
+                        else:
+                            verses[num] = t
+                        prev = num
+                        continue
                     m = DUP_RE.match(vk)
                     stem = m.group(1) if m else vk
                     if not stem.isdigit():

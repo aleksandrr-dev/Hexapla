@@ -125,6 +125,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
+/** Shown in place of a verse the edition genuinely lacks, in SPLIT view only —
+ *  the row has to stay so the other translation still pairs, but a bare verse
+ *  number with nothing after it reads as a rendering failure. Single view skips
+ *  such verses outright. */
+private const val EMPTY_VERSE = "—"
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReaderScreen(settings: AppSettings) {
@@ -532,6 +539,14 @@ fun ReaderScreen(settings: AppSettings) {
                     }
             ) {
                 itemsIndexed(verses) { i, verse ->
+                    // Verses an edition genuinely lacks (135 of them in the
+                    // Zohrab Armenian OT, e.g. Ezra 2:26-27) are honest holes
+                    // in the data — but on the owner's device pass a bare
+                    // verse number with nothing after it read as a rendering
+                    // failure. In SINGLE view the row is skipped entirely; in
+                    // SPLIT view it must stay, or the other translation stops
+                    // pairing, so the gap shows an em-dash instead (below).
+                    if (verse.isBlank() && !settings.splitEnabled) return@itemsIndexed
                     val highlighted = playbackHere && Playback.verse.intValue == i
                     // Red letters, notes and highlights are all keyed by the
                     // canonical KJV reference; pivot the primary's own
@@ -592,15 +607,15 @@ fun ReaderScreen(settings: AppSettings) {
                             else null
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                                 }
                             } else {
-                                VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
-                                    i + 1, second, settings.fontSize, fontFamily,
+                                    i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
                                     onWordIndexed = secondTap,
@@ -1801,6 +1816,19 @@ fun BookChapterPicker(
                     LazyColumn(state = listState) {
                         itemsIndexed(books) { i, b ->
                             if (i == 0 || i == 39 || i == 66) {
+                                // Owner report: the three section headings were
+                                // the same colour as everything else and got
+                                // lost in a 66-item list, so finding where the
+                                // New Testament starts meant scrolling and
+                                // squinting. Each section now gets its own
+                                // accent and a tinted band, which makes the
+                                // boundaries findable at a glance without
+                                // adding any new chrome to the list itself.
+                                val accent = when (i) {
+                                    0 -> MaterialTheme.colorScheme.primary
+                                    39 -> MaterialTheme.colorScheme.tertiary
+                                    else -> MaterialTheme.colorScheme.secondary
+                                }
                                 Text(
                                     stringResource(
                                         when (i) {
@@ -1809,9 +1837,13 @@ fun BookChapterPicker(
                                             else -> R.string.apocrypha
                                         }
                                     ),
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = accent,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(accent.copy(alpha = 0.12f))
+                                        .padding(horizontal = 20.dp, vertical = 10.dp)
                                 )
                             }
                             TextButton(

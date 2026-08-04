@@ -91,32 +91,41 @@ ESTHER_CH13_ORDER = ["4", "13"]
 # (Inventing 48 Armenian names from memory is precisely the ru_stress failure
 #  mode; using TITUS's Latin codes is the de_luther/el_vamvas one.)
 NAMES = {
+    # ⚠ SHORTENED 2026-08-04 after the owner's device pass. Thirteen prophets
+    # all began with the identical 14-character «ՄԱՐԳԱՐԷՈՒԹԻՒՆ » ("Prophecy
+    # of"), which put the distinguishing word at the END of every line and made
+    # the book list unscannable; it also overflowed the reader title on
+    # Habakkuk. The genre prefixes «ՄԱՐԳԱՐԷՈՒԹԻՒՆ» and «ԳԻՐՔ» are dropped.
+    # Still DERIVED, never invented — the substring assertion below is
+    # unchanged, so every name here must still occur in the print's heading.
+    # ⚠ These are the print's GENITIVE forms («ԵՍԱՅԱՅ» = "of Isaiah"). Standing
+    # alone a native may expect the nominative; flagged for the reviewer.
     "Gen.": "ԾՆՈՒՆԴՔ", "Ex.": "ԵԼՔ", "Lev.": "ՂԵՒՏԱԿԱՆ", "Num.": "ԹԻՒՔ",
-    "Deut.": "ԵՐԿՐՈՐԴՈՒՄՆ ՕՐԻՆԱՑ", "Jos.": "ԳԻՐՔ ՅԵՍՈՒԱՅ",
+    "Deut.": "ԵՐԿՐՈՐԴՈՒՄՆ ՕՐԻՆԱՑ", "Jos.": "ՅԵՍՈՒԱՅ",
     "Ju.": "ԴԱՏԱՒՈՐՔ", "Ru.": "ՀՌՈՒԹ",
     "Reg.I_(Sam.I)": "ԹԱԳԱՒՈՐՈՒԹԵԱՆՑ ԱՌԱՋԻՆ",
     "Reg.II_(Sam.II)": "ԹԱԳԱՒՈՐՈՒԹԵԱՆՑ ԵՐԿՐՈՐԴ",
     "Reg.III_(Reg.I)": "ԹԱԳԱՒՈՐՈՒԹԵԱՆՑ ԵՐՐՈՐԴ",
     "Reg.IV_(Reg.II)": "ԹԱԳԱՒՈՐՈՒԹԵԱՆՑ ՉՈՐՐՈՐԴ",
     "Chr.I": "ՄՆԱՑՈՐԴԱՑ ԱՌԱՋԻՆ", "Chr.II": "ՄՆԱՑՈՐԴԱՑ ԵՐԿՐՈՐԴ",
-    "Esr.I_(Esr.III)": "ԳԻՐՔ ԵԶՐԻ ԱՌԱՋԻՆ", "Esr.II_(Esr.)": "ԵԶՐԱՅ ԵՐԿՐՈՐԴ",
+    "Esr.I_(Esr.III)": "ԵԶՐԻ ԱՌԱՋԻՆ", "Esr.II_(Esr.)": "ԵԶՐԱՅ ԵՐԿՐՈՐԴ",
     "Esr.II_(Neh.)": "ԲԱՆՔ ՆԵԵՄԱՅ", "Esth.": "ԵՍԹԵՐ", "Jud.": "ՅՈՒԴԻԹ",
     "Tob.": "ՏՈՎԲԻԹ",
-    "Macc.I": "ԳԻՐՔ ԱՌԱՋԻՆ ՄԱԿԱԲԱՅԵՑՒՈՑ",
-    "Macc.II": "ԳԻՐՔ ԵՐԿՐՈՐԴ ՄԱԿԱԲԱՅԵՑՒՈՑ",
-    "Macc.III": "ԳԻՐՔ ԵՐՐՈՐԴ ՄԱԿԱԲԱՅԵՑՒՈՑ",
-    "Ps.": "ԳԻՐՔ ՍԱՂՄՈՍԱՑ", "Prov.": "ԱՌԱԿՔ ՍՈՂՈՄՈՆԻ",
+    "Macc.I": "ԱՌԱՋԻՆ ՄԱԿԱԲԱՅԵՑՒՈՑ",
+    "Macc.II": "ԵՐԿՐՈՐԴ ՄԱԿԱԲԱՅԵՑՒՈՑ",
+    "Macc.III": "ԵՐՐՈՐԴ ՄԱԿԱԲԱՅԵՑՒՈՑ",
+    "Ps.": "ՍԱՂՄՈՍԱՑ", "Prov.": "ԱՌԱԿՔ ՍՈՂՈՄՈՆԻ",
     "Eccl.": "ԲԱՆՔ ԺՈՂՈՎՈՂԻՆ", "Cant.": "ԵՐԳ ԵՐԳՈՑ",
-    "Sap.Sal.": "ԻՄԱՍՏՈՒԹԻՒՆ ՍՈՂՈՄՈՆԻ", "Hiob": "ԳԻՐՔ ՅՈԲԱՅ",
-    "Is.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԵՍԱՅԱՅ", "Jer.": "ԳԻՐՔ ԵՐԵՄԻԱՅ",
+    "Sap.Sal.": "ԻՄԱՍՏՈՒԹԻՒՆ ՍՈՂՈՄՈՆԻ", "Hiob": "ՅՈԲԱՅ",
+    "Is.": "ԵՍԱՅԱՅ", "Jer.": "ԵՐԵՄԻԱՅ",
     "Bar.": "ԹՈՒՂԹ ԲԱՐՈՒՔԱՅ", "Lam.Jer.": "ՈՂԲՔ",
-    "Ez.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԵԶԵԿԻԵԼԻ", "Dan.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԴԱՆԻԵԼԻ",
-    "Hos.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՈՎՍԵԱՅ", "Joel": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՅՈՎԵԼԵԱՅ",
-    "Am.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԱՄՈՎՍԱՅ", "Abd.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԱԲԴԻՈՒ",
-    "Jon.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՅՈՎՆԱՆՈՒ", "Mi.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՄԻՔԻԱՅ",
-    "Nah.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՆԱՒՈՒՄԱՅ", "Hab.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԱՄԲԱԿՈՒՄԱՅ",
-    "Soph.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՍՈՓՈՆԻԱՅ", "Agg.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԱՆԳԵԱՅ",
-    "Zach.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ԶԱՔԱՐԻԱՅ", "Mal.": "ՄԱՐԳԱՐԷՈՒԹԻՒՆ ՄԱՂԱՔԻԱՅ",
+    "Ez.": "ԵԶԵԿԻԵԼԻ", "Dan.": "ԴԱՆԻԵԼԻ",
+    "Hos.": "ՈՎՍԵԱՅ", "Joel": "ՅՈՎԵԼԵԱՅ",
+    "Am.": "ԱՄՈՎՍԱՅ", "Abd.": "ԱԲԴԻՈՒ",
+    "Jon.": "ՅՈՎՆԱՆՈՒ", "Mi.": "ՄԻՔԻԱՅ",
+    "Nah.": "ՆԱՒՈՒՄԱՅ", "Hab.": "ԱՄԲԱԿՈՒՄԱՅ",
+    "Soph.": "ՍՈՓՈՆԻԱՅ", "Agg.": "ԱՆԳԵԱՅ",
+    "Zach.": "ԶԱՔԱՐԻԱՅ", "Mal.": "ՄԱՂԱՔԻԱՅ",
 }
 
 

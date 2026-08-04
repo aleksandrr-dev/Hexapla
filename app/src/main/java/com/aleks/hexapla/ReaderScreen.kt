@@ -546,7 +546,13 @@ fun ReaderScreen(settings: AppSettings) {
                     // failure. In SINGLE view the row is skipped entirely; in
                     // SPLIT view it must stay, or the other translation stops
                     // pairing, so the gap shows an em-dash instead (below).
-                    if (verse.isBlank() && !settings.splitEnabled) return@itemsIndexed
+                    val secondHere = if (settings.splitEnabled && secondaryAligned != null)
+                        secondaryAligned.getOrNull(i)?.first ?: "" else ""
+                    // Nothing to show on ANY pane -> no row at all. Without
+                    // this, pairing an OT-only text with itself printed two
+                    // em-dashes side by side (owner report).
+                    if (verse.isBlank() &&
+                        (!settings.splitEnabled || secondHere.isBlank())) return@itemsIndexed
                     val highlighted = playbackHere && Playback.verse.intValue == i
                     // Red letters, notes and highlights are all keyed by the
                     // canonical KJV reference; pivot the primary's own
@@ -1824,10 +1830,21 @@ fun BookChapterPicker(
                                 // accent and a tinted band, which makes the
                                 // boundaries findable at a glance without
                                 // adding any new chrome to the list itself.
+                                // ⚠ Explicit colours, NOT theme roles. This
+                                // app's palette never defines `tertiary`, so
+                                // the New Testament heading fell back to
+                                // Material's default PINK; and `primary` is
+                                // already the current-book highlight, so the
+                                // Old Testament heading was indistinguishable
+                                // from a selected book. Both owner reports.
+                                // Tuned to the parchment/leather palette:
+                                // olive, brick red, muted stone.
+                                val darkTheme =
+                                    MaterialTheme.colorScheme.background.luminance() < 0.5f
                                 val accent = when (i) {
-                                    0 -> MaterialTheme.colorScheme.primary
-                                    39 -> MaterialTheme.colorScheme.tertiary
-                                    else -> MaterialTheme.colorScheme.secondary
+                                    0 -> if (darkTheme) Color(0xFF9DB36B) else Color(0xFF4E6B34)
+                                    39 -> if (darkTheme) Color(0xFFE0705C) else Color(0xFFB03A2E)
+                                    else -> if (darkTheme) Color(0xFFAA9C80) else Color(0xFF7A6A50)
                                 }
                                 Text(
                                     stringResource(

@@ -1195,8 +1195,14 @@ must include them; owner should spot-check on-device before submitting.
 
 ★ **ARMENIAN ZOHRAB OT (`zoh`) IS COMPLETE IN TREE** — asset, versemap,
 rubrics, registration and the required TITUS credit all landed 2026-08-04.
-Gated on a native-speaker review (draft message ready) and an owner device
-pass, not on more engineering. See SESSION_HANDOFF_2026-08-04.md §3.
+★ **The owner's device pass is DONE (2026-08-04)** and every finding is fixed:
+stichometry colophons stripped, empty-verse rendering, findable picker
+sections, shortened book names. `zoh` is gated ONLY on the native-speaker
+reply now. See SESSION_HANDOFF_2026-08-04.md §3 and §3a.
+⚠ Two things there are NOT bugs and must not be "fixed": the «։» ending
+Armenian verses is U+0589 ARMENIAN FULL STOP (22,896 verses), and Daniel 3
+showing 30 verses in split view is the primary-drives-the-grid behaviour the
+owner already ratified for the Vulgate.
 
 ★ **Georgian Bakar is started, foundation only** — `tools/build_bakar.py`
 maps and cleans, and prints its own curation list. Its asset is deliberately

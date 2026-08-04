@@ -204,6 +204,16 @@
     <string name="share_app_link">Даслаць спасылку</string>
     <string name="music_title">Фонавая музыка падчас праслухоўваньня</string>
     <string name="music_volume">Гучнасьць музыкі</string>
+    <string name="audio_stream">Патокавы рэжым без захоўваньня</string>
+    <string name="audio_stream_note">Аўдыё прайграецца падчас загрузкі замест захоўваньня на прыладзе. Займае менш месца, але кожны раз патрабуе злучэньня з інтэрнэтам; ужо спампаваныя разьдзелы па-ранейшаму прайграюцца афлайн.</string>
+    <string name="music_pack">Спампаваць музычны набор</string>
+    <string name="music_pack_partial">Спампавана %1$d з %2$d трэкаў — дакраніцеся, каб атрымаць астатнія</string>
+    <string name="music_pack_note">%1$d трэкаў, каля %2$d МБ. Больш разнастайнасьці, чым убудаваная ў праграму музыка, якая ў любым выпадку працягвае працаваць афлайн.</string>
+    <string name="music_pack_have">Музычны набор спампаваны: %1$d трэкаў, %2$d МБ</string>
+    <string name="music_pack_delete">Выдаліць спампаваную музыку</string>
+    <string name="music_pack_progress">Спампоўваньне %1$d з %2$d…</string>
+    <string name="music_uniform">Адна і тая ж музыка ўвесь час</string>
+    <string name="music_uniform_note">Прадвызначана выключана: музыка падладжваецца пад тэкст, які чытаецца, і сьціхае ў некалькіх месцах, дзе лепш без яе.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">назоўнік</string>
     <string name="morph_adjective">прыметнік</string>

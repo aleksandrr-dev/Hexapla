@@ -204,6 +204,16 @@
     <string name="share_app_link">Pošalji link</string>
     <string name="music_title">Muzika u pozadini tokom slušanja</string>
     <string name="music_volume">Jačina muzike</string>
+    <string name="audio_stream">Strimovanje bez čuvanja</string>
+    <string name="audio_stream_note">Zvuk se pušta dok se učitava, umesto da se preuzima. Zauzima manje prostora, ali svaki put zahteva vezu sa mrežom; već preuzeta poglavlja i dalje se puštaju van mreže.</string>
+    <string name="music_pack">Preuzmi muzički paket</string>
+    <string name="music_pack_partial">Preuzeto %1$d od %2$d numera — dodirnite da preuzmete ostatak</string>
+    <string name="music_pack_note">%1$d numera, oko %2$d MB. Više raznovrsnosti od muzike ugrađene u aplikaciju, koja u svakom slučaju radi i van mreže.</string>
+    <string name="music_pack_have">Muzički paket preuzet: %1$d numera, %2$d MB</string>
+    <string name="music_pack_delete">Obriši preuzetu muziku</string>
+    <string name="music_pack_progress">Preuzimanje %1$d od %2$d…</string>
+    <string name="music_uniform">Ista muzika sve vreme</string>
+    <string name="music_uniform_note">Podrazumevano isključeno: muzika se menja u skladu sa onim što se čita, a na nekoliko mesta utihne tamo gde je bolje bez nje.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">imenica</string>
     <string name="morph_adjective">pridev</string>

@@ -204,6 +204,16 @@
     <string name="share_app_link">リンクを送る</string>
     <string name="music_title">朗読中の背景音楽</string>
     <string name="music_volume">音楽の音量</string>
+    <string name="audio_stream">保存せずにストリーミング再生</string>
+    <string name="audio_stream_note">音声をダウンロードせず、読み込みながら再生します。容量は少なくて済みますが、そのつど通信が必要です。すでにダウンロード済みの章はオフラインのまま再生できます。</string>
+    <string name="music_pack">音楽パックをダウンロード</string>
+    <string name="music_pack_partial">%1$d/%2$d 曲をダウンロード済み — タップして残りを取得</string>
+    <string name="music_pack_note">%1$d 曲、約 %2$d MB。アプリ内蔵の音楽よりバリエーションが豊富です。ダウンロードしてもしなくても、音楽はオフラインで使えます。</string>
+    <string name="music_pack_have">音楽パックをダウンロード済み: %1$d 曲、%2$d MB</string>
+    <string name="music_pack_delete">ダウンロード済みの音楽を削除</string>
+    <string name="music_pack_progress">%1$d/%2$d 曲をダウンロード中…</string>
+    <string name="music_uniform">常に同じ音楽</string>
+    <string name="music_uniform_note">既定でオフ: 音楽は読んでいる内容に合わせて変化し、音楽がない方がよい一部の箇所では静かになります。</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">名詞</string>
     <string name="morph_adjective">形容詞</string>

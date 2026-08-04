@@ -204,6 +204,16 @@
     <string name="share_app_link">Skicka länk</string>
     <string name="music_title">Bakgrundsmusik under lyssning</string>
     <string name="music_volume">Musikvolym</string>
+    <string name="audio_stream">Streaming utan att spara</string>
+    <string name="audio_stream_note">Spelar upp ljud medan det laddas i stället för att ladda ner det. Använder mindre utrymme men kräver anslutning varje gång; kapitel du redan har laddat ner spelas fortfarande upp offline.</string>
+    <string name="music_pack">Ladda ner musikpaket</string>
+    <string name="music_pack_partial">%1$d av %2$d spår nedladdade — tryck för att hämta resten</string>
+    <string name="music_pack_note">%1$d spår, cirka %2$d MB. Mer variation än musiken som redan finns inbyggd i appen, som ändå fungerar offline.</string>
+    <string name="music_pack_have">Musikpaket nedladdat: %1$d spår, %2$d MB</string>
+    <string name="music_pack_delete">Ta bort nedladdad musik</string>
+    <string name="music_pack_progress">Laddar ner %1$d av %2$d…</string>
+    <string name="music_uniform">Samma musik genomgående</string>
+    <string name="music_uniform_note">Avstängt som standard: musiken ändras efter vad som läses och tystnar vid några avsnitt där ingen musik är bättre.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">substantiv</string>
     <string name="morph_adjective">adjektiv</string>

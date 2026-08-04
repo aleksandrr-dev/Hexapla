@@ -204,6 +204,16 @@
     <string name="share_app_link">发送链接</string>
     <string name="music_title">收听时的背景音乐</string>
     <string name="music_volume">音乐音量</string>
+    <string name="audio_stream">流式播放，不保存</string>
+    <string name="audio_stream_note">播放时即时加载，而非先下载。占用空间更少，但每次都需要联网。已下载的章节仍可离线播放。</string>
+    <string name="music_pack">下载音乐包</string>
+    <string name="music_pack_partial">已下载 %1$d/%2$d 首乐曲——点按获取其余部分</string>
+    <string name="music_pack_note">%1$d 首乐曲，约 %2$d MB。比应用内置的音乐更丰富多样。无论是否下载，音乐都能离线使用。</string>
+    <string name="music_pack_have">音乐包已下载：%1$d 首乐曲，%2$d MB</string>
+    <string name="music_pack_delete">删除已下载的音乐</string>
+    <string name="music_pack_progress">正在下载 %1$d/%2$d…</string>
+    <string name="music_uniform">全程使用相同音乐</string>
+    <string name="music_uniform_note">默认关闭：音乐会随所读内容而变化，并在少数不宜配乐的经文处静音。</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">名词</string>
     <string name="morph_adjective">形容词</string>

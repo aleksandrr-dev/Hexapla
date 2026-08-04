@@ -204,6 +204,16 @@
     <string name="share_app_link">Send link</string>
     <string name="music_title">Baggrundsmusik under lytning</string>
     <string name="music_volume">Lydstyrke for musik</string>
+    <string name="audio_stream">Streaming uden at gemme</string>
+    <string name="audio_stream_note">Afspiller lyd, mens den indlæses, i stedet for at downloade den. Bruger mindre plads, men kræver forbindelse hver gang; kapitler du allerede har downloadet, afspilles stadig offline.</string>
+    <string name="music_pack">Download musikpakke</string>
+    <string name="music_pack_partial">%1$d af %2$d numre downloadet — tryk for at hente resten</string>
+    <string name="music_pack_note">%1$d numre, cirka %2$d MB. Mere variation end musikken, der allerede er indbygget i appen, som under alle omstændigheder virker offline.</string>
+    <string name="music_pack_have">Musikpakke downloadet: %1$d numre, %2$d MB</string>
+    <string name="music_pack_delete">Slet downloadet musik</string>
+    <string name="music_pack_progress">Downloader %1$d af %2$d…</string>
+    <string name="music_uniform">Samme musik hele vejen igennem</string>
+    <string name="music_uniform_note">Slået fra som standard: musikken skifter, så den passer til det, der læses, og bliver stille ved nogle passager, hvor ingen musik er bedre.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">substantiv</string>
     <string name="morph_adjective">adjektiv</string>

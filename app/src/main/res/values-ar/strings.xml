@@ -204,6 +204,16 @@
     <string name="share_app_link">إرسال الرابط</string>
     <string name="music_title">موسيقى خلفية أثناء الاستماع</string>
     <string name="music_volume">مستوى صوت الموسيقى</string>
+    <string name="audio_stream">البث دون حفظ</string>
+    <string name="audio_stream_note">يُشغَّل الصوت فور تحميله بدلاً من تنزيله بالكامل أولاً. يستخدم مساحة أقل، لكنه يحتاج اتصالاً بالإنترنت في كل مرة؛ الأصحاحات المنزَّلة من قبل تبقى تعمل دون إنترنت.</string>
+    <string name="music_pack">تنزيل حزمة الموسيقى</string>
+    <string name="music_pack_partial">تم تنزيل %1$d من %2$d مقطوعة — اضغط للحصول على الباقي</string>
+    <string name="music_pack_note">%1$d مقطوعة، بحجم %2$d ميغابايت تقريبًا. تنوّع أكبر من الموسيقى المدمجة في التطبيق، التي تعمل دون إنترنت في الحالتين.</string>
+    <string name="music_pack_have">حزمة الموسيقى منزَّلة: %1$d مقطوعة، %2$d ميغابايت</string>
+    <string name="music_pack_delete">حذف الموسيقى المنزَّلة</string>
+    <string name="music_pack_progress">جارٍ تنزيل %1$d من %2$d…</string>
+    <string name="music_uniform">نفس الموسيقى طوال الوقت</string>
+    <string name="music_uniform_note">مُعطَّل افتراضيًا: تتغيّر الموسيقى لتناسب ما يُقرأ، وتصمت في بعض المقاطع التي يكون فيها غياب الموسيقى أفضل.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">اسم</string>
     <string name="morph_adjective">صفة</string>

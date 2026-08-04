@@ -196,6 +196,16 @@
     <string name="share_app_link">Envoyer le lien</string>
     <string name="music_title">Musique de fond pendant l\'écoute</string>
     <string name="music_volume">Volume de la musique</string>
+    <string name="audio_stream">Diffuser sans enregistrer</string>
+    <string name="audio_stream_note">Lit l\'audio au fur et à mesure du chargement au lieu de le télécharger. Utilise moins de stockage mais nécessite une connexion à chaque fois ; les chapitres déjà téléchargés restent disponibles hors ligne.</string>
+    <string name="music_pack">Télécharger le pack de musique</string>
+    <string name="music_pack_partial">%1$d pistes sur %2$d téléchargées — touchez pour obtenir le reste</string>
+    <string name="music_pack_note">%1$d pistes, environ %2$d Mo. Plus de variété que la musique intégrée à l\'application, qui continue de fonctionner hors ligne dans tous les cas.</string>
+    <string name="music_pack_have">Pack de musique téléchargé : %1$d pistes, %2$d Mo</string>
+    <string name="music_pack_delete">Supprimer la musique téléchargée</string>
+    <string name="music_pack_progress">Téléchargement de %1$d sur %2$d…</string>
+    <string name="music_uniform">Même musique tout du long</string>
+    <string name="music_uniform_note">Désactivé par défaut : la musique change selon ce qui est lu, et se tait à certains passages où l\'absence de musique convient mieux.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">nom</string>
     <string name="morph_adjective">adjectif</string>

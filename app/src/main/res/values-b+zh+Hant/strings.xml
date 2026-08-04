@@ -204,6 +204,16 @@
     <string name="share_app_link">傳送連結</string>
     <string name="music_title">聆聽時的背景音樂</string>
     <string name="music_volume">音樂音量</string>
+    <string name="audio_stream">串流播放，不儲存</string>
+    <string name="audio_stream_note">播放時即時載入，而非先下載。佔用空間更少，但每次都需要網路連線。已下載的章節仍可離線播放。</string>
+    <string name="music_pack">下載音樂包</string>
+    <string name="music_pack_partial">已下載 %1$d/%2$d 首樂曲——點按取得其餘部分</string>
+    <string name="music_pack_note">%1$d 首樂曲，約 %2$d MB。比應用程式內建的音樂更豐富多樣。無論是否下載，音樂都能離線使用。</string>
+    <string name="music_pack_have">音樂包已下載：%1$d 首樂曲，%2$d MB</string>
+    <string name="music_pack_delete">刪除已下載的音樂</string>
+    <string name="music_pack_progress">正在下載 %1$d/%2$d…</string>
+    <string name="music_uniform">全程使用相同音樂</string>
+    <string name="music_uniform_note">預設關閉：音樂會隨所讀內容而變化，並在少數不宜配樂的經文處靜音。</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">名詞</string>
     <string name="morph_adjective">形容詞</string>

@@ -198,6 +198,16 @@
     <string name="share_app_link">Отправить ссылку</string>
     <string name="music_title">Фоновая музыка при прослушивании</string>
     <string name="music_volume">Громкость музыки</string>
+    <string name="audio_stream">Потоковый режим без сохранения</string>
+    <string name="audio_stream_note">Аудио воспроизводится по мере загрузки, а не сохраняется на устройстве. Занимает меньше места, но каждый раз требуется подключение к интернету; уже загруженные главы по-прежнему воспроизводятся офлайн.</string>
+    <string name="music_pack">Загрузить музыкальный набор</string>
+    <string name="music_pack_partial">Загружено %1$d из %2$d треков — нажмите, чтобы получить остальные</string>
+    <string name="music_pack_note">%1$d треков, около %2$d МБ. Больше разнообразия, чем во встроенной музыке приложения, которая в любом случае продолжает работать офлайн.</string>
+    <string name="music_pack_have">Музыкальный набор загружен: %1$d треков, %2$d МБ</string>
+    <string name="music_pack_delete">Удалить загруженную музыку</string>
+    <string name="music_pack_progress">Загрузка %1$d из %2$d…</string>
+    <string name="music_uniform">Одна и та же музыка на всё время</string>
+    <string name="music_uniform_note">По умолчанию выключено: музыка подстраивается под читаемый текст и умолкает в нескольких местах, где лучше без неё.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">существительное</string>
     <string name="morph_adjective">прилагательное</string>

@@ -204,6 +204,16 @@
     <string name="share_app_link">Link versturen</string>
     <string name="music_title">Achtergrondmuziek tijdens het luisteren</string>
     <string name="music_volume">Muziekvolume</string>
+    <string name="audio_stream">Streamen zonder opslaan</string>
+    <string name="audio_stream_note">Speelt audio af terwijl die laadt, in plaats van deze te downloaden. Gebruikt minder ruimte, maar heeft elke keer een verbinding nodig; hoofdstukken die je al hebt gedownload, spelen nog steeds offline af.</string>
+    <string name="music_pack">Muziekpakket downloaden</string>
+    <string name="music_pack_partial">%1$d van %2$d nummers gedownload — tik om de rest te downloaden</string>
+    <string name="music_pack_note">%1$d nummers, ongeveer %2$d MB. Meer variatie dan de muziek die in de app is ingebouwd, die sowieso offline blijft werken.</string>
+    <string name="music_pack_have">Muziekpakket gedownload: %1$d nummers, %2$d MB</string>
+    <string name="music_pack_delete">Gedownloade muziek verwijderen</string>
+    <string name="music_pack_progress">%1$d van %2$d worden gedownload…</string>
+    <string name="music_uniform">Steeds dezelfde muziek</string>
+    <string name="music_uniform_note">Standaard uit: de muziek verandert passend bij wat er wordt gelezen, en valt op een paar plekken stil waar geen muziek beter is.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">zelfstandig naamwoord</string>
     <string name="morph_adjective">bijvoeglijk naamwoord</string>

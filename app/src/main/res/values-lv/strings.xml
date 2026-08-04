@@ -204,6 +204,16 @@
     <string name="share_app_link">Nosūtīt saiti</string>
     <string name="music_title">Fona mūzika klausīšanās laikā</string>
     <string name="music_volume">Mūzikas skaļums</string>
+    <string name="audio_stream">Straumēšana bez saglabāšanas</string>
+    <string name="audio_stream_note">Atskaņo audio ielādes laikā, nevis lejupielādē to iepriekš. Izmanto mazāk vietas, bet katru reizi nepieciešams savienojums; jau lejupielādētās nodaļas joprojām atskaņojas bezsaistē.</string>
+    <string name="music_pack">Lejupielādēt mūzikas paketi</string>
+    <string name="music_pack_partial">Lejupielādēti %1$d no %2$d celiņiem — pieskarieties, lai lejupielādētu pārējos</string>
+    <string name="music_pack_note">%1$d celiņi, apmēram %2$d MB. Lielāka dažādība salīdzinājumā ar lietotnē iebūvēto mūziku, kas jebkurā gadījumā darbojas arī bezsaistē.</string>
+    <string name="music_pack_have">Mūzikas pakete lejupielādēta: %1$d celiņi, %2$d MB</string>
+    <string name="music_pack_delete">Dzēst lejupielādēto mūziku</string>
+    <string name="music_pack_progress">Lejupielādē %1$d no %2$d…</string>
+    <string name="music_uniform">Vienmēr vienāda mūzika</string>
+    <string name="music_uniform_note">Pēc noklusējuma izslēgts: mūzika mainās atbilstoši tam, kas tiek lasīts, un dažos fragmentos apklust, kur labāk iztikt bez mūzikas.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">lietvārds</string>
     <string name="morph_adjective">īpašības vārds</string>

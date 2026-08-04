@@ -204,6 +204,16 @@
     <string name="share_app_link">Lähetä linkki</string>
     <string name="music_title">Taustamusiikki kuunnellessa</string>
     <string name="music_volume">Musiikin voimakkuus</string>
+    <string name="audio_stream">Suoratoisto ilman tallentamista</string>
+    <string name="audio_stream_note">Toistaa ääntä sen latautuessa lataamisen sijaan. Käyttää vähemmän tilaa mutta vaatii yhteyden joka kerta; jo ladatut luvut toistuvat silti offline-tilassa.</string>
+    <string name="music_pack">Lataa musiikkipaketti</string>
+    <string name="music_pack_partial">%1$d/%2$d kappaletta ladattu — napauta ladataksesi loput</string>
+    <string name="music_pack_note">%1$d kappaletta, noin %2$d Mt. Enemmän vaihtelua kuin sovellukseen sisäänrakennettu musiikki, joka toimii joka tapauksessa myös offline-tilassa.</string>
+    <string name="music_pack_have">Musiikkipaketti ladattu: %1$d kappaletta, %2$d Mt</string>
+    <string name="music_pack_delete">Poista ladattu musiikki</string>
+    <string name="music_pack_progress">Ladataan %1$d/%2$d…</string>
+    <string name="music_uniform">Sama musiikki koko ajan</string>
+    <string name="music_uniform_note">Pois päältä oletuksena: musiikki vaihtuu luettavan tekstin mukaan ja vaikenee muutamissa kohdissa, joissa musiikin puuttuminen on parempi.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">substantiivi</string>
     <string name="morph_adjective">adjektiivi</string>

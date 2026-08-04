@@ -203,6 +203,16 @@
     <string name="share_app_link">இணைப்பை அனுப்பு</string>
     <string name="music_title">கேட்கும்போது பின்னணி இசை</string>
     <string name="music_volume">இசை ஒலியளவு</string>
+    <string name="audio_stream">சேமிக்காமல் ஸ்ட்ரீமிங்</string>
+    <string name="audio_stream_note">பதிவிறக்காமல், ஏற்றும்போதே ஒலியை இயக்கும். குறைவான இடத்தைப் பயன்படுத்தும், ஆனால் ஒவ்வொரு முறையும் இணைய இணைப்பு தேவை; ஏற்கெனவே பதிவிறக்கிய அதிகாரங்கள் தொடர்ந்து ஆஃப்லைனில் இயங்கும்.</string>
+    <string name="music_pack">இசைத் தொகுப்பைப் பதிவிறக்கு</string>
+    <string name="music_pack_partial">%1$d/%2$d பாடல்கள் பதிவிறக்கப்பட்டன — மீதமுள்ளவற்றைப் பெற தொடவும்</string>
+    <string name="music_pack_note">%1$d பாடல்கள், சுமார் %2$d MB. ஆப்பில் உள்ளமைந்த இசையை விட அதிக வகைகள்; பதிவிறக்கினாலும் இல்லாவிட்டாலும் இசை ஆஃப்லைனில் தொடர்ந்து இயங்கும்.</string>
+    <string name="music_pack_have">இசைத் தொகுப்பு பதிவிறக்கப்பட்டது: %1$d பாடல்கள், %2$d MB</string>
+    <string name="music_pack_delete">பதிவிறக்கிய இசையை நீக்கு</string>
+    <string name="music_pack_progress">%1$d/%2$d பதிவிறக்கப்படுகிறது…</string>
+    <string name="music_uniform">முழுவதும் ஒரே இசை</string>
+    <string name="music_uniform_note">இயல்பாக அணைந்திருக்கும்: வாசிக்கப்படும் பகுதிக்கு ஏற்ப இசை மாறுகிறது; இசை இல்லாமலிருப்பதே சிறந்த சில இடங்களில் அமைதியாகிவிடும்.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">பெயர்ச்சொல்</string>
     <string name="morph_adjective">பெயரடை</string>

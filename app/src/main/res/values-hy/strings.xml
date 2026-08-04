@@ -204,6 +204,16 @@
     <string name="share_app_link">Ղրկել յղումը</string>
     <string name="music_title">Ետին երաժշտութիւն լսումին ընթացքին</string>
     <string name="music_volume">Երաժշտութեան ձայնի բարձրութիւն</string>
+    <string name="audio_stream">Հոսք՝ առանց պահելու</string>
+    <string name="audio_stream_note">Ձայնը կը նուագուի բեռնաւորման ընթացքին, փոխանակ ամբողջովին բեռնաւորելու։ Կը գործածէ աւելի քիչ տեղ, սակայն ամէն անգամ կապ կը պահանջէ։ Արդէն բեռնաւորուած գլուխները կը շարունակեն նուագել անցանց։</string>
+    <string name="music_pack">Բեռնաւորել երաժշտութեան փաթեթը</string>
+    <string name="music_pack_partial">%1$d/%2$d երգեր բեռնաւորուած են — հպեցէք մնացածը ստանալու համար</string>
+    <string name="music_pack_note">%1$d երգ, շուրջ %2$d ՄԲ։ Աւելի բազմազանութիւն, քան ծրագիրին մէջ ներառուած երաժշտութիւնը, որ երկու պարագային ալ կը շարունակէ գործել անցանց։</string>
+    <string name="music_pack_have">Երաժշտութեան փաթեթը բեռնաւորուած է. %1$d երգ, %2$d ՄԲ</string>
+    <string name="music_pack_delete">Ջնջել բեռնաւորուած երաժշտութիւնը</string>
+    <string name="music_pack_progress">Կը բեռնաւորուի %1$d/%2$d…</string>
+    <string name="music_uniform">Նոյն երաժշտութիւնը ամբողջ ընթացքին</string>
+    <string name="music_uniform_note">Լռելեայն անջատուած է. երաժշտութիւնը կը փոխուի՝ կարդացուածին յարմարելու համար, եւ կը լռէ քանի մը հատուածներու մէջ, ուր աւելի լաւ է առանց երաժշտութեան։</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">գոյական</string>
     <string name="morph_adjective">ածական</string>

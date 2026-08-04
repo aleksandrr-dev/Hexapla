@@ -204,6 +204,16 @@
     <string name="share_app_link">Link küldése</string>
     <string name="music_title">Háttérzene hallgatás közben</string>
     <string name="music_volume">Zene hangereje</string>
+    <string name="audio_stream">Streamelés mentés nélkül</string>
+    <string name="audio_stream_note">A hang lejátszásra kerül betöltés közben, letöltés helyett. Kevesebb tárhelyet használ, de minden alkalommal internetkapcsolatot igényel; a már letöltött fejezetek továbbra is offline lejátszhatók.</string>
+    <string name="music_pack">Zenecsomag letöltése</string>
+    <string name="music_pack_partial">%1$d/%2$d szám letöltve — koppints a többi letöltéséhez</string>
+    <string name="music_pack_note">%1$d szám, kb. %2$d MB. Nagyobb változatosság, mint az alkalmazásba beépített zene, amely egyébként is offline működik.</string>
+    <string name="music_pack_have">Zenecsomag letöltve: %1$d szám, %2$d MB</string>
+    <string name="music_pack_delete">Letöltött zene törlése</string>
+    <string name="music_pack_progress">Letöltés: %1$d/%2$d…</string>
+    <string name="music_uniform">Ugyanaz a zene végig</string>
+    <string name="music_uniform_note">Alapértelmezés szerint kikapcsolva: a zene igazodik az olvasott szöveghez, és néhány helyen elnémul, ahol jobb nélküle.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">főnév</string>
     <string name="morph_adjective">melléknév</string>

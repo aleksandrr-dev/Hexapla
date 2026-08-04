@@ -204,6 +204,16 @@
     <string name="share_app_link">שלח קישור</string>
     <string name="music_title">מוזיקת רקע בזמן ההאזנה</string>
     <string name="music_volume">עוצמת המוזיקה</string>
+    <string name="audio_stream">הזרמה בלי לשמור</string>
+    <string name="audio_stream_note">מנגן את השמע תוך כדי טעינה במקום להוריד אותו. צורך פחות אחסון אך דורש חיבור בכל פעם; פרקים שכבר הורדתם ימשיכו להתנגן גם במצב לא מקוון.</string>
+    <string name="music_pack">הורד חבילת מוזיקה</string>
+    <string name="music_pack_partial">%1$d מתוך %2$d רצועות הורדו — הקישו כדי לקבל את השאר</string>
+    <string name="music_pack_note">%1$d רצועות, כ-%2$d מ״ב. יותר גיוון מהמוזיקה המובנית באפליקציה, שבכל מקרה ממשיכה לפעול גם במצב לא מקוון.</string>
+    <string name="music_pack_have">חבילת המוזיקה הורדה: %1$d רצועות, %2$d מ״ב</string>
+    <string name="music_pack_delete">מחק מוזיקה שהורדה</string>
+    <string name="music_pack_progress">מוריד %1$d מתוך %2$d…</string>
+    <string name="music_uniform">אותה מוזיקה לאורך כל הקריאה</string>
+    <string name="music_uniform_note">כבוי כברירת מחדל: המוזיקה משתנה בהתאם למה שנקרא, ומשתתקת בכמה קטעים שבהם היעדר מוזיקה עדיף.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">שם עצם</string>
     <string name="morph_adjective">שם תואר</string>

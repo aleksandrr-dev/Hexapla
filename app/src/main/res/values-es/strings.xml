@@ -196,6 +196,16 @@
     <string name="share_app_link">Enviar enlace</string>
     <string name="music_title">Música de fondo al escuchar</string>
     <string name="music_volume">Volumen de la música</string>
+    <string name="audio_stream">Transmitir sin guardar</string>
+    <string name="audio_stream_note">Reproduce el audio a medida que se carga en lugar de descargarlo. Usa menos almacenamiento pero necesita conexión cada vez; los capítulos que ya descargaste se siguen reproduciendo sin conexión.</string>
+    <string name="music_pack">Descargar paquete de música</string>
+    <string name="music_pack_partial">%1$d de %2$d pistas descargadas — toca para obtener el resto</string>
+    <string name="music_pack_note">%1$d pistas, unos %2$d MB. Más variedad que la música incluida en la app, que de todas formas sigue funcionando sin conexión.</string>
+    <string name="music_pack_have">Paquete de música descargado: %1$d pistas, %2$d MB</string>
+    <string name="music_pack_delete">Eliminar música descargada</string>
+    <string name="music_pack_progress">Descargando %1$d de %2$d…</string>
+    <string name="music_uniform">Misma música en todo momento</string>
+    <string name="music_uniform_note">Desactivado de forma predeterminada: la música cambia según lo que se está leyendo, y calla en algunos pasajes donde el silencio es mejor.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">sustantivo</string>
     <string name="morph_adjective">adjetivo</string>

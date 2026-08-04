@@ -204,6 +204,16 @@
     <string name="share_app_link">Odeslat odkaz</string>
     <string name="music_title">Hudba na pozadí během poslechu</string>
     <string name="music_volume">Hlasitost hudby</string>
+    <string name="audio_stream">Streamování bez ukládání</string>
+    <string name="audio_stream_note">Zvuk se přehrává při načítání místo stahování. Zabírá méně místa, ale pokaždé je potřeba připojení k internetu; už stažené kapitoly se stále přehrávají offline.</string>
+    <string name="music_pack">Stáhnout hudební balíček</string>
+    <string name="music_pack_partial">Staženo %1$d z %2$d skladeb — klepnutím stáhnete zbytek</string>
+    <string name="music_pack_note">%1$d skladeb, přibližně %2$d MB. Větší rozmanitost než hudba vestavěná v aplikaci, která funguje offline tak jako tak.</string>
+    <string name="music_pack_have">Hudební balíček stažen: %1$d skladeb, %2$d MB</string>
+    <string name="music_pack_delete">Smazat staženou hudbu</string>
+    <string name="music_pack_progress">Stahování %1$d z %2$d…</string>
+    <string name="music_uniform">Stejná hudba po celou dobu</string>
+    <string name="music_uniform_note">Ve výchozím nastavení vypnuto: hudba se mění podle čteného textu a na několika místech ztichne tam, kde je lepší bez ní.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">podstatné jméno</string>
     <string name="morph_adjective">přídavné jméno</string>

@@ -204,6 +204,16 @@
     <string name="share_app_link">Wyślij link</string>
     <string name="music_title">Muzyka w tle podczas słuchania</string>
     <string name="music_volume">Głośność muzyki</string>
+    <string name="audio_stream">Strumieniowanie bez zapisywania</string>
+    <string name="audio_stream_note">Dźwięk odtwarza się w trakcie wczytywania zamiast być pobierany. Zajmuje mniej miejsca, ale za każdym razem wymaga połączenia z internetem; już pobrane rozdziały nadal odtwarzają się offline.</string>
+    <string name="music_pack">Pobierz pakiet muzyczny</string>
+    <string name="music_pack_partial">Pobrano %1$d z %2$d utworów — dotknij, aby pobrać resztę</string>
+    <string name="music_pack_note">%1$d utworów, około %2$d MB. Więcej różnorodności niż muzyka wbudowana w aplikację, która i tak działa offline.</string>
+    <string name="music_pack_have">Pakiet muzyczny pobrany: %1$d utworów, %2$d MB</string>
+    <string name="music_pack_delete">Usuń pobraną muzykę</string>
+    <string name="music_pack_progress">Pobieranie %1$d z %2$d…</string>
+    <string name="music_uniform">Ta sama muzyka przez cały czas</string>
+    <string name="music_uniform_note">Domyślnie wyłączone: muzyka zmienia się w zależności od czytanego fragmentu, a w kilku miejscach milknie, gdzie lepiej bez niej.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->
     <string name="morph_noun">rzeczownik</string>
     <string name="morph_adjective">przymiotnik</string>

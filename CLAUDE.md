@@ -1189,9 +1189,18 @@ must include them; owner should spot-check on-device before submitting.
   differ only by stripped umlauts with no markup to match. Silent damage needs
   a REFERENCE TEXT, not a pattern.
 
-## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-03.md first
+## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-04.md first
 
 1.6.2 (code 15) is LIVE in Play and RuStore. Next is 1.6.3 / code 16.
+
+★ **ARMENIAN ZOHRAB OT (`zoh`) IS COMPLETE IN TREE** — asset, versemap,
+rubrics, registration and the required TITUS credit all landed 2026-08-04.
+Gated on a native-speaker review (draft message ready) and an owner device
+pass, not on more engineering. See SESSION_HANDOFF_2026-08-04.md §3.
+
+★ **Georgian Bakar is started, foundation only** — `tools/build_bakar.py`
+maps and cleans, and prints its own curation list. Its asset is deliberately
+untracked. Larger than Zohrab; wants its own session (§5).
 
 ★ **GENEVA'S SHIPPED NARRATION IS DEFECTIVE** — ASR-proven: Genesis 1:1 says
 "God created the HORN and the earth" ("heauen"), plus "MOO-YUED" for moued and

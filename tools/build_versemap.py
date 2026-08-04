@@ -36,6 +36,9 @@ Usage: python build_versemap.py
 import json
 import os
 import re
+import sys
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -59,6 +62,7 @@ IDS = {
     "arm": "hy_west1853",
     "glk": "lv_gluck",
     "zoh": "hy_zohrab",
+    "bak": "ka_bakar",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -69,6 +73,29 @@ STD_TAIL = [  # continental 3 John split + Rev 12:18
     (65, [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)]),
 ]
 EXTRA = {
+    # ── Georgian Bakar 1743 (added 2026-08-04) ────────────────────────────
+    # Esther, read seam by seam against the KJV with the Georgian quoted in
+    # research/BAKAR_BUILD_LOG.md. The Bakar prints the Septuagint Esther with
+    # its additions INLINE, so the KJV's chapter 10 has no chapter of its own.
+    ("bak",): {
+        16: [(3, 14, 15, 3, 14, 14),      # M "published in Susa" + "the king
+                                          #   and Haman sat down to drink"
+             (4, 6, 7, 4, 6, 6),          # M Hatach going out is elided; the
+             (4, 8, 17, 4, 7, 16),        #   sum Haman promised carries v7
+             (8, 12, 17, 8, 12, 12),      # KJV 8:12-17 all compress into one
+                                          #   verse that also carries the whole
+                                          #   of LXX Addition E
+             (10, 1, 3, 9, 17, 17),       # ★ there IS no chapter 10: the
+                                          #   tribute and Mordecai's greatness
+                                          #   open Bakar 9:17, which then runs
+                                          #   on into Addition F
+             (9, 17, 32, 9, 18, 18)],     # ⚠ COARSE ON PURPOSE. The Purim
+                                          #   institution is compressed into a
+                                          #   single summary verse and the
+                                          #   chapter-10 epilogue precedes it —
+                                          #   a reordering, not a seam, so no
+                                          #   verse-level map is asserted.
+    },
     # ── Zohrab Armenian OT (added 2026-08-03) ─────────────────────────────
     # Each run below was located by length-alignment against the Latin (same
     # textual tradition) and then CONFIRMED BY READING THE ARMENIAN at the
@@ -546,10 +573,18 @@ def psalm_title_runs(ci, tn, kn):
             (ci + 1, 2, kn, ci + 1, 2 + extra, tn)]
 
 
-def lxx_psalter_runs(trans, kjv, overrides=None):
+def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None):
     """151-psalm LXX psalter -> KJV 150, with seams + per-psalm titles.
     overrides: {kjv psalm: [runs]} for psalms whose surplus/deficit is
-    NOT a leading title (Vulgate Ps 2/4/16) — text-verified curation."""
+    NOT a leading title (Vulgate Ps 2/4/16) — text-verified curation.
+
+    tolerant/sink: the engine assumes an LXX psalm is never SHORTER than its
+    KJV counterpart, which holds when the title occupies its own verse. The
+    Bakar Georgian prints its titles INLINE, so a psalm that also merges two
+    verses comes up short and the assertion fires. With tolerant=True such a
+    psalm is mapped as ONE BLOCK (chapter-correct, verse-coarse) and recorded
+    in `sink` for curation, instead of crashing the build or — far worse —
+    being silently aligned wrong."""
     t = [len(c) for c in trans[18]["chapters"]]
     k = [len(c) for c in kjv[18]["chapters"]]
     runs = []
@@ -560,7 +595,13 @@ def lxx_psalter_runs(trans, kjv, overrides=None):
             runs.extend(overrides[kc])
             return
         extra = t[tc - 1] - k[kc - 1]
-        assert extra in (0, 1, 2), ("psalm", kc, tc, extra)
+        if extra not in (0, 1, 2):
+            if not tolerant:
+                raise AssertionError(("psalm", kc, tc, extra))
+            if sink is not None:
+                sink.append((kc, tc, extra))
+            runs.append((kc, 1, k[kc - 1], tc, 1, t[tc - 1]))
+            return
         if extra == 0 and kc == tc:
             return
         if extra:
@@ -572,7 +613,13 @@ def lxx_psalter_runs(trans, kjv, overrides=None):
     def seam_two_into_one(kc1, kc2, tc):
         """KJV psalms kc1+kc2 both live in LXX psalm tc."""
         extra = t[tc - 1] - k[kc1 - 1] - k[kc2 - 1]
-        assert extra in (0, 1, 2), ("seam", kc1, kc2, tc, extra)
+        if extra not in (0, 1, 2):
+            if not tolerant:
+                raise AssertionError(("seam", kc1, kc2, tc, extra))
+            if sink is not None:
+                sink.append((kc1, tc, extra))
+            runs.append((kc1, 1, k[kc1 - 1], tc, 1, t[tc - 1]))
+            return
         off = 1 + extra
         runs.append((kc1, 1, 1, tc, 1, off))
         runs.append((kc1, 2, k[kc1 - 1], tc, off + 1, off + k[kc1 - 1] - 1))
@@ -582,7 +629,14 @@ def lxx_psalter_runs(trans, kjv, overrides=None):
     def seam_one_into_two(kc, tc1, tc2):
         """KJV psalm kc split across LXX psalms tc1+tc2."""
         extra = t[tc1 - 1] + t[tc2 - 1] - k[kc - 1]
-        assert extra in (0, 1, 2), ("split", kc, tc1, tc2, extra)
+        if extra not in (0, 1, 2):
+            if not tolerant:
+                raise AssertionError(("split", kc, tc1, tc2, extra))
+            if sink is not None:
+                sink.append((kc, tc1, extra))
+            runs.append((kc, 1, k[kc - 1], tc1, 1, t[tc1 - 1]))
+            runs.append((kc, 1, k[kc - 1], tc2, 1, t[tc2 - 1]))
+            return
         n1 = t[tc1 - 1] - extra          # KJV verses inside tc1 after title
         if extra:
             runs.append((kc, 1, 1, tc1, 1, 1 + extra))
@@ -613,6 +667,7 @@ def main():
     for tid, fname in IDS.items():
         trans = load(fname)
         books = {}
+        psalter_coarse = []
         curated = {}
         for ids, table in EXTRA.items():
             if tid in ids:
@@ -623,7 +678,7 @@ def main():
             kcounts = counts(kjv, bi)
             if not any(tcounts):
                 continue
-            if tid in ("syn", "csl", "vul", "zoh") and bi == 26:
+            if tid in ("syn", "csl", "vul", "zoh", "bak") and bi == 26:
                 continue  # LXX Daniel handled below
             if bi in curated:
                 runs = list(curated[bi])
@@ -640,7 +695,9 @@ def main():
                     books[bi] = lxx_psalter_runs(
                         trans, kjv,
                         ZOH_PSALTER if tid == "zoh" else
-                        (VUL_PSALTER if tid == "vul" else None))
+                        (VUL_PSALTER if tid == "vul" else None),
+                        tolerant=(tid == "bak"),
+                        sink=(psalter_coarse if tid == "bak" else None))
                 except AssertionError as e:
                     if tid != "wyc":
                         raise
@@ -664,7 +721,7 @@ def main():
             # other shape must be curated — fail loudly, except for the
             # rough Middle-English Wycliffe where identity is accepted.
             deficits = [ci + 1 for ci in range(nch) if tcounts[ci] < kcounts[ci]]
-            if deficits and tid not in ("wyc", "zoh"):
+            if deficits and tid not in ("wyc", "zoh", "bak"):
                 raise SystemExit(f"{tid} book {bi}: unhandled shape (short chapters {deficits})")
             if deficits:
                 # ⚠ zoh (Zohrab Armenian OT) is DELIBERATELY INCOMPLETE as of
@@ -675,7 +732,7 @@ def main():
                 # text-verified; the rest degrade to identity, exactly as
                 # Wycliffe's 16 rough books do, rather than shipping runs that
                 # were generated but never read.
-                if tid != "zoh":      # zoh reports per-chapter, below
+                if tid not in ("zoh", "bak"):   # these report per-chapter, below
                     incomplete.setdefault(tid, []).append(bi)
                 print(f"  note: {tid} book {bi} left identity (chapters {deficits} differ)")
         # LXX Daniel: ch13-14 (Susanna, Bel) are additions with no KJV
@@ -705,6 +762,28 @@ def main():
                          (4, 4, 37, 4, 1, 34),
                          (8, 2, 2, 8, 2, 3),
                          (8, 3, 27, 8, 4, 28)]
+        if tid == "bak":
+            # Georgian Bakar Daniel — the same LXX shape as the Vulgate's but
+            # ONE VERSE EARLIER throughout, because its Song of the Three runs
+            # 3:24-89 (66 verses) against the Vulgate's 67. Every seam below
+            # was read in Georgian (quotes in research/BAKAR_BUILD_LOG.md):
+            #   bak 3:90 «და ნაბუქოდონოსორსა ესმა მგალობელთა და დაუკჳრდა» = KJV 3:24
+            #   bak 3:96 «მაშინ მეფემან წარმართნა სედრაქ მისაქ და აბედნაქო» = KJV 3:30
+            #   bak 3:97 «ნაბუქოდონოსორ მეფე ყოველთა ერთა ტომთა ენათა»      = KJV 4:1
+            #   bak 4:1  «მე ნაბუქოდონოსორ წარმართებით ვიყავ სახლსა შორის ჩემსა» = KJV 4:4
+            # ⚠ Chapter 4 does NOT run straight: KJV 4:27 is SPLIT across bak
+            # 4:24 ("let my counsel be acceptable unto thee") and 4:25 ("and
+            # redeem thy sins by mercy"), which is exactly what accounts for
+            # its 35 verses against the KJV's 34 from 4:4 on. Susanna and Bel
+            # stay as Bakar chapters 13-14 with no KJV counterpart.
+            tdan, kdan = counts(trans, 26), counts(kjv, 26)
+            assert len(tdan) == 14, ("bak Daniel should be 14 chapters", len(tdan))
+            assert tdan[2] == 99 and tdan[3] == 35, ("bak Dan 3/4", tdan[2:4])
+            books[26] = [(3, 24, 30, 3, 90, 96),
+                         (4, 1, 3, 3, 97, 99),
+                         (4, 4, 26, 4, 1, 23),
+                         (4, 27, 27, 4, 24, 25),
+                         (4, 28, 37, 4, 26, 35)]
         if tid == "zoh":
             # ADOPT THE VULGATE'S ALREADY-VERIFIED RUNS, but only per CHAPTER
             # and only where zoh's verse count for that chapter equals vul's.
@@ -775,6 +854,10 @@ def main():
             books[26] = [(3, 24, 30, 3, 91, 97),
                          (4, 1, 3, 3, 98, 100),
                          (4, 4, 37, 4, 1, 34)]
+        if psalter_coarse:
+            print(f"  {tid}: {len(psalter_coarse)} psalms mapped COARSE "
+                  f"(whole-psalm block; verse seams still to curate): "
+                  f"{[c[0] for c in psalter_coarse]}")
         out[tid] = {str(b): [list(r) for r in rs] for b, rs in sorted(books.items()) if rs}
 
     if incomplete:

@@ -25,7 +25,9 @@ the shipped Western Armenian 1853 `arm`). NT slots stay empty here, exactly as
 """
 import argparse
 import json
+import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -150,9 +152,68 @@ RUBRICS = {
 }
 
 
+# ── Stichometry colophons ──────────────────────────────────────────────────
+# The print closes each psalm with the scribe's line-count — «Տունք . զ՜։»
+# ("lines: 6"), sometimes with «Գոբղայս . ի՜ը։» ("kephalaia: 28"). 151 psalms
+# carry one, plus 3 in Proverbs. Found on the owner's device pass, visible at
+# the end of Psalm 23.
+#
+# STRIPPED as apparatus. This is the Bakar `*` precedent, not the rubric one:
+# a rubric tells the reader what section follows and so is STRUCTURE worth
+# keeping, whereas a line-count is production metadata that conveys nothing to
+# a reader and mirrors nothing lexical.
+#
+# ⚠ Anchored to the END of the verse and required to be followed only by
+# numerals/punctuation, so a «Տունք» occurring as an ordinary word mid-verse
+# is untouched.
+# Colophon vocabulary. A trailing run made ONLY of these words plus short
+# numeral tokens is apparatus; anything else is prose.
+# «Տունս» is the same word in another case; «՛ի սմա» ("in it") also
+# appears inside the longer Ps 150 form and passes on length alone.
+# Case-folded on comparison: the tail mixes «Տունք» and «տունս». The last
+# three close the whole Psalter after Ps 150 ("four canons ... altogether
+# psalms"), which is why they appear nowhere else.
+COLOPHON_WORDS = {w.casefold() for w in (
+    "Տունք", "Տունս", "Գոբղայս", "Կանոն", "Սաղմոս", "Սաղմոսս",
+    "Չորք", "Միահամուռ")}
+_CSTAT = Counter()
+_WORD_RE = re.compile(r"[^\W\d_]+", re.UNICODE)
+
+
+def strip_colophon(txt, stats):
+    """Remove a trailing stichometry colophon, and nothing else.
+
+    ⚠ «Տունք» is ALSO the ordinary word "houses" — «Տունք անօրինաց» (Prov
+    14:11), «Տունք նոցա աջողեալք» (Job 21:9). A keyword match alone is not
+    enough. A tail only counts as a colophon when EVERY word in it is
+    colophon vocabulary and everything else is a short numeral token, which
+    those prose verses fail on their very next word.
+    """
+    best = None
+    # Case-insensitive: the print mixes «Տունք» and «տունք» (Ps 49:23).
+    for m in re.finditer(r"(?:Տունք|Տունս|Գոբղայս|Կանոն|Սաղմոս)", txt, re.I):
+        tail = txt[m.start():]
+        words = _WORD_RE.findall(tail)
+        if not words or any(w.casefold() not in COLOPHON_WORDS and len(w) > 3
+                            for w in words):
+            continue
+        best = m.start()
+        break
+    if best is None:
+        return txt
+    out = txt[:best].strip()
+    if out != txt:
+        stats["colophons_stripped"] += 1
+    return out or txt
+
+
 def numeric(d):
-    """{verse-label: text} -> [(int, text)] sorted, non-numeric dropped."""
-    out = [(int(k), v) for k, v in d.items() if k.isdigit()]
+    """{verse-label: text} -> [(int, text)] sorted, non-numeric dropped.
+
+    Every path into the asset funnels through here, so the colophon strip
+    lives here rather than at each call site.
+    """
+    out = [(int(k), strip_colophon(v, _CSTAT)) for k, v in d.items() if k.isdigit()]
     return sorted(out)
 
 
@@ -339,6 +400,7 @@ def main():
     (ASSETS.parent / "rubrics_zoh.json").write_text(
         json.dumps(rubrics, ensure_ascii=False, indent=1), encoding="utf-8")
     print("rubrics lifted  : %d -> rubrics_zoh.json" % len(rubrics))
+    print("colophons strip : %d (stichometry line-counts)" % _CSTAT["colophons_stripped"])
 
     # ── assertions ─────────────────────────────────────────────────────────
     assert len(slots) == 83

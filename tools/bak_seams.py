@@ -30,7 +30,13 @@ all. 29 turned out to map cleanly and are now included. Of the rest:
   * 4 are a DIFFERENT RECENSION, not a rearrangement — the Septuagint
     tabernacle account, Exodus 36-39. Its content is other, not reordered, and
     identity is the correct answer there.
-  * 9 have a correspondence that CROSSES A CHAPTER BOUNDARY (Job 40-41 on the
+  * 9 had a correspondence that CROSSES A CHAPTER BOUNDARY — SINCE MAPPED
+    (2026-08-04, fifth pass), by reading each affected chapter together with
+    the chapters it spills into. Job's LXX division, Jonah's great-fish verse
+    opening chapter 2, the Ecclesiastes 4/5 and 6/7 seam cascade, Haggai 1:15
+    drawn into chapter 2, the LXX Proverbs 15/16 transposition, and the Shimei
+    narrative displaced from 1 Kings 2 into 3. Kept for the record, the
+    original finding was (Job 40-41 on the
     LXX division, Ecclesiastes 5-6, Proverbs 15, Song 6, Jonah 1, Haggai 1,
     1 Kings 2). The versemap format supports cross-chapter runs — Daniel and
     Esther already use them — so these are mappable follow-up work, not dead
@@ -173,6 +179,7 @@ BAK_SEAM_RUNS = {
     ],
     10: [
         (1, 51, 52, 1, 51, 51),
+        (2, 36, 46, 3, 3, 13),
         (3, 2, 28, 3, 15, 41),
         (4, 27, 27, 4, 20, 20),
         (4, 28, 28, 4, 21, 21),
@@ -283,12 +290,32 @@ BAK_SEAM_RUNS = {
         (6, 29, 30, 6, 28, 29),
         (16, 4, 4, 16, 4, 5),
         (16, 5, 22, 16, 6, 23),
+        (40, 1, 1, 39, 31, 31),
+        (40, 2, 2, 39, 32, 32),
+        (40, 3, 3, 39, 33, 33),
+        (40, 4, 4, 39, 34, 34),
+        (40, 5, 5, 39, 35, 35),
+        (40, 6, 24, 40, 1, 19),
+        (41, 1, 8, 40, 20, 27),
+        (41, 9, 10, 41, 1, 1),
+        (41, 11, 11, 41, 2, 2),
+        (41, 12, 34, 41, 3, 25),
     ],
     19: [
         (9, 6, 6, 9, 6, 7),
         (9, 7, 18, 9, 8, 19),
         (13, 13, 13, 13, 13, 14),
         (13, 14, 25, 13, 15, 26),
+        (15, 30, 30, 16, 2, 2),
+        (15, 31, 32, 16, 3, 3),
+        (15, 33, 33, 16, 4, 4),
+        (16, 1, 3, 16, 4, 4),
+        (16, 4, 4, 16, 5, 5),
+        (16, 5, 5, 16, 6, 6),
+        (16, 6, 6, 15, 27, 27),
+        (16, 7, 7, 15, 28, 28),
+        (16, 8, 8, 15, 29, 29),
+        (16, 9, 9, 16, 1, 1),
         (18, 22, 22, 18, 22, 23),
         (18, 23, 24, 18, 24, 25),
         (20, 10, 10, 20, 13, 13),
@@ -312,12 +339,30 @@ BAK_SEAM_RUNS = {
         (31, 31, 31, 31, 33, 33),
     ],
     20: [
+        (5, 1, 1, 4, 17, 17),
+        (5, 2, 20, 5, 1, 19),
+        (6, 12, 12, 7, 1, 1),
+        (7, 1, 26, 7, 2, 27),
+        (7, 27, 28, 7, 28, 28),
         (11, 3, 3, 11, 3, 4),
         (11, 4, 10, 11, 5, 11),
     ],
     21: [
         (1, 1, 2, 1, 1, 1),
         (1, 3, 17, 1, 2, 16),
+        (6, 1, 1, 5, 17, 17),
+        (6, 2, 2, 6, 1, 1),
+        (6, 3, 3, 6, 2, 2),
+        (6, 4, 4, 6, 3, 3),
+        (6, 5, 5, 6, 4, 4),
+        (6, 6, 6, 6, 5, 5),
+        (6, 7, 7, 6, 6, 6),
+        (6, 8, 8, 6, 7, 7),
+        (6, 9, 9, 6, 8, 8),
+        (6, 10, 10, 6, 9, 9),
+        (6, 11, 11, 6, 10, 10),
+        (6, 12, 12, 6, 11, 11),
+        (6, 13, 13, 6, 12, 12),
     ],
     22: [
         (27, 12, 13, 27, 12, 12),
@@ -384,6 +429,7 @@ BAK_SEAM_RUNS = {
         (6, 11, 14, 6, 12, 15),
     ],
     31: [
+        (1, 17, 17, 2, 1, 1),
         (2, 1, 10, 2, 2, 11),
     ],
     32: [
@@ -398,6 +444,7 @@ BAK_SEAM_RUNS = {
         (1, 18, 18, 1, 18, 19),
     ],
     36: [
+        (1, 15, 15, 2, 1, 1),
         (2, 4, 23, 2, 5, 24),
     ],
     37: [

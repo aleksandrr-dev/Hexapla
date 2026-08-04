@@ -41,6 +41,9 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bak_seams import BAK_SEAM_RUNS   # noqa: E402  (generated; see its docstring)
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 BIBLES = os.path.join(HERE, "..", "app", "src", "main", "assets", "bibles")
 OUT = os.path.join(HERE, "..", "app", "src", "main", "assets", "versemap.json")
@@ -673,6 +676,12 @@ def main():
             if tid in ids:
                 for b, runs in table.items():
                     curated.setdefault(b, []).extend(runs)
+        if tid == "bak":
+            # Generated seam runs (tools/bak_seams.py) merge UNDER the curated
+            # table above, so the hand-read Esther entry always wins its book.
+            for b, runs in BAK_SEAM_RUNS.items():
+                if int(b) not in curated:
+                    curated[int(b)] = list(runs)
         for bi in range(66):
             tcounts = counts(trans, bi)
             kcounts = counts(kjv, bi)

@@ -683,7 +683,20 @@ def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None,
             n2 = t[tc2 - 1]
             head = k[kc - 1] - n2
             if head > 0:
-                runs.append((kc, 1, head, tc1, 1, t[tc1 - 1]))
+                # The tail pairs one-for-one with the second psalm. The HEAD
+                # must not become one big block either — that is the same
+                # defect the owner caught on Psalm 6, where a block reprints
+                # the whole other side under every verse of it. Pair the head
+                # verse-for-verse too, and confine the difference to its last
+                # verse.
+                n1 = t[tc1 - 1]
+                m = min(head, n1)
+                if m > 1:
+                    runs.append((kc, 1, m - 1, tc1, 1, m - 1))
+                if head >= n1:
+                    runs.append((kc, m, head, tc1, m, n1))
+                else:
+                    runs.append((kc, m, m, tc1, m, n1))
                 runs.append((kc, head + 1, k[kc - 1], tc2, 1, n2))
             else:
                 runs.append((kc, 1, k[kc - 1], tc1, 1, t[tc1 - 1]))

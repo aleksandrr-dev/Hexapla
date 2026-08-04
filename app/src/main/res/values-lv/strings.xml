@@ -29,6 +29,7 @@
     <string name="split_horizontal">Blakus (horizontāli)</string>
     <string name="split_vertical">Sakrauti (vertikāli)</string>
     <string name="primary_translation">Galvenais tulkojums</string>
+    <string name="swap_translations">Mainīt tulkojumus vietām</string>
     <string name="secondary_translation">Otrais tulkojums</string>
     <string name="show_apocrypha">Rādīt apokrifus / deiterokanoniskās grāmatas</string>
     <string name="show_apocrypha_note">Grāmatas ārpus 66 grāmatu kanona, parādītas atsevišķā sadaļā</string>

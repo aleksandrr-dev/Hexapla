@@ -29,6 +29,7 @@
     <string name="split_horizontal">Naast elkaar (horizontaal)</string>
     <string name="split_vertical">Gestapeld (verticaal)</string>
     <string name="primary_translation">Eerste vertaling</string>
+    <string name="swap_translations">Vertalingen omwisselen</string>
     <string name="secondary_translation">Tweede vertaling</string>
     <string name="show_apocrypha">Apocriefen / Deuterocanonieke boeken tonen</string>
     <string name="show_apocrypha_note">Boeken buiten de canon van 66 boeken, getoond in een eigen sectie</string>

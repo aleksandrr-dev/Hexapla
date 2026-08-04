@@ -29,6 +29,7 @@
     <string name="split_horizontal">Obok siebie (poziomo)</string>
     <string name="split_vertical">Jeden nad drugim (pionowo)</string>
     <string name="primary_translation">Główny przekład</string>
+    <string name="swap_translations">Zamień przekłady</string>
     <string name="secondary_translation">Drugi przekład</string>
     <string name="show_apocrypha">Pokaż Apokryfy / Księgi deuterokanoniczne</string>
     <string name="show_apocrypha_note">Księgi spoza 66-księgowego kanonu, wyświetlane w osobnej sekcji</string>

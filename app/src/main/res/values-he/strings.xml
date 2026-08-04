@@ -29,6 +29,7 @@
     <string name="split_horizontal">זה לצד זה (אופקי)</string>
     <string name="split_vertical">זה מעל זה (אנכי)</string>
     <string name="primary_translation">תרגום ראשי</string>
+    <string name="swap_translations">החלף תרגומים</string>
     <string name="secondary_translation">תרגום שני</string>
     <string name="show_apocrypha">הצג ספרים חיצוניים / דויטרוקנוניים</string>
     <string name="show_apocrypha_note">ספרים שאינם בקנון בן 66 הספרים, מוצגים במדור נפרד</string>

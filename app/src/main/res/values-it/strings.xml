@@ -29,6 +29,7 @@
     <string name="split_horizontal">Affiancate (orizzontale)</string>
     <string name="split_vertical">Sovrapposte (verticale)</string>
     <string name="primary_translation">Traduzione principale</string>
+    <string name="swap_translations">Inverti l\'ordine delle traduzioni</string>
     <string name="secondary_translation">Seconda traduzione</string>
     <string name="show_apocrypha">Mostra Apocrifi / Deuterocanonici</string>
     <string name="show_apocrypha_note">Libri fuori dal canone dei 66 libri, mostrati in una sezione a parte</string>

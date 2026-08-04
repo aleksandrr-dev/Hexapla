@@ -29,6 +29,7 @@
     <string name="split_horizontal">左右に並べる（横）</string>
     <string name="split_vertical">上下に重ねる（縦）</string>
     <string name="primary_translation">メインの訳</string>
+    <string name="swap_translations">訳を入れ替える</string>
     <string name="secondary_translation">2つ目の訳</string>
     <string name="show_apocrypha">外典・第二正典を表示</string>
     <string name="show_apocrypha_note">66巻の正典に含まれない書を、独立したセクションに表示します</string>

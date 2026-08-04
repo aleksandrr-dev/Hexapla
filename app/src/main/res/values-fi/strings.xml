@@ -29,6 +29,7 @@
     <string name="split_horizontal">Rinnakkain (vaakasuunta)</string>
     <string name="split_vertical">Pinottuna (pystysuunta)</string>
     <string name="primary_translation">Ensisijainen käännös</string>
+    <string name="swap_translations">Vaihda käännökset</string>
     <string name="secondary_translation">Toinen käännös</string>
     <string name="show_apocrypha">Näytä apokryfit / deuterokanoniset kirjat</string>
     <string name="show_apocrypha_note">66 kirjan kaanonin ulkopuoliset kirjat, näytetään omassa osiossaan</string>

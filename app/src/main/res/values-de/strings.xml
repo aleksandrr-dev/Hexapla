@@ -25,6 +25,7 @@
     <string name="split_horizontal">Nebeneinander (horizontal)</string>
     <string name="split_vertical">Untereinander (vertikal)</string>
     <string name="primary_translation">Hauptübersetzung</string>
+    <string name="swap_translations">Übersetzungen tauschen</string>
     <string name="secondary_translation">Zweite Übersetzung</string>
     <string name="show_apocrypha">Apokryphen anzeigen</string>
     <string name="show_apocrypha_note">Bücher außerhalb des 66-Bücher-Kanons, in eigenem Abschnitt angezeigt</string>

@@ -29,6 +29,7 @@
     <string name="split_horizontal">Egymás mellett (vízszintes)</string>
     <string name="split_vertical">Egymás alatt (függőleges)</string>
     <string name="primary_translation">Elsődleges fordítás</string>
+    <string name="swap_translations">Fordítások felcserélése</string>
     <string name="secondary_translation">Második fordítás</string>
     <string name="show_apocrypha">Apokrifek / deuterokanonikus könyvek megjelenítése</string>
     <string name="show_apocrypha_note">A 66 könyves kánonon kívüli könyvek, saját szakaszban megjelenítve</string>

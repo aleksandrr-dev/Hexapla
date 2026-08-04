@@ -43,6 +43,7 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bak_seams import BAK_SEAM_RUNS   # noqa: E402  (generated; see its docstring)
+from bak_psalter import BAK_PSALTER   # noqa: E402  (generated; see its docstring)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BIBLES = os.path.join(HERE, "..", "app", "src", "main", "assets", "bibles")
@@ -609,14 +610,38 @@ def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None,
             # about not knowing where inside it the seam falls.
             if sink is not None:
                 sink.append((kc, tc, extra))
-            runs.append((kc, 1, k[kc - 1], tc, 1, t[tc - 1]))
+            # ⚠ NEVER emit a whole-psalm block. A run whose two sides differ in
+            # length is a BLOCK, and the reader prints the entire other side
+            # under EVERY verse of it — so a whole-psalm block repeats the
+            # whole psalm ten or twenty times down the page. The owner caught
+            # this on Psalm 6.
+            # Pair verse-for-verse as far as both psalms go, and confine the
+            # difference to a small block on the last verse.
+            m = min(k[kc - 1], t[tc - 1])
+            runs.append((kc, 1, m - 1, tc, 1, m - 1))
+            if k[kc - 1] >= t[tc - 1]:
+                runs.append((kc, m, k[kc - 1], tc, m, t[tc - 1]))
+            else:
+                runs.append((kc, m, m, tc, m, t[tc - 1]))
             return
         if extra not in (0, 1, 2):
             if not tolerant:
                 raise AssertionError(("psalm", kc, tc, extra))
             if sink is not None:
                 sink.append((kc, tc, extra))
-            runs.append((kc, 1, k[kc - 1], tc, 1, t[tc - 1]))
+            # ⚠ NEVER emit a whole-psalm block. A run whose two sides differ in
+            # length is a BLOCK, and the reader prints the entire other side
+            # under EVERY verse of it — so a whole-psalm block repeats the
+            # whole psalm ten or twenty times down the page. The owner caught
+            # this on Psalm 6.
+            # Pair verse-for-verse as far as both psalms go, and confine the
+            # difference to a small block on the last verse.
+            m = min(k[kc - 1], t[tc - 1])
+            runs.append((kc, 1, m - 1, tc, 1, m - 1))
+            if k[kc - 1] >= t[tc - 1]:
+                runs.append((kc, m, k[kc - 1], tc, m, t[tc - 1]))
+            else:
+                runs.append((kc, m, m, tc, m, t[tc - 1]))
             return
         if extra == 0 and kc == tc:
             return
@@ -726,8 +751,9 @@ def main():
                 try:
                     books[bi] = lxx_psalter_runs(
                         trans, kjv,
-                        ZOH_PSALTER if tid == "zoh" else
-                        (VUL_PSALTER if tid == "vul" else None),
+                        BAK_PSALTER if tid == "bak" else
+                        (ZOH_PSALTER if tid == "zoh" else
+                         (VUL_PSALTER if tid == "vul" else None)),
                         tolerant=(tid == "bak"),
                         sink=(psalter_coarse if tid == "bak" else None),
                         inline_titles=(tid == "bak"))

@@ -29,6 +29,7 @@
     <string name="split_horizontal">Side om side (vandret)</string>
     <string name="split_vertical">Over hinanden (lodret)</string>
     <string name="primary_translation">Primær oversættelse</string>
+    <string name="swap_translations">Byt oversættelser</string>
     <string name="secondary_translation">Anden oversættelse</string>
     <string name="show_apocrypha">Vis apokryfer / deuterokanoniske bøger</string>
     <string name="show_apocrypha_note">Bøger uden for de 66 kanoniske bøger, vist i deres eget afsnit</string>

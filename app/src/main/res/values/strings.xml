@@ -31,6 +31,7 @@
     <string name="split_horizontal">Side by side (horizontal)</string>
     <string name="split_vertical">Stacked (vertical)</string>
     <string name="primary_translation">Primary translation</string>
+    <string name="swap_translations">Swap the two translations</string>
     <string name="secondary_translation">Second translation</string>
     <string name="show_apocrypha">Show Apocrypha / Deuterocanon</string>
     <string name="show_apocrypha_note">Books outside the 66-book canon, shown in their own section</string>

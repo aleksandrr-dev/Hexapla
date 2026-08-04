@@ -24,6 +24,7 @@
     <string name="split_horizontal">გვერდიგვერდ (ჰორიზონტალური)</string>
     <string name="split_vertical">ერთმანეთის ქვეშ (ვერტიკალური)</string>
     <string name="primary_translation">ძირითადი თარგმანი</string>
+    <string name="swap_translations">თარგმანების გადანაცვლება</string>
     <string name="secondary_translation">მეორე თარგმანი</string>
     <string name="show_apocrypha">აპოკრიფებისა და დეუტეროკანონიკური წიგნების ჩვენება</string>
     <string name="show_apocrypha_note">66-წიგნიანი კანონის გარეთ არსებული წიგნები, ნაჩვენები ცალკე განყოფილებაში</string>

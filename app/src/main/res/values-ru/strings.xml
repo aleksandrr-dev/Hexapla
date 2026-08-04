@@ -27,6 +27,7 @@
     <string name="split_horizontal">Рядом (горизонтально)</string>
     <string name="split_vertical">Друг под другом (вертикально)</string>
     <string name="primary_translation">Основной перевод</string>
+    <string name="swap_translations">Поменять переводы местами</string>
     <string name="secondary_translation">Второй перевод</string>
     <string name="show_apocrypha">Показывать неканонические книги</string>
     <string name="show_apocrypha_note">Книги вне 66-книжного канона, в отдельном разделе</string>

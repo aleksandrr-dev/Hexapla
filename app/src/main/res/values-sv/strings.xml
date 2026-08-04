@@ -29,6 +29,7 @@
     <string name="split_horizontal">Sida vid sida (horisontellt)</string>
     <string name="split_vertical">Staplat (vertikalt)</string>
     <string name="primary_translation">Huvudöversättning</string>
+    <string name="swap_translations">Byt översättningar</string>
     <string name="secondary_translation">Andra översättning</string>
     <string name="show_apocrypha">Visa Apokryferna / deuterokanoniska böcker</string>
     <string name="show_apocrypha_note">Böcker utanför kanons 66 böcker, visade i en egen avdelning</string>

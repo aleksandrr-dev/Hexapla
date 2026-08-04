@@ -29,6 +29,7 @@
     <string name="split_horizontal">جنبًا إلى جنب (أفقي)</string>
     <string name="split_vertical">متراكب (رأسي)</string>
     <string name="primary_translation">الترجمة الأساسية</string>
+    <string name="swap_translations">تبديل الترجمتين</string>
     <string name="secondary_translation">الترجمة الثانية</string>
     <string name="show_apocrypha">إظهار الأبوكريفا / الأسفار القانونية الثانية</string>
     <string name="show_apocrypha_note">أسفار خارج القانون المكوَّن من 66 سفرًا، تُعرض في قسم خاص بها</string>

@@ -29,6 +29,7 @@
     <string name="split_horizontal">Vedle sebe (vodorovně)</string>
     <string name="split_vertical">Nad sebou (svisle)</string>
     <string name="primary_translation">Hlavní překlad</string>
+    <string name="swap_translations">Prohodit překlady</string>
     <string name="secondary_translation">Druhý překlad</string>
     <string name="show_apocrypha">Zobrazit apokryfy / deuterokanonické knihy</string>
     <string name="show_apocrypha_note">Knihy mimo 66knižní kánon, zobrazené ve vlastní části</string>

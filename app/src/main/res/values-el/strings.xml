@@ -29,6 +29,7 @@
     <string name="split_horizontal">Δίπλα-δίπλα (οριζόντια)</string>
     <string name="split_vertical">Στοιβαγμένα (κάθετα)</string>
     <string name="primary_translation">Κύρια μετάφραση</string>
+    <string name="swap_translations">Εναλλαγή μεταφράσεων</string>
     <string name="secondary_translation">Δεύτερη μετάφραση</string>
     <string name="show_apocrypha">Εμφάνιση Απόκρυφων / Δευτεροκανονικών</string>
     <string name="show_apocrypha_note">Βιβλία εκτός του κανόνα των 66 βιβλίων, εμφανίζονται σε ξεχωριστή ενότητα</string>

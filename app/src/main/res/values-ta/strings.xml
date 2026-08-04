@@ -28,6 +28,7 @@
     <string name="split_horizontal">அருகருகே (கிடைமட்டம்)</string>
     <string name="split_vertical">மேலும் கீழும் (செங்குத்து)</string>
     <string name="primary_translation">முதன்மை மொழிபெயர்ப்பு</string>
+    <string name="swap_translations">மொழிபெயர்ப்புகளை மாற்று</string>
     <string name="secondary_translation">இரண்டாம் மொழிபெயர்ப்பு</string>
     <string name="show_apocrypha">அப்போக்கிரிபா நூல்களைக் காட்டு</string>
     <string name="show_apocrypha_note">66 புத்தக நியதிக்கு வெளியே உள்ள நூல்கள், தனிப் பிரிவில் காட்டப்படும்</string>

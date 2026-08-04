@@ -29,6 +29,7 @@
     <string name="split_horizontal">Jedan pored drugog (horizontalno)</string>
     <string name="split_vertical">Naslagano (vertikalno)</string>
     <string name="primary_translation">Osnovni prevod</string>
+    <string name="swap_translations">Zameni prevode</string>
     <string name="secondary_translation">Drugi prevod</string>
     <string name="show_apocrypha">Prikaži Apokrife / Devterokanonske knjige</string>
     <string name="show_apocrypha_note">Knjige van kanona od 66 knjiga, prikazane u sopstvenom odeljku</string>

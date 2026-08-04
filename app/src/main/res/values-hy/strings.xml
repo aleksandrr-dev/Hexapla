@@ -29,6 +29,7 @@
     <string name="split_horizontal">Կողք կողքի (հորիզոնական)</string>
     <string name="split_vertical">Իրար վրայ (ուղղահայեաց)</string>
     <string name="primary_translation">Գլխաւոր թարգմանութիւն</string>
+    <string name="swap_translations">Փոխանակել թարգմանությունները</string>
     <string name="secondary_translation">Երկրորդ թարգմանութիւն</string>
     <string name="show_apocrypha">Ցուցադրել երկրորդական գիրքերը (Ապոկրիֆ)</string>
     <string name="show_apocrypha_note">66 գիրքէն դուրս գիրքեր, ցուցադրուած իրենց առանձին բաժնին մէջ</string>

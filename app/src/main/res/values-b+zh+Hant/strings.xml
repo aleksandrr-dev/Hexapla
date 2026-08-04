@@ -29,6 +29,7 @@
     <string name="split_horizontal">左右並排（水平）</string>
     <string name="split_vertical">上下排列（垂直）</string>
     <string name="primary_translation">主要譯本</string>
+    <string name="swap_translations">交換譯本</string>
     <string name="secondary_translation">第二譯本</string>
     <string name="show_apocrypha">顯示次經／第二正典</string>
     <string name="show_apocrypha_note">66卷正典之外的書卷，另列於獨立區段</string>

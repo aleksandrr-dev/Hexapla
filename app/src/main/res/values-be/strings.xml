@@ -29,6 +29,7 @@
     <string name="split_horizontal">Побач (гарызантальна)</string>
     <string name="split_vertical">Адзін пад адным (вэртыкальна)</string>
     <string name="primary_translation">Асноўны пераклад</string>
+    <string name="swap_translations">Памяняць пераклады месцамі</string>
     <string name="secondary_translation">Другі пераклад</string>
     <string name="show_apocrypha">Паказваць Апокрыфы / Другакананічныя кнігі</string>
     <string name="show_apocrypha_note">Кнігі па-за 66-кніжным канонам, паказаныя ў сваёй асобнай частцы</string>

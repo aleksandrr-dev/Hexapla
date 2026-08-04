@@ -25,6 +25,7 @@
     <string name="split_horizontal">Côte à côte (horizontal)</string>
     <string name="split_vertical">Empilé (vertical)</string>
     <string name="primary_translation">Traduction principale</string>
+    <string name="swap_translations">Inverser l\'ordre des traductions</string>
     <string name="secondary_translation">Seconde traduction</string>
     <string name="show_apocrypha">Afficher les Apocryphes / Deutérocanoniques</string>
     <string name="show_apocrypha_note">Livres hors du canon des 66 livres, affichés dans leur propre section</string>

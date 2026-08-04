@@ -50,6 +50,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
@@ -1795,10 +1796,33 @@ fun BookChapterPicker(
                         onClick = { pickTranslation = 0 },
                         label = { Text(TranslationGroups.shortTag(BibleRepo.translation(primaryId))) }
                     )
-                    if (splitEnabled) AssistChip(
-                        onClick = { pickTranslation = 1 },
-                        label = { Text("+ " + TranslationGroups.shortTag(BibleRepo.translation(secondaryId))) }
-                    )
+                    if (splitEnabled) {
+                        // Swap the two panes in place. Reaching the same result
+                        // through the pickers takes four taps and only works if
+                        // you pick the second one first, because setting the
+                        // primary to what is currently the secondary would
+                        // otherwise leave both panes on the same translation.
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    val p = primaryId
+                                    Store.setPrimary(context, secondaryId)
+                                    Store.setSecondary(context, p)
+                                }
+                            },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.SwapHoriz,
+                                stringResource(R.string.swap_translations),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        AssistChip(
+                            onClick = { pickTranslation = 1 },
+                            label = { Text(TranslationGroups.shortTag(BibleRepo.translation(secondaryId))) }
+                        )
+                    }
                 }
                 if (picked == null) {
                     // Back to the current book's chapter grid — without

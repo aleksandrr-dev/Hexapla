@@ -25,6 +25,7 @@
     <string name="split_horizontal">Lado a lado (horizontal)</string>
     <string name="split_vertical">Apilado (vertical)</string>
     <string name="primary_translation">Traducción principal</string>
+    <string name="swap_translations">Intercambiar traducciones</string>
     <string name="secondary_translation">Segunda traducción</string>
     <string name="show_apocrypha">Mostrar Apócrifos / Deuterocanónicos</string>
     <string name="show_apocrypha_note">Libros fuera del canon de 66 libros, mostrados en su propia sección</string>

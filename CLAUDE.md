@@ -1009,6 +1009,28 @@ must include them; owner should spot-check on-device before submitting.
   PENDING: re-render ru books 17 chapters 1+8 (narrate.py --lang ru
   --book 17 --chapter N --force) AFTER the main ru render finishes —
   don't run two CosyVoice processes concurrently on the GPU.
+- ⚠ **TRUNCATED CHAPTER ANNOUNCEMENTS IN THE ru RENDER (found 2026-08-04)**:
+  the owner heard 1 Corinthians 4 announce itself with the number «4» cut off.
+  NOT a bug in ru_ordinal_fem — «четвёртая» announcements average the LONGEST
+  of chapters 1-10 across the whole set (3278 ms), so this is an isolated
+  CosyVoice generation defect: the genai-pipeline-qa class where a defect
+  REPLACES content instead of adding it.
+  DETECTION, no listening required: a chapter's `<n>.json` first offset IS the
+  length of its announcement. Compare each chapter against its OWN BOOK's
+  median — book-name length dominates the announcement, so comparing across
+  books produces false positives — and exclude the genuinely short ordinals
+  (1-3, 5-10, 20, 30…), which are short for real reasons. 1 Cor 4 sits at
+  0.72 of its book's median.
+  RE-RENDER QUEUE — the confirmed one plus 8 candidates of the same shape,
+  all AFTER the main render finishes. ⚠ Listed 1-based; narrate.py's
+  --book/--chapter are 0-BASED, so subtract one, and pass --force:
+  **1 Cor 4** (owner-confirmed) · Judges 16 · Numbers 4 · Numbers 14 ·
+  Genesis 16 · Proverbs 16 · Proverbs 17 · Luke 17 · Leviticus 25.
+  ⚠ The 8 are UNCONFIRMED — flagged by duration alone, nobody has listened.
+  Re-rendering is cheap and idempotent, so a false positive costs a few
+  minutes of GPU; afterwards check the new first offset lands near the book
+  median. Worth folding this check into qa_narration.py so the next set
+  catches it automatically.
 - **⚠ ~HALF THE PSALTER IS MISSING ITS TITLES — ru_synodal AND cu_elizabeth.**
   Found 2026-07-15 while fixing the Psalm 144 stray title; NOT yet fixed, needs
   a source and an owner decision. Measured against the app's own Clementine

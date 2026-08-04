@@ -1843,7 +1843,12 @@ fun BookChapterPicker(
                                     MaterialTheme.colorScheme.background.luminance() < 0.5f
                                 val accent = when (i) {
                                     0 -> if (darkTheme) Color(0xFF9DB36B) else Color(0xFF4E6B34)
-                                    39 -> if (darkTheme) Color(0xFFE0705C) else Color(0xFFB03A2E)
+                                    // Redder on the owner's second look: the
+                                    // first pass sat at G=112/B=92, which reads
+                                    // as salmon. Green and blue pulled well
+                                    // down so red dominates, while staying
+                                    // legible on the near-black background.
+                                    39 -> if (darkTheme) Color(0xFFE8452A) else Color(0xFFA5210F)
                                     else -> if (darkTheme) Color(0xFFAA9C80) else Color(0xFF7A6A50)
                                 }
                                 Text(
@@ -1854,7 +1859,7 @@ fun BookChapterPicker(
                                             else -> R.string.apocrypha
                                         }
                                     ),
-                                    style = MaterialTheme.typography.titleSmall,
+                                    style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = accent,
                                     modifier = Modifier

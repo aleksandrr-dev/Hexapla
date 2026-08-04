@@ -43,8 +43,14 @@ def main():
     bak = json.loads((A / "ka_bakar.json").read_text(encoding="utf-8"))
     kjv = json.loads((A / "en_kjv.json").read_text(encoding="utf-8"))
 
-    ok, bad = {}, []
+    ok, bad, unmappable = {}, [], []
     for f in rows:
+        if f.get("mappable") is False or not f.get("pairs"):
+            # The reader judged that no verse-level correspondence exists —
+            # a different recension, or one that crosses chapter boundaries.
+            # That is a finding, not a failure; the chapter stays identity.
+            unmappable.append((f["book"], f["chapter"], f.get("note", "")[:120]))
+            continue
         bi, ci, spec = f["book"], f["chapter"], f["pairs"]
         if bi == 18:
             # Psalms belongs to the LXX psalter engine, which already maps the
@@ -113,7 +119,8 @@ def main():
         if runs:
             ok.setdefault(bi, []).extend(runs)
 
-    print("chapters mapped and VALID : %d" % (len(rows) - len(bad)))
+    print("chapters mapped and VALID : %d" % (len(rows) - len(bad) - len(unmappable)))
+    print("chapters UNMAPPABLE       : %d  (no correspondence exists)" % len(unmappable))
     print("chapters REJECTED         : %d" % len(bad))
     for b in bad:
         print("    book %-2d ch %-3d %-16s [%s] %s" % (b[0], b[1], b[2], b[4], b[3]))

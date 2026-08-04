@@ -650,8 +650,18 @@ def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None,
                 raise AssertionError(("split", kc, tc1, tc2, extra))
             if sink is not None:
                 sink.append((kc, tc1, extra))
-            runs.append((kc, 1, k[kc - 1], tc1, 1, t[tc1 - 1]))
-            runs.append((kc, 1, k[kc - 1], tc2, 1, t[tc2 - 1]))
+            # ⚠ Do NOT map the whole KJV psalm onto BOTH halves — that maps
+            # every verse twice. Give the SECOND psalm the last n2 KJV verses,
+            # which pair with it exactly, and leave the head as one block on
+            # the first. For KJV 116 (= LXX 114 + 115) that is 116:1-9 onto
+            # the eight verses of 114 and 116:10-19 one-for-one onto 115.
+            n2 = t[tc2 - 1]
+            head = k[kc - 1] - n2
+            if head > 0:
+                runs.append((kc, 1, head, tc1, 1, t[tc1 - 1]))
+                runs.append((kc, head + 1, k[kc - 1], tc2, 1, n2))
+            else:
+                runs.append((kc, 1, k[kc - 1], tc1, 1, t[tc1 - 1]))
             return
         n1 = t[tc1 - 1] - extra          # KJV verses inside tc1 after title
         if extra:

@@ -63,6 +63,12 @@ object BibleRepo {
         // tapping "just start reading" opens John, and must not land in an
         // empty chapter).
         Translation("zoh", "bibles/hy_zohrab.json", "Աստուածաշունչ — Զոհրապեան ՀՆ, 1805 (HY)", Locale("hy")),
+        // Georgian, the 1743 Moscow print of King Bakar — the full canon plus
+        // the deuterocanon, under the same TITUS grant as the Zohrab above.
+        // Its Septuagint arrangement is mapped in versemap.json; the psalter,
+        // Daniel (Song of the Three inline, 99 verses in chapter 3) and Esther
+        // (no chapter 10 at all — it opens 9:17) are the seams that matter.
+        Translation("bak", "bibles/ka_bakar.json", "ბიბლია — ბაქარის გამოცემა, 1743 (KA)", Locale("ka")),
         Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la")),
         Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale("be")),
         // Transcribed by this project from the 1876 BFBS reprint's page scans
@@ -99,6 +105,7 @@ object BibleRepo {
         // Kralická was historically the Slovak Protestant Bible too.
         "cs", "sk" -> "bkr"
         "hy" -> "arm"
+        "ka" -> "bak"
         "lv" -> "glk"
         // Modern Greek reads Vamvas; grc stays the study/original text.
         "el" -> "vam"

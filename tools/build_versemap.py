@@ -576,7 +576,8 @@ def psalm_title_runs(ci, tn, kn):
             (ci + 1, 2, kn, ci + 1, 2 + extra, tn)]
 
 
-def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None):
+def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None,
+                     inline_titles=False):
     """151-psalm LXX psalter -> KJV 150, with seams + per-psalm titles.
     overrides: {kjv psalm: [runs]} for psalms whose surplus/deficit is
     NOT a leading title (Vulgate Ps 2/4/16) — text-verified curation.
@@ -598,6 +599,18 @@ def lxx_psalter_runs(trans, kjv, overrides=None, tolerant=False, sink=None):
             runs.extend(overrides[kc])
             return
         extra = t[tc - 1] - k[kc - 1]
+        if inline_titles and extra != 0:
+            # ⚠ The +1/+2 branch below exists for psalters that give the TITLE
+            # its own verse. The Bakar prints titles INLINE (the converter
+            # prepends them to verse 1), so a surplus verse here is never a
+            # title — it is a split, a gap, or an LXX plus, and pretending it
+            # is a title would silently pair KJV v1 with two unrelated verses.
+            # Map the psalm as one block instead: chapter-correct, and honest
+            # about not knowing where inside it the seam falls.
+            if sink is not None:
+                sink.append((kc, tc, extra))
+            runs.append((kc, 1, k[kc - 1], tc, 1, t[tc - 1]))
+            return
         if extra not in (0, 1, 2):
             if not tolerant:
                 raise AssertionError(("psalm", kc, tc, extra))
@@ -706,7 +719,8 @@ def main():
                         ZOH_PSALTER if tid == "zoh" else
                         (VUL_PSALTER if tid == "vul" else None),
                         tolerant=(tid == "bak"),
-                        sink=(psalter_coarse if tid == "bak" else None))
+                        sink=(psalter_coarse if tid == "bak" else None),
+                        inline_titles=(tid == "bak"))
                 except AssertionError as e:
                     if tid != "wyc":
                         raise

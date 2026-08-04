@@ -30,7 +30,15 @@ import kotlinx.coroutines.withContext
 object Rubrics {
 
     /** Translation id -> its rubric asset. Add a line to ship more. */
-    private val FILES = mapOf("vul" to "rubrics_vul.json", "zoh" to "rubrics_zoh.json")
+    private val FILES = mapOf(
+        "vul" to "rubrics_vul.json",
+        "zoh" to "rubrics_zoh.json",
+        // The Bakar's 840 rows are mostly the Byzantine lectionary rubrics the
+        // 1743 print carries inline, plus each book's closing colophon, the
+        // 20 kathisma headings of the Psalter, and the Olympiodorus scholion
+        // on Job 39 — all apparatus, kept out of the verse text.
+        "bak" to "rubrics_bak.json",
+    )
 
     @Volatile
     private var data: Map<String, Map<String, List<Pair<Int, String>>>>? = null

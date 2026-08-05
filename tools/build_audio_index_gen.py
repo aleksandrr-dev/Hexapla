@@ -47,7 +47,17 @@ SETS = [
     #   (2379/2379 requests, 0 failed) and verified public — chapter URLs
     #   0/0.ogg, 42/0.ogg and 65/21.ogg all fetch HTTP 200.
     # Activation checklist lives in tools/GENEVA_AUDIO_RUNBOOK.md.
-    {"tid": "gen1599", "dir": "gnv", "asset": "en_geneva.json",
+    # ⚠ dir points at the QUARANTINE, deliberately (2026-08-04). The archaic-
+    #   spelling re-render moved narration/gnv aside to gnv_quarantine_archaic_
+    #   spelling so the render could restart from zero under skip-existing. But
+    #   archive.org still SERVES the old audio, and this index embeds the verse
+    #   offsets users actually stream — so it must be built from the audio that
+    #   is live, which is the quarantined set (byte-identical to the item).
+    # ⚠ WHEN THE RE-RENDER FINISHES AND IS UPLOADED: point this back at "gnv"
+    #   and REBUILD. The new audio has different offsets; leaving it here would
+    #   ship verse highlighting that drifts against the audio being played.
+    {"tid": "gen1599", "dir": "gnv_quarantine_archaic_spelling",
+     "asset": "en_geneva.json",
      "item": "hexapla-audio-geneva-1599", "partial": False},
 
     # ── RUSSIAN SYNODAL — PREPARED 2026-08-02, ACTIVATE WHEN THE RENDER ENDS ──
@@ -63,8 +73,15 @@ SETS = [
     # ⚠ Do NOT activate before the leak re-render is finished AND the set has
     #   been ASR spot-checked. Duration heuristics cannot see an instruction
     #   leak — that defect replaces the verse rather than lengthening it.
-    # {"tid": "syn", "dir": "ru", "asset": "ru_synodal.json",
-    #  "item": "hexapla-audio-synodal-1876", "partial": False},
+    # ✅ ACTIVATED 2026-08-04. Render 1192/1192; leak screen over every current
+    #   chapter plus an ASR headscan census of all 487 instruct-style chapters
+    #   found 0 header leaks and 0 genuine mid-verse leaks (the only two hits
+    #   were the keyword matcher firing on scripture's own words — «прочитать»
+    #   in Daniel 5:15, «торжествуй» in Zechariah 9:9 — both matching the
+    #   expected verse at ratio 0.95+). Uploaded: 1192 oggs + 1192 sidecars
+    #   verified present ON THE ITEM, complete title verified live.
+    {"tid": "syn", "dir": "ru", "asset": "ru_synodal.json",
+     "item": "hexapla-audio-synodal-1876", "partial": False},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 

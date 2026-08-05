@@ -132,6 +132,17 @@ def clean_text(raw_html, stats=None, where=""):
     ns = len(SL_JOIN_RE.findall(txt))
     txt = SL_JOIN_RE.sub('', txt)
     txt = re.sub(r'\s+', ' ', txt).strip()
+    # ⚠ TITUS wraps every WORD in its own <a> element, so «</a>,» arrives here
+    # as « ,» — the tag replacement above MUST stay a space (replacing tags
+    # with '' would fuse words across element boundaries), which means the
+    # space before closing punctuation has to come off at the end. Without
+    # this the asset reads «სიტყუაჲ , და» in 90.7% of its verses, which is how
+    # it shipped into the tree until 2026-08-04; the raw source has only 27
+    # space-preceded punctuation marks in 239,693. Closing marks only —
+    # opening «[» and «(» keep their preceding space. Combining marks
+    # (U+0300-U+036F) belong on the letter before them by definition.
+    # See tools/fix_bakar_punct_spacing.py, which repaired the built asset.
+    txt = re.sub(r'\s+([,.:;?!\]\u0300-\u036f])', r'\1', txt)
     if stats is not None:
         stats["bs"] += nb
         stats["sl"] += ns

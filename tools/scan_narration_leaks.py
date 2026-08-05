@@ -236,6 +236,15 @@ def phase_screen(args, res, books):
                 continue
             rec["audio_stamp"] = stamp
             rec.pop("verify", None)      # ASR verdict describes the OLD audio
+            # ⚠ headscan MUST be dropped for the same reason, and was not until
+            # 2026-08-04. It is ASR evidence about a specific ogg exactly like
+            # `verify`, but it survived re-renders — so after the whole ru set
+            # was re-rendered, `report` still read 65 header-leak records made
+            # against audio that no longer existed and stamped the queue
+            # "ASR-confirmed". A stale FAIL is loud and eventually questioned;
+            # the same field going stale on a clean chapter would be a silent
+            # PASS, which is the direction that actually ships a defect.
+            rec.pop("headscan", None)
             side = ogg.with_suffix(".json")
             if not side.exists():
                 rec["screen"] = {"error": "no sidecar json"}

@@ -34,6 +34,9 @@ FONTS = {
     # glyphs; Segoe UI/Sylfaen cover both (same choice as make_reader_shot.py).
     "el": ["segoeui.ttf"],
     "hy": ["sylfaen.ttf", "segoeui.ttf"],
+    # Sylfaen was designed with Georgian (and Armenian) alongside its Latin;
+    # Segoe UI carries Georgian too as the fallback.
+    "ka": ["sylfaen.ttf", "segoeui.ttf"],
 }
 LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl",
          "pl", "sr", "be", "en_in"}
@@ -72,6 +75,11 @@ TAGLINES = {
     # Best-effort classical-orthography Armenian, consistent with the
     # already-flagged listing text — same pending native review applies here.
     "hy": ("Եբրայերէն · Յունարէն · 1853 · KJV", "հին տեքստեր՝ կողք կողքի"),
+    # Georgian: same year-in-place-of-name shape as hy (the Bakar edition is
+    # known by its year). Language names match values-ka/strings.xml usage
+    # (ებრაული / ბერძნული). Best-effort — same pending native review as the
+    # ka UI locale and the ka-GE listing text.
+    "ka": ("ებრაული · ბერძნული · 1743 · KJV", "ძველი ტექსტები გვერდიგვერდ"),
     # Belarusian (тарашкевіца), best-effort — same pending native review as
     # he/hy and the be listing text (get an orthography check before final).
     "be": ("Гэбрайская · Грэцкая · Дзекуць-Малей · KJV", "старажытныя тэксты побач"),

@@ -34,6 +34,22 @@ maximize reach, keep everything free, nothing locked, collect no data.
   keystore in the owner's Documents folder. Play uses Play App Signing
   (our key = upload key). NEVER commit keys. versionCode: next is 3;
   bump for every store update.
+- ★ **TODO, DO IN THE NEXT BUILD** (owner asked 2026-08-05, deliberately
+  deferred past 1.6.3 because its artifacts were already built and verified):
+  replace the **25 deprecated `Locale("xx")` call sites in `Bible.kt`** — the
+  one-arg `Locale(String)` constructor, deprecated in Java 19, which the
+  Android Studio JBR (JDK 21) flags on every translation not covered by a
+  built-in like `Locale.ENGLISH`. They are warnings only: the constructor
+  still works on every supported Android version and the app behaves
+  identically. They are worth clearing because 25 sites (reported as ~50
+  warnings — Kotlin counts each twice) drown out warnings that DO matter.
+  ⚠⚠ **USE `Locale.forLanguageTag("sv")`, NOT `Locale.of("sv")`.** `Locale.of`
+  is Java's official replacement but it is Java 19 = **API 36**, against this
+  app's **minSdk 26** — it compiles clean and then crashes on essentially every
+  real device. `forLanguageTag` is API 21+ and equivalent for the plain
+  language codes used here (all 25 are bare two-letter tags, no country or
+  variant). Re-run the donation grep with its positive control after, since
+  any Bible.kt change invalidates a built artifact.
 
 ## Store status (as of 2026-07-10)
 
@@ -1213,7 +1229,99 @@ must include them; owner should spot-check on-device before submitting.
 
 ## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-04.md first
 
-1.6.2 (code 15) is LIVE in Play and RuStore. Next is 1.6.3 / code 16.
+**1.6.3 (code 16) was UPLOADED to Play and RuStore on 2026-08-05** — 35
+translations in 30 languages, the Georgian Bakar and its UI locale, the
+Armenian Zohrab OT, music by mood, the swap-translations button, and the
+Russian Synodal narration (1192 chapters, streamed from
+`hexapla-audio-synodal-1876`). Next versionCode is 17.
+
+⚠ **THE GITHUB RELEASE IS BEHIND — v1.6.1 IS STILL `releases/latest`.** 1.6.2
+was never published there at all, and 1.6.3 is not either. The landing page's
+direct-APK button points at `releases/latest`, so every sideloader downloading
+from the site gets **1.6.1** — no Geneva narration, no complete Karl XII, none
+of 1.6.3. Fix with `gh release create v1.6.3 <the rustore APK>` (the direct
+download is the RUSTORE flavour, not the Play AAB), and consider back-filling
+1.6.2. Artifacts are staged at `C:/Projects/Hexapla-releases/`.
+
+### ★ RENDER QUEUE (owner, 2026-08-04)
+
+**ru re-render → then Geneva and Church Slavonic (`csl`) SIDE BY SIDE.**
+
+⚠ **THE LIMIT IS ONE *GPU* RENDER, NOT ONE RENDER.** What matters is whether
+the engine holds its model IN-PROCESS:
+
+| set | engine | model | contends for GPU? |
+|---|---|---|---|
+| ru, **cu** | cosyvoice3 | in-process | **YES** |
+| sv, tyn | chatterbox | in-process | **YES** |
+| **gnv**, wyc, wbt | kokoro | fresh subprocess PER VERSE | **no — CPU** |
+
+Two GPU renders do not merely run slowly, they **OOM on model load**: one
+RTX 3080 Laptop, 8 GiB, and a live CosyVoice3 render holds ~5.4 GB leaving
+~2.7 GB (chatterbox ~4 GB collides the same way). But a kokoro set is CPU-only
+and narrate.py says outright that mixing it with the in-process engines is
+fine — so **Geneva (kokoro) can run alongside Slavonic (cosyvoice3)**.
+⚠ They still share CPU, and a laptop chassis: watch GPU temp for the first
+hour, because the thermal watchdog kills at 90 °C sustained / 94 instant and
+a CPU-heavy kokoro job raises chassis temp under the GPU one.
+
+⚠ **THE 75-MIN RECYCLE IS NOT THERMAL** (owner corrected this 2026-08-04;
+`render_supervisor.ps1` documents it). Throughput decays with **PROCESS AGE**:
+measured 2026-07-28, fresh 151-183 KB/min · +45min ~103 · +4h ~63 · +12h ~35.
+Restarting only the process — machine still running, chassis still hot at
+79-81 °C with SwThermalSlowdown flagged — took a chapter from **27 -> 137
+KB/min**. So recycling applies ONLY to the in-process engines. Kokoro sets get
+`-IntervalMin 0` (revive-only); recycling them would pay model-load cost for
+nothing.
+
+⚠ **The 10-minute `HexaplaRenderKeepalive` scheduled task** runs
+`render_keepalive_hidden.vbs` -> `render_bootstrap.ps1`, an idempotent "start
+whatever is missing" check. It lives in Task Scheduler because anything
+launched from the Claude Code shell is a child of the app's process tree — on
+2026-07-29 both supervisors, both renders and the watchdog vanished together
+and cost ~8h of GPU. It starts SUPERVISORS ONLY, never renders, to avoid a
+double-launch race. Each language is guarded by a chapter-count test, so
+adding a set means adding its `Ensure` block there.
+
+1. **ru re-render** — 36 chapters (`scratchpad/ru_rerender_queue.py`): Job 2+9,
+   24 psalms predating the restored titles, 1 Cor 4 + 8 duration-flagged
+   candidates. Hours, not days.
+2. **Geneva re-render** — all 1,189 chapters, CPU/kokoro. The shipped set is
+   defective ("God created the HORN"); the fix is verified live in the render
+   path — `archaic_english.normalize(..., "geneva")` turns heauen→heaven,
+   moued→moved, prouince→province, euening→evening, Iesus→Jesus. Does NOT
+   block a release: that audio streams from archive.org and is not bundled in
+   the APK. ⚠ START IT BY QUARANTINING `narration/gnv` (oggs AND sidecars) to
+   `gnv_quarantine_<reason>`, NOT by adding `--force`. The bootstrap's
+   `ChapterCount 'gnv' -lt 1189` guard then starts the revive-only supervisor
+   on its next 10-minute poll, and skip-existing keeps the job resumable —
+   with `--force` every revive would restart from Genesis and it would never
+   finish. Same pattern as `ru_quarantine_instruction_leak`.
+3. **Church Slavonic (`csl`)** — 1,192 canon chapters, same size as ru.
+   Already fully configured in `narrate.py`, and the judgment call is
+   already made: the owner approved the Пс 22 ear test 2026-07-16 (CosyVoice
+   reads civil-script Slavonic like a modern Russian reader — akanye,
+   guessed archaic stress — accepted). Before it can SHIP it needs (a) the
+   app id **`csl`**, NOT the `cu` narration-folder name, in the
+   `build_audio_index_gen.py` SETS entry — a wrong tid yields an index the
+   app silently never looks up; (b) an archive.org identifier in
+   `upload_narration.py`, which has none; (c) the `cloned` disclosure flag,
+   because cu uses the owner's own voice.
+
+**WYCLIFFE WAS CONSIDERED AND DEFERRED** (2026-08-04). It has **0 chapters
+rendered** — a full 1,189-chapter run, not a bolt-on — and it would be the
+FOURTH English set (KJV, Webster, Geneva), where Slavonic is the only shipped
+translation with a distinct audience and no narration at all. It also is not
+render-ready: **4,960 verses (13.7%) carry a stray backtick** that survives
+normalization (`` `thre and twentithe salm ``, an editorial supplied-word
+marker that `audit_asset_markup.py` cannot see because a backtick is not a
+tag), and **177 verses still say "salm"** where the normalizer should give
+"psalm" — the same mispronunciation class as the Geneva defect. Fix both
+BEFORE any render, not by ASR afterwards.
+
+⚠ **GLEN OT CAMPAIGN — resume Thursday 2026-08-06, 16:00** (owner,
+2026-08-04), when the usage limit restarts. It is a transcription campaign,
+not a GPU job, so it does NOT contend with the render queue above.
 
 ★ **ARMENIAN ZOHRAB OT (`zoh`) IS COMPLETE IN TREE** — asset, versemap,
 rubrics, registration and the required TITUS credit all landed 2026-08-04.

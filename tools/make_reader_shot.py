@@ -45,6 +45,9 @@ SHOTS = [
     ("fi", "fi_biblia1776.json", 42, "Johannes 1", ["segoeui.ttf"], False),
     ("hu", "hu_karoli.json", 42, "János 1", ["segoeui.ttf"], False),
     ("hy", "hy_west1853.json", 42, "Յովհաննէս 1", ["sylfaen.ttf", "segoeui.ttf"], False),
+    # Georgian: Sylfaen was designed with Georgian alongside Armenian; Segoe UI
+    # is the fallback. Title is the asset's own book name for John.
+    ("ka", "ka_bakar.json", 42, "სახარება იონესი 1", ["sylfaen.ttf", "segoeui.ttf"], False),
     ("lv", "lv_gluck.json", 42, "Jāņa evaņģēlijs 1", ["segoeui.ttf"], False),
     ("nl", "nl_staten.json", 42, "Johannes 1", ["segoeui.ttf"], False),
     ("pl", "pl_gdanska.json", 42, "Jan 1", ["segoeui.ttf"], False),
@@ -149,7 +152,21 @@ def hexc(rgb):
 
 
 def main():
+    # Optional language filter: `python make_reader_shot.py ka` regenerates
+    # ONLY that shot. With no argument every entry in SHOTS is rewritten —
+    # which needlessly churns the committed PNGs (and re-runs the slow WPF
+    # shaping pass for ta/ar/he) when you only wanted one.
+    import sys
+    only = [a for a in sys.argv[1:] if not a.startswith("-")]
+    known = {s[0] for s in SHOTS}
+    unknown = [a for a in only if a not in known]
+    if unknown:
+        raise SystemExit(f"unknown language(s): {unknown}\n"
+                         f"known: {sorted(known)}")
+
     for lang, asset, book_idx, title, fonts, cjk in SHOTS:
+        if only and lang not in only:
+            continue
         books = json.load(open(os.path.join(ASSETS, asset), encoding="utf-8"))
         verses = books[book_idx]["chapters"][0]
         rtl = lang in RTL

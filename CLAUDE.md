@@ -212,12 +212,16 @@ maximize reach, keep everything free, nothing locked, collect no data.
   «کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)»
   («ولیم گلن» = the 1856 title page's own spelling). The present
   «عهد جدید — …» label MUST change once the OT slots are populated.
-  ⚠⚠ **KEEP THE ID `"mrt"`.** Verified in code: the translation id is
+  **KEEP THE ID `"mrt"`** — it is an opaque storage key, invisible to users,
+  so renaming it to something honest buys nothing but tidiness in a file only
+  we read. Mechanism, verified in code rather than assumed: the id is
   persisted in DataStore (Store.kt `"primary"`/`"secondary"`) and every
-  Bookmark carries its own `translationId`. Renaming it to something honest
-  would silently orphan every 1.6.3 user's Persian selection and Persian
-  bookmarks — no error, nothing to debug. It is an opaque storage key, not a
-  label. fa_martyn.json's books 0-38 hold NO chapters at all (verified
+  Bookmark carries its own `translationId`, so a rename orphans a user's
+  selection and bookmarks silently — no error, nothing to debug. ⚠ Owner's
+  correction 2026-08-08, and he is right: that POPULATION is near nil today
+  (Persian shipped only in 1.6.3, Play is still closed testing), so this is a
+  no-upside argument, NOT a scary one. Do not cite it as if real users were
+  at stake. fa_martyn.json's books 0-38 hold NO chapters at all (verified
   2026-08-08), so the OT slots are being FILLED, not overwritten.
   Full step order for conversion is in research/GLEN_RESUME_NOW.md.
 - **Candidate research pipeline (2026-07-16)**: tools/TRANSLATION_RESEARCH.md

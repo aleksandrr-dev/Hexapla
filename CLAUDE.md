@@ -203,6 +203,23 @@ maximize reach, keep everything free, nothing locked, collect no data.
   Hexapla-releases/research/martyn_*.md. GLEN OT (1856, HathiTrust
   njp.32101076512563, feasibility CONFIRMED same-easy-tier) = the next
   campaign; see SESSION_HANDOFF for access/harvest notes.
+  ✅ **OWNER DECISION 2026-08-08 — THE GLEN OT MERGES INTO THIS ASSET.** One
+  Persian Bible, not an OT-only plus an NT-only entry: BFBS bound Glen's OT
+  with Martyn's NT and that is the Bible a Persian reader recognises. His
+  condition: label it correctly, naming BOTH translators and BOTH dates
+  (different translators, decades and source languages — Glen from the
+  Hebrew, Martyn from the Greek). Proposed, pending his confirmation:
+  «کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)»
+  («ولیم گلن» = the 1856 title page's own spelling). The present
+  «عهد جدید — …» label MUST change once the OT slots are populated.
+  ⚠⚠ **KEEP THE ID `"mrt"`.** Verified in code: the translation id is
+  persisted in DataStore (Store.kt `"primary"`/`"secondary"`) and every
+  Bookmark carries its own `translationId`. Renaming it to something honest
+  would silently orphan every 1.6.3 user's Persian selection and Persian
+  bookmarks — no error, nothing to debug. It is an opaque storage key, not a
+  label. fa_martyn.json's books 0-38 hold NO chapters at all (verified
+  2026-08-08), so the OT slots are being FILLED, not overwritten.
+  Full step order for conversion is in research/GLEN_RESUME_NOW.md.
 - **Candidate research pipeline (2026-07-16)**: tools/TRANSLATION_RESEARCH.md
   is a self-contained brief (litmus table + license gates + report format)
   for agent research passes; verdict reports land in

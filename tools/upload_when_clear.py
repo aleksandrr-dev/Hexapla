@@ -40,6 +40,19 @@ TRANSIENT = ("ConnectionError", "ProtocolError", "ConnectionResetError",
              "ReadTimeout", "ConnectTimeout", "RemoteDisconnected",
              "IncompleteRead", "ChunkedEncodingError")
 
+# ⚠ ARCHIVE.ORG RATIONS AT (AT LEAST) TWO LEVELS, WITH DIFFERENT WORDING.
+# 2026-08-08: this watcher died on
+#     "Please reduce your request rate. - bucket_tasks_queued exceeds
+#      bucket_limit amount"
+# because it only recognised the ACCESS-KEY form ("exceeds rationed amount").
+# The bucket form fell through to "failed for a different reason" and the whole
+# upload stopped, hours after the queue had drained — the one failure mode this
+# script exists to survive. Match on the shared prefix too, so a third variant
+# of the same refusal does not kill it again.
+RATIONED = ("exceeds rationed amount", "exceeds bucket_limit",
+            "bucket_tasks_queued", "accesskey_tasks_queued",
+            "Please reduce your request rate")
+
 
 def queued():
     from internetarchive import get_session
@@ -86,7 +99,7 @@ def main():
                                            "live:", "want:", "METADATA")):
                     print(line, flush=True)
             return 0
-        if "exceeds rationed amount" in out:
+        if any(k in out for k in RATIONED):
             print("  rationed again — back to waiting", flush=True)
             transient = 0  # archive.org answered us; the network is fine
             time.sleep(args.poll)

@@ -20,6 +20,7 @@ trusts: CLAUDE.md's queue claimed ~25 psalms plus Job 2/9, and measurement found
     python tools/rerender_ru_stale.py
 """
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -44,8 +45,26 @@ BACKUP = Path("C:/Projects/Hexapla-releases/narration/ru_pre_announce")
 # chapter is one word shorter and nothing else changes.
 # Hence the verify-and-retry loop below: render, then LISTEN (ASR) for the
 # title, and redraw if it is missing.
-TARGETS = [(18, 22), (18, 90), (18, 134), (18, 145), (18, 147)]
-MAX_TRIES = 3
+# ⚠ SECOND PASS 2026-08-08. After the first pass and the join_short_lead
+# mitigation, check_ru_titles_rendered.py still measured 9 psalms whose title is
+# not spoken: Psalms 106, 113, 114, 117, 118, 134, 145, 149, 150 (1-based) =
+# the 0-based chapters below. Every one of these has already been redrawn at
+# least once with the DEFAULT comma join and come back without its title, so
+# redrawing them identically is not a plan — see JOINS.
+TARGETS = [(18, 105), (18, 112), (18, 113), (18, 116), (18, 117),
+           (18, 133), (18, 144), (18, 148), (18, 149)]
+
+# ⚠ ROTATE THE JOIN PUNCTUATION BETWEEN ATTEMPTS. narrate.py's join_short_lead
+# reads NARRATE_LEAD_JOIN, and its own docstring records that «Аллилуия!» and
+# «Аллилуия —» were both voiced in isolated tests where «Аллилуия.» was not.
+# Redrawing with the same punctuation only re-rolls the same loaded die; these
+# chapters have already lost that roll. Only the punctuation between title and
+# verse changes — NO WORD IS ADDED OR REMOVED, which is what makes this safe to
+# do to scripture. The comma form goes first because it is what the rest of the
+# set was rendered with, so a chapter that succeeds on attempt 1 stays
+# consistent with its neighbours.
+JOINS = [", ", "! ", " — ", ", "]
+MAX_TRIES = len(JOINS)
 
 
 def title_spoken(b, c):
@@ -100,11 +119,13 @@ def main():
             continue
 
         for attempt in range(1, MAX_TRIES + 1):
+            join = JOINS[attempt - 1]
+            env = dict(os.environ, NARRATE_LEAD_JOIN=join)
             r = subprocess.run([str(COSY), "-u", str(HERE / "narrate.py"),
                                 "--lang", "ru", "--book", str(b),
                                 "--chapter", str(c), "--force"],
                                capture_output=True, text=True, encoding="utf-8",
-                               errors="replace", cwd=str(HERE.parent))
+                               errors="replace", cwd=str(HERE.parent), env=env)
             if r.returncode != 0:
                 print(f"  attempt {attempt}: RENDER FAILED")
                 print((r.stderr or "")[-300:])
@@ -126,8 +147,9 @@ def main():
                           for l in (r2.stdout or "").splitlines())
 
             ok, heard = title_spoken(b, c)
-            print(f"  attempt {attempt}: spliced={spliced} title={'YES' if ok else 'NO'}"
-                  f"  heard={heard[:60]!r}", flush=True)
+            print(f"  attempt {attempt} (join={join!r}): spliced={spliced} "
+                  f"title={'YES' if ok else 'NO'}  heard={heard[:60]!r}",
+                  flush=True)
             if ok and spliced:
                 break
         else:

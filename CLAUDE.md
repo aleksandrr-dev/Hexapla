@@ -223,6 +223,21 @@ maximize reach, keep everything free, nothing locked, collect no data.
   no-upside argument, NOT a scary one. Do not cite it as if real users were
   at stake. fa_martyn.json's books 0-38 hold NO chapters at all (verified
   2026-08-08), so the OT slots are being FILLED, not overwritten.
+  ✅ **OWNER DECISION 2026-08-08 — DEFECTIVE VERSE NUMERALS ARE RECORDED AS
+  PRINTED, in the marker stream itself** ("decide based on the original work
+  and faithfulness to the source"). A normalized marker destroys the evidence
+  INVISIBLY: the chapter then passes the 1..N check as COMPLETE and nothing
+  downstream can see that a defect existed. As-printed makes it scan DEFECT,
+  which is how the converter finds the site. The ADDRESSING is the converter's
+  job — build_glen_ot.py carries a curated defect table mapping printed glyph
+  -> positional slot, so a bare «۱» mid-chapter cannot restart the verse
+  counter. The chunk report is a WITNESS DOCUMENT; the asset is an ADDRESSED
+  TEXT; only the second owes anything to the KJV grid.
+  ⚠ The clash occurred INSIDE one chunk (glen_ezekiel_33-48.md normalized at
+  34:18 while recording as-printed at 35:7/8 — repaired 2026-08-08, backup
+  .prenormfix.bak), so before conversion EVERY chunk report must be re-scanned
+  against its own flag prose. Silently-normalized sites are unrecoverable from
+  the corpus and need the page re-read.
   Full step order for conversion is in research/GLEN_RESUME_NOW.md.
 - **Candidate research pipeline (2026-07-16)**: tools/TRANSLATION_RESEARCH.md
   is a self-contained brief (litmus table + license gates + report format)

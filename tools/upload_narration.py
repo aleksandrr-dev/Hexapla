@@ -85,6 +85,32 @@ SETS = {
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
     },
+    # Church Slavonic, Elizabeth Bible 1757. Narration folder is "cu"; the
+    # APP id is "csl" (see build_audio_index_gen.py's warning about the split).
+    # ⚠ The voice is CLONED FROM THE OWNER'S OWN consented recording, same as
+    # ru — so "cloned": True is required, and the no-personal-names rule applies:
+    # credit the consent, never the person.
+    # ⚠ Canon is 1,192 chapters (Psalm 151, Daniel 13-14), not 1,189.
+    "cu": {
+        "asset": "cu_elizabeth.json",
+        "identifier": "hexapla-audio-slavonic-1757",
+        "title": "Елизаветинская Библия (1757) — полная аудиозапись / "
+                 "complete audio narration",
+        # ⚠ Used automatically while chapters are missing, so a half-rendered
+        # set can never be published under a "complete" title — the inversion
+        # Karl XII shipped on 2026-08-01 behind a clean "0 failed".
+        "title_partial": "Елизаветинская Библия (1757) — аудиозапись "
+                         "(в процессе) / audio narration (in progress)",
+        "translation": "Church Slavonic Elizabeth Bible, 1757",
+        "language": "chu",
+        "voice": "Fun-CosyVoice3 — synthetic speech cloned from a consented "
+                 "reference recording by a volunteer reader",
+        "cloned": True,      # CosyVoice3 embeds no watermark
+        "subject": ["bible", "audiobook", "церковнославянский",
+                    "елизаветинская библия", "библия", "public domain",
+                    "scripture", "christianity", "text to speech", "hexapla",
+                    "audio bible"],
+    },
     "ru": {
         "asset": "ru_synodal.json",
         "identifier": "hexapla-audio-synodal-1876",
@@ -257,8 +283,20 @@ def build(set_key, dry_run=False):
     # publicly titled "(pågår / in progress)", the precise inversion the
     # honesty gate exists to prevent. Geneva looked fine only because it was a
     # brand-new item. Metadata must be written explicitly, below.
+    # ⚠ queue_derive=False IS REQUIRED FOR A SET THIS SIZE. Every uploaded file
+    # otherwise queues a DERIVE task, and archive.org rations queued tasks per
+    # access key. The ru upload died at 877 of 1,192 files on 2026-08-07 with
+    #   "Please reduce your request rate. - accesskey_tasks_queued exceeds
+    #    rationed amount"
+    # leaving the public item half-updated. Derives are useless to us anyway —
+    # they exist to transcode uploads into alternate formats, and we ship the
+    # Opus files exactly as rendered. Geneva/Karl XII got away with it only
+    # because their queues had drained between runs.
+    # ⚠ RESUMING IS SAFE AND CHEAP: checksum=True skips every file already
+    # present with a matching MD5, so a rate-limited run is re-run, not redone.
     res = upload(meta_src["identifier"], files=files, metadata=metadata,
-                 retries=6, retries_sleep=20, verbose=True, checksum=True)
+                 retries=6, retries_sleep=20, verbose=True, checksum=True,
+                 queue_derive=False)
     bad = [r for r in res if getattr(r, "status_code", 200) not in (200, None)]
     print(f"\nuploaded {len(res) - len(bad)}/{len(res)} requests, {len(bad)} failed")
     if bad:

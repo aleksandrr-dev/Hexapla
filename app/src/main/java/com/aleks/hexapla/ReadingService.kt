@@ -990,6 +990,15 @@ class ReadingService : Service() {
                 else action(android.R.drawable.ic_media_play, R.string.play_audio, ACTION_RESUME)
             )
             .addAction(action(android.R.drawable.ic_media_next, R.string.next_chapter, ACTION_NEXT))
+            // ⚠ STOP, added 2026-08-06. Playback deliberately survives the app
+            // being swiped out of Recents (see the note by onDestroy), so there
+            // MUST be an obvious way to end it: the notification is
+            // setOngoing(playing) and therefore cannot be dismissed while
+            // playing, and prev/play-pause/next give no way out — a tester hit
+            // exactly this and reported it as "the app won't close". Unlike
+            // pause, this releases the service, the wakelock and audio focus.
+            .addAction(action(android.R.drawable.ic_menu_close_clear_cancel,
+                              R.string.stop_audio, ACTION_STOP))
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(session?.sessionToken)
@@ -1027,6 +1036,19 @@ class ReadingService : Service() {
                 .build()
         )
     }
+
+    /* ⚠ DELIBERATELY NO onTaskRemoved OVERRIDE (owner, 2026-08-06).
+       A tester reported that audio keeps playing after the app is swiped out
+       of Recents, and the first fix here was to stop playback on task removal.
+       Reverted: this app is meant to behave like a music app, which is also
+       what Spotify, YouTube Music, Audible and podcast apps do — someone
+       listening to a chapter while driving should not lose it because they
+       cleared Recents, which people do habitually and not as a "close". (The
+       YouTube counter-example is a VIDEO app; YouTube Music keeps playing.)
+       The tester's real problem was that there was NO WAY TO STOP: the
+       notification offered prev/play-pause/next only, and setOngoing(playing)
+       makes it non-dismissible while playing, so the sole route was
+       pause-then-dismiss. The Stop action added below is the actual fix. */
 
     override fun onDestroy() {
         sleepJob?.cancel()

@@ -82,6 +82,17 @@ SETS = [
     #   verified present ON THE ITEM, complete title verified live.
     {"tid": "syn", "dir": "ru", "asset": "ru_synodal.json",
      "item": "hexapla-audio-synodal-1876", "partial": False},
+    # ── CHURCH SLAVONIC 1757 — PREPARED 2026-08-07, ACTIVATE WHEN THE RENDER
+    #    FINISHES (uncomment). Same prepare-then-activate pattern as Geneva.
+    # ⚠⚠ tid is "csl" — the app id in Bible.kt — NOT "cu", which is only the
+    #    narration FOLDER name. Getting this wrong yields an index the app
+    #    silently never looks up: no error, no audio, nothing to debug. This is
+    #    the third set with a tid/dir split (kxii/sv, gen1599/gnv, csl/cu).
+    # ⚠ The asset is cu_elizabeth.json and its canon runs to 1,192 chapters
+    #    like ru — Psalm 151 plus Daniel 13-14 — NOT the 1,189 of the
+    #    Protestant sets. Do not assume 1189 anywhere.
+    # {"tid": "csl", "dir": "cu", "asset": "cu_elizabeth.json",
+    #  "item": "hexapla-audio-slavonic-1757", "partial": False},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 

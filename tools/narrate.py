@@ -582,14 +582,73 @@ def normalize_cu_digits(text):
     return re.sub(r"\s{2,}", " ", text).strip()
 
 
+_SHORT_LEAD = re.compile(r"^\s*\[?([^\].!?]{1,24}?)\.\]?\s+(?=\S)")
+
+# The punctuation join_short_lead uses. Overridable per-run so a chapter the
+# comma form keeps failing on can be retried with a different one WITHOUT
+# editing the asset — «Аллилуия!» and «Аллилуия —» both voiced correctly in
+# isolated tests where «Аллилуия.» did not. Only punctuation varies; the words
+# are never touched.
+LEAD_JOIN = os.environ.get("NARRATE_LEAD_JOIN", ", ")
+
+
+def join_short_lead(text):
+    """Join a very short leading sentence to the one after it, with a comma.
+
+    ⚠⚠ WITHOUT THIS, CosyVoice SILENTLY DROPS PSALM SUPERSCRIPTIONS. Measured
+    2026-08-07 after Psalms 135/146/148 rendered with no «Аллилуия» on 4 of 4
+    chapter draws each, and the owner's re-render queue kept "fixing" them to
+    no effect:
+
+        «Аллилуия. Славьте Господа, ибо Он благ…»   -> title NOT spoken (5/5)
+        «[Аллилуия.] Славьте Господа…»              -> title NOT spoken
+        «Аллилуия, славьте Господа…»                -> spoken (3/3)
+        «Аллилуия — славьте…» / «Аллилуия! Славьте…» -> spoken
+
+    ⚠⚠ MECHANISM, established by elimination — do NOT repeat these tests:
+      · NOT the brackets — removing them changed nothing (5/5 still dropped).
+      · NOT the splice — the PRE-SPLICE render lacks the word too, while
+        Psalm 23's pre-splice render contains it. apply_announcements is
+        exonerated.
+      · NOT CosyVoice's English text normalizer — running the real `wetext`
+        Normalizer over these exact strings returns them UNCHANGED.
+      · NOT paragraph splitting — split_paragraph ACCUMULATES short segments
+        (frontend_utils.py); a 60-char verse is one utterance, well under the
+        80-token limit, so the model receives the whole text.
+      · It is THE MODEL, omitting a short leading utterance during generation.
+
+    So this join is a MITIGATION, not a cure: it measurably reduces the failure
+    (Psalms 23 and 91 came back correct on the first draw after it, having
+    failed 4/4 before), but Psalm 135 still failed with it applied. **No word
+    is added or removed; only the punctuation between title and verse
+    changes**, which is why it is safe to apply to scripture.
+
+    ⚠ THE REAL GUARD IS VERIFICATION. Because the omission is stochastic, any
+    render of a set with superscriptions must be checked by ASR afterwards —
+    tools/check_ru_titles_rendered.py — and failures redrawn. That applies to
+    the Church Slavonic set as much as to ru.
+
+    ⚠ NOTHING ELSE IN THE PIPELINE CAN SEE THIS DEFECT. The chapter is one
+    word shorter and every count, duration, offset and marker check still
+    passes; only listening (ASR) catches it. tools/check_ru_titles_rendered.py
+    is that check.
+
+    ⚠ It is NOT reliably deterministic — Psalm 106 has byte-identical verse-1
+    text to Psalm 135 and DID speak its title. Treat this as "frequently
+    dropped", not "always", and keep verifying renders rather than trusting
+    the fix blindly.
+    """
+    return _SHORT_LEAD.sub(lambda m: m.group(1) + LEAD_JOIN, text, count=1)
+
+
 def normalize_text(text, normalizer_name):
     """Apply language-specific text normalization for TTS."""
     if normalizer_name is None:
         return text
     if normalizer_name == "ru_variants":
-        return strip_ru_variant_numbers(strip_ru_markup(text))
+        return join_short_lead(strip_ru_variant_numbers(strip_ru_markup(text)))
     if normalizer_name == "cu_digits":
-        return normalize_cu_digits(text)
+        return join_short_lead(normalize_cu_digits(text))
     if normalizer_name == "ru_stress":
         # ⚠ CORRUPTS TEXT — see the note in LANG_CONFIG["ru"] and
         # tools/audit_ru_stress.py. Do not use until the table is rebuilt.
@@ -641,8 +700,85 @@ def get_wav_duration_ms(wav_file):
     return duration_ms
 
 
+_KOKORO_PROC = None
+_KOKORO_FAILS = 0
+
+
+def _kokoro_worker():
+    """The persistent worker, started on demand. See tools/_kokoro_worker.py."""
+    global _KOKORO_PROC
+    if _KOKORO_PROC is None or _KOKORO_PROC.poll() is not None:
+        _KOKORO_PROC = subprocess.Popen(
+            [KOKORO_PYTHON, "-u", str(HERE / "_kokoro_worker.py")],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            text=True, encoding="utf-8", errors="replace",
+            env={**os.environ, "PYTHONPATH": KOKORO_SITE_PACKAGES},
+            creationflags=_NO_WINDOW,
+        )
+        hello = _KOKORO_PROC.stdout.readline()
+        if not hello or not json.loads(hello).get("ready"):
+            raise RuntimeError(f"kokoro worker failed to start: {hello!r}")
+    return _KOKORO_PROC
+
+
+def _kokoro_request(text, voice, output_wav, timeout=180):
+    """One request/response, with a hard timeout so a hung worker cannot stall.
+
+    ⚠ A blocking readline on a wedged worker would hang the render FOREVER,
+    which is strictly worse than the per-verse process it replaced (that had
+    subprocess timeout=120). The read therefore runs on a thread and the worker
+    is killed if it overruns.
+    """
+    import threading
+    proc = _kokoro_worker()
+    proc.stdin.write(json.dumps({"text": text, "voice": voice,
+                                 "out": str(output_wav)}) + "\n")
+    proc.stdin.flush()
+
+    box = {}
+
+    def _read():
+        box["line"] = proc.stdout.readline()
+
+    t = threading.Thread(target=_read, daemon=True)
+    t.start()
+    t.join(timeout)
+    if t.is_alive():
+        proc.kill()
+        raise TimeoutError("kokoro worker timed out")
+    line = box.get("line")
+    if not line:
+        raise RuntimeError("kokoro worker closed the pipe")
+    resp = json.loads(line)
+    if not resp.get("ok"):
+        raise RuntimeError(resp.get("err", "unknown kokoro error"))
+    return True
+
+
 def synthesize_kokoro(text, voice, output_wav):
-    """Synthesize with Kokoro via the sandboxed Python 3.12 venv."""
+    """Synthesize with Kokoro, via a persistent worker in the sandboxed venv.
+
+    ⚠ FALLS BACK to the original one-process-per-verse path if the worker
+    misbehaves. The speed-up is worth having, but not at the cost of a render
+    that nobody is watching dying on a protocol hiccup; three consecutive
+    worker failures disable it for the rest of the run.
+    """
+    global _KOKORO_FAILS
+    if _KOKORO_FAILS < 3:
+        try:
+            _kokoro_request(text, voice, output_wav)
+            _KOKORO_FAILS = 0
+            return True
+        except Exception as e:
+            _KOKORO_FAILS += 1
+            print(f"    Kokoro worker failed ({_KOKORO_FAILS}/3): {e}"
+                  f"{' — falling back to per-verse processes' if _KOKORO_FAILS >= 3 else ''}",
+                  file=sys.stderr, flush=True)
+    return _synthesize_kokoro_isolated(text, voice, output_wav)
+
+
+def _synthesize_kokoro_isolated(text, voice, output_wav):
+    """The original path: one throwaway process per verse. Kept as the fallback."""
     text_file = Path(tempfile.mktemp(suffix=".txt"))
     try:
         text_file.write_text(text, encoding="utf-8")
@@ -818,6 +954,15 @@ def synthesize_cosyvoice3(text, cfg, book_idx, output_wav):
 
         import numpy as np
         audio = np.clip(np.concatenate(chunks), -1.0, 1.0)
+        # ⚠ ADDED 2026-08-05. This call was MISSING on the cosyvoice3 path for
+        # the whole ru render — `_trim_and_fade` was written for Chatterbox and
+        # only ever called there. Consequence: CosyVoice sometimes stops a verse
+        # abruptly, and with no fade the waveform was spliced onto 600 ms of
+        # digital silence at full amplitude. The owner heard it in Numbers 1 as
+        # verses "cutting off"; a set-wide scan found 1,077 such verses (3.44%)
+        # across 801 of 1,192 chapters. Same defect, same fix, same reasons as
+        # the Chatterbox path — see _trim_and_fade's docstring.
+        audio = _trim_and_fade(audio, cosy.sample_rate)
         # PCM_16 to match make_silence_wav()'s gaps (ffmpeg concat -c copy
         # needs one format) and to stay readable by any WAV reader.
         sf.write(str(output_wav), (audio * 32767).astype(np.int16),

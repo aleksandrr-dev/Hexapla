@@ -3,7 +3,17 @@
     "allow": [
       "PowerShell(.\\\\gradlew assembleDebug --console=plain 2>$null)",
       "Bash(./gradlew assembleDebug --console=plain)",
-      "Bash(export JAVA_HOME=\"/c/Program Files/Android/Android Studio/jbr\")"
+      "Bash(export JAVA_HOME=\"/c/Program Files/Android/Android Studio/jbr\")",
+      "PowerShell($p = Join-Path $env:APPDATA 'Claude'; \"APPDATA\\\\Claude exists: \" + \\(Test-Path $p\\); if \\(Test-Path $p\\) { Get-ChildItem $p | Select-Object Name, Mode, LastWriteTime | Format-Table -AutoSize | Out-String -Width 200 })",
+      "Bash(python -c \"print\\(1\\)\")",
+      "PowerShell(Get-CimInstance *)",
+      "Read(//c/Projects/Hexapla-releases/narration//**)",
+      "Read(//c/Projects/Hexapla-releases/narration/cu/**)",
+      "Bash(curl -s \"https://archive.org/metadata/hexapla-audio-synodal-1876\" -o /tmp/ru_meta.json)",
+      "Bash(echo \"exit:$?\")",
+      "Read(//tmp/**)",
+      "Bash(curl -sv \"https://archive.org/metadata/hexapla-audio-synodal-1876\")",
+      "Bash(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu --format=csv)"
     ]
   }
 }

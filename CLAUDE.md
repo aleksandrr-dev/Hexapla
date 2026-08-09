@@ -1263,7 +1263,20 @@ must include them; owner should spot-check on-device before submitting.
   differ only by stripped umlauts with no markup to match. Silent damage needs
   a REFERENCE TEXT, not a pattern.
 
-## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-04.md first
+## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-09.md first
+
+★ **GLEN PERSIAN OT SHIPPED 2026-08-09, versionCode 17 / 1.6.4** (APK staged at
+`Hexapla-1.6.4-rustore.apk`, NOT yet uploaded or device-checked). fa_martyn.json
+is now a complete Persian Bible — Glen's OT 1856 (23,137 verses, transcribed by
+this project) + Martyn's NT 1876. **36 translations / 28 languages**; the
+landing page and STORE_LISTING both still say 33/28 and must be updated
+together. Next campaign is the **Icelandic Þorláksbiblía 1644** — 31,102
+verses, and there is a volunteer-overlap question to settle first (handoff §4).
+⚠ `tools/glen_corpus_audit.py` exists because a chunk report claimed 572
+transcribed verses while holding two on disk, and every per-chunk check passed
+it for three weeks. Run it before believing any completeness claim.
+
+## ⚠ SUPERSEDED — SESSION_HANDOFF_2026-08-04.md
 
 **1.6.3 (code 16) was UPLOADED to Play and RuStore on 2026-08-05** — 35
 translations in 30 languages, the Georgian Bakar and its UI locale, the

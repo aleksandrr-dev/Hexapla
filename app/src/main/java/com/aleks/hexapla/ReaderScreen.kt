@@ -442,7 +442,12 @@ fun ReaderScreen(settings: AppSettings) {
     var dragTotal by remember { mutableFloatStateOf(0f) }
     val layoutDirection = LocalLayoutDirection.current
 
-    val fontFamily = if (settings.serifFont) FontFamily.Serif else FontFamily.SansSerif
+    // Literata for the scripts it covers; system serif for the rest —
+    // see ReadingFont for why this is per-language rather than global.
+    val fontFamily = ReadingFont.forLanguage(
+        settings.serifFont,
+        BibleRepo.translation(settings.primaryId).locale.language
+    )
     val ttsError = stringResource(R.string.tts_unavailable)
     val copiedMsg = stringResource(R.string.copied)
 

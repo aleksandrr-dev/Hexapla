@@ -67,6 +67,11 @@ IDS = {
     "glk": "lv_gluck",
     "zoh": "hy_zohrab",
     "bak": "ka_bakar",
+    # ⚠ Persian: the id stays "mrt" (opaque storage key, persisted in DataStore
+    # and on every bookmark) even though the asset now carries Glen's OT as
+    # well as Martyn's NT. Points at the staging file until the OT is merged
+    # The OT was merged into fa_martyn.json on 2026-08-09.
+    "mrt": "fa_martyn",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -77,6 +82,49 @@ STD_TAIL = [  # continental 3 John split + Rev 12:18
     (65, [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)]),
 ]
 EXTRA = {
+    # ── Glen Persian OT 1856 (added 2026-08-09) ───────────────────────────
+    # Ten chapters where the PRINT's verse division differs from the KJV by
+    # one. The asset keeps the print's own divisions; these runs map them.
+    # Nine were text-verified seam by seam in
+    # research/glen_versemap_verified.md; Ruth 2 was verified separately (see
+    # its note). Everything else in the OT sits exactly on the KJV grid.
+    #
+    # ⚠ EIGHT OF THE TEN ARE MERGES OF THE SAME SHAPE: the print skips a
+    # numeral, so the next KJV verse runs on unmarked under the previous
+    # marker. Each therefore needs TWO runs — the merge itself, and the
+    # one-off shift it forces on the rest of the chapter.
+    # ⚠ Sixteen chapters originally looked divergent. Six of those were bugs in
+    # the converter's extraction, not in the print — see build_glen_ot.py.
+    ("mrt",): {
+        2: [(6, 19, 20, 6, 19, 19),       # Leviticus 6: print skips «۲۰»
+            (6, 21, 30, 6, 20, 29)],
+        7: [(2, 1, 2, 2, 1, 1),           # Ruth 2: «(۲)» is absent from the
+            (2, 3, 23, 2, 2, 22)],        #   print — verified: our v1 carries
+                                          #   both Boaz-the-kinsman (KJV 2:1)
+                                          #   and Ruth's request (KJV 2:2)
+        9: [(18, 14, 15, 18, 14, 14),     # 2 Samuel 18
+            (18, 16, 33, 18, 15, 32)],
+        13: [(34, 6, 7, 34, 6, 6),        # 2 Chronicles 34 — reconfirms the
+             (34, 8, 33, 34, 7, 32)],     #   entry curated by hand earlier in
+                                          #   the campaign, derived
+                                          #   independently here
+        17: [(27, 9, 10, 27, 9, 9),       # Job 27
+             (27, 11, 23, 27, 10, 22)],
+        18: [(73, 2, 3, 73, 2, 2),        # Psalms 73
+             (73, 4, 28, 73, 3, 27)],
+        19: [(7, 14, 15, 7, 14, 14),      # Proverbs 7
+             (7, 16, 27, 7, 15, 26)],
+        23: [(30, 6, 7, 30, 6, 6),        # Jeremiah 30 — the print omits the
+             (30, 8, 24, 30, 7, 23)],     #   numeral outright at this site
+        25: [(31, 15, 16, 31, 15, 15),    # Ezekiel 31 — numeral absent, content
+             (31, 17, 18, 31, 16, 17)],   #   runs on unmarked
+        26: [(8, 12, 12, 8, 12, 13),      # ★ Daniel 8 — the only SPLIT: one KJV
+             (8, 13, 27, 8, 14, 28)],     #   verse over two markers. CORRECTED
+                                          #   from the mechanical proposal,
+                                          #   which put the split at v13; the
+                                          #   duplicate «(۱۳)» glyph actually
+                                          #   falls mid-v12.
+    },
     # ── Georgian Bakar 1743 (added 2026-08-04) ────────────────────────────
     # Esther, read seam by seam against the KJV with the Georgian quoted in
     # research/BAKAR_BUILD_LOG.md. The Bakar prints the Septuagint Esther with

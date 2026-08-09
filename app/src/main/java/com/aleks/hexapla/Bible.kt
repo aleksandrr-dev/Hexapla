@@ -74,7 +74,14 @@ object BibleRepo {
         // Transcribed by this project from the 1876 BFBS reprint's page scans
         // (Acts 21:21b-32a supplied from the 1837 first printing where the
         // 1876 scan's folio 295 is a master-scan duplicate). PD by age.
-        Translation("mrt", "bibles/fa_martyn.json", "عهد جدید — ترجمهٔ هنری مارتین، ۱۸۷۶ (FA)", Locale("fa"))
+        // The complete Persian Bible: Glen's Old Testament (1856) bound with
+        // Martyn's New Testament (1876), as the BFBS published it and as a
+        // Persian reader knows it. Different translators, decades and source
+        // languages — Glen from the Hebrew, Martyn from the Greek — so the
+        // label names both. The OT was transcribed page by page from the 1856
+        // scan by this project (23,137 verses); the id stays "mrt" because it
+        // is persisted in DataStore and on every bookmark.
+        Translation("mrt", "bibles/fa_martyn.json", "کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)", Locale("fa"))
     )
 
     fun translation(id: String): Translation =

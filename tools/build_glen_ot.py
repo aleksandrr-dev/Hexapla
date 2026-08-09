@@ -132,7 +132,32 @@ def normalise(t):
     # chapter's last verse (1 Chr 1:54, Dan 1:21), so strip it everywhere
     # rather than only from leading text.
     t = re.sub(r"«?\((?:فصل|مزمور)[^)]*آیه\)\s*»?", " ", t)
+    # ── «٭» RESOLUTION (owner decision 2026-08-09: ship on current evidence) ──
+    # The transcribers typed «٭» for TWO different printed marks: the small
+    # hook the print sets for izafa, and the larger flower-shaped asterisk it
+    # uses as a paragraph separator. Classification over 14 sampled sites read
+    # off the page: 10 IZAFA, 3 ARTEFACT, **0 SEPARATOR** — no attached mark
+    # has yet proved to be the separator, and the separator appears standalone
+    # at clause and verse ends.
+    #   «بالاي بِرکه٭ حِبرون» → بِرکهٔ حِبرون   "the pool OF Hebron"
+    #   «تمامي٭ بهترین»       → تمامیِ بهترین   "all OF the best"
+    # ⚠ THIS IS A RISK ACCEPTANCE, NOT A COMPLETED CLASSIFICATION — the same
+    # documented-deviation pattern as the Van Dyck tashkeel and the Luther
+    # apparatus calls. A falsification pass was still running when this shipped.
+    # If a genuine attached SEPARATOR is ever found, those sites need reverting
+    # individually. The failure mode is mild and reversible: a wrong izafa is a
+    # diacritic, not a wrong word, whereas leaving 1,818 stray «٭» marks
+    # mid-phrase is visibly broken Persian.
+    # Order matters: ه٭ must be taken before the general after-a-letter rule,
+    # because ه is itself an Arabic letter.
+    t = t.replace("ه" + STAR, "هٔ")                 # izafa over final heh
+    t = re.sub(r"(?<=[؀-ۿ])%s" % STAR, "ِ", t)   # izafa kasra
+    t = re.sub(r"%s(?=[؀-ۿ])" % STAR, " ", t)  # leading-attached: sep
     t = re.sub(r"(?<=\s)%s(?=\s)|^%s\s|\s%s$" % (STAR, STAR, STAR), " ", t)
+    # Residue: marks adjacent to ZWNJ, a closing guillemet or a bracket rather
+    # than to a letter — inspected, all 43 are the separator at a verse end or
+    # after a word whose izafa is already written. Drop them.
+    t = t.replace(STAR, " ")
     t = re.sub(r"[ \t]+", " ", t)
     return t.strip()
 

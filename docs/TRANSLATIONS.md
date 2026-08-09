@@ -1,5 +1,15 @@
 # Translations — research verdicts, integration records, watch list
 
+## ⚠ ACTIVE WORK — read these first
+· **Russian Strong's**: owner approved shipping under risk-acceptance
+  2026-08-09; source downloaded and the Dvoretsky gate PASSED. Converter
+  and app wiring remain — `research/russian_strongs_status.md`.
+· **Cover art gaps**: Weigel's *Biblia Ectypa* (1695, 839 plates, one per
+  epistle by design) and Merian's *Icones Biblicae* (1625-30, Part III
+  covers the Apocrypha) fill what Doré and Schnorr never drew. Both PD,
+  both on archive.org/Wikimedia. Style caveat: 17th-c. baroque against
+  19th-c. romantic — monochrome line art either way, but not seamless.
+
 Split out of CLAUDE.md 2026-08-09: it was 612 lines of material needed when ADDING a translation, not every session.
 ⚠ Every ⚠ in here is load-bearing — licence gates, traps, and dead ends that cost real time to establish. Nothing here was deleted in the split.
 

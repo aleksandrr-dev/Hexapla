@@ -52,14 +52,27 @@ DEFECT_WORDS = re.compile(
     r"|skips?\b[^.]{0,25}«[۰-۹٠-٩]+»"
     r"|never appears as a printed glyph"
     r"|bare[- ]stroke numeral"
-    r"|bare «?[۰-۹٠-٩]+»?",
+    r"|bare «?[۰-۹٠-٩]+»?"
+    # ⚠ ADDED 2026-08-08 after a chunk agent showed these were MISSED. Its
+    # reports write "⚠ GENUINE PRINT DEFECT — v9's numeral prints as «۱», not
+    # «۹»" — a positive defect claim this detector scored as no-evidence, i.e.
+    # a FALSE NEGATIVE, the direction that actually costs something.
+    r"|«[۰-۹٠-٩]+»\s*,?\s*not\s*«[۰-۹٠-٩]+»"
+    r"|prints? as\s*«?[۰-۹٠-٩]+»?"
+    r"|genuine print defect",
     re.I)
 
 # A line asserting there is NO defect, or withdrawing an earlier claim.
+# ⚠ A BARE `\bgenuine\b` USED TO BE HERE AND WAS A FALSE-NEGATIVE MACHINE.
+# "genuine" appears on BOTH sides of this distinction: "came back genuine"
+# (retraction — the glyph really was a ۹) versus "GENUINE PRINT DEFECT"
+# (assertion — the print really is wrong). Killing every line containing the
+# word discarded real evidence. Match the retraction PHRASES, never the word.
 NEGATION = re.compile(
     r"\bno defect\b|\bnot a defect\b|retract|overturn|withdraw|false positive"
-    r"|\bgenuine\b|\bPASS\b|no gaps|no skipped|no duplicat|correctly numbered"
-    r"|came back genuine|resolved to|not a print defect|innocent",
+    r"|\bPASS\b|no gaps|no skipped|no duplicat|correctly numbered"
+    r"|came back genuine|is genuine|are genuine|genuine «?[۰-۹٠-٩]"
+    r"|resolved to|not a print defect|innocent",
     re.I)
 # A chapter:verse reference, either «34:18» or «ch 34».
 REF = re.compile(r"\b(\d{1,3}):(\d{1,3})\b")

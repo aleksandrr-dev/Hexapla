@@ -127,6 +127,11 @@ def normalise(t):
         sites remain findable.
     """
     t = t.translate(TRANS)
+    # The print's own chapter heading, quoted inline by the reports. It turns up
+    # BOTH before a chapter's first verse and trailing off the previous
+    # chapter's last verse (1 Chr 1:54, Dan 1:21), so strip it everywhere
+    # rather than only from leading text.
+    t = re.sub(r"«?\((?:فصل|مزمور)[^)]*آیه\)\s*»?", " ", t)
     t = re.sub(r"(?<=\s)%s(?=\s)|^%s\s|\s%s$" % (STAR, STAR, STAR), " ", t)
     t = re.sub(r"[ \t]+", " ", t)
     return t.strip()

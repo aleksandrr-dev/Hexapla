@@ -363,7 +363,7 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    tools/convert_cuv.py, avoiding the UBS 1988 punctuation layer).
    Now 15 translations / 11 languages; zh default picks script by
    locale (Hant/TW/HK/MO → traditional).
-2. IzzyOnDroid listing (repo is public; low effort).
+2. IzzyOnDroid listing (repo is public; low effort — flavor ready, see item 6).
 3. ~~Original-language interlinear~~ shipped in-tree for v1.4/code 7:
    tap any word in grc/wlc → Strong's entry + decoded morphology
    (Robinson for Greek, OSHM for Hebrew; decoders in Interlinear.kt).
@@ -386,8 +386,12 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    ★ FULL EXECUTION PLAN: IOS_PORT_PLAN.md (repo root, written 2026-07-21
    by Fable-5 with whole-architecture context — self-contained for a
    future agent; GATED on Play production going live + owner go).
-6. Maybe: fonts (Literata/EB Garamond), music download-on-demand
-   (APK 39→23 MB), rotating covers, `foss` flavor for F-Droid proper.
+6. Maybe: fonts (Literata/EB Garamond — NOT in the app, verified 2026-08-09),
+   rotating covers (not implemented). ~~music download-on-demand~~ SHIPPED
+   (Settings → Download music pack; music_pack_* strings ×26 locales).
+   ~~`foss` flavor~~ EXISTS in build.gradle.kts with the src/foss stub —
+   what remains is the LISTING (IzzyOnDroid takes a released APK; F-Droid
+   proper needs an fdroiddata MR with gradle:[foss]).
 
 ## Owner preferences
 

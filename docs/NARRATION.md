@@ -108,9 +108,11 @@ Before 2026-08-03 it did not, so the device voice read archaic spelling
 literally while rendered audio was correct. Regenerate the assets whenever
 tools/archaic_english.py or the generated maps change, or the two voices drift.
 
-★ **MUSIC BY MOOD is built but not shipped**: mood_map.json (1,189 chapters),
-a 79-track archive.org pack, MusicRepo + crossfade. 24 locales of strings are
-still missing.
+★ **MUSIC BY MOOD SHIPPED in 1.6.3 (2026-08-05)** — mood_map.json (1,189
+chapters), 79-track archive.org pack, MusicRepo + crossfade, all 10 strings in
+all 26 locales (landed in the release commit c0588ef). The old 'built but not
+shipped / 24 locales missing' note survived here for a month after being
+falsified — verified against the res/ tree 2026-08-09.
 
 
 ---

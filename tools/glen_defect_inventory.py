@@ -63,16 +63,31 @@ EXCLUDE = (
     "glen_deuteronomy_28-34.md",   # subset of glen_deuteronomy_16-34.md
 )
 
+# Multi-book files, as (book_index, start-of-section regex). `None` means the
+# section starts at the top of the file.
+# ⚠ EVERY FILE HEADS ITS BOOKS DIFFERENTLY — different agents, different weeks:
+# «# نحمیاه (Nehemiah)», «## استیر — فصلِ اوّل», «# BOOK: AMOS»,
+# «## SONG OF SOLOMON», «## Habakkuk (idx …)». An earlier version assumed one
+# uniform style, matched nothing in three files, and silently fell through to a
+# single-book scan — which MERGES two books' chapter numbers and manufactured
+# five phantom "Ezra" defects (Ezra 3 reading 32 markers against KJV 13).
+# Match the real headings, and assert below that every section was found.
 MULTI = {
-    "glen_ezra_nehemiah_1-6.md": [("EZRA", 14), ("NEHEMIAH", 15)],
-    "glen_nehemiah_7-13_esther.md": [("NEHEMIAH", 15), ("ESTHER", 16)],
-    "glen_ecclesiastes_song.md": [("ECCLESIASTES", 20), ("SONG", 21)],
-    "glen_hosea_joel.md": [("HOSEA", 27), ("JOEL", 28)],
-    "glen_amos_obadiah_jonah_micah.md": [("AMOS", 29), ("OBADIAH", 30),
-                                         ("JONAH", 31), ("MICAH", 32)],
+    "glen_ezra_nehemiah_1-6.md": [
+        (14, None), (15, r"(?m)^#\s*نحمیاه")],
+    "glen_nehemiah_7-13_esther.md": [
+        (15, None), (16, r"(?m)^##\s*استیر")],
+    "glen_ecclesiastes_song.md": [
+        (20, None), (21, r"(?mi)^##\s*SONG OF SOLOMON")],
+    "glen_hosea_joel.md": [
+        (27, None), (28, r"(?mi)^##+\s*JOEL")],
+    "glen_amos_obadiah_jonah_micah.md": [
+        (29, None), (30, r"(?mi)^#\s*BOOK:\s*OBADIAH"),
+        (31, r"(?mi)^#\s*BOOK:\s*JONAH"), (32, r"(?mi)^#\s*BOOK:\s*MICAH")],
     "glen_nahum_habakkuk_zephaniah_haggai_malachi.md": [
-        ("Nahum", 33), ("Habakkuk", 34), ("Zephaniah", 35),
-        ("Haggai", 36), ("Malachi", 38)],
+        (33, None), (34, r"(?mi)^##\s*Habakkuk"),
+        (35, r"(?mi)^##\s*Zephaniah"), (36, r"(?mi)^##\s*Haggai"),
+        (38, r"(?mi)^##\s*Malachi")],
 }
 FA = "۰۱۲۳۴۵۶۷۸۹"
 
@@ -107,10 +122,17 @@ def sections(path, name):
     if base in MULTI:
         text = open(path, encoding="utf-8").read()
         marks = []
-        for label, idx in MULTI[base]:
-            m = re.search(r"(?mi)^#+ *(?:BOOK: *)?" + label + r"\b", text)
-            if m:
-                marks.append((m.start(), idx))
+        for idx, pat in MULTI[base]:
+            if pat is None:
+                marks.append((0, idx))
+                continue
+            m = re.search(pat, text)
+            if not m:
+                # Never fall through to a single-book scan: that is exactly the
+                # failure that manufactured the phantom Ezra defects.
+                raise SystemExit(f"{base}: section pattern {pat!r} matched "
+                                 f"nothing — fix the pattern, do not guess")
+            marks.append((m.start(), idx))
         marks.sort()
         for i, (s, idx) in enumerate(marks):
             e = marks[i + 1][0] if i + 1 < len(marks) else len(text)
@@ -135,7 +157,14 @@ def main():
     args = ap.parse_args()
 
     counts, names = kjv_counts()
-    rows = []
+
+    # ⚠ DEDUPE ACROSS FILES FIRST. Chunk boundaries overlap: a chapter can
+    # appear both as the trailing fragment of one chunk and in full in the
+    # chunk that owns it (Numbers 25 sits in both the 11-24 and 25-36 files).
+    # Classifying both produced a phantom "SHORT" defect from the fragment.
+    # Keep the copy whose marker count matches the reference; failing that, the
+    # longest — a fragment is never longer than the whole chapter.
+    best = {}
     for path in sorted(glob.glob(str(RESEARCH / "glen_*.md"))):
         if ".bak" in path or any(x in os.path.basename(path)
                                  for x in EXCLUDE):
@@ -148,6 +177,24 @@ def main():
                 exp = None
                 if bidx is not None and c - 1 < len(counts[bidx]):
                     exp = counts[bidx][c - 1]
+                key = (bidx, c)
+                prev = best.get(key)
+                if prev is None:
+                    best[key] = (got, exp, path)
+                else:
+                    pgot = prev[0]
+                    better = (len(got) == exp and len(pgot) != exp) or \
+                             (exp is None and len(got) > len(pgot)) or \
+                             (len(pgot) != exp and len(got) > len(pgot))
+                    if better:
+                        best[key] = (got, exp, path)
+
+    rows = []
+    if True:
+        for (bidx, c), (got, exp, path) in sorted(
+                best.items(), key=lambda kv: (kv[0][0] if kv[0][0] is not None
+                                              else 99, kv[0][1])):
+            if True:
                 for kind, pos, val in classify(got, exp):
                     rows.append({
                         "book": names[bidx] if bidx is not None else "?",

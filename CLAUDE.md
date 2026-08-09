@@ -134,19 +134,17 @@ download is the RUSTORE flavour, not the Play AAB), and consider back-filling
   REBUILT 2026-07-21 (commit d2e30e3, owner-requested): **English first**
   in title/tagline/every button, Russian second on the same lines; counts
   refreshed 17 languages -> «33 translations in 28 languages» (stale since the 1.4.x era).
-  ⚠⚠ **THE COUNTS DISAGREE THREE WAYS AND NOBODY HAS RECONCILED THEM.**
-  Derived from Bible.kt 2026-08-09: **37 `Translation()` entries**, and **28
-  distinct language codes** once zh Hans/Hant collapse to one. The shipped
-  1.6.3 listing says «35 translations in 30 languages». The in-app
-  `welcome_tagline` says **thirty languages** in all 26 locales (consistent
-  with each other, at least).
-  The spread comes from unstated conventions: whether zh counts once or twice,
-  and whether grc/wlc/la/sa (ancient languages carried under a modern locale
-  code) count as languages. **Pick a convention, write it down HERE, then make
-  the page, the listing and the tagline agree.** Until then do not "fix" any
-  one of them in isolation.
-  ⚠ Glen's OT did NOT change either count — it added a testament to the
-  existing Persian entry, not a new entry or language. Button order: direct APK (GitHub
+  ✅ **COUNTING CONVENTION SETTLED (owner, 2026-08-09) — derive, never
+  hand-count: `python tools/count_translations.py`.** Translations = distinct
+  TEXTS (two scripts of one translation count once — zh; original-language
+  texts grc/wlc DO count). Languages = what a READER would name (Middle
+  English folds into English; ancient languages count as their own).
+  **Today: «36 translations in 30 languages».**
+  The in-app `welcome_tagline` (thirty languages, ×26 locales) is ALREADY
+  CORRECT under this convention. Still to update: the store listing (says 35)
+  and the landing page (says 33/28). When the counts change, the script names
+  the three places that must move together.
+
   releases/latest, `gh release create vX.Y.Z <apk>` each release),
   RuStore (live), Play (`.soon` class = greyed + non-clickable).
   ⚠ **PENDING PAGE UPDATES — owner, 2026-07-21: "once it's on Play Store

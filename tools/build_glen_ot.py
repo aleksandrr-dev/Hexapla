@@ -171,6 +171,17 @@ def normalise(t):
     #           routinely left unwritten in Persian orthography («کتاب مقدس»),
     #           so the text reads normally either way.
     # The asymmetry is the point — one context invents nothing, the other would.
+    # ⚠ REFINED after the second classifier (24 more sites: 20 IZAFA, 6
+    # ARTEFACT, 0 SEPARATOR) established that the discriminator is the
+    # FOLLOWING word, not the preceding letter: a mark followed by a NOUN is
+    # izafa (20/20), while one followed by a VERB, the object marker «را», or
+    # the conjunction «و» has NOTHING printed at that position (6/6) — the
+    # transcriber attached a mark belonging elsewhere in the verse.
+    # «و» and «را» are mechanically detectable, so those 40 sites are dropped
+    # rather than given an izafa they do not have. (A verb test is not
+    # mechanical and is left alone: over-marking there is a spurious diacritic,
+    # which is mild and reversible.)
+    t = re.sub(r"ه%s(?=\s+(?:و|را)\s)" % STAR, "ه ", t)
     t = t.replace("ه" + STAR, "هٔ")                 # izafa over final heh
     t = re.sub(r"(?<=[؀-ۿ])%s" % STAR, " ", t)   # everything else: drop
     t = re.sub(r"%s(?=[؀-ۿ])" % STAR, " ", t)  # leading-attached: sep

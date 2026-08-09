@@ -57,11 +57,14 @@ BOOKS = {
 # reconstruction notes, and superseded partial files that OVERLAP a complete
 # one. Including them double-counts sites and (for the re-witness files) mixes
 # a second reading into an inventory that must describe the shipped text.
-EXCLUDE = (
-    "rewitness", "spotcheck", "recon", "headings",
-    "glen_joshua_10-12.md",        # subset of glen_joshua_1-12.md
-    "glen_deuteronomy_28-34.md",   # subset of glen_deuteronomy_16-34.md
-)
+# ⚠ 2026-08-09: this list ONCE contained glen_joshua_10-12.md and
+# glen_deuteronomy_28-34.md, excluded on the ASSUMPTION that a file whose range
+# is contained in another's name is a subset. Both assumptions were false and
+# the corpus audit caught it: glen_deuteronomy_16-34.md actually stops at ch 27
+# and glen_joshua_1-12.md stops at ch 9 — the "subset" files are the
+# COMPLETIONS, and excluding them deleted 330 verses from the audit.
+# ▶ Never infer a file's contents from its NAME. Scan it.
+EXCLUDE = ("rewitness", "spotcheck", "recon", "headings")
 
 # Multi-book files, as (book_index, start-of-section regex). `None` means the
 # section starts at the top of the file.

@@ -208,16 +208,12 @@ download is the RUSTORE flavour, not the Play AAB), and consider back-filling
   chapter announcement plays), else the sectionFraction verse-count estimate.
   Makes stop→resume land exactly on the verse for generated audio (TTS was
   already exact). Translation-agnostic — every render that emits "o" gets it.
-  💡 FUTURE IDEA (owner interested 2026-07-24) — WORD-LEVEL following on recorded
-  narration via FORCED ALIGNMENT. TTS gets word ranges live from the engine
-  (onRangeStart); recorded audio has none. To match it: run a forced aligner
-  (WhisperX / Montreal Forced Aligner) over each rendered chapter ogg against its
-  known verse text → per-WORD ms timestamps, emit a parallel per-word array into
-  audio_index_gen.json alongside "o", and extend startVerseFollow to set
-  Playback.wordStart/wordEnd from it. NOT token-heavy — a local compute pass
-  (GPU/CPU, same class as the renders), zero LLM tokens; only cost is writing the
-  aligner script + app wiring (~audio-fix sized) plus re-processing every rendered
-  chapter once. Deferred; verse-level is the right call for now.
+  ✅ WORD-LEVEL following on recorded narration SHIPPED (commit 8b0d050):
+  tools/align_words.py emits per-word .w.json sidecars; ReadingService
+  fetches them in the background and publishes wordStart/wordEnd exactly
+  as TTS does. Chapters without a sidecar degrade to verse-level.
+  ⚠ The old 'FUTURE IDEA / deferred' note sat here after shipping and
+  misled a session into calling this feature missing (2026-08-09).
   ✅ GENERATED AUDIO "REVERTS TO TTS AFTER SOME CHAPTERS" BUG — FIXED
   2026-07-24 (owner heard it on Webster; in tree, uncommitted). Root cause:
   on auto-advance, playSection downloads the next chapter on demand and

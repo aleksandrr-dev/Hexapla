@@ -150,8 +150,29 @@ def normalise(t):
     # mid-phrase is visibly broken Persian.
     # Order matters: ه٭ must be taken before the general after-a-letter rule,
     # because ه is itself an Arabic letter.
+    # ⚠⚠ REVISED 2026-08-09 AFTER THE FALSIFICATION PASS BROKE THE HYPOTHESIS.
+    # A second sampling run, aimed deliberately at counterexamples, found what
+    # the first (confirmation-shaped) run could not:
+    #   · 2 GENUINE SEPARATORS, both after a VERB — «دیگرانِرا مخور٭» (Ezek
+    #     24:17), «و خواهد گفت٭ بدرستي» (Isa 45:24);
+    #   · a large ARTEFACT cluster in proper-name lists before «و»/«را», where
+    #     NOTHING is printed at that position at all.
+    # Neither class follows ه. Combined tally over ~26 sites: 17 IZAFA,
+    # 10 ARTEFACT, 2 SEPARATOR.
+    # ▶ So the two contexts are treated DIFFERENTLY:
+    #   «ه٭»  → «هٔ». Well supported: every izafa verdict of the ه subset held,
+    #           and no ه-preceded counterexample was found. The hamza is also
+    #           orthographically REQUIRED after final heh, so omitting it is
+    #           visible.
+    #   «٭» after any other letter → DROPPED, not turned into a kasra. This is
+    #           where both separators and nearly all artefacts live, and a
+    #           kasra there would INVENT a mark the print does not have.
+    #           Dropping costs nothing visible: izafa after a consonant is
+    #           routinely left unwritten in Persian orthography («کتاب مقدس»),
+    #           so the text reads normally either way.
+    # The asymmetry is the point — one context invents nothing, the other would.
     t = t.replace("ه" + STAR, "هٔ")                 # izafa over final heh
-    t = re.sub(r"(?<=[؀-ۿ])%s" % STAR, "ِ", t)   # izafa kasra
+    t = re.sub(r"(?<=[؀-ۿ])%s" % STAR, " ", t)   # everything else: drop
     t = re.sub(r"%s(?=[؀-ۿ])" % STAR, " ", t)  # leading-attached: sep
     t = re.sub(r"(?<=\s)%s(?=\s)|^%s\s|\s%s$" % (STAR, STAR, STAR), " ", t)
     # Residue: marks adjacent to ZWNJ, a closing guillemet or a bracket rather

@@ -207,7 +207,14 @@ def verse_runs(path, bidx):
             # The first marker's own value discriminates them.
             if not out[cur] and cur in pre:
                 lead = " ".join(pre.pop(cur))
-                if val == 1:
+                # ⚠ STRIP THE PRINT'S OWN CHAPTER HEADING. The reports quote
+                # it inline — «(فصلِ دویم مشتمل بر سی و هفت آیه)» — on the same
+                # line as the chapter's opening words. It is not scripture, and
+                # retaining it prepended a heading to 208 verse-1 texts.
+                lead = re.sub(r"«?\((?:فصل|مزمور)[^)]*آیه\)\s*", "", lead)
+                if not lead.strip():
+                    pass
+                elif val == 1:
                     txt = lead + " " + txt
                 else:
                     out[cur].append(lead)

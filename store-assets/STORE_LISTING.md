@@ -53,130 +53,130 @@ the descriptions section.
 ★ **ONLY THE CURRENT RELEASE'S NOTES LIVE AT THE TOP** (owner, 2026-07-28).
 When a release ships, move its block down under the
 `# ── ARCHIVE: older release notes (historical) ──` banner at the END of this
-## 1.6.3 release notes (paste per store)
+## 1.6.4 release notes (paste per store)
 
 <en-US>
-Georgian for the first time: the Bakar Bible of 1743 — the complete Old and New Testament with the deuterocanonical books — and the app's interface is now in Georgian too. The Armenian Bible is complete: the classical Zohrab Old Testament joins the Western Armenian New Testament. The Russian Synodal Bible is now narrated in full. New: background music suited to each chapter, and a button that swaps the two translations in split view. Now 35 translations in 30 languages.
+The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day, and five more books have artwork for the first time. Now 36 translations in 30 languages.
 </en-US>
 
 <ar>
-الجورجية لأول مرة: كتاب باكار المقدس (1743) بعهديه القديم والجديد كاملين مع الأسفار القانونية الثانية، وواجهة التطبيق أصبحت بالجورجية أيضًا. واكتمل الكتاب المقدس الأرمني: عهد زوهراب القديم ينضم إلى العهد الجديد بالأرمنية الغربية. كما أصبحت الترجمة السينودسية الروسية مقروءة صوتيًا بالكامل. جديد: موسيقى خلفية تناسب أجواء كل إصحاح، وزر يبدّل الترجمتين في العرض المنقسم. الآن 35 ترجمة في 30 لغة.
+اكتمل الكتاب المقدس بالفارسية: عهد وليم غلن القديم (1856) ينضم إلى عهد هنري مارتن الجديد، منسوخًا صفحةً صفحةً عن الطبعة الأصلية من أجل هذا التطبيق. وقاموس سترونغ صار متاحًا بالروسية بكل مداخله العبرية واليونانية لقرّاء الترجمة السينودسية. وأغلفة الأسفار صارت تتبدل: الأسفار الأكثر قراءةً تعرض نقشًا مختلفًا كل يوم، وخمسة أسفار أخرى نالت صورًا لأول مرة. الآن 36 ترجمة بـ30 لغة.
 </ar>
 
 <be>
-Упершыню грузінская: Біблія Бакара 1743 году — поўны Стары і Новы Запавет з дэўтэраканонічнымі кнігамі, а інтэрфейс цяпер таксама па-грузінску. Армянская Біблія стала поўнай: Стары Запавет Зограба далучыўся да заходнеармянскага Новага Запавету. Расійскі сінадальны пераклад цяпер агучаны цалкам. Новае: фонавая музыка пад настрой разьдзелу і кнопка, якая мяняе месцамі два пераклады. Цяпер 35 перакладаў у 30 мовах.
+Персідская Біблія поўная: Стары Запавет Уільяма Глена 1856 года далучыўся да Новага Запавету Генры Мартына — перапісаны старонка за старонкай з арыгінальнага друку для гэтай праграмы. Слоўнік Стронга цяпер чытаецца па-руску: усе яўрэйскія і грэчаскія артыкулы, для чытачоў Сінадальнага перакладу. Вокладкі кніг цяпер чаргуюцца: найбольш чытаныя кнігі паказваюць новую гравюру кожны дзень, а яшчэ пяць кніг атрымалі выявы ўпершыню. Цяпер 36 перакладаў на 30 мовах.
 </be>
 
 <cs-CZ>
-Poprvé gruzínština: Bakarova Bible z roku 1743 — celý Starý i Nový zákon včetně deuterokanonických knih — a rozhraní je nyní také v gruzínštině. Arménská Bible je úplná: Zohrabův Starý zákon se připojil k západoarménskému Novému zákonu. Ruský synodální překlad je nyní kompletně namluvený. Novinky: hudba na pozadí podle ladění kapitoly a tlačítko, které prohodí oba překlady. Nyní 35 překladů ve 30 jazycích.
+Perská Bible je úplná: Starý zákon Williama Glena z roku 1856 se připojuje k Novému zákonu Henryho Martyna — přepsán stránku po stránce z původního tisku pro tuto aplikaci. Strongův slovník je nyní i rusky, všechna hebrejská i řecká hesla, pro čtenáře synodálního překladu. Obálky knih se nyní střídají: nejčtenější knihy ukazují každý den jinou rytinu a dalších pět knih má obraz poprvé. Nyní 36 překladů ve 30 jazycích.
 </cs-CZ>
 
 <da-DK>
-Georgisk for første gang: Bakar-bibelen fra 1743 — hele Det Gamle og Det Nye Testamente med de deuterokanoniske bøger — og appen findes nu også på georgisk. Den armenske bibel er komplet: Zohrabs Gamle Testamente slutter sig til Det Nye Testamente på vestarmensk. Den russiske synodalbibel er nu indlæst i sin helhed. Nyt: baggrundsmusik efter kapitlets stemning, og en knap der bytter om på de to oversættelser. Nu 35 oversættelser på 30 sprog.
+Den persiske bibel er komplet: William Glens Gamle Testamente fra 1856 slutter sig til Henry Martyns Nye Testamente — afskrevet side for side fra originaltrykket til denne app. Strongs ordbog findes nu på russisk med alle hebraiske og græske opslag, til læsere af den synodale bibel. Bogomslag skifter nu: de mest læste bøger viser et nyt stik hver dag, og fem bøger mere har billede for første gang. Nu 36 oversættelser på 30 sprog.
 </da-DK>
 
 <de-DE>
-Erstmals Georgisch: die Bakar-Bibel von 1743 — das vollständige Alte und Neue Testament samt den deuterokanonischen Büchern — und die App gibt es jetzt auch auf Georgisch. Die armenische Bibel ist vollständig: das Alte Testament nach Zohrab tritt zum westarmenischen Neuen Testament. Die russische Synodalbibel wird jetzt ganz vorgelesen. Neu: Hintergrundmusik zur Stimmung des Kapitels und eine Schaltfläche zum Tauschen beider Übersetzungen. Jetzt 35 Übersetzungen in 30 Sprachen.
+Die persische Bibel ist vollständig: das Alte Testament von William Glen (1856) tritt zum Neuen Testament Henry Martyns — Seite für Seite aus dem Originaldruck für diese App übertragen. Strongs Wörterbuch gibt es jetzt auf Russisch, alle hebräischen und griechischen Einträge, für Leser der Synodalbibel. Buchtitelbilder wechseln nun: die meistgelesenen Bücher zeigen täglich einen anderen Stich, und fünf weitere Bücher haben erstmals ein Bild. Jetzt 36 Übersetzungen in 30 Sprachen.
 </de-DE>
 
 <el-GR>
-Για πρώτη φορά γεωργιανά: η Βίβλος του Μπακάρ του 1743 — ολόκληρη η Παλαιά και η Καινή Διαθήκη με τα δευτεροκανονικά — και η εφαρμογή είναι πλέον και στα γεωργιανά. Η αρμενική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ζοχράπ προστίθεται στη δυτικοαρμενική Καινή Διαθήκη. Η ρωσική Συνοδική Βίβλος διαβάζεται πλέον ολόκληρη. Νέα: μουσική ανάλογη με το κεφάλαιο και κουμπί που εναλλάσσει τις δύο μεταφράσεις. Τώρα 35 μεταφράσεις σε 30 γλώσσες.
+Η περσική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ουίλιαμ Γκλεν (1856) προστίθεται στην Καινή Διαθήκη του Χένρι Μάρτιν — αντιγραμμένη σελίδα προς σελίδα από την αρχική έκδοση για αυτή την εφαρμογή. Το λεξικό Strong διατίθεται τώρα και στα ρωσικά, με όλα τα εβραϊκά και ελληνικά λήμματα. Τα εξώφυλλα των βιβλίων εναλλάσσονται: τα πιο διαβασμένα βιβλία δείχνουν κάθε μέρα άλλη χαλκογραφία, και πέντε ακόμη βιβλία απέκτησαν εικόνα. Τώρα 36 μεταφράσεις σε 30 γλώσσες.
 </el-GR>
 
 <en-IN>
-Georgian for the first time: the Bakar Bible of 1743 — the complete Old and New Testament with the deuterocanonical books — and the app's interface is now in Georgian too. The Armenian Bible is complete: the classical Zohrab Old Testament joins the Western Armenian New Testament. The Russian Synodal Bible is now narrated in full. New: background music suited to each chapter, and a button that swaps the two translations in split view. Now 35 translations in 30 languages.
+The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day, and five more books have artwork for the first time. Now 36 translations in 30 languages.
 </en-IN>
 
 <es-419>
-Por primera vez en georgiano: la Biblia de Bakar de 1743, con el Antiguo y el Nuevo Testamento completos y los libros deuterocanónicos; la app también está ya en georgiano. La Biblia armenia queda completa: el Antiguo Testamento de Zohrab se suma al Nuevo Testamento en armenio occidental. La Biblia Sinodal rusa ya está narrada por completo. Novedades: música de fondo acorde al capítulo y un botón que intercambia las traducciones en la vista dividida. Ahora 35 traducciones en 30 idiomas.
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original para esta app. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas, para quienes leen la Biblia sinodal. Las portadas de los libros ahora rotan: los libros más leídos muestran cada día otro grabado, y cinco libros más tienen imagen por primera vez. Ahora 36 traducciones en 30 idiomas.
 </es-419>
 
 <es-ES>
-Por primera vez en georgiano: la Biblia de Bakar de 1743, con el Antiguo y el Nuevo Testamento completos y los libros deuterocanónicos; la app también está ya en georgiano. La Biblia armenia queda completa: el Antiguo Testamento de Zohrab se suma al Nuevo Testamento en armenio occidental. La Biblia Sinodal rusa ya está narrada por completo. Novedades: música de fondo acorde al capítulo y un botón que intercambia las traducciones en la vista dividida. Ahora 35 traducciones en 30 idiomas.
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original para esta app. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas, para quienes leen la Biblia sinodal. Las portadas de los libros ahora rotan: los libros más leídos muestran cada día otro grabado, y cinco libros más tienen imagen por primera vez. Ahora 36 traducciones en 30 idiomas.
 </es-ES>
 
 <es-US>
-Por primera vez en georgiano: la Biblia de Bakar de 1743, con el Antiguo y el Nuevo Testamento completos y los libros deuterocanónicos; la app también está ya en georgiano. La Biblia armenia queda completa: el Antiguo Testamento de Zohrab se suma al Nuevo Testamento en armenio occidental. La Biblia Sinodal rusa ya está narrada por completo. Novedades: música de fondo acorde al capítulo y un botón que intercambia las traducciones en la vista dividida. Ahora 35 traducciones en 30 idiomas.
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original para esta app. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas, para quienes leen la Biblia sinodal. Las portadas de los libros ahora rotan: los libros más leídos muestran cada día otro grabado, y cinco libros más tienen imagen por primera vez. Ahora 36 traducciones en 30 idiomas.
 </es-US>
 
 <fi-FI>
-Ensimmäistä kertaa georgiaa: vuoden 1743 Bakarin Raamattu — koko Vanha ja Uusi testamentti deuterokanonisine kirjoineen — ja sovellus on nyt myös georgiaksi. Armenialainen Raamattu on täydellinen: Zohrabin Vanha testamentti liittyy länsiarmenialaiseen Uuteen testamenttiin. Venäjän synodaaliraamattu on nyt kokonaan ääneen luettu. Uutta: taustamusiikki luvun tunnelman mukaan ja painike, joka vaihtaa käännösten paikkaa. Nyt 35 käännöstä 30 kielellä.
+Persiankielinen Raamattu on täydellinen: William Glenin vuoden 1856 Vanha testamentti liittyy Henry Martynin Uuteen testamenttiin — jäljennettynä sivu sivulta alkuperäisestä painoksesta tätä sovellusta varten. Strongin sanakirja on nyt myös venäjäksi, kaikki heprean ja kreikan hakusanat. Kirjojen kannet vaihtuvat: luetuimmat kirjat näyttävät joka päivä eri kuparipiirroksen, ja viisi kirjaa sai kuvan ensi kertaa. Nyt 36 käännöstä 30 kielellä.
 </fi-FI>
 
 <fr-CA>
-Le géorgien pour la première fois : la Bible de Bakar de 1743, avec l’Ancien et le Nouveau Testament complets et les livres deutérocanoniques ; l’app est désormais aussi en géorgien. La Bible arménienne est complète : l’Ancien Testament de Zohrab rejoint le Nouveau Testament en arménien occidental. La Bible synodale russe est désormais lue en entier. Nouveautés : une musique adaptée au chapitre et un bouton qui échange les traductions en vue partagée. Désormais 35 traductions en 30 langues.
+La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine pour cette application. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent : les livres les plus lus montrent chaque jour une autre gravure, et cinq livres ont une image pour la première fois. Désormais 36 traductions en 30 langues.
 </fr-CA>
 
 <fr-FR>
-Le géorgien pour la première fois : la Bible de Bakar de 1743, avec l’Ancien et le Nouveau Testament complets et les livres deutérocanoniques ; l’app est désormais aussi en géorgien. La Bible arménienne est complète : l’Ancien Testament de Zohrab rejoint le Nouveau Testament en arménien occidental. La Bible synodale russe est désormais lue en entier. Nouveautés : une musique adaptée au chapitre et un bouton qui échange les traductions en vue partagée. Désormais 35 traductions en 30 langues.
+La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine pour cette application. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent : les livres les plus lus montrent chaque jour une autre gravure, et cinq livres ont une image pour la première fois. Désormais 36 traductions en 30 langues.
 </fr-FR>
 
 <hu-HU>
-Először grúzul: az 1743-as Bakar-Biblia — a teljes Ó- és Újszövetség a deuterokanonikus könyvekkel —, és az alkalmazás is elérhető grúzul. Az örmény Biblia teljessé vált: Zohrab Ószövetsége csatlakozott a nyugati örmény Újszövetséghez. Az orosz szinodális Biblia mostantól teljesen hallgatható. Újdonság: a fejezet hangulatához illő háttérzene, és egy gomb, amely felcseréli a két fordítást. Most 35 fordítás 30 nyelven.
+A perzsa Biblia teljes: William Glen 1856-os Ószövetsége Henry Martyn Újszövetségéhez csatlakozik — oldalról oldalra átírva az eredeti nyomtatványból ehhez az alkalmazáshoz. A Strong-szótár mostantól oroszul is olvasható, minden héber és görög szócikkel, a szinodális fordítás olvasóinak. A könyvborítók váltakoznak: a legolvasottabb könyvek naponta más metszetet mutatnak, és további öt könyv kapott először képet. Most 36 fordítás 30 nyelven.
 </hu-HU>
 
 <hy-AM>
-Առաջին անգամ վրացերեն՝ 1743 թ. Բաքարի Աստվածաշունչը՝ ամբողջական Հին և Նոր Կտակարան երկրորդականոն գրքերով, իսկ հավելվածն այժմ նույնպես վրացերեն է։ Հայերեն Աստվածաշունչն ամբողջական է՝ Զոհրապյան Հին Կտակարանն ավելացավ արևմտահայերեն Նոր Կտակարանին։ Ռուսերեն Սինոդալ Աստվածաշունչն այժմ ամբողջությամբ ընթերցվում է ձայնով։ Նոր՝ գլխին համապատասխան երաժշտություն և թարգմանությունները փոխող կոճակ։ Այժմ 35 թարգմանություն 30 լեզվով։
+Պարսկերեն Աստվածաշունչն ամբողջական է՝ Ուիլյամ Գլենի 1856 թ. Հին Կտակարանը միանում է Հենրի Մարտինի Նոր Կտակարանին՝ էջ առ էջ ընդօրինակված բնօրինակ տպագրությունից այս հավելվածի համար։ Սթրոնգի բառարանն այժմ կարդացվում է նաև ռուսերեն՝ բոլոր եբրայերեն և հունարեն հոդվածները։ Գրքերի շապիկներն այժմ հերթափոխվում են՝ ամենաընթերցվող գրքերն ամեն օր այլ փորագրություն են ցույց տալիս, և ևս հինգ գիրք առաջին անգամ պատկեր ունի։ Այժմ 36 թարգմանություն 30 լեզվով։
 </hy-AM>
 
 <it-IT>
-Per la prima volta il georgiano: la Bibbia di Bakar del 1743, con l’Antico e il Nuovo Testamento completi e i libri deuterocanonici; anche l’app è ora in georgiano. La Bibbia armena è completa: l’Antico Testamento di Zohrab si affianca al Nuovo Testamento in armeno occidentale. La Bibbia sinodale russa ora si ascolta per intero. Novità: musica di sottofondo adatta al capitolo e un pulsante che scambia le traduzioni. Ora 35 traduzioni in 30 lingue.
+La Bibbia in persiano è completa: l'Antico Testamento di William Glen (1856) si unisce al Nuovo Testamento di Henry Martyn, trascritto pagina per pagina dalla stampa originale per questa app. Il dizionario di Strong si legge ora anche in russo, con tutte le voci ebraiche e greche. Le copertine dei libri ora ruotano: i libri più letti mostrano ogni giorno un'incisione diversa, e altri cinque libri hanno un'immagine per la prima volta. Ora 36 traduzioni in 30 lingue.
 </it-IT>
 
 <iw-IL>
-גאורגית לראשונה: התנ״ך של בקאר (1743) — הברית הישנה והחדשה במלואן, כולל הספרים החיצוניים — וגם האפליקציה זמינה כעת בגאורגית. המקרא הארמני הושלם: הברית הישנה של זוהרב מצטרפת לברית החדשה בארמנית מערבית. גם המקרא הסינודלי הרוסי נקרא כעת בקול במלואו. חדש: מוזיקת רקע המותאמת לפרק, וכפתור שמחליף בין שני התרגומים. כעת 35 תרגומים ב-30 שפות.
+התנ"ך והברית החדשה בפרסית הושלמו: הברית הישנה של ויליאם גלן (1856) מצטרפת לברית החדשה של הנרי מרטין — מועתקת עמוד אחר עמוד מן הדפוס המקורי עבור אפליקציה זו. מילון סטרונג נקרא כעת גם ברוסית, כל הערכים בעברית וביוונית, לקוראי התרגום הסינודלי. עטיפות הספרים מתחלפות: הספרים הנקראים ביותר מציגים תחריט אחר בכל יום, וחמישה ספרים נוספים קיבלו תמונה לראשונה. כעת 36 תרגומים ב-30 שפות.
 </iw-IL>
 
 <ja-JP>
-ジョージア語（グルジア語）が初登場。1743年のバカル聖書は旧約・新約の全巻に第二正典を加えた完全版で、アプリの表示もジョージア語に対応しました。アルメニア語聖書も完成し、ゾフラプ訳旧約が西アルメニア語の新約に加わりました。ロシア語シノド訳の朗読も全巻そろいました。新機能: 章の雰囲気に合わせた背景音楽と、分割表示で二つの訳を入れ替えるボタン。現在35訳・30言語。
+ペルシア語聖書が完成しました。ウィリアム・グレンの1856年旧約が、ヘンリー・マーティンの新約に加わります。原本から一頁ずつ本アプリのために書き起こしたものです。ストロング辞典がロシア語でも読めるようになり、ヘブライ語・ギリシア語の全項目を収録。書物の表紙が日替わりになり、よく読まれる書物は毎日ちがう版画を表示します。さらに五つの書物に初めて挿絵が付きました。現在36訳・30言語。
 </ja-JP>
 
 <lv>
-Pirmoreiz gruzīnu valodā: 1743. gada Bakara Bībele — pilnīga Vecā un Jaunā Derība kopā ar deiterokanoniskajām grāmatām — un lietotne tagad pieejama arī gruzīniski. Armēņu Bībele ir pilnīga: Zohraba Vecā Derība pievienojas Jaunajai Derībai rietumarmēņu valodā. Krievu Sinodālā Bībele tagad ir pilnībā ieskaņota. Jaunums: fona mūzika atbilstoši nodaļas noskaņai un poga, kas samaina abus tulkojumus. Tagad 35 tulkojumi 30 valodās.
+Persiešu Bībele ir pilnīga: Viljama Glena 1856. gada Vecā Derība pievienojas Henrija Mārtina Jaunajai Derībai — pārrakstīta lapu pa lapai no oriģinālizdevuma šai lietotnei. Stronga vārdnīca tagad lasāma arī krieviski, visi ebreju un grieķu šķirkļi, sinodālā tulkojuma lasītājiem. Grāmatu vāki tagad mainās: visvairāk lasītās grāmatas katru dienu rāda citu gravīru, un vēl piecām grāmatām pirmoreiz ir attēls. Tagad 36 tulkojumi 30 valodās.
 </lv>
 
 <nl-NL>
-Voor het eerst Georgisch: de Bakarbijbel uit 1743 — het volledige Oude en Nieuwe Testament met de deuterocanonieke boeken — en de app is nu ook in het Georgisch. De Armeense Bijbel is compleet: het Oude Testament van Zohrab komt bij het West-Armeense Nieuwe Testament. De Russische Synodale Bijbel wordt nu volledig voorgelezen. Nieuw: achtergrondmuziek die past bij het hoofdstuk, en een knop die de twee vertalingen verwisselt. Nu 35 vertalingen in 30 talen.
+De Perzische Bijbel is compleet: het Oude Testament van William Glen (1856) voegt zich bij het Nieuwe Testament van Henry Martyn — pagina voor pagina overgeschreven uit de oorspronkelijke druk voor deze app. Strongs woordenboek is nu ook in het Russisch te lezen, met alle Hebreeuwse en Griekse lemma's. De omslagen wisselen nu: de meestgelezen boeken tonen elke dag een andere gravure, en vijf boeken hebben voor het eerst een afbeelding. Nu 36 vertalingen in 30 talen.
 </nl-NL>
 
 <pl-PL>
-Po raz pierwszy gruziński: Biblia Bakara z 1743 roku — cały Stary i Nowy Testament z księgami deuterokanonicznymi — a aplikacja jest już dostępna także po gruzińsku. Biblia ormiańska jest kompletna: Stary Testament Zohraba dołączył do zachodnioormiańskiego Nowego Testamentu. Rosyjski przekład synodalny jest teraz w całości czytany na głos. Nowość: muzyka w tle dobrana do rozdziału i przycisk zamieniający przekłady. Teraz 35 przekładów w 30 językach.
+Biblia perska jest kompletna: Stary Testament Williama Glena z 1856 roku dołącza do Nowego Testamentu Henry'ego Martyna — przepisany strona po stronie z pierwodruku na potrzeby tej aplikacji. Słownik Stronga czyta się teraz po rosyjsku, wszystkie hasła hebrajskie i greckie, dla czytelników przekładu synodalnego. Okładki ksiąg się zmieniają: najczęściej czytane księgi pokazują co dzień inny sztych, a pięć kolejnych ksiąg ma ilustrację po raz pierwszy. Teraz 36 przekładów w 30 językach.
 </pl-PL>
 
 <pt-BR>
-Pela primeira vez em georgiano: a Bíblia de Bakar de 1743, com o Antigo e o Novo Testamento completos e os livros deuterocanônicos; o app agora também está em georgiano. A Bíblia armênia ficou completa: o Antigo Testamento de Zohrab junta-se ao Novo Testamento em armênio ocidental. A Bíblia Sinodal russa já é lida por completo em voz alta. Novidades: música de fundo conforme o capítulo e um botão que troca as traduções. Agora 35 traduções em 30 idiomas.
+A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original para este aplicativo. O dicionário de Strong agora se lê em russo, com todos os verbetes hebraicos e gregos, para quem lê a Bíblia sinodal. As capas dos livros agora alternam: os livros mais lidos mostram uma gravura diferente a cada dia, e mais cinco livros têm imagem pela primeira vez. Agora 36 traduções em 30 idiomas.
 </pt-BR>
 
 <pt-PT>
-Pela primeira vez em georgiano: a Bíblia de Bakar de 1743, com o Antigo e o Novo Testamento completos e os livros deuterocanónicos; a aplicação está agora também em georgiano. A Bíblia arménia ficou completa: o Antigo Testamento de Zohrab junta-se ao Novo Testamento em arménio ocidental. A Bíblia Sinodal russa já é lida por completo em voz alta. Novidades: música de fundo conforme o capítulo e um botão que troca as traduções. Agora 35 traduções em 30 idiomas.
+A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original para esta aplicação. O dicionário de Strong lê-se agora em russo, com todos os verbetes hebraicos e gregos, para quem lê a Bíblia sinodal. As capas dos livros alternam agora: os livros mais lidos mostram uma gravura diferente cada dia, e mais cinco livros têm imagem pela primeira vez. Agora 36 traduções em 30 idiomas.
 </pt-PT>
 
 <ru-RU>
-Синодальный перевод теперь озвучен полностью — вся Библия, каждая глава. Впервые грузинский: Библия Бакара 1743 года — полные Ветхий и Новый Завет с неканоническими книгами, — и интерфейс теперь тоже на грузинском. Армянская Библия стала полной: Ветхий Завет Зохраба присоединился к новозаветному тексту на западноармянском. Новое: фоновая музыка под настроение главы и кнопка, меняющая местами два перевода. Теперь 35 переводов на 30 языках.
+Персидская Библия стала полной: Ветхий Завет Уильяма Глена 1856 года присоединился к Новому Завету Генри Мартина — переписанный страница за страницей с оригинального издания для этого приложения. Словарь Стронга теперь читается по-русски: все еврейские и греческие статьи, для читателей Синодального перевода. Обложки книг теперь чередуются: самые читаемые книги каждый день показывают другую гравюру, и ещё пять книг впервые получили изображение. Теперь 36 переводов на 30 языках.
 </ru-RU>
 
 <sr>
-Prvi put gruzijski: Bakarova Biblija iz 1743 — ceo Stari i Novi zavet sa devterokanonskim knjigama — a i aplikacija je sada na gruzijskom. Jermenska Biblija je potpuna: Stari zavet Zohraba pridružio se novozavetnom tekstu na zapadnojermenskom. Ruski Sinodalni prevod sada se čita naglas u celini. Novo: pozadinska muzika prilagođena poglavlju i dugme koje zamenjuje prevode. Sada 35 prevoda na 30 jezika.
+Персијска Библија је потпуна: Стари завет Вилијама Глена из 1856. придружује се Новом завету Хенрија Мартина — преписан страну по страну са изворног издања за ову апликацију. Стронгов речник сада се чита и на руском, све јеврејске и грчке одреднице, за читаоце синодалног превода. Корице књига се сада смењују: најчитаније књиге сваког дана приказују други бакрорез, а још пет књига први пут има слику. Сада 36 превода на 30 језика.
 </sr>
 
 <sv-SE>
-Georgiska för första gången: Bakarbibeln från 1743 — hela Gamla och Nya testamentet med de deuterokanoniska böckerna — och appen finns nu också på georgiska. Den armeniska bibeln är komplett: Zohrabs Gamla testamente sluter upp bredvid Nya testamentet på västarmeniska. Den ryska synodalbibeln läses nu upp i sin helhet. Nytt: bakgrundsmusik efter kapitlets stämning och en knapp som byter plats på översättningarna. Nu 35 översättningar på 30 språk.
+Den persiska bibeln är fullständig: William Glens Gamla testamente från 1856 sluter sig till Henry Martyns Nya testamente — avskrivet sida för sida ur originaltrycket för den här appen. Strongs lexikon går nu att läsa på ryska, alla hebreiska och grekiska uppslagsord, för den som läser synodalbibeln. Bokomslagen växlar nu: de mest lästa böckerna visar ett nytt kopparstick varje dag, och fem böcker till har bild för första gången. Nu 36 översättningar på 30 språk.
 </sv-SE>
 
 <ta-IN>
-முதன்முறையாக ஜார்ஜியன்: 1743 பாக்கர் பைபிள் — பழைய, புதிய ஏற்பாடுகள் முழுமையாக, இரண்டாம் நியமநூல்களுடன்; செயலியும் இப்போது ஜார்ஜிய மொழியில். ஆர்மீனிய பைபிள் முழுமை: ஸோஹ்ராப் பழைய ஏற்பாடு மேற்கு ஆர்மீனிய புதிய ஏற்பாட்டுடன் இணைந்தது. ரஷ்ய சினோடல் பைபிளும் இப்போது முழுமையாக ஒலிவடிவில். புதியவை: அதிகாரத்திற்கேற்ற பின்னணி இசை; மொழிபெயர்ப்புகளை இடம் மாற்றும் பொத்தான். இப்போது 30 மொழிகளில் 35 மொழிபெயர்ப்புகள்.
+பாரசீக பைபிள் முழுமை அடைந்தது: வில்லியம் கிளென்னின் 1856 பழைய ஏற்பாடு, ஹென்றி மார்ட்டினின் புதிய ஏற்பாட்டுடன் இணைந்தது — மூல அச்சிலிருந்து பக்கம் பக்கமாக இந்த செயலிக்காக எழுதப்பட்டது. ஸ்ட்ராங் அகராதி இப்போது ரஷ்ய மொழியிலும்: எபிரேய, கிரேக்க அனைத்து சொற்பொருளும். புத்தக அட்டைகள் இப்போது மாறும்: அதிகம் வாசிக்கப்படும் புத்தகங்கள் நாள்தோறும் வேறு செதுக்கு படத்தைக் காட்டும்; மேலும் ஐந்து புத்தகங்களுக்கு முதன்முறையாக படம். இப்போது 36 மொழிபெயர்ப்புகள், 30 மொழிகளில்.
 </ta-IN>
 
 <zh-CN>
-首次加入格鲁吉亚语：1743年巴卡尔圣经，完整的旧约与新约，并含次经；应用界面现在也支持格鲁吉亚语。亚美尼亚语圣经已完整：古典亚美尼亚语的佐赫拉布旧约与西亚美尼亚语新约合璧。俄文圣经现代主教公会译本也已完整朗读。新增：随每章气氛而变的背景音乐，以及在分栏视图中一键对调两个译本的按钮。现有35部译本、30种语言。
+波斯语圣经已完整：威廉·格伦1856年的旧约与亨利·马丁的新约合璧，逐页照原版刻本为本应用抄录。斯特朗词典now可用俄文阅读，希伯来语与希腊语词条一应俱全，供和合本以外的俄文读者使用。书卷封面开始轮换：最常阅读的书卷每天显示不同的版画，另有五卷书首次拥有插图。现有36部译本、30种语言。
 </zh-CN>
 
 <zh-HK>
-首次加入喬治亞語：1743年巴卡爾聖經，完整的舊約與新約，並含次經；應用程式介面現在也支援喬治亞語。亞美尼亞語聖經已完整：古典亞美尼亞語的佐赫拉布舊約與西亞美尼亞語新約合璧。俄文聖經正教會譯本也已完整朗讀。新增：隨每章氣氛而變的背景音樂，以及在分割檢視中一鍵對調兩個譯本的按鈕。現有35部譯本、30種語言。
+波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
 </zh-HK>
 
 <zh-TW>
-首次加入喬治亞語：1743年巴卡爾聖經，完整的舊約與新約，並含次經；應用程式介面現在也支援喬治亞語。亞美尼亞語聖經已完整：古典亞美尼亞語的佐赫拉布舊約與西亞美尼亞語新約合璧。俄文聖經正教會譯本也已完整朗讀。新增：隨每章氣氛而變的背景音樂，以及在分割檢視中一鍵對調兩個譯本的按鈕。現有35部譯本、30種語言。
+波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
 </zh-TW>
 
 ## Store descriptions (per language — English first, then alphabetical)
@@ -900,6 +900,132 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 எல்லா உரைகளும் பொதுக் களம் (public domain). ஆப் எந்தத் தரவையும் சேகரிப்பதில்லை.
 
 # ── ARCHIVE: older release notes (historical) ──
+
+## 1.6.3 release notes (paste per store)
+
+<en-US>
+Georgian for the first time: the Bakar Bible of 1743 — the complete Old and New Testament with the deuterocanonical books — and the app's interface is now in Georgian too. The Armenian Bible is complete: the classical Zohrab Old Testament joins the Western Armenian New Testament. The Russian Synodal Bible is now narrated in full. New: background music suited to each chapter, and a button that swaps the two translations in split view. Now 35 translations in 30 languages.
+</en-US>
+
+<ar>
+الجورجية لأول مرة: كتاب باكار المقدس (1743) بعهديه القديم والجديد كاملين مع الأسفار القانونية الثانية، وواجهة التطبيق أصبحت بالجورجية أيضًا. واكتمل الكتاب المقدس الأرمني: عهد زوهراب القديم ينضم إلى العهد الجديد بالأرمنية الغربية. كما أصبحت الترجمة السينودسية الروسية مقروءة صوتيًا بالكامل. جديد: موسيقى خلفية تناسب أجواء كل إصحاح، وزر يبدّل الترجمتين في العرض المنقسم. الآن 35 ترجمة في 30 لغة.
+</ar>
+
+<be>
+Упершыню грузінская: Біблія Бакара 1743 году — поўны Стары і Новы Запавет з дэўтэраканонічнымі кнігамі, а інтэрфейс цяпер таксама па-грузінску. Армянская Біблія стала поўнай: Стары Запавет Зограба далучыўся да заходнеармянскага Новага Запавету. Расійскі сінадальны пераклад цяпер агучаны цалкам. Новае: фонавая музыка пад настрой разьдзелу і кнопка, якая мяняе месцамі два пераклады. Цяпер 35 перакладаў у 30 мовах.
+</be>
+
+<cs-CZ>
+Poprvé gruzínština: Bakarova Bible z roku 1743 — celý Starý i Nový zákon včetně deuterokanonických knih — a rozhraní je nyní také v gruzínštině. Arménská Bible je úplná: Zohrabův Starý zákon se připojil k západoarménskému Novému zákonu. Ruský synodální překlad je nyní kompletně namluvený. Novinky: hudba na pozadí podle ladění kapitoly a tlačítko, které prohodí oba překlady. Nyní 35 překladů ve 30 jazycích.
+</cs-CZ>
+
+<da-DK>
+Georgisk for første gang: Bakar-bibelen fra 1743 — hele Det Gamle og Det Nye Testamente med de deuterokanoniske bøger — og appen findes nu også på georgisk. Den armenske bibel er komplet: Zohrabs Gamle Testamente slutter sig til Det Nye Testamente på vestarmensk. Den russiske synodalbibel er nu indlæst i sin helhed. Nyt: baggrundsmusik efter kapitlets stemning, og en knap der bytter om på de to oversættelser. Nu 35 oversættelser på 30 sprog.
+</da-DK>
+
+<de-DE>
+Erstmals Georgisch: die Bakar-Bibel von 1743 — das vollständige Alte und Neue Testament samt den deuterokanonischen Büchern — und die App gibt es jetzt auch auf Georgisch. Die armenische Bibel ist vollständig: das Alte Testament nach Zohrab tritt zum westarmenischen Neuen Testament. Die russische Synodalbibel wird jetzt ganz vorgelesen. Neu: Hintergrundmusik zur Stimmung des Kapitels und eine Schaltfläche zum Tauschen beider Übersetzungen. Jetzt 35 Übersetzungen in 30 Sprachen.
+</de-DE>
+
+<el-GR>
+Για πρώτη φορά γεωργιανά: η Βίβλος του Μπακάρ του 1743 — ολόκληρη η Παλαιά και η Καινή Διαθήκη με τα δευτεροκανονικά — και η εφαρμογή είναι πλέον και στα γεωργιανά. Η αρμενική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ζοχράπ προστίθεται στη δυτικοαρμενική Καινή Διαθήκη. Η ρωσική Συνοδική Βίβλος διαβάζεται πλέον ολόκληρη. Νέα: μουσική ανάλογη με το κεφάλαιο και κουμπί που εναλλάσσει τις δύο μεταφράσεις. Τώρα 35 μεταφράσεις σε 30 γλώσσες.
+</el-GR>
+
+<en-IN>
+Georgian for the first time: the Bakar Bible of 1743 — the complete Old and New Testament with the deuterocanonical books — and the app's interface is now in Georgian too. The Armenian Bible is complete: the classical Zohrab Old Testament joins the Western Armenian New Testament. The Russian Synodal Bible is now narrated in full. New: background music suited to each chapter, and a button that swaps the two translations in split view. Now 35 translations in 30 languages.
+</en-IN>
+
+<es-419>
+Por primera vez en georgiano: la Biblia de Bakar de 1743, con el Antiguo y el Nuevo Testamento completos y los libros deuterocanónicos; la app también está ya en georgiano. La Biblia armenia queda completa: el Antiguo Testamento de Zohrab se suma al Nuevo Testamento en armenio occidental. La Biblia Sinodal rusa ya está narrada por completo. Novedades: música de fondo acorde al capítulo y un botón que intercambia las traducciones en la vista dividida. Ahora 35 traducciones en 30 idiomas.
+</es-419>
+
+<es-ES>
+Por primera vez en georgiano: la Biblia de Bakar de 1743, con el Antiguo y el Nuevo Testamento completos y los libros deuterocanónicos; la app también está ya en georgiano. La Biblia armenia queda completa: el Antiguo Testamento de Zohrab se suma al Nuevo Testamento en armenio occidental. La Biblia Sinodal rusa ya está narrada por completo. Novedades: música de fondo acorde al capítulo y un botón que intercambia las traducciones en la vista dividida. Ahora 35 traducciones en 30 idiomas.
+</es-ES>
+
+<es-US>
+Por primera vez en georgiano: la Biblia de Bakar de 1743, con el Antiguo y el Nuevo Testamento completos y los libros deuterocanónicos; la app también está ya en georgiano. La Biblia armenia queda completa: el Antiguo Testamento de Zohrab se suma al Nuevo Testamento en armenio occidental. La Biblia Sinodal rusa ya está narrada por completo. Novedades: música de fondo acorde al capítulo y un botón que intercambia las traducciones en la vista dividida. Ahora 35 traducciones en 30 idiomas.
+</es-US>
+
+<fi-FI>
+Ensimmäistä kertaa georgiaa: vuoden 1743 Bakarin Raamattu — koko Vanha ja Uusi testamentti deuterokanonisine kirjoineen — ja sovellus on nyt myös georgiaksi. Armenialainen Raamattu on täydellinen: Zohrabin Vanha testamentti liittyy länsiarmenialaiseen Uuteen testamenttiin. Venäjän synodaaliraamattu on nyt kokonaan ääneen luettu. Uutta: taustamusiikki luvun tunnelman mukaan ja painike, joka vaihtaa käännösten paikkaa. Nyt 35 käännöstä 30 kielellä.
+</fi-FI>
+
+<fr-CA>
+Le géorgien pour la première fois : la Bible de Bakar de 1743, avec l’Ancien et le Nouveau Testament complets et les livres deutérocanoniques ; l’app est désormais aussi en géorgien. La Bible arménienne est complète : l’Ancien Testament de Zohrab rejoint le Nouveau Testament en arménien occidental. La Bible synodale russe est désormais lue en entier. Nouveautés : une musique adaptée au chapitre et un bouton qui échange les traductions en vue partagée. Désormais 35 traductions en 30 langues.
+</fr-CA>
+
+<fr-FR>
+Le géorgien pour la première fois : la Bible de Bakar de 1743, avec l’Ancien et le Nouveau Testament complets et les livres deutérocanoniques ; l’app est désormais aussi en géorgien. La Bible arménienne est complète : l’Ancien Testament de Zohrab rejoint le Nouveau Testament en arménien occidental. La Bible synodale russe est désormais lue en entier. Nouveautés : une musique adaptée au chapitre et un bouton qui échange les traductions en vue partagée. Désormais 35 traductions en 30 langues.
+</fr-FR>
+
+<hu-HU>
+Először grúzul: az 1743-as Bakar-Biblia — a teljes Ó- és Újszövetség a deuterokanonikus könyvekkel —, és az alkalmazás is elérhető grúzul. Az örmény Biblia teljessé vált: Zohrab Ószövetsége csatlakozott a nyugati örmény Újszövetséghez. Az orosz szinodális Biblia mostantól teljesen hallgatható. Újdonság: a fejezet hangulatához illő háttérzene, és egy gomb, amely felcseréli a két fordítást. Most 35 fordítás 30 nyelven.
+</hu-HU>
+
+<hy-AM>
+Առաջին անգամ վրացերեն՝ 1743 թ. Բաքարի Աստվածաշունչը՝ ամբողջական Հին և Նոր Կտակարան երկրորդականոն գրքերով, իսկ հավելվածն այժմ նույնպես վրացերեն է։ Հայերեն Աստվածաշունչն ամբողջական է՝ Զոհրապյան Հին Կտակարանն ավելացավ արևմտահայերեն Նոր Կտակարանին։ Ռուսերեն Սինոդալ Աստվածաշունչն այժմ ամբողջությամբ ընթերցվում է ձայնով։ Նոր՝ գլխին համապատասխան երաժշտություն և թարգմանությունները փոխող կոճակ։ Այժմ 35 թարգմանություն 30 լեզվով։
+</hy-AM>
+
+<it-IT>
+Per la prima volta il georgiano: la Bibbia di Bakar del 1743, con l’Antico e il Nuovo Testamento completi e i libri deuterocanonici; anche l’app è ora in georgiano. La Bibbia armena è completa: l’Antico Testamento di Zohrab si affianca al Nuovo Testamento in armeno occidentale. La Bibbia sinodale russa ora si ascolta per intero. Novità: musica di sottofondo adatta al capitolo e un pulsante che scambia le traduzioni. Ora 35 traduzioni in 30 lingue.
+</it-IT>
+
+<iw-IL>
+גאורגית לראשונה: התנ״ך של בקאר (1743) — הברית הישנה והחדשה במלואן, כולל הספרים החיצוניים — וגם האפליקציה זמינה כעת בגאורגית. המקרא הארמני הושלם: הברית הישנה של זוהרב מצטרפת לברית החדשה בארמנית מערבית. גם המקרא הסינודלי הרוסי נקרא כעת בקול במלואו. חדש: מוזיקת רקע המותאמת לפרק, וכפתור שמחליף בין שני התרגומים. כעת 35 תרגומים ב-30 שפות.
+</iw-IL>
+
+<ja-JP>
+ジョージア語（グルジア語）が初登場。1743年のバカル聖書は旧約・新約の全巻に第二正典を加えた完全版で、アプリの表示もジョージア語に対応しました。アルメニア語聖書も完成し、ゾフラプ訳旧約が西アルメニア語の新約に加わりました。ロシア語シノド訳の朗読も全巻そろいました。新機能: 章の雰囲気に合わせた背景音楽と、分割表示で二つの訳を入れ替えるボタン。現在35訳・30言語。
+</ja-JP>
+
+<lv>
+Pirmoreiz gruzīnu valodā: 1743. gada Bakara Bībele — pilnīga Vecā un Jaunā Derība kopā ar deiterokanoniskajām grāmatām — un lietotne tagad pieejama arī gruzīniski. Armēņu Bībele ir pilnīga: Zohraba Vecā Derība pievienojas Jaunajai Derībai rietumarmēņu valodā. Krievu Sinodālā Bībele tagad ir pilnībā ieskaņota. Jaunums: fona mūzika atbilstoši nodaļas noskaņai un poga, kas samaina abus tulkojumus. Tagad 35 tulkojumi 30 valodās.
+</lv>
+
+<nl-NL>
+Voor het eerst Georgisch: de Bakarbijbel uit 1743 — het volledige Oude en Nieuwe Testament met de deuterocanonieke boeken — en de app is nu ook in het Georgisch. De Armeense Bijbel is compleet: het Oude Testament van Zohrab komt bij het West-Armeense Nieuwe Testament. De Russische Synodale Bijbel wordt nu volledig voorgelezen. Nieuw: achtergrondmuziek die past bij het hoofdstuk, en een knop die de twee vertalingen verwisselt. Nu 35 vertalingen in 30 talen.
+</nl-NL>
+
+<pl-PL>
+Po raz pierwszy gruziński: Biblia Bakara z 1743 roku — cały Stary i Nowy Testament z księgami deuterokanonicznymi — a aplikacja jest już dostępna także po gruzińsku. Biblia ormiańska jest kompletna: Stary Testament Zohraba dołączył do zachodnioormiańskiego Nowego Testamentu. Rosyjski przekład synodalny jest teraz w całości czytany na głos. Nowość: muzyka w tle dobrana do rozdziału i przycisk zamieniający przekłady. Teraz 35 przekładów w 30 językach.
+</pl-PL>
+
+<pt-BR>
+Pela primeira vez em georgiano: a Bíblia de Bakar de 1743, com o Antigo e o Novo Testamento completos e os livros deuterocanônicos; o app agora também está em georgiano. A Bíblia armênia ficou completa: o Antigo Testamento de Zohrab junta-se ao Novo Testamento em armênio ocidental. A Bíblia Sinodal russa já é lida por completo em voz alta. Novidades: música de fundo conforme o capítulo e um botão que troca as traduções. Agora 35 traduções em 30 idiomas.
+</pt-BR>
+
+<pt-PT>
+Pela primeira vez em georgiano: a Bíblia de Bakar de 1743, com o Antigo e o Novo Testamento completos e os livros deuterocanónicos; a aplicação está agora também em georgiano. A Bíblia arménia ficou completa: o Antigo Testamento de Zohrab junta-se ao Novo Testamento em arménio ocidental. A Bíblia Sinodal russa já é lida por completo em voz alta. Novidades: música de fundo conforme o capítulo e um botão que troca as traduções. Agora 35 traduções em 30 idiomas.
+</pt-PT>
+
+<ru-RU>
+Синодальный перевод теперь озвучен полностью — вся Библия, каждая глава. Впервые грузинский: Библия Бакара 1743 года — полные Ветхий и Новый Завет с неканоническими книгами, — и интерфейс теперь тоже на грузинском. Армянская Библия стала полной: Ветхий Завет Зохраба присоединился к новозаветному тексту на западноармянском. Новое: фоновая музыка под настроение главы и кнопка, меняющая местами два перевода. Теперь 35 переводов на 30 языках.
+</ru-RU>
+
+<sr>
+Prvi put gruzijski: Bakarova Biblija iz 1743 — ceo Stari i Novi zavet sa devterokanonskim knjigama — a i aplikacija je sada na gruzijskom. Jermenska Biblija je potpuna: Stari zavet Zohraba pridružio se novozavetnom tekstu na zapadnojermenskom. Ruski Sinodalni prevod sada se čita naglas u celini. Novo: pozadinska muzika prilagođena poglavlju i dugme koje zamenjuje prevode. Sada 35 prevoda na 30 jezika.
+</sr>
+
+<sv-SE>
+Georgiska för första gången: Bakarbibeln från 1743 — hela Gamla och Nya testamentet med de deuterokanoniska böckerna — och appen finns nu också på georgiska. Den armeniska bibeln är komplett: Zohrabs Gamla testamente sluter upp bredvid Nya testamentet på västarmeniska. Den ryska synodalbibeln läses nu upp i sin helhet. Nytt: bakgrundsmusik efter kapitlets stämning och en knapp som byter plats på översättningarna. Nu 35 översättningar på 30 språk.
+</sv-SE>
+
+<ta-IN>
+முதன்முறையாக ஜார்ஜியன்: 1743 பாக்கர் பைபிள் — பழைய, புதிய ஏற்பாடுகள் முழுமையாக, இரண்டாம் நியமநூல்களுடன்; செயலியும் இப்போது ஜார்ஜிய மொழியில். ஆர்மீனிய பைபிள் முழுமை: ஸோஹ்ராப் பழைய ஏற்பாடு மேற்கு ஆர்மீனிய புதிய ஏற்பாட்டுடன் இணைந்தது. ரஷ்ய சினோடல் பைபிளும் இப்போது முழுமையாக ஒலிவடிவில். புதியவை: அதிகாரத்திற்கேற்ற பின்னணி இசை; மொழிபெயர்ப்புகளை இடம் மாற்றும் பொத்தான். இப்போது 30 மொழிகளில் 35 மொழிபெயர்ப்புகள்.
+</ta-IN>
+
+<zh-CN>
+首次加入格鲁吉亚语：1743年巴卡尔圣经，完整的旧约与新约，并含次经；应用界面现在也支持格鲁吉亚语。亚美尼亚语圣经已完整：古典亚美尼亚语的佐赫拉布旧约与西亚美尼亚语新约合璧。俄文圣经现代主教公会译本也已完整朗读。新增：随每章气氛而变的背景音乐，以及在分栏视图中一键对调两个译本的按钮。现有35部译本、30种语言。
+</zh-CN>
+
+<zh-HK>
+首次加入喬治亞語：1743年巴卡爾聖經，完整的舊約與新約，並含次經；應用程式介面現在也支援喬治亞語。亞美尼亞語聖經已完整：古典亞美尼亞語的佐赫拉布舊約與西亞美尼亞語新約合璧。俄文聖經正教會譯本也已完整朗讀。新增：隨每章氣氛而變的背景音樂，以及在分割檢視中一鍵對調兩個譯本的按鈕。現有35部譯本、30種語言。
+</zh-HK>
+
+<zh-TW>
+首次加入喬治亞語：1743年巴卡爾聖經，完整的舊約與新約，並含次經；應用程式介面現在也支援喬治亞語。亞美尼亞語聖經已完整：古典亞美尼亞語的佐赫拉布舊約與西亞美尼亞語新約合璧。俄文聖經正教會譯本也已完整朗讀。新增：隨每章氣氛而變的背景音樂，以及在分割檢視中一鍵對調兩個譯本的按鈕。現有35部譯本、30種語言。
+</zh-TW>
 
 ## 1.6.2 release notes (paste per store)
 

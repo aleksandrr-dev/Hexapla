@@ -107,13 +107,13 @@ Armenian Zohrab OT, music by mood, the swap-translations button, and the
 Russian Synodal narration (1192 chapters, streamed from
 `hexapla-audio-synodal-1876`). Next versionCode is 17.
 
-⚠ **THE GITHUB RELEASE IS BEHIND — v1.6.1 IS STILL `releases/latest`.** 1.6.2
-was never published there at all, and 1.6.3 is not either. The landing page's
-direct-APK button points at `releases/latest`, so every sideloader downloading
-from the site gets **1.6.1** — no Geneva narration, no complete Karl XII, none
-of 1.6.3. Fix with `gh release create v1.6.3 <the rustore APK>` (the direct
-download is the RUSTORE flavour, not the Play AAB), and consider back-filling
-1.6.2. Artifacts are staged at `C:/Projects/Hexapla-releases/`.
+✅ **GITHUB RELEASES ARE CURRENT** (checked 2026-08-10 with `gh release list`).
+The old warning here — "v1.6.1 is still `releases/latest`, 1.6.3 was never
+published" — was STALE: v1.6.3 was published 2026-08-05 and was `Latest`.
+v1.6.4 is now published and is `Latest`. ⚠ 1.6.2 was never published and is
+not back-filled; that is a deliberate gap, not an oversight to re-fix. The
+landing page's direct-APK button points at `releases/latest`, and the upload
+is always the **RuStore APK**, never the Play AAB.
 
 
 ## Store status
@@ -155,10 +155,12 @@ download is the RUSTORE flavour, not the Play AAB), and consider back-filling
   texts grc/wlc DO count). Languages = what a READER would name (Middle
   English folds into English; ancient languages count as their own).
   **Today: «36 translations in 30 languages».**
-  The in-app `welcome_tagline` (thirty languages, ×26 locales) is ALREADY
-  CORRECT under this convention. Still to update: the store listing (says 35)
-  and the landing page (says 33/28). When the counts change, the script names
-  the three places that must move together.
+  ✅ **ALL THREE PLACES NOW AGREE ON 36/30** (2026-08-10). The in-app
+  `welcome_tagline` was already right; the landing page was updated (it said
+  **35**, not the 33/28 this note used to claim — check `index.html`, do not
+  trust a remembered figure); and the store listing carries the count only in
+  its release-notes block, which the 1.6.4 notes state as 36. Older blocks
+  under the ARCHIVE banner keep their historical numbers on purpose.
 
   releases/latest, `gh release create vX.Y.Z <apk>` each release),
   RuStore (live), Play (`.soon` class = greyed + non-clickable).

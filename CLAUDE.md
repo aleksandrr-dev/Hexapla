@@ -79,7 +79,22 @@ is now a complete Persian Bible — Glen's OT 1856 (23,137 verses, transcribed b
 this project) + Martyn's NT 1876. Counts are UNCHANGED by this release (an OT was added to the existing
 Persian entry). ⚠ But the counts disagree across page/listing/tagline — see
 the Store status section; reconcile before the next listing edit. Next campaign is the **Icelandic Þorláksbiblía 1644** — 31,102
-verses, and there is a volunteer-overlap question to settle first (handoff §4).
+verses. ✅ **NO BLOCKERS REMAIN — chunks may launch** (brief, with exact
+folio↔index navigation for all three volumes:
+`research/THORLAKS_CAMPAIGN.md`; run
+`tools/thorlaks_corpus_audit.py` before believing any completeness claim).
+The volunteer-overlap question is SETTLED (owner, 2026-08-10): Birgir was told
+in advance that we are doing the 1644, and his 1584 Guðbrandsbiblía is a
+separate project — two Icelandic Bibles is the intended outcome.
+✅ **The 1 Chronicles blocker is CLEARED (2026-08-10).** The print splits KJV
+1 Chr 4 at verse **24** (the Simeon genealogy becomes its own chapter "V",
+keeping KJV's verse numbers 24-43), so printed VI..XXX = KJV 5..29 and it never
+re-syncs; 2 Chronicles starts clean. The **marginal "Cap. N" is the
+authoritative numeral, NOT the big heading** — it equals the KJV number and
+appears only where the print has drifted, so it doubles as a divergence
+detector for chunk agents. Cost is one merge run, not a wholesale shift. Full
+evidence + the two corrections to the 08-09 write-up:
+`research/thorlaks_precampaign_checks.md` (top section).
 ⚠ `tools/glen_corpus_audit.py` exists because a chunk report claimed 572
 transcribed verses while holding two on disk, and every per-chunk check passed
 it for three weeks. Run it before believing any completeness claim.

@@ -171,7 +171,7 @@
     <string name="widget_continue">Продолжить чтение: %1$s →</string>
     <string name="compare_note">Выберите переводы, отображаемые при сравнении стиха.</string>
     <string name="audio_title">Озвученное чтение</string>
-    <string name="audio_note">Главы читаются вслух — записанной озвучкой там, где она есть, иначе синтезатором речи устройства. Аудио сохраняется для прослушивания офлайн, либо включите ниже потоковый режим, чтобы сэкономить место.</string>
+    <string name="audio_note">Главы читаются вслух — записанной озвучкой там, где она есть, иначе синтезатором речи устройства. Аудио сохраняется для прослушивания офлайн — либо включите ниже «Слушать без сохранения», чтобы сэкономить место.</string>
     <string name="audio_downloading">Загрузка аудио… %1$d%%</string>
     <string name="audio_narrated">Озвученное чтение</string>
     <string name="audio_storage">Загружено аудио: %1$d МБ</string>
@@ -199,7 +199,7 @@
     <string name="share_app_link">Отправить ссылку</string>
     <string name="music_title">Фоновая музыка при прослушивании</string>
     <string name="music_volume">Громкость музыки</string>
-    <string name="audio_stream">Потоковый режим без сохранения</string>
+    <string name="audio_stream">Слушать без сохранения</string>
     <string name="audio_stream_note">Аудио воспроизводится по мере загрузки, а не сохраняется на устройстве. Занимает меньше места, но каждый раз требуется подключение к интернету; уже загруженные главы по-прежнему воспроизводятся офлайн.</string>
     <string name="music_pack">Загрузить музыкальный набор</string>
     <string name="music_pack_partial">Загружено %1$d из %2$d треков — нажмите, чтобы получить остальные</string>

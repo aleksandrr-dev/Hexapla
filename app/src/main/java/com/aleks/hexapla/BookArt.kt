@@ -12,21 +12,61 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import java.util.Calendar
 
 /**
  * "Album art" for the media notification / lock screen. Books with an iconic
  * Gustave Doré engraving (public domain, 1866) bundled under assets/bookart/
  * show it; the rest get a generated title-page cover with a deterministic
  * color per book.
+ *
+ * A book may ship more than one plate — "<idx>.webp" plus "<idx>_1.webp",
+ * "<idx>_2.webp" and so on. When it does, the day picks which one shows, the
+ * same date-seeded trick the widget's verse of the day uses: stable for the
+ * whole day, different tomorrow.
  */
 object BookArt {
 
-    private val cache = HashMap<Int, Bitmap>()
+    /** Keyed by resolved asset name, so the day's turnover refreshes it. */
+    private val cache = HashMap<String, Bitmap>()
+    private var variantIndex: Map<Int, List<String>>? = null
 
-    fun forBook(context: Context, bookIdx: Int, bookName: String): Bitmap = cache.getOrPut(bookIdx) {
-        try {
-            context.assets.open("bookart/$bookIdx.webp").use { BitmapFactory.decodeStream(it) }
-        } catch (_: Exception) { null } ?: generated(bookIdx, bookName)
+    /** bookIdx -> its plates, base first ('.' sorts before '_'). */
+    private fun variants(context: Context): Map<Int, List<String>> = variantIndex ?: run {
+        val byBook = HashMap<Int, MutableList<String>>()
+        val names = try {
+            context.assets.list("bookart") ?: emptyArray()
+        } catch (_: Exception) { emptyArray() }
+        for (name in names) {
+            val stem = name.substringBeforeLast('.')
+            val idx = stem.substringBefore('_').toIntOrNull() ?: continue
+            byBook.getOrPut(idx) { mutableListOf() }.add(name)
+        }
+        byBook.mapValues { (_, v) -> v.sorted() }.also { variantIndex = it }
+    }
+
+    fun forBook(context: Context, bookIdx: Int, bookName: String): Bitmap {
+        val plates = variants(context)[bookIdx].orEmpty()
+        val asset = when {
+            plates.isEmpty() -> null
+            plates.size == 1 -> plates[0]
+            else -> {
+                val cal = Calendar.getInstance()
+                val day = cal.get(Calendar.YEAR) * 1000 + cal.get(Calendar.DAY_OF_YEAR)
+                // Offset by book so the whole library does not turn over in
+                // lockstep — two books with two plates each stay out of phase.
+                plates[Math.floorMod(day + bookIdx * 7, plates.size)]
+            }
+        }
+        val key = asset ?: "generated/$bookIdx"
+        cache[key]?.let { return it }
+        val bmp = asset?.let { name ->
+            try {
+                context.assets.open("bookart/$name").use { BitmapFactory.decodeStream(it) }
+            } catch (_: Exception) { null }
+        } ?: generated(bookIdx, bookName)
+        cache[key] = bmp
+        return bmp
     }
 
     private fun generated(bookIdx: Int, bookName: String): Bitmap {

@@ -401,8 +401,21 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    ★ FULL EXECUTION PLAN: IOS_PORT_PLAN.md (repo root, written 2026-07-21
    by Fable-5 with whole-architecture context — self-contained for a
    future agent; GATED on Play production going live + owner go).
-6. Maybe: fonts (Literata/EB Garamond — NOT in the app, verified 2026-08-09),
-   rotating covers (not implemented). ~~music download-on-demand~~ SHIPPED
+6. ~~fonts~~ SHIPPED (Literata bundled for reading, commit 8c04580 — the
+   "NOT in the app" note here was true only until that landed).
+   ~~rotating covers~~ DONE 2026-08-10: `BookArt.kt` indexes
+   `bookart/<idx>_N.webp` variants and picks one with the widget's own
+   date-seeded trick (`year*1000 + dayOfYear`, offset by bookIdx so books do
+   not turn over in lockstep). `tools/build_bookart3.py` added 31 extra Doré
+   plates — **9 books rotate** (Genesis 7 plates, Matthew 6, Luke 6, Mark 5,
+   Acts 5, John 4, Daniel 3, 1 Samuel 2, 1 Kings 2) for **+1.36 MB
+   compressed**, far under the 2.5 MB the plan assumed.
+   ⚠ Its plate numbers were DERIVED from Gutenberg #8710's own printed
+   scripture references, not recalled, and the derivation reproduces
+   build_bookart.py's existing curated map exactly. Re-derive rather than
+   hand-edit. Psalms/Proverbs/Isaiah/Exodus/Revelation cannot rotate yet —
+   Doré has only the one plate each; Schnorr has 219 unused plates but no
+   transcribed index. ~~music download-on-demand~~ SHIPPED
    (Settings → Download music pack; music_pack_* strings ×26 locales).
    ~~`foss` flavor~~ EXISTS in build.gradle.kts with the src/foss stub —
    what remains is the LISTING (IzzyOnDroid takes a released APK; F-Droid

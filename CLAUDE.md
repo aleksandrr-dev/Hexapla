@@ -415,7 +415,21 @@ Python scripts (need `pillow`, `pymupdf`; ffmpeg via winget for audio):
    build_bookart.py's existing curated map exactly. Re-derive rather than
    hand-edit. Psalms/Proverbs/Isaiah/Exodus/Revelation cannot rotate yet —
    Doré has only the one plate each; Schnorr has 219 unused plates but no
-   transcribed index. ~~music download-on-demand~~ SHIPPED
+   transcribed index.
+   ★ **COVER GAPS: 54 of 83 books now have art; the remaining 29 are DONE
+   being hunted — do not re-search.** `tools/build_bookart4.py` filled the
+   last coverable five (Song of Solomon, Hosea, Haggai, Malachi from Merian's
+   *Icones Biblicae*; 1 Peter from Schnorr plate 231). What is left is
+   **16 epistles, 8 apocrypha, 5 minor prophets**, and the reason is
+   structural, not a gap in our sources: **17th-c. picture Bibles illustrate
+   NARRATIVE**, so epistles were never given plates, and the leftover
+   apocrypha (1/2 Esdras, 3 Macc, Laodiceans…) are not even in the Lutheran
+   canon. Both Weigel volumes were indexed page by page to prove it — the
+   1708 *Historiae celebriores* (Luyken engravings) runs Genesis → Acts 28
+   and stops. These 29 keep `BookArt.kt`'s generated title pages, which is
+   the right answer. Full audit:
+   `research/bookart_gap_sources_2026-08-10.md`.
+   ~~music download-on-demand~~ SHIPPED
    (Settings → Download music pack; music_pack_* strings ×26 locales).
    ~~`foss` flavor~~ EXISTS in build.gradle.kts with the src/foss stub —
    what remains is the LISTING (IzzyOnDroid takes a released APK; F-Droid

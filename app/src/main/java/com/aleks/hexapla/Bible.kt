@@ -225,8 +225,15 @@ object StrongsRepo {
 
     val tag = Regex("""\[([HG]\d+)\]""")
 
+    /* Translated lexicons live beside the English one as
+       strongs_lexicon_<lang>.json, keyed by the SAME H<n>/G<n> ids. A
+       language is listed here only once its asset ships; anything else
+       reads English. Add de/es/pt the same way when their glosses exist. */
+    private val translatedLexicons = setOf("ru")
+
     private var textCache: List<Book>? = null
     private var lexCache: Map<String, Entry>? = null
+    private var lexCacheLang: String? = null
     private val strongsMutex = Mutex()
 
     suspend fun books(context: Context): List<Book> = strongsMutex.withLock {
@@ -235,23 +242,45 @@ object StrongsRepo {
         }.also { textCache = it }
     }
 
+    private fun readLexicon(context: Context, asset: String): Map<String, Entry> {
+        val text = context.assets.open(asset).readBytes().toString(Charsets.UTF_8)
+        val o = org.json.JSONObject(text)
+        val m = HashMap<String, Entry>(o.length())
+        for (k in o.keys()) {
+            val e = o.getJSONObject(k)
+            m[k] = Entry(
+                word = e.optString("w"),
+                translit = e.optString("t"),
+                pos = e.optString("p"),
+                def = e.optString("d")
+            )
+        }
+        return m
+    }
+
     suspend fun entry(context: Context, id: String): Entry? = strongsMutex.withLock {
-        val lex = lexCache ?: withContext(Dispatchers.IO) {
-            val text = context.assets.open("strongs_lexicon.json").readBytes()
-                .toString(Charsets.UTF_8)
-            val o = org.json.JSONObject(text)
-            val m = HashMap<String, Entry>(o.length())
-            for (k in o.keys()) {
-                val e = o.getJSONObject(k)
-                m[k] = Entry(
-                    word = e.optString("w"),
-                    translit = e.optString("t"),
-                    pos = e.optString("p"),
-                    def = e.optString("d")
-                )
+        val lang = Locale.getDefault().language
+        val lex = lexCache?.takeIf { lexCacheLang == lang } ?: withContext(Dispatchers.IO) {
+            val english = readLexicon(context, "strongs_lexicon.json")
+            if (lang !in translatedLexicons) english else {
+                /* Per-id fallback, not per-file: the translated source may be
+                   missing ids the English one has (ru is missing 3), and it
+                   carries no transliteration or part of speech at all. Keep
+                   the English scaffolding, swap in the translated gloss. */
+                val translated = readLexicon(context, "strongs_lexicon_$lang.json")
+                val m = HashMap<String, Entry>(english)
+                for ((k, t) in translated) {
+                    val en = m[k]
+                    m[k] = Entry(
+                        word = t.word.ifBlank { en?.word ?: "" },
+                        translit = t.translit.ifBlank { en?.translit ?: "" },
+                        pos = t.pos.ifBlank { en?.pos ?: "" },
+                        def = t.def.ifBlank { en?.def ?: "" }
+                    )
+                }
+                m
             }
-            m
-        }.also { lexCache = it }
+        }.also { lexCache = it; lexCacheLang = lang }
         lex[id]
     }
 }

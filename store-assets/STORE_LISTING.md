@@ -56,127 +56,127 @@ When a release ships, move its block down under the
 ## 1.6.4 release notes (paste per store)
 
 <en-US>
-The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day, and five more books have artwork for the first time. Now 36 translations in 30 languages.
+The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. The Church Slavonic Bible is now fully narrated, and the Russian apocrypha too. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day. Now 36 translations in 30 languages.
 </en-US>
 
 <ar>
-اكتمل الكتاب المقدس بالفارسية: عهد وليم غلن القديم (1856) ينضم إلى عهد هنري مارتن الجديد، منسوخًا صفحةً صفحةً عن الطبعة الأصلية من أجل هذا التطبيق. وقاموس سترونغ صار متاحًا بالروسية بكل مداخله العبرية واليونانية لقرّاء الترجمة السينودسية. وأغلفة الأسفار صارت تتبدل: الأسفار الأكثر قراءةً تعرض نقشًا مختلفًا كل يوم، وخمسة أسفار أخرى نالت صورًا لأول مرة. الآن 36 ترجمة بـ30 لغة.
+اكتمل الكتاب المقدس بالفارسية: عهد وليم غلن القديم (1856) ينضم إلى عهد هنري مارتن الجديد، منسوخًا صفحةً صفحةً عن الطبعة الأصلية من أجل هذا التطبيق. والكتاب المقدس بالسلافونية الكنسية صار له تسجيل صوتي كامل، وكذلك الأسفار القانونية الثانية بالروسية. وقاموس سترونغ صار متاحًا بالروسية بكل مداخله العبرية واليونانية. وأغلفة الأسفار صارت تتبدل: الأسفار الأكثر قراءةً تعرض نقشًا مختلفًا كل يوم. الآن 36 ترجمة بـ30 لغة.
 </ar>
 
 <be>
-Персідская Біблія поўная: Стары Запавет Уільяма Глена 1856 года далучыўся да Новага Запавету Генры Мартына — перапісаны старонка за старонкай з арыгінальнага друку для гэтай праграмы. Слоўнік Стронга цяпер чытаецца па-руску: усе яўрэйскія і грэчаскія артыкулы, для чытачоў Сінадальнага перакладу. Вокладкі кніг цяпер чаргуюцца: найбольш чытаныя кнігі паказваюць новую гравюру кожны дзень, а яшчэ пяць кніг атрымалі выявы ўпершыню. Цяпер 36 перакладаў на 30 мовах.
+Персідская Біблія поўная: Стары Запавет Уільяма Глена 1856 года далучыўся да Новага Запавету Генры Мартына — перапісаны старонка за старонкай з арыгінальнага друку. Царкоўнаславянская Біблія поўнасцю агучана, як і рускія апокрыфы. Слоўнік Стронга цяпер чытаецца па-руску: усе яўрэйскія і грэчаскія артыкулы. Вокладкі кніг цяпер чаргуюцца: найбольш чытаныя кнігі паказваюць новую гравюру кожны дзень. Цяпер 36 перакладаў на 30 мовах.
 </be>
 
 <cs-CZ>
-Perská Bible je úplná: Starý zákon Williama Glena z roku 1856 se připojuje k Novému zákonu Henryho Martyna — přepsán stránku po stránce z původního tisku pro tuto aplikaci. Strongův slovník je nyní i rusky, všechna hebrejská i řecká hesla, pro čtenáře synodálního překladu. Obálky knih se nyní střídají: nejčtenější knihy ukazují každý den jinou rytinu a dalších pět knih má obraz poprvé. Nyní 36 překladů ve 30 jazycích.
+Perská Bible je úplná: Starý zákon Williama Glena z roku 1856 se připojuje k Novému zákonu Henryho Martyna — přepsán stránku po stránce z původního tisku. Církevněslovanská Bible má nyní úplnou zvukovou nahrávku, stejně jako ruské apokryfy. Strongův slovník je nyní i rusky, všechna hebrejská i řecká hesla. Obálky knih se nyní střídají: nejčtenější knihy ukazují každý den jinou rytinu. Nyní 36 překladů ve 30 jazycích.
 </cs-CZ>
 
 <da-DK>
-Den persiske bibel er komplet: William Glens Gamle Testamente fra 1856 slutter sig til Henry Martyns Nye Testamente — afskrevet side for side fra originaltrykket til denne app. Strongs ordbog findes nu på russisk med alle hebraiske og græske opslag, til læsere af den synodale bibel. Bogomslag skifter nu: de mest læste bøger viser et nyt stik hver dag, og fem bøger mere har billede for første gang. Nu 36 oversættelser på 30 sprog.
+Den persiske bibel er komplet: William Glens Gamle Testamente fra 1856 slutter sig til Henry Martyns Nye Testamente — afskrevet side for side fra originaltrykket. Den kirkeslaviske bibel er nu fuldt indlæst, og de russiske apokryfer med. Strongs ordbog findes nu på russisk med alle hebraiske og græske opslag. Bogomslag skifter nu: de mest læste bøger viser et nyt stik hver dag. Nu 36 oversættelser på 30 sprog.
 </da-DK>
 
 <de-DE>
-Die persische Bibel ist vollständig: das Alte Testament von William Glen (1856) tritt zum Neuen Testament Henry Martyns — Seite für Seite aus dem Originaldruck für diese App übertragen. Strongs Wörterbuch gibt es jetzt auf Russisch, alle hebräischen und griechischen Einträge, für Leser der Synodalbibel. Buchtitelbilder wechseln nun: die meistgelesenen Bücher zeigen täglich einen anderen Stich, und fünf weitere Bücher haben erstmals ein Bild. Jetzt 36 Übersetzungen in 30 Sprachen.
+Die persische Bibel ist vollständig: das Alte Testament von William Glen (1856) tritt zum Neuen Testament Henry Martyns — Seite für Seite aus dem Originaldruck übertragen. Die kirchenslawische Bibel ist jetzt vollständig vertont, ebenso die russischen Apokryphen. Strongs Wörterbuch gibt es jetzt auf Russisch, alle hebräischen und griechischen Einträge. Buchtitelbilder wechseln nun täglich bei den meistgelesenen Büchern. Jetzt 36 Übersetzungen in 30 Sprachen.
 </de-DE>
 
 <el-GR>
-Η περσική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ουίλιαμ Γκλεν (1856) προστίθεται στην Καινή Διαθήκη του Χένρι Μάρτιν — αντιγραμμένη σελίδα προς σελίδα από την αρχική έκδοση για αυτή την εφαρμογή. Το λεξικό Strong διατίθεται τώρα και στα ρωσικά, με όλα τα εβραϊκά και ελληνικά λήμματα. Τα εξώφυλλα των βιβλίων εναλλάσσονται: τα πιο διαβασμένα βιβλία δείχνουν κάθε μέρα άλλη χαλκογραφία, και πέντε ακόμη βιβλία απέκτησαν εικόνα. Τώρα 36 μεταφράσεις σε 30 γλώσσες.
+Η περσική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ουίλιαμ Γκλεν (1856) προστίθεται στην Καινή Διαθήκη του Χένρι Μάρτιν — αντιγραμμένη σελίδα προς σελίδα από την αρχική έκδοση. Η εκκλησιαστική σλαβονική Βίβλος ηχογραφήθηκε πλήρως, όπως και τα ρωσικά απόκρυφα. Το λεξικό Strong διατίθεται τώρα και στα ρωσικά. Τα εξώφυλλα εναλλάσσονται: τα πιο διαβασμένα βιβλία δείχνουν κάθε μέρα άλλη χαλκογραφία. Τώρα 36 μεταφράσεις σε 30 γλώσσες.
 </el-GR>
 
 <en-IN>
-The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day, and five more books have artwork for the first time. Now 36 translations in 30 languages.
+The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. The Church Slavonic Bible is now fully narrated, and the Russian apocrypha too. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day. Now 36 translations in 30 languages.
 </en-IN>
 
 <es-419>
-La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original para esta app. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas, para quienes leen la Biblia sinodal. Las portadas de los libros ahora rotan: los libros más leídos muestran cada día otro grabado, y cinco libros más tienen imagen por primera vez. Ahora 36 traducciones en 30 idiomas.
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
 </es-419>
 
 <es-ES>
-La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original para esta app. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas, para quienes leen la Biblia sinodal. Las portadas de los libros ahora rotan: los libros más leídos muestran cada día otro grabado, y cinco libros más tienen imagen por primera vez. Ahora 36 traducciones en 30 idiomas.
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
 </es-ES>
 
 <es-US>
-La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original para esta app. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas, para quienes leen la Biblia sinodal. Las portadas de los libros ahora rotan: los libros más leídos muestran cada día otro grabado, y cinco libros más tienen imagen por primera vez. Ahora 36 traducciones en 30 idiomas.
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
 </es-US>
 
 <fi-FI>
-Persiankielinen Raamattu on täydellinen: William Glenin vuoden 1856 Vanha testamentti liittyy Henry Martynin Uuteen testamenttiin — jäljennettynä sivu sivulta alkuperäisestä painoksesta tätä sovellusta varten. Strongin sanakirja on nyt myös venäjäksi, kaikki heprean ja kreikan hakusanat. Kirjojen kannet vaihtuvat: luetuimmat kirjat näyttävät joka päivä eri kuparipiirroksen, ja viisi kirjaa sai kuvan ensi kertaa. Nyt 36 käännöstä 30 kielellä.
+Persiankielinen Raamattu on täydellinen: William Glenin vuoden 1856 Vanha testamentti liittyy Henry Martynin Uuteen testamenttiin — jäljennettynä sivu sivulta alkuperäisestä painoksesta. Kirkkoslaavilainen Raamattu on nyt kokonaan äänitetty, samoin venäjän apokryfikirjat. Strongin sanakirja on nyt myös venäjäksi, kaikki heprean ja kreikan hakusanat. Kirjojen kannet vaihtuvat: luetuimmat kirjat näyttävät joka päivä eri kuparipiirroksen. Nyt 36 käännöstä 30 kielellä.
 </fi-FI>
 
 <fr-CA>
-La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine pour cette application. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent : les livres les plus lus montrent chaque jour une autre gravure, et cinq livres ont une image pour la première fois. Désormais 36 traductions en 30 langues.
+La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine. La Bible en slavon d'église est désormais entièrement narrée, et les apocryphes russes aussi. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent chaque jour pour les livres les plus lus. Désormais 36 traductions en 30 langues.
 </fr-CA>
 
 <fr-FR>
-La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine pour cette application. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent : les livres les plus lus montrent chaque jour une autre gravure, et cinq livres ont une image pour la première fois. Désormais 36 traductions en 30 langues.
+La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine. La Bible en slavon d'église est désormais entièrement narrée, et les apocryphes russes aussi. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent chaque jour pour les livres les plus lus. Désormais 36 traductions en 30 langues.
 </fr-FR>
 
 <hu-HU>
-A perzsa Biblia teljes: William Glen 1856-os Ószövetsége Henry Martyn Újszövetségéhez csatlakozik — oldalról oldalra átírva az eredeti nyomtatványból ehhez az alkalmazáshoz. A Strong-szótár mostantól oroszul is olvasható, minden héber és görög szócikkel, a szinodális fordítás olvasóinak. A könyvborítók váltakoznak: a legolvasottabb könyvek naponta más metszetet mutatnak, és további öt könyv kapott először képet. Most 36 fordítás 30 nyelven.
+A perzsa Biblia teljes: William Glen 1856-os Ószövetsége Henry Martyn Újszövetségéhez csatlakozik — oldalról oldalra átírva az eredeti nyomtatványból. Az egyházi szláv Biblia most teljes hangfelvételt kapott, és az orosz apokrifok is. A Strong-szótár mostantól oroszul is olvasható, minden héber és görög szócikkel. A könyvborítók váltakoznak: a legolvasottabb könyvek naponta más metszetet mutatnak. Most 36 fordítás 30 nyelven.
 </hu-HU>
 
 <hy-AM>
-Պարսկերեն Աստվածաշունչն ամբողջական է՝ Ուիլյամ Գլենի 1856 թ. Հին Կտակարանը միանում է Հենրի Մարտինի Նոր Կտակարանին՝ էջ առ էջ ընդօրինակված բնօրինակ տպագրությունից այս հավելվածի համար։ Սթրոնգի բառարանն այժմ կարդացվում է նաև ռուսերեն՝ բոլոր եբրայերեն և հունարեն հոդվածները։ Գրքերի շապիկներն այժմ հերթափոխվում են՝ ամենաընթերցվող գրքերն ամեն օր այլ փորագրություն են ցույց տալիս, և ևս հինգ գիրք առաջին անգամ պատկեր ունի։ Այժմ 36 թարգմանություն 30 լեզվով։
+Պարսկերեն Աստվածաշունչն ամբողջական է՝ Ուիլյամ Գլենի 1856 թ. Հին Կտակարանը միանում է Հենրի Մարտինի Նոր Կտակարանին՝ էջ առ էջ ընդօրինակված բնօրինակ տպագրությունից։ Եկեղեցասլավոներեն Աստվածաշունչն այժմ ամբողջությամբ ընթերցվում է, ինչպես նաև ռուսերեն պարականոն գրքերը։ Սթրոնգի բառարանն այժմ կարդացվում է նաև ռուսերեն։ Գրքերի շապիկներն այժմ հերթափոխվում են ամեն օր։ Այժմ 36 թարգմանություն 30 լեզվով։
 </hy-AM>
 
 <it-IT>
-La Bibbia in persiano è completa: l'Antico Testamento di William Glen (1856) si unisce al Nuovo Testamento di Henry Martyn, trascritto pagina per pagina dalla stampa originale per questa app. Il dizionario di Strong si legge ora anche in russo, con tutte le voci ebraiche e greche. Le copertine dei libri ora ruotano: i libri più letti mostrano ogni giorno un'incisione diversa, e altri cinque libri hanno un'immagine per la prima volta. Ora 36 traduzioni in 30 lingue.
+La Bibbia in persiano è completa: l'Antico Testamento di William Glen (1856) si unisce al Nuovo Testamento di Henry Martyn, trascritto pagina per pagina dalla stampa originale. La Bibbia in slavo ecclesiastico è ora narrata per intero, e anche gli apocrifi russi. Il dizionario di Strong si legge ora anche in russo, con tutte le voci ebraiche e greche. Le copertine ruotano: i libri più letti mostrano ogni giorno un'incisione diversa. Ora 36 traduzioni in 30 lingue.
 </it-IT>
 
 <iw-IL>
-התנ"ך והברית החדשה בפרסית הושלמו: הברית הישנה של ויליאם גלן (1856) מצטרפת לברית החדשה של הנרי מרטין — מועתקת עמוד אחר עמוד מן הדפוס המקורי עבור אפליקציה זו. מילון סטרונג נקרא כעת גם ברוסית, כל הערכים בעברית וביוונית, לקוראי התרגום הסינודלי. עטיפות הספרים מתחלפות: הספרים הנקראים ביותר מציגים תחריט אחר בכל יום, וחמישה ספרים נוספים קיבלו תמונה לראשונה. כעת 36 תרגומים ב-30 שפות.
+התנ"ך והברית החדשה בפרסית הושלמו: הברית הישנה של ויליאם גלן (1856) מצטרפת לברית החדשה של הנרי מרטין — מועתקת עמוד אחר עמוד מן הדפוס המקורי. לתנ"ך בסלאבית כנסייתית יש כעת הקראה קולית מלאה, וכן לספרים החיצוניים הרוסיים. מילון סטרונג נקרא כעת גם ברוסית, כל הערכים בעברית וביוונית. עטיפות הספרים מתחלפות: הספרים הנקראים ביותר מציגים תחריט אחר בכל יום. כעת 36 תרגומים ב-30 שפות.
 </iw-IL>
 
 <ja-JP>
-ペルシア語聖書が完成しました。ウィリアム・グレンの1856年旧約が、ヘンリー・マーティンの新約に加わります。原本から一頁ずつ本アプリのために書き起こしたものです。ストロング辞典がロシア語でも読めるようになり、ヘブライ語・ギリシア語の全項目を収録。書物の表紙が日替わりになり、よく読まれる書物は毎日ちがう版画を表示します。さらに五つの書物に初めて挿絵が付きました。現在36訳・30言語。
+ペルシア語聖書が完成しました。ウィリアム・グレンの1856年旧約が、ヘンリー・マーティンの新約に加わります。原本から一頁ずつ本アプリのために書き起こしたものです。教会スラヴ語聖書に全章の音声朗読が加わり、ロシア語外典も朗読されます。ストロング辞典がロシア語でも読めるようになり、ヘブライ語・ギリシア語の全項目を収録。書物の表紙が日替わりになり、さらに五つの書物に初めて挿絵が付きました。現在36訳・30言語。
 </ja-JP>
 
 <lv>
-Persiešu Bībele ir pilnīga: Viljama Glena 1856. gada Vecā Derība pievienojas Henrija Mārtina Jaunajai Derībai — pārrakstīta lapu pa lapai no oriģinālizdevuma šai lietotnei. Stronga vārdnīca tagad lasāma arī krieviski, visi ebreju un grieķu šķirkļi, sinodālā tulkojuma lasītājiem. Grāmatu vāki tagad mainās: visvairāk lasītās grāmatas katru dienu rāda citu gravīru, un vēl piecām grāmatām pirmoreiz ir attēls. Tagad 36 tulkojumi 30 valodās.
+Persiešu Bībele ir pilnīga: Viljama Glena 1856. gada Vecā Derība pievienojas Henrija Mārtina Jaunajai Derībai — pārrakstīta lapu pa lapai no oriģinālizdevuma. Baznīcslāvu Bībele tagad ir pilnībā ieskaņota, tāpat krievu apokrifi. Stronga vārdnīca tagad lasāma arī krieviski, visi ebreju un grieķu šķirkļi. Grāmatu vāki tagad mainās: visvairāk lasītās grāmatas katru dienu rāda citu gravīru. Tagad 36 tulkojumi 30 valodās.
 </lv>
 
 <nl-NL>
-De Perzische Bijbel is compleet: het Oude Testament van William Glen (1856) voegt zich bij het Nieuwe Testament van Henry Martyn — pagina voor pagina overgeschreven uit de oorspronkelijke druk voor deze app. Strongs woordenboek is nu ook in het Russisch te lezen, met alle Hebreeuwse en Griekse lemma's. De omslagen wisselen nu: de meestgelezen boeken tonen elke dag een andere gravure, en vijf boeken hebben voor het eerst een afbeelding. Nu 36 vertalingen in 30 talen.
+De Perzische Bijbel is compleet: het Oude Testament van William Glen (1856) voegt zich bij het Nieuwe Testament van Henry Martyn — pagina voor pagina overgeschreven uit de oorspronkelijke druk. De kerkslavische Bijbel is nu volledig ingesproken, en de Russische apocriefen ook. Strongs woordenboek is nu ook in het Russisch te lezen. De omslagen wisselen nu: de meestgelezen boeken tonen elke dag een andere gravure. Nu 36 vertalingen in 30 talen.
 </nl-NL>
 
 <pl-PL>
-Biblia perska jest kompletna: Stary Testament Williama Glena z 1856 roku dołącza do Nowego Testamentu Henry'ego Martyna — przepisany strona po stronie z pierwodruku na potrzeby tej aplikacji. Słownik Stronga czyta się teraz po rosyjsku, wszystkie hasła hebrajskie i greckie, dla czytelników przekładu synodalnego. Okładki ksiąg się zmieniają: najczęściej czytane księgi pokazują co dzień inny sztych, a pięć kolejnych ksiąg ma ilustrację po raz pierwszy. Teraz 36 przekładów w 30 językach.
+Biblia perska jest kompletna: Stary Testament Williama Glena z 1856 roku dołącza do Nowego Testamentu Henry'ego Martyna — przepisany strona po stronie z pierwodruku. Biblia cerkiewnosłowiańska ma teraz pełne nagranie audio, podobnie jak apokryfy rosyjskie. Słownik Stronga czyta się teraz po rosyjsku, wszystkie hasła hebrajskie i greckie. Okładki ksiąg się zmieniają: najczęściej czytane księgi pokazują co dzień inny sztych. Teraz 36 przekładów w 30 językach.
 </pl-PL>
 
 <pt-BR>
-A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original para este aplicativo. O dicionário de Strong agora se lê em russo, com todos os verbetes hebraicos e gregos, para quem lê a Bíblia sinodal. As capas dos livros agora alternam: os livros mais lidos mostram uma gravura diferente a cada dia, e mais cinco livros têm imagem pela primeira vez. Agora 36 traduções em 30 idiomas.
+A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original. A Bíblia em eslavo eclesiástico agora está narrada por completo, e os apócrifos russos também. O dicionário de Strong agora se lê em russo, com todos os verbetes hebraicos e gregos. As capas alternam: os livros mais lidos mostram uma gravura diferente a cada dia. Agora 36 traduções em 30 idiomas.
 </pt-BR>
 
 <pt-PT>
-A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original para esta aplicação. O dicionário de Strong lê-se agora em russo, com todos os verbetes hebraicos e gregos, para quem lê a Bíblia sinodal. As capas dos livros alternam agora: os livros mais lidos mostram uma gravura diferente cada dia, e mais cinco livros têm imagem pela primeira vez. Agora 36 traduções em 30 idiomas.
+A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original. A Bíblia em eslavo eclesiástico está agora narrada por completo, e os apócrifos russos também. O dicionário de Strong lê-se agora em russo, com todos os verbetes hebraicos e gregos. As capas alternam: os livros mais lidos mostram uma gravura diferente cada dia. Agora 36 traduções em 30 idiomas.
 </pt-PT>
 
 <ru-RU>
-Персидская Библия стала полной: Ветхий Завет Уильяма Глена 1856 года присоединился к Новому Завету Генри Мартина — переписанный страница за страницей с оригинального издания для этого приложения. Словарь Стронга теперь читается по-русски: все еврейские и греческие статьи, для читателей Синодального перевода. Обложки книг теперь чередуются: самые читаемые книги каждый день показывают другую гравюру, и ещё пять книг впервые получили изображение. Теперь 36 переводов на 30 языках.
+Персидская Библия стала полной: Ветхий Завет Уильяма Глена 1856 года присоединился к Новому Завету Генри Мартина — переписанный страница за страницей с оригинального издания. Церковнославянская Библия полностью озвучена, как и русские апокрифы. Словарь Стронга теперь читается по-русски: все еврейские и греческие статьи. Обложки книг теперь чередуются: самые читаемые книги каждый день показывают другую гравюру. Теперь 36 переводов на 30 языках.
 </ru-RU>
 
 <sr>
-Персијска Библија је потпуна: Стари завет Вилијама Глена из 1856. придружује се Новом завету Хенрија Мартина — преписан страну по страну са изворног издања за ову апликацију. Стронгов речник сада се чита и на руском, све јеврејске и грчке одреднице, за читаоце синодалног превода. Корице књига се сада смењују: најчитаније књиге сваког дана приказују други бакрорез, а још пет књига први пут има слику. Сада 36 превода на 30 језика.
+Персијска Библија је потпуна: Стари завет Вилијама Глена из 1856. придружује се Новом завету Хенрија Мартина — преписан страну по страну са изворног издања. Црквенословенска Библија сада има потпуно аудио читање, као и руски апокрифи. Стронгов речник сада се чита и на руском, све јеврејске и грчке одреднице. Корице књига се сада смењују: најчитаније књиге сваког дана приказују други бакрорез. Сада 36 превода на 30 језика.
 </sr>
 
 <sv-SE>
-Den persiska bibeln är fullständig: William Glens Gamla testamente från 1856 sluter sig till Henry Martyns Nya testamente — avskrivet sida för sida ur originaltrycket för den här appen. Strongs lexikon går nu att läsa på ryska, alla hebreiska och grekiska uppslagsord, för den som läser synodalbibeln. Bokomslagen växlar nu: de mest lästa böckerna visar ett nytt kopparstick varje dag, och fem böcker till har bild för första gången. Nu 36 översättningar på 30 språk.
+Den persiska bibeln är fullständig: William Glens Gamla testamente från 1856 sluter sig till Henry Martyns Nya testamente — avskrivet sida för sida ur originaltrycket. Den kyrkslaviska bibeln är nu fullständigt inläst, liksom de ryska apokryferna. Strongs lexikon går nu att läsa på ryska, alla hebreiska och grekiska uppslagsord. Bokomslagen växlar nu: de mest lästa böckerna visar ett nytt kopparstick varje dag. Nu 36 översättningar på 30 språk.
 </sv-SE>
 
 <ta-IN>
-பாரசீக பைபிள் முழுமை அடைந்தது: வில்லியம் கிளென்னின் 1856 பழைய ஏற்பாடு, ஹென்றி மார்ட்டினின் புதிய ஏற்பாட்டுடன் இணைந்தது — மூல அச்சிலிருந்து பக்கம் பக்கமாக இந்த செயலிக்காக எழுதப்பட்டது. ஸ்ட்ராங் அகராதி இப்போது ரஷ்ய மொழியிலும்: எபிரேய, கிரேக்க அனைத்து சொற்பொருளும். புத்தக அட்டைகள் இப்போது மாறும்: அதிகம் வாசிக்கப்படும் புத்தகங்கள் நாள்தோறும் வேறு செதுக்கு படத்தைக் காட்டும்; மேலும் ஐந்து புத்தகங்களுக்கு முதன்முறையாக படம். இப்போது 36 மொழிபெயர்ப்புகள், 30 மொழிகளில்.
+பாரசீக பைபிள் முழுமை அடைந்தது: வில்லியம் கிளென்னின் 1856 பழைய ஏற்பாடு, ஹென்றி மார்ட்டினின் புதிய ஏற்பாட்டுடன் இணைந்தது. திருச்சபை ஸ்லாவோனிக் பைபிளுக்கும் ரஷ்ய அபோக்ரிபா நூல்களுக்கும் இப்போது முழு ஒலி வாசிப்பு. ஸ்ட்ராங் அகராதி இப்போது ரஷ்ய மொழியிலும். புத்தக அட்டைகள் இப்போது மாறும்: அதிகம் வாசிக்கப்படும் புத்தகங்கள் நாள்தோறும் வேறு படத்தைக் காட்டும். இப்போது 36 மொழிபெயர்ப்புகள், 30 மொழிகளில்.
 </ta-IN>
 
 <zh-CN>
-波斯语圣经已完整：威廉·格伦1856年的旧约与亨利·马丁的新约合璧，逐页照原版刻本为本应用抄录。斯特朗词典now可用俄文阅读，希伯来语与希腊语词条一应俱全，供和合本以外的俄文读者使用。书卷封面开始轮换：最常阅读的书卷每天显示不同的版画，另有五卷书首次拥有插图。现有36部译本、30种语言。
+波斯语圣经已完整：威廉·格伦1856年的旧约与亨利·马丁的新约合璧，逐页照原版刻本为本应用抄录。教会斯拉夫语圣经现已有全部章节的语音朗读，俄文次经也已录制。斯特朗词典现可用俄文阅读，希伯来语与希腊语词条一应俱全。书卷封面开始轮换：最常阅读的书卷每天显示不同的版画，另有五卷书首次拥有插图。现有36部译本、30种语言。
 </zh-CN>
 
 <zh-HK>
-波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
+波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。教會斯拉夫語聖經現已有全部章節的語音朗讀，俄文次經也已錄製。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
 </zh-HK>
 
 <zh-TW>
-波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
+波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。教會斯拉夫語聖經現已有全部章節的語音朗讀，俄文次經也已錄製。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
 </zh-TW>
 
 ## Store descriptions (per language — English first, then alphabetical)
@@ -194,7 +194,7 @@ Offline Bible: 35 classic translations, audio, Strong's, reading plans.
 
 Hexapla is the complete Bible — offline, ad-free, account-free, and it collects no data. Everything is free and nothing is locked.
 
-📖 35 classic translations across 30 languages: KJV 1611 with Apocrypha, Webster 1833, Geneva 1599, Wycliffe, Tyndale, Bible Martin 1744 (French), Luther 1545 (German), Karl XII 1703 (Swedish), Danish 1819/1871, Reina-Valera 1909 (Spanish), Diodati 1649 (Italian), Bíblia Livre — Almeida TR (Portuguese), 明治元訳 Meiji Motoyaku — the first Japanese Bible 1880/87, the Chinese Union Version 和合本 1919 (Traditional and Simplified), Russian Synodal, Church Slavonic, the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the Sanskrit New Testament of 1851, the Tamil Bible (IRV 2019, the 1871 Bower lineage), the Clementine Vulgate of 1592 (Latin), the Dutch Statenvertaling (1637), the Arabic Van Dyck (1865), and the Persian New Testament in Henry Martyn's translation (1876), and more.
+📖 35 classic translations across 30 languages: KJV 1611 with Apocrypha, Webster 1833, Geneva 1599, Wycliffe, Tyndale, Bible Martin 1744 (French), Luther 1545 (German), Karl XII 1703/1873 (Swedish), Danish 1819/1871, Reina-Valera 1909 (Spanish), Diodati 1649 (Italian), Bíblia Livre — Almeida TR (Portuguese), 明治元訳 Meiji Motoyaku — the first Japanese Bible 1880/87, the Chinese Union Version 和合本 1919 (Traditional and Simplified), Russian Synodal, Church Slavonic, the Hebrew Tanakh (Leningrad Codex), the Greek New Testament (Byzantine Text), the Sanskrit New Testament of 1851, the Tamil Bible (IRV 2019, the 1871 Bower lineage), the Clementine Vulgate of 1592 (Latin), the Dutch Statenvertaling (1637), the Arabic Van Dyck (1865), and the Persian New Testament in Henry Martyn's translation (1876), and more.
 
 ✝️ The Good News — God's plan of salvation, step by step, Scripture only.
 🔴 Words of Christ in red.
@@ -243,7 +243,7 @@ All texts are public domain. The app collects nothing.
 
 هكسابلا هو الكتاب المقدس الكامل — دون إنترنت، دون إعلانات، دون حساب، ودون جمع أي بيانات. كل شيء مجاني ولا شيء مقفل.
 
-📖 35 ترجمة كلاسيكية في 30 لغة: ترجمة فان دايك 1865 (العربية)، الملك جيمس KJV 1611 مع الأسفار القانونية الثانية، وبستر 1833، جنيف 1599، ديوداتي 1649، رينا-فاليرا 1909، لوثر 1545، مارتن 1744، كارل الثاني عشر 1703، السينودسية الروسية، السلافية الكنسية، المييجي اليابانية، والنسخة الصينية الموحدة (和合本)، إضافة إلى النصين الأصليين العبري واليوناني.
+📖 35 ترجمة كلاسيكية في 30 لغة: ترجمة فان دايك 1865 (العربية)، الملك جيمس KJV 1611 مع الأسفار القانونية الثانية، وبستر 1833، جنيف 1599، ديوداتي 1649، رينا-فاليرا 1909، لوثر 1545، مارتن 1744، كارل الثاني عشر 1703/1873، السينودسية الروسية، السلافية الكنسية، المييجي اليابانية، والنسخة الصينية الموحدة (和合本)، إضافة إلى النصين الأصليين العبري واليوناني.
 ✝️ البشارة — خطة الله للخلاص، خطوة بخطوة، من الكتاب المقدس فقط.
 🔴 كلام المسيح باللون الأحمر.
 🎧 صوت: تلاوة وتحويل نص إلى كلام مع تمييز الآية، تشغيل في الخلفية، مؤقت نوم.
@@ -268,7 +268,7 @@ All texts are public domain. The app collects nothing.
 
 Hexapla-ն ամբողջական Աստուածաշունչն է՝ առանց ինտերնետի, առանց գովազդի, առանց հաշուի եւ առանց տուեալների հաւաքման։ Ամէն ինչ անվճար է, ոչինչ փակուած չէ։
 
-📖 35 դասական թարգմանութիւն 30 լեզուներով՝ Զոհրապեան Հին Կտակարանը (1805) եւ Արեւմտահայերէն Նոր Կտակարանը (1853), KJV 1611-ը՝ ապոկրիֆներով, Webster 1833, Ժնեւի Աստուածաշունչը 1599, Diodati 1649, Reina-Valera 1909, Լիւթերի Աստուածաշունչը 1545, Martin 1744, Կարլոս XII-ի Աստուածաշունչը 1703, ռուսական սինոդալ թարգմանութիւնը, եկեղեցասլավոներէնը, ճապոներէն Մեիջին, չինական Union տարբերակը (和合本), ինչպէս նաեւ եբրայերէն եւ հունարէն բնագրերը։
+📖 35 դասական թարգմանութիւն 30 լեզուներով՝ Զոհրապեան Հին Կտակարանը (1805) եւ Արեւմտահայերէն Նոր Կտակարանը (1853), KJV 1611-ը՝ ապոկրիֆներով, Webster 1833, Ժնեւի Աստուածաշունչը 1599, Diodati 1649, Reina-Valera 1909, Լիւթերի Աստուածաշունչը 1545, Martin 1744, Կարլոս XII-ի Աստուածաշունչը 1703/1873, ռուսական սինոդալ թարգմանութիւնը, եկեղեցասլավոներէնը, ճապոներէն Մեիջին, չինական Union տարբերակը (和合本), ինչպէս նաեւ եբրայերէն եւ հունարէն բնագրերը։
 ✝️ Բարի լուրը — Աստուծոյ փրկութեան ծրագիրը քայլ առ քայլ, միայն Սուրբ Գրքից։
 🔴 Քրիստոսի խօսքերը՝ կարմիրով։
 🎧 Ձայն՝ կենդանի ընթերցում եւ տեքստից խօսք փոխակերպում՝ համարի ընդգծմամբ, ֆոնային նուագարկում, քնի ժամաչափ։
@@ -295,7 +295,7 @@ Hexapla-ն ամբողջական Աստուածաշունչն է՝ առանց ի�
 
 Hexapla — гэта поўная Біблія — без інтэрнэту, без рэклямы, без рэгістрацыі і без збору даных. Усё бясплатна, нічога не заблакавана.
 
-📖 35 клясычных перакладаў у 30 мовах: Новы Запавет і Псальмы ў перакладзе Дзекуць-Малея і Луцкевіча (1931), KJV 1611 з апокрыфамі, Webster 1833, Жэнеўская Біблія 1599, Diodati 1649, Reina-Valera 1909, Лютэраўская Біблія 1545, Martin 1744, Біблія Карла XII 1703, расійскі сінадальны пераклад, царкоўнаславянская мова, японская Мэйдзі, кітайская версія Union (和合本), а таксама габрэйскі і грэцкі арыгінальныя тэксты.
+📖 35 клясычных перакладаў у 30 мовах: Новы Запавет і Псальмы ў перакладзе Дзекуць-Малея і Луцкевіча (1931), KJV 1611 з апокрыфамі, Webster 1833, Жэнеўская Біблія 1599, Diodati 1649, Reina-Valera 1909, Лютэраўская Біблія 1545, Martin 1744, Біблія Карла XII 1703/1873, расійскі сінадальны пераклад, царкоўнаславянская мова, японская Мэйдзі, кітайская версія Union (和合本), а таксама габрэйскі і грэцкі арыгінальныя тэксты.
 ✝️ Добрая Навіна — Божы плян збаўленьня крок за крокам, толькі паводле Пісаньня.
 🔴 Словы Хрыста чырвоным колерам.
 🎧 Аўдыё: жывое чытаньне і сынтэз мовы з падсьвятленьнем радка, прайграваньне ў фоне, таймэр сну.
@@ -402,7 +402,7 @@ Bible offline: 35 klasických překladů, zvuk, plány čtení, Strong.
 
 Hexapla je kompletní Bible — offline, bez reklam, bez účtu a bez sběru dat. Vše zdarma, nic není uzamčeno.
 
-📖 35 klasických překladů ve 30 jazycích: Bible kralická 1613, KJV 1611 s apokryfy, Webster 1833, Ženevská bible 1599, Diodati 1649, Reina-Valera 1909, Lutherova bible 1545, Martin 1744, Karel XII. 1703, ruský synodální překlad, církevní slovanština, japonský Meidži, čínský Union Version (和合本), a hebrejský i řecký původní text.
+📖 35 klasických překladů ve 30 jazycích: Bible kralická 1613, KJV 1611 s apokryfy, Webster 1833, Ženevská bible 1599, Diodati 1649, Reina-Valera 1909, Lutherova bible 1545, Martin 1744, Karel XII. 1703/1873, ruský synodální překlad, církevní slovanština, japonský Meidži, čínský Union Version (和合本), a hebrejský i řecký původní text.
 ✝️ Dobrá zpráva — Boží plán spásy krok za krokem, pouze biblický text.
 🔴 Slova Kristova červeně.
 🎧 Zvuk: namluvené čtení a syntéza řeči se zvýrazněním verše, přehrávání na pozadí, časovač usínání.
@@ -427,7 +427,7 @@ Bibelen offline: 35 klassiske oversættelser, lyd, læseplaner, Strong.
 
 Hexapla — hele Bibelen uden internet, uden reklamer, uden konto og uden dataindsamling. Alt er gratis, intet er låst.
 
-📖 35 klassiske oversættelser på 30 sprog: Dansk Bibel 1819, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karl XII 1703, russisk synodal, kirkeslavisk, japansk 明治元訳, kinesisk 和合本 samt de hebraiske og græske grundtekster.
+📖 35 klassiske oversættelser på 30 sprog: Dansk Bibel 1819, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karl XII 1703/1873, russisk synodal, kirkeslavisk, japansk 明治元訳, kinesisk 和合本 samt de hebraiske og græske grundtekster.
 ✝️ Det gode budskab: Guds frelsesplan trin for trin, kun Skriften.
 🔴 Kristi ord med rødt.
 🎧 Lyd: oplæsning og talesyntese med versfremhævning, baggrundsafspilning, sleep-timer.
@@ -452,7 +452,7 @@ Bijbel offline: 35 klassieke vertalingen, audio, leesplannen, Strong.
 
 Hexapla is de complete Bijbel — offline, zonder advertenties, zonder account en zonder gegevensverzameling. Alles gratis, niets vergrendeld.
 
-📖 35 klassieke vertalingen in 30 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
+📖 35 klassieke vertalingen in 30 talen: de Statenvertaling 1637/1888, de KJV 1611 met apocriefen, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, Karel XII 1703/1873, Russisch-Synodale vertaling, Kerkslavisch, Japans Meiji, Chinese Union-versie (和合本), en de Hebreeuwse en Griekse grondteksten.
 ✝️ Het Goede Nieuws — Gods heilsplan stap voor stap, uitsluitend Schrift.
 🔴 Woorden van Christus in rood.
 🎧 Audio: voorlezen en tekst-naar-spraak met versmarkering, afspelen op de achtergrond, slaaptimer.
@@ -477,7 +477,7 @@ Raamattu offline: 35 klassista käännöstä, ääni, lukusuunnitelmat, Strong.
 
 Hexapla on koko Raamattu — ilman internetiä, ilman mainoksia, ilman tiliä ja ilman tiedonkeruuta. Kaikki on ilmaista, mikään ei ole lukittu.
 
-📖 35 klassista käännöstä 30 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
+📖 35 klassista käännöstä 30 kielellä: Vanha kirkkoraamattu 1776, KJV 1611 apokryfikirjoineen, Webster 1833, Geneven raamattu 1599, Diodati 1649, Reina-Valera 1909, Lutherin raamattu 1545, Martin 1744, Kaarle XII:n raamattu 1703/1873, venäläinen synodaalikäännös, kirkkoslaavi, japanilainen Meiji, kiinalainen Union-versio (和合本) sekä heprean- ja kreikankieliset alkutekstit.
 ✝️ Hyvä sanoma — Jumalan pelastussuunnitelma askel askeleelta, pelkkää Raamattua.
 🔴 Kristuksen sanat punaisella.
 🎧 Ääni: ihmisääninen luenta ja tekstistä puheeksi -toiminto jakeen korostuksella, taustatoisto, uniajastin.
@@ -519,7 +519,7 @@ Tous les textes sont dans le domaine public. L'application ne collecte rien.
 
 Hexapla არის სრული ბიბლია — ინტერნეტის გარეშე, რეკლამის გარეშე, ანგარიშის გარეშე და მონაცემთა შეგროვების გარეშე. ყველაფერი უფასოა, არაფერია დაკეტილი.
 
-📖 35 კლასიკური თარგმანი 30 ენაზე: ბაქარის ბიბლია 1743 (ქართული), KJV 1611 აპოკრიფებით, Webster 1833, ჟენევის ბიბლია 1599, Diodati 1649, Reina-Valera 1909, ლუთერის ბიბლია 1545, Martin 1744, კარლ XII-ის ბიბლია 1703, რუსული სინოდალური თარგმანი, საეკლესიო სლავური, სომხური (ზოჰრაბის ძველი აღთქმა 1805 და ახალი აღთქმა 1853), იაპონური მეიჯი, ჩინური Union (和合本), აგრეთვე ებრაული და ბერძნული დედნები.
+📖 35 კლასიკური თარგმანი 30 ენაზე: ბაქარის ბიბლია 1743 (ქართული), KJV 1611 აპოკრიფებით, Webster 1833, ჟენევის ბიბლია 1599, Diodati 1649, Reina-Valera 1909, ლუთერის ბიბლია 1545, Martin 1744, კარლ XII-ის ბიბლია 1703/1873, რუსული სინოდალური თარგმანი, საეკლესიო სლავური, სომხური (ზოჰრაბის ძველი აღთქმა 1805 და ახალი აღთქმა 1853), იაპონური მეიჯი, ჩინური Union (和合本), აგრეთვე ებრაული და ბერძნული დედნები.
 ✝️ სასიხარულო ცნობა — ღვთის ცხონების გეგმა ნაბიჯ-ნაბიჯ, მხოლოდ წმინდა წერილიდან.
 🔴 ქრისტეს სიტყვები წითლად.
 🎧 აუდიო: ჩაწერილი კითხვა და ტექსტის ხმად გარდაქმნა მუხლის მონიშვნით, ფონური მუსიკა, ძილის ტაიმერი.
@@ -566,7 +566,7 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
 Το Hexapla είναι η πλήρης Βίβλος — χωρίς σύνδεση στο διαδίκτυο, χωρίς διαφημίσεις, χωρίς λογαριασμό και χωρίς συλλογή δεδομένων. Όλα δωρεάν, τίποτα κλειδωμένο.
 
-📖 35 κλασικές μεταφράσεις σε 30 γλώσσες: η μετάφραση Βάμβα 1850, η KJV 1611 με τα Απόκρυφα, η Webster 1833, η Γενεύη 1599, η Diodati 1649, η Reina-Valera 1909, η Βίβλος του Λούθηρου 1545, η Martin 1744, ο Κάρολος ΙΒ' 1703, η Ρωσική Συνοδική, η Εκκλησιαστική Σλαβονική, η ιαπωνική Meiji, η κινεζική Union Version (和合本), καθώς και τα πρωτότυπα εβραϊκά και ελληνικά κείμενα.
+📖 35 κλασικές μεταφράσεις σε 30 γλώσσες: η μετάφραση Βάμβα 1850, η KJV 1611 με τα Απόκρυφα, η Webster 1833, η Γενεύη 1599, η Diodati 1649, η Reina-Valera 1909, η Βίβλος του Λούθηρου 1545, η Martin 1744, ο Κάρολος ΙΒ' 1703/1873, η Ρωσική Συνοδική, η Εκκλησιαστική Σλαβονική, η ιαπωνική Meiji, η κινεζική Union Version (和合本), καθώς και τα πρωτότυπα εβραϊκά και ελληνικά κείμενα.
 ✝️ Τα Καλά Νέα — το σχέδιο σωτηρίας του Θεού, βήμα προς βήμα, μόνο από τη Γραφή.
 🔴 Τα λόγια του Χριστού με κόκκινο.
 🎧 Ήχος: αφήγηση και σύνθεση ομιλίας με επισήμανση εδαφίου, αναπαραγωγή στο παρασκήνιο, χρονοδιακόπτης ύπνου.
@@ -591,7 +591,7 @@ Alle Texte sind gemeinfrei. Die App sammelt keine Daten.
 
 Hexapla הוא אוסף כתבי הקודש המלא — ללא אינטרנט, ללא פרסומות, ללא צורך בחשבון וללא איסוף נתונים. הכול חינם וכלום אינו נעול.
 
-📖 35 תרגומים קלאסיים ב-30 שפות: הנוסח העברי של התנ"ך לפי כתב היד של לנינגרד (Westminster Leningrad Codex), ה-KJV משנת 1611 עם הספרים החיצוניים, וובסטר 1833, ג'נבה 1599, דיודאטי 1649, ריינה-ולרה 1909, תרגום לותר 1545, מרטין 1744, קרל ה-12 משנת 1703, הנוסח הסינודלי הרוסי, הסלאבית הכנסייתית, מייג'י היפני, התרגום הסיני 和合本, וכן הטקסט היווני של הברית החדשה.
+📖 35 תרגומים קלאסיים ב-30 שפות: הנוסח העברי של התנ"ך לפי כתב היד של לנינגרד (Westminster Leningrad Codex), ה-KJV משנת 1611 עם הספרים החיצוניים, וובסטר 1833, ג'נבה 1599, דיודאטי 1649, ריינה-ולרה 1909, תרגום לותר 1545, מרטין 1744, קרל ה-12 משנת 1703/1873, הנוסח הסינודלי הרוסי, הסלאבית הכנסייתית, מייג'י היפני, התרגום הסיני 和合本, וכן הטקסט היווני של הברית החדשה.
 ✝️ הבשורה הטובה — תוכנית הישועה של אלוהים, צעד אחר צעד, מתוך הכתובים בלבד.
 🔴 דברי ישוע מודגשים באדום (בתרגומים הנוצריים).
 🎧 שמע: קריינות אנושית והמרת טקסט לדיבור עם הדגשת הפסוק, נגינה ברקע, טיימר שינה.
@@ -618,7 +618,7 @@ Biblia internet nélkül: 35 klasszikus fordítás, hang, olvasási tervek, Stro
 
 A Hexapla a teljes Biblia — internet nélkül, hirdetések nélkül, regisztráció nélkül és adatgyűjtés nélkül. Minden ingyenes, semmi sincs lezárva.
 
-📖 35 klasszikus fordítás 30 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
+📖 35 klasszikus fordítás 30 nyelven: Károli Gáspár fordítása 1590/1908, KJV 1611 az apokrifekkel, Webster 1833, Genfi Biblia 1599, Diodati 1649, Reina-Valera 1909, Luther-Biblia 1545, Martin 1744, XII. Károly Bibliája 1703/1873, orosz szinodális fordítás, egyházi szláv, japán Meidzsi, kínai Union-fordítás (和合本), valamint a héber és görög eredeti szövegek.
 ✝️ A jó hír — Isten üdvtervének lépései, kizárólag Szentírás alapján.
 🔴 Krisztus szavai piros betűkkel.
 🎧 Hang: felolvasás és szövegfelolvasás versenkénti kiemeléssel, háttérben lejátszás, elalváskapcsoló.
@@ -643,7 +643,7 @@ Bibbia offline: 35 traduzioni classiche, audio, piani di lettura, Strong.
 
 Hexapla — la Bibbia completa senza internet, senza pubblicità, senza registrazione e senza raccolta dati. Tutto gratuito, niente bloccato.
 
-📖 35 traduzioni classiche in 30 lingue: Diodati 1649/1885, KJV 1611 con apocrifi, Webster 1833, Ginevra 1599, Reina-Valera 1909, Almeida TR, Lutero 1545, Martin 1744, Carlo XII 1703, danese 1819, Sinodale russa, slavo ecclesiastico, 明治元訳 giapponese, 和合本 cinese, e gli originali ebraico e greco.
+📖 35 traduzioni classiche in 30 lingue: Diodati 1649/1885, KJV 1611 con apocrifi, Webster 1833, Ginevra 1599, Reina-Valera 1909, Almeida TR, Lutero 1545, Martin 1744, Carlo XII 1703/1873, danese 1819, Sinodale russa, slavo ecclesiastico, 明治元訳 giapponese, 和合本 cinese, e gli originali ebraico e greco.
 ✝️ La Buona Novella: il piano di salvezza di Dio passo dopo passo, solo Scrittura.
 🔴 Parole di Cristo in rosso.
 🎧 Audio: narrazione e sintesi vocale con evidenziazione dei versetti, riproduzione in sottofondo, timer.
@@ -693,7 +693,7 @@ Bībele bez interneta: 35 klasiski tulkojumi, audio, lasīšanas plāni, Strong.
 
 Hexapla ir pilna Bībele — bez interneta, bez reklāmām, bez konta un bez datu vākšanas. Viss ir bez maksas, nekas nav slēgts.
 
-📖 35 klasiski tulkojumi 30 valodās: Glika Bībele 1685/1689, KJV 1611 ar apokrifiem, Webster 1833, Ženēvas Bībele 1599, Diodati 1649, Reina-Valera 1909, Lutera Bībele 1545, Martina Bībele 1744, Kārļa XII Bībele 1703, krievu Sinodālais tulkojums, baznīcslāvu valoda, japāņu Meidzi, ķīniešu Union versija (和合本), kā arī ebreju un grieķu oriģinālteksti.
+📖 35 klasiski tulkojumi 30 valodās: Glika Bībele 1685/1689, KJV 1611 ar apokrifiem, Webster 1833, Ženēvas Bībele 1599, Diodati 1649, Reina-Valera 1909, Lutera Bībele 1545, Martina Bībele 1744, Kārļa XII Bībele 1703/1873, krievu Sinodālais tulkojums, baznīcslāvu valoda, japāņu Meidzi, ķīniešu Union versija (和合本), kā arī ebreju un grieķu oriģinālteksti.
 ✝️ Labā vēsts — Dieva pestīšanas plāns soli pa solim, tikai no Rakstiem.
 🔴 Kristus vārdi sarkanā krāsā.
 🎧 Audio: lasījums balsī un teksta pārvēršana runā ar panta izcelšanu, atskaņošana fonā, aizmigšanas taimeris.
@@ -718,7 +718,7 @@ Biblia offline: 35 klasycznych przekładów, audio, plany czytania, Strong.
 
 Hexapla to kompletna Biblia — bez internetu, bez reklam, bez konta i bez zbierania danych. Wszystko za darmo, nic nie jest zablokowane.
 
-📖 35 klasycznych przekładów w 30 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
+📖 35 klasycznych przekładów w 30 językach: Biblia Gdańska 1632, KJV 1611 z apokryfami, Webster 1833, Biblia Genewska 1599, Diodati 1649, Reina-Valera 1909, Biblia Lutra 1545, Martin 1744, Biblia Karola XII 1703/1873, rosyjski przekład synodalny, cerkiewnosłowiański, japoński Meiji, chińska Union Version (和合本), a także oryginalne teksty hebrajski i grecki.
 ✝️ Dobra Nowina — Boży plan zbawienia krok po kroku, wyłącznie na podstawie Pisma.
 🔴 Słowa Chrystusa zaznaczone na czerwono.
 🎧 Audio: lektor i synteza mowy z podświetlaniem wersetu, odtwarzanie w tle, minutnik snu.
@@ -743,7 +743,7 @@ Bíblia offline: 35 traduções clássicas, áudio, planos de leitura, Strong.
 
 Hexapla — a Bíblia completa sem internet, sem anúncios, sem cadastro e sem coleta de dados. Tudo gratuito, nada bloqueado.
 
-📖 35 traduções clássicas em 30 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+📖 35 traduções clássicas em 30 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703/1873 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
 ✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
 🔴 Palavras de Cristo em vermelho.
 🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
@@ -768,7 +768,7 @@ Bíblia offline: 35 traduções clássicas, áudio, planos de leitura, Strong.
 
 Hexapla — a Bíblia completa sem internet, sem anúncios, sem registo e sem recolha de dados. Tudo gratuito, nada bloqueado.
 
-📖 35 traduções clássicas em 30 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
+📖 35 traduções clássicas em 30 idiomas: Almeida (Bíblia Livre, Textus Receptus), KJV 1611 com apócrifos, Webster 1833, Genebra 1599, Diodati 1649, Reina-Valera 1909, Lutero 1545, Martin 1744, Carlos XII 1703/1873 (sueca), dinamarquesa 1819, Sinodal russa, eslavo eclesiástico, 明治元訳 japonesa, 和合本 chinesa, e os originais em hebraico e grego.
 ✝️ As Boas Novas: o plano de salvação de Deus passo a passo, somente Escritura.
 🔴 Palavras de Cristo em vermelho.
 🎧 Áudio: narração e voz sintetizada com realce de versículos, reprodução em segundo plano, temporizador.
@@ -793,7 +793,7 @@ Todos os textos são de domínio público. A aplicação não recolhe nenhum dad
 
 Гексапла — полная Библия без интернета, без рекламы, без регистрации и без сбора данных. Всё бесплатно и ничего не заблокировано.
 
-📖 35 классических переводов на 30 языках: Синодальный, Елизаветинская Библия (церковнославянский), KJV 1611 с апокрифами, Библия Уэбстера 1833, Женевская 1599, Уиклиф, Тиндейл, Bible Martin 1744 (франц.), Библия Лютера 1545 (нем.), Карла XII 1703 (швед.), датская 1819, Рейна-Валера 1909 (исп.), Диодати 1649 (итал.), Bíblia Livre — Алмейда TR (порт.), 明治元訳 — первая японская Библия 1880/87, китайская 和合本 1919 (трад. и упрощ. иероглифы), древнееврейский текст (Ленинградский кодекс), греческий Новый Завет (византийский текст), санскритский Новый Завет 1851 года, тамильская Библия (IRV 2019, линия Бауэра 1871), латинская Вульгата (Климентина, 1592), нидерландская Statenvertaling 1637 года, арабская Библия Ван Дейка 1865 года и персидский Новый Завет в переводе Генри Мартина 1876 года — и другие.
+📖 35 классических переводов на 30 языках: Синодальный, Елизаветинская Библия (церковнославянский), KJV 1611 с апокрифами, Библия Уэбстера 1833, Женевская 1599, Уиклиф, Тиндейл, Bible Martin 1744 (франц.), Библия Лютера 1545 (нем.), Карла XII 1703/1873 (швед.), датская 1819, Рейна-Валера 1909 (исп.), Диодати 1649 (итал.), Bíblia Livre — Алмейда TR (порт.), 明治元訳 — первая японская Библия 1880/87, китайская 和合本 1919 (трад. и упрощ. иероглифы), древнееврейский текст (Ленинградский кодекс), греческий Новый Завет (византийский текст), санскритский Новый Завет 1851 года, тамильская Библия (IRV 2019, линия Бауэра 1871), латинская Вульгата (Климентина, 1592), нидерландская Statenvertaling 1637 года, арабская Библия Ван Дейка 1865 года и персидский Новый Завет в переводе Генри Мартина 1876 года — и другие.
 
 ✝️ «Благая весть» — план спасения шаг за шагом, только стихи Писания.
 🔴 Слова Христа выделены красным.
@@ -821,7 +821,7 @@ Biblija bez interneta: 35 klasičnih prevoda, audio, planovi čitanja, Strong.
 
 Hexapla je kompletna Biblija — bez interneta, bez reklama, bez naloga i bez prikupljanja podataka. Sve je besplatno, ništa nije zaključano.
 
-📖 35 klasičnih prevoda na 30 jezika: Sveto pismo — Karadžić/Daničić, 1847/1865, KJV 1611 sa apokrifima, Webster 1833, Ženevska Biblija 1599, Diodati 1649, Reina-Valera 1909, Lutherova Biblija 1545, Martin 1744, Biblija Karla XII 1703, ruski Sinodalni prevod, crkvenoslovenski, japanski Meiji, kineska Union verzija (和合本), kao i hebrejski i grčki izvorni tekstovi.
+📖 35 klasičnih prevoda na 30 jezika: Sveto pismo — Karadžić/Daničić, 1847/1865, KJV 1611 sa apokrifima, Webster 1833, Ženevska Biblija 1599, Diodati 1649, Reina-Valera 1909, Lutherova Biblija 1545, Martin 1744, Biblija Karla XII 1703/1873, ruski Sinodalni prevod, crkvenoslovenski, japanski Meiji, kineska Union verzija (和合本), kao i hebrejski i grčki izvorni tekstovi.
 ✝️ Dobra vest — Božji plan spasenja korak po korak, isključivo iz Svetog pisma.
 🔴 Hristove reči crvenim slovima.
 🎧 Audio: čitanje i sinteza govora sa isticanjem stiha, reprodukcija u pozadini, tajmer za spavanje.
@@ -864,7 +864,7 @@ Bibeln offline: 35 klassiska översättningar, ljud, läsplaner, Strong.
 
 Hexapla — hela Bibeln utan internet, utan reklam, utan konto och utan datainsamling. Allt gratis, inget låst.
 
-📖 35 klassiska översättningar på 30 språk: Karl XII:s Bibel 1703, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, danska 1819, ryska synodala, kyrkoslaviska, japanska 明治元訳, kinesiska 和合本 samt hebreiska och grekiska grundtexterna.
+📖 35 klassiska översättningar på 30 språk: Karl XII:s Bibel 1703/1873, KJV 1611 med apokryfer, Webster 1833, Genève 1599, Diodati 1649, Reina-Valera 1909, Luther 1545, Martin 1744, danska 1819, ryska synodala, kyrkoslaviska, japanska 明治元訳, kinesiska 和合本 samt hebreiska och grekiska grundtexterna.
 ✝️ De goda nyheterna: Guds frälsningsplan steg för steg, endast Skriften.
 🔴 Kristi ord i rött.
 🎧 Ljud: uppläsning och talsyntes med versmarkering, bakgrundsuppspelning, insomningstimer.

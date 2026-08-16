@@ -30,30 +30,30 @@ object BibleRepo {
         Translation("ylt", "bibles/en_ylt.json", "Young's Literal Translation, 1898 (EN)", Locale.ENGLISH),
         Translation("mar", "bibles/fr_martin.json", "Bible Martin, 1744 (FR)", Locale.FRENCH),
         Translation("lut", "bibles/de_luther.json", "Lutherbibel, 1545 (DE)", Locale.GERMAN),
-        Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703 (SV)", Locale("sv")),
-        Translation("fi76", "bibles/fi_biblia1776.json", "Biblia — Vanha kirkkoraamattu, 1776 (FI)", Locale("fi")),
-        Translation("glk", "bibles/lv_gluck.json", "Glika Bībele, 1685/1689 (LV)", Locale("lv")),
-        Translation("gda", "bibles/pl_gdanska.json", "Biblia Gdańska, 1632 (PL)", Locale("pl")),
-        Translation("srb", "bibles/sr_karadzic.json", "Sveto pismo — Karadžić/Daničić, 1847/1865 (SR)", Locale("sr")),
-        Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale("da")),
-        Translation("svv", "bibles/nl_staten.json", "Statenvertaling, 1637/1888 (NL)", Locale("nl")),
-        Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale("es")),
-        Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale("pt")),
+        Translation("kxii", "bibles/sv_karlxii.json", "Karl XII:s Bibel, 1703/1873 (SV)", Locale.forLanguageTag("sv")),
+        Translation("fi76", "bibles/fi_biblia1776.json", "Biblia — Vanha kirkkoraamattu, 1776 (FI)", Locale.forLanguageTag("fi")),
+        Translation("glk", "bibles/lv_gluck.json", "Glika Bībele, 1685/1689 (LV)", Locale.forLanguageTag("lv")),
+        Translation("gda", "bibles/pl_gdanska.json", "Biblia Gdańska, 1632 (PL)", Locale.forLanguageTag("pl")),
+        Translation("srb", "bibles/sr_karadzic.json", "Sveto pismo — Karadžić/Daničić, 1847/1865 (SR)", Locale.forLanguageTag("sr")),
+        Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale.forLanguageTag("da")),
+        Translation("svv", "bibles/nl_staten.json", "Statenvertaling, 1637/1888 (NL)", Locale.forLanguageTag("nl")),
+        Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale.forLanguageTag("es")),
+        Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale.forLanguageTag("pt")),
         Translation("dio", "bibles/it_diodati.json", "Diodati, 1649/1885 (IT)", Locale.ITALIAN),
-        Translation("kar", "bibles/hu_karoli.json", "Károli Biblia, 1590/1908 (HU)", Locale("hu")),
-        Translation("bkr", "bibles/cs_kralicka.json", "Bible kralická, 1613 (CS)", Locale("cs")),
+        Translation("kar", "bibles/hu_karoli.json", "Károli Biblia, 1590/1908 (HU)", Locale.forLanguageTag("hu")),
+        Translation("bkr", "bibles/cs_kralicka.json", "Bible kralická, 1613 (CS)", Locale.forLanguageTag("cs")),
         Translation("mei", "bibles/ja_meiji.json", "明治元訳 — Meiji Motoyaku, 1880/87 (JA)", Locale.JAPANESE),
         Translation("cus", "bibles/zh_cuv_s.json", "和合本 — Chinese Union, 1919 (简体)", Locale.SIMPLIFIED_CHINESE),
         Translation("cuv", "bibles/zh_cuv_t.json", "和合本 — Chinese Union, 1919 (繁體)", Locale.TRADITIONAL_CHINESE),
-        Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale("ru")),
-        Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale("ru")),
-        Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale("el")),
-        Translation("vam", "bibles/el_vamvas.json", "Η Αγία Γραφή — Βάμβας, 1850 (EL)", Locale("el")),
-        Translation("wlc", "bibles/he_wlc.json", "עברית — Westminster Leningrad Codex (HE)", Locale("he")),
-        Translation("san", "bibles/sa_nt.json", "संस्कृतम् — Sanskrit NT, 1851 (SA)", Locale("sa")),
-        Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale("ta")),
-        Translation("vd", "bibles/ar_vandyck.json", "الكتاب المقدس — Van Dyck, 1865 (AR)", Locale("ar")),
-        Translation("arm", "bibles/hy_west1853.json", "Նոր Կտակարան — արեւմտահայերէն NT, 1853 (HY)", Locale("hy")),
+        Translation("syn", "bibles/ru_synodal.json", "Синодальный перевод (RU)", Locale.forLanguageTag("ru")),
+        Translation("csl", "bibles/cu_elizabeth.json", "Елизаветинская Библия, 1757 (ЦСЯ)", Locale.forLanguageTag("ru")),
+        Translation("grc", "bibles/grc_byz.json", "Ελληνικά — Byzantine Textform NT (GRC)", Locale.forLanguageTag("el")),
+        Translation("vam", "bibles/el_vamvas.json", "Η Αγία Γραφή — Βάμβας, 1850 (EL)", Locale.forLanguageTag("el")),
+        Translation("wlc", "bibles/he_wlc.json", "עברית — Westminster Leningrad Codex (HE)", Locale.forLanguageTag("he")),
+        Translation("san", "bibles/sa_nt.json", "संस्कृतम् — Sanskrit NT, 1851 (SA)", Locale.forLanguageTag("sa")),
+        Translation("ta", "bibles/ta_irv.json", "பரிசுத்த வேதாகமம் — Tamil IRV, 2019 (TA)", Locale.forLanguageTag("ta")),
+        Translation("vd", "bibles/ar_vandyck.json", "الكتاب المقدس — Van Dyck, 1865 (AR)", Locale.forLanguageTag("ar")),
+        Translation("arm", "bibles/hy_west1853.json", "Նոր Կտակարան — արեւմտահայերէն NT, 1853 (HY)", Locale.forLanguageTag("hy")),
         // Classical Armenian OT, from the TITUS edition under Prof. Jost
         // Gippert's 2026-07-20 grant (credit condition honoured in
         // sources_text). OT-ONLY by owner decision: the Zohrab NT
@@ -62,15 +62,15 @@ object BibleRepo {
         // defaultPrimaryId("hy") deliberately stays on "arm" (a newcomer
         // tapping "just start reading" opens John, and must not land in an
         // empty chapter).
-        Translation("zoh", "bibles/hy_zohrab.json", "Աստուածաշունչ — Զոհրապեան ՀՆ, 1805 (HY)", Locale("hy")),
+        Translation("zoh", "bibles/hy_zohrab.json", "Աստուածաշունչ — Զոհրապեան ՀՆ, 1805 (HY)", Locale.forLanguageTag("hy")),
         // Georgian, the 1743 Moscow print of King Bakar — the full canon plus
         // the deuterocanon, under the same TITUS grant as the Zohrab above.
         // Its Septuagint arrangement is mapped in versemap.json; the psalter,
         // Daniel (Song of the Three inline, 99 verses in chapter 3) and Esther
         // (no chapter 10 at all — it opens 9:17) are the seams that matter.
-        Translation("bak", "bibles/ka_bakar.json", "ბიბლია — ბაქარის გამოცემა, 1743 (KA)", Locale("ka")),
-        Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale("la")),
-        Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale("be")),
+        Translation("bak", "bibles/ka_bakar.json", "ბიბლია — ბაქარის გამოცემა, 1743 (KA)", Locale.forLanguageTag("ka")),
+        Translation("vul", "bibles/la_vulgata.json", "Vulgata Clementina, 1592 (LA)", Locale.forLanguageTag("la")),
+        Translation("dzm", "bibles/be_dzekuc.json", "Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 (BE)", Locale.forLanguageTag("be")),
         // Transcribed by this project from the 1876 BFBS reprint's page scans
         // (Acts 21:21b-32a supplied from the 1837 first printing where the
         // 1876 scan's folio 295 is a master-scan duplicate). PD by age.
@@ -81,7 +81,7 @@ object BibleRepo {
         // label names both. The OT was transcribed page by page from the 1856
         // scan by this project (23,137 verses); the id stays "mrt" because it
         // is persisted in DataStore and on every bookmark.
-        Translation("mrt", "bibles/fa_martyn.json", "کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)", Locale("fa"))
+        Translation("mrt", "bibles/fa_martyn.json", "کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)", Locale.forLanguageTag("fa"))
     )
 
     fun translation(id: String): Translation =

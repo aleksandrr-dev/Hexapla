@@ -364,7 +364,15 @@ def main():
         chs = [args.chapter] if args.chapter is not None else range(len(books[args.book]["chapters"]))
         targets = [(args.book, c) for c in chs]
     else:
-        for b in range(min(66, len(books))):
+        # ⚠⚠ THIS USED TO BE range(min(66, len(books))) — CANON ONLY — and it
+        # silently under-covered every set that narrates its deuterocanon.
+        # Caught 2026-08-15: csl aligned 1192 of its 1362 chapters and syn
+        # reported ok:0, BOTH exiting 0. A canon-only sweep looks exactly like
+        # success when the extra books are the ones missing.
+        # The sweep now covers every non-empty book the ASSET has; slots with
+        # no text are skipped below, and chapters with no rendered audio are
+        # skipped by align_chapter, so this is safe for canon-only sets too.
+        for b in range(len(books)):
             for c in range(len(books[b]["chapters"])):
                 targets.append((b, c))
 

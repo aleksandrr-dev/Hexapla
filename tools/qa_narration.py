@@ -73,11 +73,43 @@ TAIL_SLACK_S = 60.0     # tail allowance beyond the final verse's own length
 TAIL_FLOOR_CPS = 6.0    # slowest plausible speech, chars/sec — scales the
                         # tail allowance for long final verses (LXX additions)
 
-# Flatness, relative to the chapter's own median. The one confirmed artifact
-# sat at 1.35x its chapter median; 1.6x is deliberately well clear of that so
-# the monitor reports the bad ones rather than every phonetically-flat verse.
-FLATNESS_WARN = 1.6
-FLATNESS_FAIL = 2.2
+# Flatness, relative to the chapter's own median.
+#
+# ⚠ RECALIBRATED 2026-08-10 (owner-approved). The previous 1.6/2.2 pair was set
+# from a SINGLE confirmed artifact with no negative control behind it, and it
+# was measuring the engine's ordinary variance rather than a defect. Against
+# `ru` — rendered, QA'd, uploaded, shipped and accepted by ear — it scored:
+#
+#     rendered 1192   pass 251   warn 611   fail 330
+#
+# i.e. it FAILED 28% and flagged 79% of a set that is live in the app, and
+# every one of those 330 failures was this check; no other check failed once.
+# `tools/NARRATION_MONITOR.md` tells the monitor to halt the render and
+# escalate on any FAIL, so taken literally the old pair would have stopped
+# every render this project has ever done. A gate that fires on almost
+# everything conveys no information and trains the operator to ignore it —
+# the same way a check that cannot fail manufactures false confidence.
+#
+# The new pair is the p95 / p99 of the ru ratio distribution (940 chapters
+# above 1.6x, ranked; see the derivation in the 2026-08-10 session). That turns
+# the check from a wall into a REVIEW QUEUE: ~5% warn and ~1% fail on ru,
+# which is a plausible rate for genuine artifacts and small enough to listen to.
+FLATNESS_WARN = 2.9      # ru p95
+FLATNESS_FAIL = 3.5      # ru p99
+
+# ⚠⚠ TWO LIMITS OF THIS CHECK, both real, neither fixed by recalibration:
+#
+# 1. THE RATIO SCALE IS VOICE- AND LANGUAGE-DEPENDENT. Measured the same day,
+#    ru's p99 is 3.46 while cu's is 2.71 — cu is a materially quieter
+#    distribution, so this ru-derived pair is CONSERVATIVE for cu and will
+#    rarely fire there. Re-derive per language when a set completes rather
+#    than assuming one pair transfers.
+# 2. IT CANNOT SEE THE ARTIFACT CLASS IT WAS BUILT FROM. The one artifact ever
+#    confirmed by ear (the "whispering" at 0:50 of ru Genesis 1) sat at 1.35x
+#    its chapter median — BELOW even the old warn line. So this has never been
+#    a detector for that defect at the chapter-gate level, at any threshold
+#    that is not swamped by false alarms. Do not treat a clean flatness result
+#    as evidence that a set has no vocoder artifacts. It is not.
 
 
 def probe_duration_s(path):

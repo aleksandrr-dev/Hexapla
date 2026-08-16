@@ -80,8 +80,17 @@ SETS = [
     #   in Daniel 5:15, «торжествуй» in Zechariah 9:9 — both matching the
     #   expected verse at ratio 0.95+). Uploaded: 1192 oggs + 1192 sidecars
     #   verified present ON THE ITEM, complete title verified live.
+    # ★ APOCRYPHA ACTIVATED 2026-08-15, after the deuterocanon render (170
+    #   chapters, slots 66-77) finished, passed QA fail-0 and was UPLOADED and
+    #   file-probe-verified on the item. Same opt-in as csl below.
+    # ⚠ THE ORDER MATTERS: adding this flag BEFORE the upload makes the
+    #   completeness guard demand 1362 chapters that are not yet published, so
+    #   it fails the build — and blocks csl's index too.
+    # ⚠ Without it those 170 chapters are UNREACHABLE: no index entry, so the
+    #   app silently falls back to TTS while correct audio sits on archive.org.
     {"tid": "syn", "dir": "ru", "asset": "ru_synodal.json",
-     "item": "hexapla-audio-synodal-1876", "partial": False},
+     "item": "hexapla-audio-synodal-1876", "partial": False,
+     "apocrypha": True},
     # ── CHURCH SLAVONIC 1757 — PREPARED 2026-08-07, ACTIVATE WHEN THE RENDER
     #    FINISHES (uncomment). Same prepare-then-activate pattern as Geneva.
     # ⚠⚠ tid is "csl" — the app id in Bible.kt — NOT "cu", which is only the
@@ -91,13 +100,22 @@ SETS = [
     # ⚠ The asset is cu_elizabeth.json and its canon runs to 1,192 chapters
     #    like ru — Psalm 151 plus Daniel 13-14 — NOT the 1,189 of the
     #    Protestant sets. Do not assume 1189 anywhere.
-    # {"tid": "csl", "dir": "cu", "asset": "cu_elizabeth.json",
-    #  "item": "hexapla-audio-slavonic-1757", "partial": False},
+    # ★ ACTIVATED 2026-08-14 WITH "apocrypha": True — owner: "Apocrypha needs
+    #   to be built in app too so it can be heard." cu renders all 78 non-empty
+    #   books (1192 canon + 170 deuterocanon = 1362). Canon-only indexing would
+    #   have left those 170 chapters silently on TTS.
+    # ⚠ partial stays False: the guard must still prove ALL 1362 are present.
+    {"tid": "csl", "dir": "cu", "asset": "cu_elizabeth.json",
+     "item": "hexapla-audio-slavonic-1757", "partial": False,
+     "apocrypha": True},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 
-# Book slots 0-65 are the Protestant canon; 66+ are apocrypha, which no
-# narration set renders. See the note in build_set().
+# Book slots 0-65 are the Protestant canon; 66+ are deuterocanon.
+# ⚠ THIS COMMENT USED TO SAY "apocrypha, which no narration set renders".
+# That stopped being true on 2026-08-13 when cu rendered its deuterocanon, and
+# the stale assumption is exactly what would have made 170 finished chapters
+# unreachable. A set opts in per-entry with "apocrypha": True — see build_set().
 CANON_BOOKS = 66
 
 
@@ -118,14 +136,31 @@ def build_set(s, errors):
     if not src.is_dir():
         errors.append(f"{tid}: no narration dir at {src}")
         return None
-    # Only the 66-book canon is ever rendered, so only the canon is indexed.
+    # Books to index. Canon-only by DEFAULT — every set before cu rendered
+    # nothing else, and ru/Geneva depend on the restriction (see below).
+    #
+    # ★ A SET MAY OPT IN TO ITS DEUTEROCANON with "apocrypha": True. cu is the
+    #   first: narrate.py gives it `default_books: None`, so it renders EVERY
+    #   non-empty slot — 1192 canon + 170 Slavonic deuterocanon. Without the
+    #   opt-in those 170 chapters render, upload, and are then UNREACHABLE:
+    #   the index simply has no entry, so the app falls back to TTS while
+    #   correct narration sits on archive.org. No error, nothing to debug.
+    # ⚠ THE OPT-IN AND THE COMPLETENESS GUARD MUST MOVE TOGETHER. Widening the
+    #   book range without widening `expected`/`grid_books` below would demand
+    #   audio the set does not have and fail a good build; narrowing one
+    #   without the other silently drops chapters. They are one decision.
+    # ⚠ DO NOT make this global. ru_synodal and en_geneva also carry apocrypha
+    #   SLOTS, but no apocrypha AUDIO — flipping them on would fail their
+    #   guard with 12 books of missing files.
+    last = len(bible_chapter_counts(asset_name)) if s.get("apocrypha") \
+        else CANON_BOOKS
     # ⚠ Restricting this matters for assets whose apocrypha slots are POPULATED
     # rather than empty. en_geneva carries 83 slots with 17 EMPTY ones, so the
     # older "count non-empty books" guard was enough for it. ru_synodal carries
     # 83 slots with 78 NON-EMPTY (the Synodal deuterocanon is real text), so
     # that same guard would demand audio for 78 books, get 66, and fail a
     # perfectly complete canon — the 83-slot trap wearing a different hat.
-    counts = bible_chapter_counts(asset_name)[:CANON_BOOKS]
+    counts = bible_chapter_counts(asset_name)[:last]
     base = f"{ARCHIVE_BASE}/{item_id}"
     entry = {}
     total = 0

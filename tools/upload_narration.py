@@ -148,10 +148,38 @@ KJV_CANON_CHAPTERS = 1189
 
 def canon_chapters(asset_name):
     """Chapters in the 66-book canon of this asset, on its OWN versification.
-    Apocrypha slots (indexes 66+) are excluded: no set renders them today."""
+
+    ⚠⚠ THE COMMENT HERE USED TO SAY "no set renders apocrypha today". THAT
+    BECAME FALSE ON 2026-08-13 and it broke the honesty gate. `narrate.py`
+    gives cu `default_books: None`, which renders EVERY non-empty slot — so
+    cu's target is 1362 chapters (1192 canon + 170 Slavonic deuterocanon),
+    not 1192. The gate compared this canon-only figure against a count of ALL
+    oggs on disk, so 1192 apocrypha-inflated files could certify a set
+    "complete" while the canon still had holes. That is the same inversion
+    Karl XII shipped behind a clean "0 failed", arriving by a new route.
+
+    ▶ Callers MUST compare this against canon oggs only — see canon_ogg_count.
+    """
     data = json.loads((BIBLES / asset_name).read_text(encoding="utf-8"))
     books = data["books"] if isinstance(data, dict) else data
     return sum(len(b["chapters"]) for b in books[:66])
+
+
+def canon_ogg_count(src, asset_name):
+    """Rendered chapters that the 66-book canon actually accounts for.
+
+    Counts by ASKING THE GRID, not by counting files: a file in slot 66+ is
+    real audio but it is not canon, and (today) the app's index cannot reach
+    it at all — build_audio_index_gen.py slices [:CANON_BOOKS].
+    """
+    data = json.loads((BIBLES / asset_name).read_text(encoding="utf-8"))
+    books = data["books"] if isinstance(data, dict) else data
+    n = 0
+    for bi, b in enumerate(books[:66]):
+        for ci in range(len(b["chapters"])):
+            if (src / str(bi) / f"{ci}.ogg").exists():
+                n += 1
+    return n
 
 DESCRIPTION = """<p>{opening} chapter-by-chapter audio narration of
 <b>{translation}</b>, produced for <a href="{app}">Hexapla</a>, a free and
@@ -222,7 +250,15 @@ def build(set_key, dry_run=False):
     total_bytes = sum(f.stat().st_size for f in oggs + jsons)
     # Honesty gate: only a set covering the whole canon may say "complete".
     expected = canon_chapters(meta_src["asset"])
-    is_partial = len(oggs) < expected
+    # ⚠ NOT len(oggs) — that counts apocrypha too and can inflate a holed
+    # canon past `expected`. See canon_chapters' warning.
+    have_canon = canon_ogg_count(src, meta_src["asset"])
+    is_partial = have_canon < expected
+    extra = len(oggs) - have_canon
+    if extra:
+        print(f"note      : {extra} rendered chapters sit in apocrypha slots "
+              f"(66+). They upload, but today's index CANNOT reach them "
+              f"(build_audio_index_gen.py slices [:CANON_BOOKS]).")
     if is_partial and "title_partial" not in meta_src:
         sys.exit(f"{set_key}: {len(oggs)}/{expected} chapters is a "
                  f"PARTIAL set, but SETS['{set_key}'] has no 'title_partial'. "
@@ -260,6 +296,7 @@ def build(set_key, dry_run=False):
 
     print(f"item      : {meta_src['identifier']}")
     print(f"files     : {len(files)} ({len(oggs)} chapters + sidecars)")
+    print(f"canon     : {have_canon}/{expected}")
     print(f"size      : {total_bytes / 1e9:.2f} GB")
     print(f"metadata  : {json.dumps(metadata, ensure_ascii=False, indent=1)}")
     if dry_run:
@@ -288,10 +325,20 @@ def build(set_key, dry_run=False):
     # access key. The ru upload died at 877 of 1,192 files on 2026-08-07 with
     #   "Please reduce your request rate. - accesskey_tasks_queued exceeds
     #    rationed amount"
-    # leaving the public item half-updated. Derives are useless to us anyway —
-    # they exist to transcode uploads into alternate formats, and we ship the
-    # Opus files exactly as rendered. Geneva/Karl XII got away with it only
-    # because their queues had drained between runs.
+    # leaving the public item half-updated. Geneva/Karl XII got away with it
+    # only because their queues had drained between runs.
+    # ⚠⚠ BUT "derives are useless to us" — what this comment used to say — IS
+    # WRONG, AND IT SHIPPED A PUBLIC FALSEHOOD. True for the APP, which streams
+    # the .ogg originals and never touches a derivative. NOT true for the item
+    # PAGE: archive.org's own web player streams the derived .mp3. When the
+    # corrected Geneva re-render replaced the originals on 2026-08-12, no
+    # derive was queued, so all 1,189 mp3s stayed at their 2026-08-01 vintage —
+    # the defective set, the "God created the HORN" one — and the public page
+    # went on playing it under a title claiming the corrected text. Same class
+    # of inversion as the "(pågår)" title above, from the same root: a
+    # publishing step suppressed for throughput and then never re-run.
+    # ▶ Suppress the derive PER FILE (throughput), submit ONE for the item at
+    # the end (correctness). One queued task, not 1,189.
     # ⚠ RESUMING IS SAFE AND CHEAP: checksum=True skips every file already
     # present with a matching MD5, so a rate-limited run is re-run, not redone.
     res = upload(meta_src["identifier"], files=files, metadata=metadata,
@@ -323,6 +370,26 @@ def build(set_key, dry_run=False):
         print("  re-check before treating the item as published.")
     else:
         print(f"\ntitle verified: {live}")
+
+    # ONE derive for the whole item, after every file has landed. remove_derived
+    # rebuilds derivatives that already exist — without it derive.php skips them
+    # and a re-render's replaced originals keep their stale mp3s (see above).
+    # reduced_priority makes the task far likelier to be accepted while a big
+    # upload's queue is still draining; it may then sit for a long time, which
+    # is fine — nothing we ship waits on it.
+    # Best-effort BY DESIGN: the files and the metadata are already correct at
+    # this point, and this runs unattended from finish_sidecars.py. A derive
+    # that cannot be queued must not turn a good upload into a failed run —
+    # it must be LOUD instead, so the next session re-submits it by hand.
+    try:
+        item.derive(remove_derived="*", reduced_priority=True)
+        print("derive queued (remove_derived=*)")
+    except Exception as e:                                    # noqa: BLE001
+        print(f"\n⚠ DERIVE NOT QUEUED: {e}")
+        print("  Files and metadata ARE correct; only archive.org's own")
+        print("  derivatives (mp3/png used by the item's web player) are stale.")
+        print(f"  Re-run by hand:  ia tasks {meta_src['identifier']} "
+              f"--cmd derive.php")
 
     print(f"\nDONE -> https://archive.org/details/{meta_src['identifier']}")
 

@@ -32,9 +32,9 @@ maximize reach, keep everything free, nothing locked, collect no data.
   `./gradlew assembleRustoreRelease` (RuStore APK).
 - Signing: `keystore.properties` in repo root (gitignored) points to the
   keystore in the owner's Documents folder. Play uses Play App Signing
-  (our key = upload key). NEVER commit keys. **versionCode: 17 is built (1.6.4, staged 2026-08-16 with BOTH the
-  Slavonic and Russian-deuterocanon narration; not yet uploaded); next free
-  is 18.** Bump for every store update.
+  (our key = upload key). NEVER commit keys. **versionCode 17 (1.6.4) was UPLOADED TO BOTH STORES 2026-08-16 by the
+  owner — Slavonic + Russian-deuterocanon narration, the Karl XII 1703/1873
+  relabel, and the Locale modernization. NEXT FREE versionCode IS 18.** Bump for every store update.
   ★ **CHURCH SLAVONIC NARRATION FOLDS INTO 1.6.4 / code 17** (owner,
   2026-08-12) — the Karl XII precedent: 1.6.4 has never been public, so it is
   rebuilt in place rather than burning code 18. ⚠ CONSEQUENCES: the STAGED
@@ -72,7 +72,7 @@ and every ⚠ landmine moved intact.
 | touching a Bible asset — corruption, psalm titles, markup | `docs/ASSET_DEFECTS.md` |
 | renders, GPU contention, the recycle and keepalive | `docs/NARRATION.md` |
 | what shipped when, and why a behaviour changed | `docs/RELEASE_HISTORY.md` |
-| what is happening right now | **`SESSION_HANDOFF_2026-08-15.md`** — the ONE current handoff |
+| what is happening right now | **`SESSION_HANDOFF_2026-08-16.md`** — the ONE current handoff |
 | the Glen Persian campaign specifically | `research/GLEN_RESUME_NOW.md` |
 
 ⚠⚠ **`research/`, `narration/`, `logs/` and every `SESSION_HANDOFF_*.md` are
@@ -88,10 +88,10 @@ conclude the campaign docs were lost; they were not. `logs/PAUSE_cu` etc. are
 OFTEN.** A completed record belongs in a topic doc. A ⚠ that can still bite
 belongs here or is pointed at from here — never silently dropped.
 
-## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-15.md first
+## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-16.md first
 
 ★ **HANDOFFS WERE CONSOLIDATED 2026-08-14** (owner). There is now exactly ONE
-current handoff, **`SESSION_HANDOFF_2026-08-15.md`**, and it is self-contained.
+current handoff, **`SESSION_HANDOFF_2026-08-16.md`**, and it is self-contained.
 The 15 dated predecessors were MOVED (not deleted) to
 `C:\Projects\Hexapla-releases\handoff-archive\` — consult them only for the
 history of a decision, never for current state. Keep it to one file: when you
@@ -145,9 +145,7 @@ is always the **RuStore APK**, never the Play AAB.
 ⚠ Live status only. Release-by-release history is in `docs/RELEASE_HISTORY.md`; translation research and integration records are in `docs/TRANSLATIONS.md`.
 
 
-- **RuStore**: LIVE. Latest uploaded: **1.6.3 (code 16), 2026-08-05**.
-  **1.6.4 (code 17) is BUILT and staged but not uploaded** — the Persian
-  Bible release. Store title «Гексапла — параллельная Библия».
+- **RuStore**: LIVE. Latest uploaded: **1.6.4 (code 17), 2026-08-16.** Store title «Гексапла — параллельная Библия».
   ⚠ Every upload re-asks the Safety form (answers at the top of
   `store-assets/STORE_LISTING.md`), and a new version draft does **NOT**
   inherit media — re-upload the icon (`store-assets/icon_512_store.png`) and
@@ -155,8 +153,8 @@ is always the **RuStore APK**, never the Play AAB.
   120307, 120326, 120426, then `screenshot_widget.png`). The browser
   extension cannot upload local files; the owner picks them in the native
   dialog. Review ≈ a day.
-- **Google Play**: closed testing (Alpha). Latest uploaded 1.6.3 (code 16),
-  2026-08-05. Personal account, so production needs **12 testers × 14
+- **Google Play**: closed testing (Alpha). Latest uploaded **1.6.4 (code 17),
+  2026-08-16**. Personal account, so production needs **12 testers × 14
   continuous days** — and the blocker has been the tester COUNT, not the
   clock: the countdown only advances on days with ≥12 opted-in testers.
   ★ **THE 12th TESTER JOINED 2026-08-12 — the clock is running as of today**

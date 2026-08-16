@@ -147,3 +147,58 @@ the access-key form ("exceeds rationed amount") and died on the bucket form
 ("bucket_tasks_queued exceeds bucket_limit"), stopping a whole upload hours
 after the queue had drained. `upload_when_clear.py` now matches both plus the
 shared "Please reduce your request rate" prefix.
+
+---
+
+## ★ ENGLISH PRONUNCIATION POLICY (owner, 2026-08-16)
+
+**The audio should match the text on the screen.** Where the app ships archaic
+spelling, the voice reads it as it was said in that period; where the asset is
+already modern, it is read normally. The owner's framing: *"If people want to
+hear modern English, they will listen to the closer KJV."*
+
+⚠ THE FACT THAT SETTLES THE APPARENT INCONSISTENCY: **we already modernized
+KJV — in the TEXT, not the audio.** `en_kjv.json` reads "God created the heaven
+and the earth"; the 1611 original prints "Heauen". Webster 1833 is modern
+natively (that was Webster's project). So nothing was modernized in KJV's
+*audio* because nothing was left to modernize. The archaic-spelling assets are
+Geneva, Tyndale and Wycliffe, and only those raise the question.
+
+| asset | text | audio should be | engine | voice |
+|---|---|---|---|---|
+| KJV 1611 | already modern | read normally | kokoro | am_adam |
+| Webster 1833 | modern natively | read normally | kokoro | am_adam |
+| Tyndale 1525 | archaic, CLOSE | Early Modern, light respelling | chatterbox | **owner** |
+| Geneva 1599 | archaic, CLOSE | Early Modern, light respelling | chatterbox | **owner** |
+| Wycliffe 1395 | Middle English | full period reconstruction | **kokoro + IPA** | am_adam |
+
+▶ **The split is by how drastic the distance is**, which is also what decides
+whether the owner's voice is usable at all:
+
+⚠⚠ **CHATTERBOX CANNOT TAKE PHONEMES — VERIFIED 2026-08-16.**
+    `chatterbox.generate(text, language_id, ...)`  <- text only
+    `kokoro  KPipeline.infer(model, ps, pack, s)`  <- IPA string
+  So the owner's cloned voice and phoneme-exact pronunciation are MUTUALLY
+  EXCLUSIVE with today's engines. Middle English needs phonemes (/x/, /ç/, the
+  pre-GVS long vowels, geminates) and therefore cannot use his voice. Early
+  Modern English is close enough that SPELLING alone carries it, so Tyndale and
+  Geneva can.
+
+### The tooling
+· `tools/me_phonemes.py` — Wycliffite Middle English -> IPA, for kokoro's
+  phoneme path. Pre-Great-Vowel-Shift long vowels, <gh> allophony (/ç/ after
+  front vowels, /x/ after back), true geminates, the u/v swap, and a curated
+  exception table for words spelling cannot predict.
+  ⚠ Kokoro's 114-symbol vocab was CHECKED, not assumed: x ç ː ə ɪ ɛː ɔː r ɹ ɾ
+  are all present; ʍ is not.
+· `tools/middle_english.py` — the earlier respelling approach, kept because it
+  is the right shape for an ENGLISH-SPELLING engine (chatterbox). Extend THIS
+  one for Early Modern English (Geneva/Tyndale), not the IPA one.
+
+### ⚠ CONSEQUENCE FOR THE SHIPPED GENEVA NARRATION
+Geneva currently DISPLAYS «heauen» and SAYS "heaven" — `archaic_english`
+modernizes it for TTS. Under this policy that is the wrong side of the line, so
+the shipped Geneva audio (1,189 chapters) would need a re-render in Early
+Modern pronunciation to comply. **Owner is aware; not yet scheduled.** Do not
+start it without an explicit go — Geneva has already been re-rendered once, for
+the "God created the HORN" defect.

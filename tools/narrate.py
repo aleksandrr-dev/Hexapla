@@ -235,17 +235,38 @@ LANG_CONFIG = {
         # Previous config, kept for a quick revert: engine "kokoro",
         # voice "am_adam", no language_id/cfg_weight/exaggeration.
     },
-    # ⚠ STILL kokoro ON PURPOSE. Tyndale (451 ch, ~2.7 days) is the trial set;
-    # Wycliffe is 1197 chapters / ~a week, so it waits until the owner has
-    # heard a real Tyndale chapter rather than a 25-second sample.
-    # ★ When it does switch, use `_en_ref_wyc.wav`, NOT the KJV reference: the
-    # owner deliberately recorded a second take reading WYCLIFFE, and a reader
-    # already in Middle English cadence is the better prompt for this text.
-    # Same E parameters (cfg 0.5 / exaggeration 1.0) plus language_id "en".
+    # ★ SWITCHED TO THE OWNER'S VOICE 2026-08-16, on his explicit instruction
+    # ("use my voice for wycliffe, Adam for kjv"). This deliberately overrides
+    # the hold recorded below — he was the gate on it, and he lifted it.
+    #   PREVIOUS (kept for a quick revert): engine "kokoro", voice "am_adam",
+    #   no language_id/cfg_weight/exaggeration.
+    #   THE HOLD IT REPLACES: "STILL kokoro ON PURPOSE. Tyndale (451 ch,
+    #   ~2.7 days) is the trial set; Wycliffe is 1197 chapters / ~a week, so it
+    #   waits until the owner has heard a real Tyndale chapter rather than a
+    #   25-second sample."
+    # ⚠ `_en_ref_wyc.wav`, NOT the KJV reference — the owner recorded a SECOND
+    # take reading WYCLIFFE, and a reader already in Middle English cadence is
+    # the better prompt for this text. Both are trimmed from his eng.wav.
+    # ⚠⚠ THIS MAKES wyc A **GPU** RENDER (chatterbox, ~4 GB, in-process model):
+    #   · it must NOT share the 8 GB card with a live CosyVoice render;
+    #   · its supervisor now needs the 75-minute RECYCLE, not revive-only —
+    #     in-process engines decay with process age, kokoro ones do not;
+    #   · it moves from .kokoro_venv to .chatterbox_venv in the supervisor.
+    # ⚠ The 72 chapters rendered in am_adam before the switch were QUARANTINED
+    #   to narration/wyc_quarantine_am_adam — mixing voices inside one
+    #   translation is the defect this avoids. Do not --force; skip-existing is
+    #   what keeps the job resumable across the recycle.
     "wyc": {
         "asset": "enm_wycliffe.json",
+        # ★ 2026-08-16 — KOKORO + IPA, NOT chatterbox. The owner wants Wycliffe
+        # to sound like 1395, and chatterbox takes TEXT ONLY (verified: its
+        # generate() has no phoneme argument), so his cloned voice and accurate
+        # Middle English are mutually exclusive. He chose accuracy here and his
+        # own voice for Tyndale. See docs/NARRATION.md "English pronunciation
+        # policy" and tools/me_phonemes.py.
         "engine": "kokoro",
         "voice": "am_adam",
+        "ipa": "middle_english",   # -> me_phonemes.to_ipa, bypasses G2P
         "strip_notes": False,
         "default_books": None,
         "normalizer": "wycliffe",
@@ -721,7 +742,7 @@ def _kokoro_worker():
     return _KOKORO_PROC
 
 
-def _kokoro_request(text, voice, output_wav, timeout=180):
+def _kokoro_request(text, voice, output_wav, timeout=180, ipa=None):
     """One request/response, with a hard timeout so a hung worker cannot stall.
 
     ⚠ A blocking readline on a wedged worker would hang the render FOREVER,
@@ -755,7 +776,7 @@ def _kokoro_request(text, voice, output_wav, timeout=180):
     return True
 
 
-def synthesize_kokoro(text, voice, output_wav):
+def synthesize_kokoro(text, voice, output_wav, ipa=None):
     """Synthesize with Kokoro, via a persistent worker in the sandboxed venv.
 
     ⚠ FALLS BACK to the original one-process-per-verse path if the worker
@@ -766,7 +787,7 @@ def synthesize_kokoro(text, voice, output_wav):
     global _KOKORO_FAILS
     if _KOKORO_FAILS < 3:
         try:
-            _kokoro_request(text, voice, output_wav)
+            _kokoro_request(text, voice, output_wav, ipa=ipa)
             _KOKORO_FAILS = 0
             return True
         except Exception as e:
@@ -1011,6 +1032,19 @@ def _trim_and_fade(audio, sr, thresh=0.0025, keep_ms=40,
     is clipped — losing the start of a word would be far worse than a click.
     """
     import numpy as np
+    # ⚠⚠ THE THRESHOLD MUST BE RELATIVE TO THIS CLIP, NOT ABSOLUTE.
+    # Measured 2026-08-16 on the Tyndale Genesis 1 header, which the owner
+    # heard as an "uhh" right after "Genesis, Chapter 1":
+    #     speech  peak 0.7987   rms 0.1085
+    #     tail    peak 0.0101   rms 0.0009      <- 41 dB below the speech
+    # The fixed 0.0025 floor is FOUR TIMES BELOW that tail's peak, so 2.1% of
+    # the tail's samples cleared it, loud[-1] landed inside the tail, and the
+    # trim preserved the very artifact it exists to remove. An absolute floor
+    # cannot work here: a vocoder tail scales with the clip's own loudness.
+    # 2% of peak is ~-34 dB — far under any real speech, including fricative
+    # onsets — and the 40 ms keep-margin below still protects consonants.
+    peak = float(np.abs(audio).max()) if len(audio) else 0.0
+    thresh = max(thresh, peak * 0.02)
     loud = np.nonzero(np.abs(audio) > thresh)[0]
     if len(loud) == 0:
         return audio
@@ -1438,7 +1472,15 @@ def synthesize_verse(text, lang, temp_dir, verse_idx, book_idx=None):
     wav_path = Path(temp_dir) / f"verse_{verse_idx:04d}.wav"
 
     if cfg["engine"] == "kokoro":
-        ok = synthesize_kokoro(text, cfg["voice"], str(wav_path))
+        # ★ If the set declares an "ipa" mode, convert the verse to phonemes
+        # and bypass grapheme-to-phoneme. Wycliffe uses this for reconstructed
+        # Middle English; every other kokoro set passes ipa=None and is
+        # unaffected.
+        _ipa = None
+        if cfg.get("ipa") == "middle_english":
+            from me_phonemes import to_ipa as _to_ipa
+            _ipa = _to_ipa(text)
+        ok = synthesize_kokoro(text, cfg["voice"], str(wav_path), ipa=_ipa)
     elif cfg["engine"] == "bark":
         ok = synthesize_bark(text, cfg["voice"], str(wav_path))
     elif cfg["engine"] == "cosyvoice3":

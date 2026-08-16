@@ -30,6 +30,25 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
+def _split_ipa(ps, limit):
+    """Split an IPA string under the model's 510-phoneme ceiling.
+
+    Splits on spaces so a word is never cut in half — a half word yields a
+    half sound, not a shorter one.
+    """
+    if len(ps) <= limit:
+        return [ps]
+    out, cur = [], ""
+    for w in ps.split(" "):
+        if len(cur) + len(w) + 1 > limit and cur:
+            out.append(cur); cur = w
+        else:
+            cur = f"{cur} {w}".strip()
+    if cur:
+        out.append(cur)
+    return out
+
+
 def main():
     import kokoro
     import numpy as np
@@ -44,7 +63,23 @@ def main():
             continue
         try:
             req = json.loads(line)
-            chunks = [a for _, _, a in pipeline(req["text"], voice=req["voice"])]
+            # ★ PHONEME PATH (2026-08-16). When the caller supplies "ipa", the
+            # grapheme-to-phoneme stage is bypassed entirely and the string is
+            # fed to the model as phonemes. This is what makes reconstructed
+            # Middle English possible for Wycliffe: /x/, /ç/, the pre-GVS long
+            # vowels and geminates are all in kokoro's 114-symbol vocab, but no
+            # G2P would ever produce them from English spelling.
+            # ⚠ 510 is the model's hard limit on phoneme-string length; longer
+            # input is truncated by kokoro with a warning, so split first.
+            if req.get("ipa"):
+                pack = pipeline.load_voice(req["voice"])
+                chunks = []
+                for piece in _split_ipa(req["ipa"], 500):
+                    out = kokoro.KPipeline.infer(pipeline.model, piece, pack, 1.0)
+                    chunks.append((out.audio if hasattr(out, "audio") else out)
+                                  .detach().numpy())
+            else:
+                chunks = [a for _, _, a in pipeline(req["text"], voice=req["voice"])]
             if not chunks:
                 print(json.dumps({"ok": False, "err": "no audio generated"}),
                       flush=True)

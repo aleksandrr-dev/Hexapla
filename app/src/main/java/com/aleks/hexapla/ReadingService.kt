@@ -223,12 +223,34 @@ class ReadingService : Service() {
                         Pronounce.load(this@ReadingService, translationId)
                         MusicRepo.load(this@ReadingService)
                     } catch (_: Exception) { }
-                    // kjv → LibriVox sections; other translations → self-generated
-                    // per-chapter narration (Webster etc.) streamed from archive.org.
+                    // kjv is the only translation served from BOTH indexes, and
+                    // it has to be: 50 of its books are LibriVox human readings
+                    // (no per-verse offsets, and 223 of their sections span
+                    // several chapters, which the generated format cannot
+                    // express), while the 30 books LibriVox never recorded are
+                    // ours — 245 chapters that DO carry exact offsets.
+                    // Merging gives verse-accurate following on our own audio
+                    // without giving up the human readings.
+                    // ⚠ The two book sets are DISJOINT (verified 2026-08-16), so
+                    // the merge cannot drop anything; generated wins on the key
+                    // if that ever stops being true, because only it has offsets.
+                    // Every other translation is generated-only, as before.
                     audioSections = if (settings.audioNarration)
                         try {
-                            if (translationId == "kjv") AudioRepo.index(this@ReadingService)
-                            else AudioRepo.generated(this@ReadingService, translationId)
+                            if (translationId == "kjv") {
+                                // Written out rather than `a + b` on purpose:
+                                // the ORDER is load-bearing and must not depend
+                                // on the reader recalling which side of the plus
+                                // operator wins. Generated goes in LAST, so it
+                                // takes precedence for any book in both.
+                                val librivox = AudioRepo.index(this@ReadingService)
+                                val generated =
+                                    AudioRepo.generated(this@ReadingService, "kjv")
+                                buildMap {
+                                    putAll(librivox)
+                                    putAll(generated)
+                                }
+                            } else AudioRepo.generated(this@ReadingService, translationId)
                         } catch (_: Exception) { emptyMap() }
                     else emptyMap()
                     bookIdx = b; chapterIdx = c; verseIdx = v

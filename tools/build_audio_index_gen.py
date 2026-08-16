@@ -108,6 +108,21 @@ SETS = [
     {"tid": "csl", "dir": "cu", "asset": "cu_elizabeth.json",
      "item": "hexapla-audio-slavonic-1757", "partial": False,
      "apocrypha": True},
+    # ★ KJV, ADDED 2026-08-16 — the 30 books THIS PROJECT rendered (245
+    #   chapters): 22 canon books LibriVox never recorded plus 8 apocrypha.
+    # ⚠⚠ partial: True IS LOAD-BEARING, NOT LAZINESS. KJV has 80 non-empty
+    #   books; we hold audio for 30. The other 50 are LibriVox HUMAN recordings
+    #   that stay in audio_index.json — they have no per-verse offsets and 223
+    #   of their sections span MULTIPLE chapters, which this one-chapter-per-
+    #   entry format cannot express. A complete-set guard here would demand
+    #   audio that must never exist.
+    # ⚠ The app therefore MERGES both indexes for kjv (ReadingService); the two
+    #   book sets are disjoint, verified 2026-08-16.
+    # ⚠ "flat" is required: this item names files kjv_<book>_<chapter>.ogg at
+    #   the root, not <book>/<chapter>.ogg.
+    {"tid": "kjv", "dir": "en", "asset": "en_kjv.json",
+     "item": "hexapla-audio-en", "partial": True,
+     "apocrypha": True, "flat": "kjv_{b}_{c}.ogg"},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
 
@@ -167,7 +182,7 @@ def build_set(s, errors):
     for bi, n_ch in enumerate(counts):
         chapters = {}
         for ci in range(n_ch):
-            ogg = src / str(bi) / f"{ci}.ogg"
+            ogg = src / str(bi) / f"{ci}.ogg"   # local layout is always <book>/<ch>
             sidecar = src / str(bi) / f"{ci}.json"
             if not ogg.exists():
                 if not partial:
@@ -179,7 +194,14 @@ def build_set(s, errors):
             elif not partial:
                 errors.append(f"{tid}: missing sidecar {bi}/{ci}.json")
                 continue
-            chapters[str(ci)] = {"f": f"{bi}/{ci}.ogg", "o": offsets}
+            # ★ FLAT NAMING (kjv). The en item predates the <book>/<chapter>
+            # layout: its files are kjv_<book>_<chapter>.ogg at the item root.
+            # "f" is a path relative to base, so both shapes fit the same index.
+            chapters[str(ci)] = {
+                "f": (s["flat"].format(b=bi, c=ci) if s.get("flat")
+                      else f"{bi}/{ci}.ogg"),
+                "o": offsets,
+            }
             total += 1
         if chapters:
             entry[str(bi)] = {"base": base, "chapters": chapters}

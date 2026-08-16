@@ -32,8 +32,16 @@ maximize reach, keep everything free, nothing locked, collect no data.
   `./gradlew assembleRustoreRelease` (RuStore APK).
 - Signing: `keystore.properties` in repo root (gitignored) points to the
   keystore in the owner's Documents folder. Play uses Play App Signing
-  (our key = upload key). NEVER commit keys. **versionCode: 17 is built (1.6.4, staged, not yet
-  uploaded); next free is 18.** Bump for every store update.
+  (our key = upload key). NEVER commit keys. **versionCode: 17 is built (1.6.4, staged 2026-08-16 with BOTH the
+  Slavonic and Russian-deuterocanon narration; not yet uploaded); next free
+  is 18.** Bump for every store update.
+  ★ **CHURCH SLAVONIC NARRATION FOLDS INTO 1.6.4 / code 17** (owner,
+  2026-08-12) — the Karl XII precedent: 1.6.4 has never been public, so it is
+  rebuilt in place rather than burning code 18. ⚠ CONSEQUENCES: the STAGED
+  `Hexapla-1.6.4-*.aab/.apk` artifacts are now STALE and must be rebuilt after
+  `audio_index_gen.json` is regenerated; the donation grep must be re-run on
+  the new pair (0 on Play, 1 on RuStore); and 1.6.4's release notes need a
+  Slavonic-audio line in every locale per the release-notes standard.
 - ★ **TODO, DO IN THE NEXT BUILD** (owner asked 2026-08-05, deliberately
   deferred past 1.6.3 because its artifacts were already built and verified):
   replace the **25 deprecated `Locale("xx")` call sites in `Bible.kt`** — the
@@ -64,14 +72,30 @@ and every ⚠ landmine moved intact.
 | touching a Bible asset — corruption, psalm titles, markup | `docs/ASSET_DEFECTS.md` |
 | renders, GPU contention, the recycle and keepalive | `docs/NARRATION.md` |
 | what shipped when, and why a behaviour changed | `docs/RELEASE_HISTORY.md` |
-| what is happening right now | the newest `SESSION_HANDOFF_*.md` |
+| what is happening right now | **`SESSION_HANDOFF_2026-08-15.md`** — the ONE current handoff |
 | the Glen Persian campaign specifically | `research/GLEN_RESUME_NOW.md` |
+
+⚠⚠ **`research/`, `narration/`, `logs/` and every `SESSION_HANDOFF_*.md` are
+NOT IN THIS REPO.** They live in the sibling working directory
+**`C:\Projects\Hexapla-releases\`** — untracked on purpose (scans, renders and
+staged store artifacts are far too large to version). Paths written as
+`research/…` throughout this file and the topic docs are relative to THERE, not
+to the repo root. A session that greps the repo for them finds nothing and can
+conclude the campaign docs were lost; they were not. `logs/PAUSE_cu` etc. are
+`C:\Projects\Hexapla-releases\narration\logs\`.
 
 ▶ **Rule for future edits: this file holds only what is true NOW and needed
 OFTEN.** A completed record belongs in a topic doc. A ⚠ that can still bite
 belongs here or is pointed at from here — never silently dropped.
 
-## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-09.md first
+## ⚠ CURRENT STATE — read SESSION_HANDOFF_2026-08-15.md first
+
+★ **HANDOFFS WERE CONSOLIDATED 2026-08-14** (owner). There is now exactly ONE
+current handoff, **`SESSION_HANDOFF_2026-08-15.md`**, and it is self-contained.
+The 15 dated predecessors were MOVED (not deleted) to
+`C:\Projects\Hexapla-releases\handoff-archive\` — consult them only for the
+history of a decision, never for current state. Keep it to one file: when you
+write a new handoff, fold forward what is still live and archive the old one.
 
 ★ **GLEN PERSIAN OT SHIPPED 2026-08-09, versionCode 17 / 1.6.4** (APK staged at
 `Hexapla-1.6.4-rustore.apk`, NOT yet uploaded or device-checked). fa_martyn.json
@@ -99,7 +123,7 @@ evidence + the two corrections to the 08-09 write-up:
 transcribed verses while holding two on disk, and every per-chunk check passed
 it for three weeks. Run it before believing any completeness claim.
 
-## ⚠ SUPERSEDED — SESSION_HANDOFF_2026-08-04.md
+## ⚠ SUPERSEDED — (was SESSION_HANDOFF_2026-08-04.md, now in handoff-archive/)
 
 **1.6.3 (code 16) was UPLOADED to Play and RuStore on 2026-08-05** — 35
 translations in 30 languages, the Georgian Bakar and its UI locale, the
@@ -135,7 +159,13 @@ is always the **RuStore APK**, never the Play AAB.
   2026-08-05. Personal account, so production needs **12 testers × 14
   continuous days** — and the blocker has been the tester COUNT, not the
   clock: the countdown only advances on days with ≥12 opted-in testers.
-  ⚠ Re-check the tester count before assuming the clock is running.
+  ★ **THE 12th TESTER JOINED 2026-08-12 — the clock is running as of today**
+  (owner). Day 14 is **2026-08-25**, so production can be applied for on
+  **2026-08-26**. ⚠ CONTINUOUS: one day below 12 opted-in testers and the
+  count restarts, so do not let a tester opt out or uninstall before then.
+  ⚠ Read the real figure off the Play Console before acting on that date —
+  Play counts opted-in testers in its own timezone and has its own idea of
+  when day 1 was.
   IARC done (purchases answered NO — tip products deliberately not created
   so Brazil rates Livre; tips exist only in code). Target audience 13+, no
   ads/ad-ID/health. Third-party syndication: publish-all. Play App Signing.

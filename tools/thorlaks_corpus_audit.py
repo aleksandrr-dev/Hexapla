@@ -61,6 +61,16 @@ VERSE_RE = re.compile(r"^(\d+)\s+\S")
 # (book index, chapter) -> (printed count, note)
 KNOWN_DIVERGENCE = {
     (22, 9): (20, "printed v20 merges KJV 9:20 and 9:21 — one versemap run"),
+    # Galatians 5, found by the ch3-6 chunk 2026-08-11. KJV 5:25-26 are printed
+    # UNNUMBERED at the head of printed chapter VI, before its «1». So printed
+    # ch5 holds 24 numbered verses and ch6 holds 18 numbered verses plus an
+    # unnumbered prelude; total content is identical to the KJV.
+    # ⚠ THE TEXT IS PRESENT IN THE CHUNK FILE — as an unnumbered line under
+    # «## Galatians 6», which this parser cannot see BY DESIGN (a verse line
+    # must start with its numeral). Do not "fix" the chunk by inventing
+    # numerals the print does not have. The converter maps the prelude to
+    # KJV 5:25-26; see the divergence note in thorlaks_galatians.md.
+    (47, 5): (24, "KJV 5:25-26 printed unnumbered at the head of chapter VI"),
 }
 
 

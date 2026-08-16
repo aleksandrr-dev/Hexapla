@@ -192,6 +192,12 @@ _TYNDALE_RULES = [
 
 _WYCLIFFE_DICT = {
     **_TYNDALE_DICT,
+    # ⚠ "salm" is Wycliffe's spelling of "psalm" (230 verses + 10 "salmes").
+    # Whole-word + case-preserving application means the proper names Salmana,
+    # Salmon, Salmanasar, Salmona are DIFFERENT words and stay untouched —
+    # verified against the asset's full inventory 2026-08-16. Same defect
+    # class as Geneva's "heauen"->HORN; found by the 2026-08-04 audit.
+    "salm": "psalm", "salmes": "psalms",
     "sche": "she", "hir": "her", "hem": "them",
     "thei": "they", "thai": "they",
     "hise": "his", "youre": "your",
@@ -498,6 +504,15 @@ def normalize(text, dialect, use_generated=True):
     """
     if dialect not in _NORMALIZERS:
         return text
+    # ⚠ Wycliffe carries a stray backtick in 4,960 verses (13.7%) — an
+    # editorial supplied-word marker ("`crepynge beeste") that
+    # audit_asset_markup.py cannot see because a backtick is not a tag, and
+    # that no dictionary stage can fix because it GLUES ITSELF TO THE WORD:
+    # "`crepynge" is not a dictionary word, so every later stage skips it and
+    # TTS receives the raw marked form. Strip it FIRST, before any word-level
+    # stage runs. (2026-08-16, the render-blocking defect from the 08-04 audit.)
+    if dialect == "wycliffe":
+        text = text.replace("`", "")
     word_dict, rules = _NORMALIZERS[dialect]
     if dialect == "tyndale" and use_generated:
         # Roman numerals first (they are delimited by the full stops that later

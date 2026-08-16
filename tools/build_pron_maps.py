@@ -44,6 +44,24 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.path.insert(0, str(Path(__file__).parent))
 from archaic_english import normalize            # noqa: E402
+# ⚠⚠ EVERY normalize() call in this file MUST pass use_generated=False.
+# The generated pron_*.json maps are loaded INTO archaic_english at import,
+# so a default call sees this script's own previous output and drops every
+# word it already fixed: regeneration on 2026-08-16 silently collapsed
+# pron_wyc.json's words map from 2,584 entries to 432 while "succeeding".
+# Same failure mode documented for build_tyndale_pron.py in normalize()'s
+# docstring. If you add a normalize() call here, pass use_generated=False.
+#
+# ⚠⚠⚠ DO NOT REGENERATE THE SHIPPED pron ASSETS WITHOUT FIXING THIS FIRST:
+# this script keys the map on POST-normalize tokens, but Pronounce.kt applies
+# it to RAW verse text — the app has NO rule engine, only the map. Any word the
+# offline rules fix therefore silently vanishes from the map on regeneration
+# and the DEVICE voice regresses while the rendered voice stays correct.
+# Measured 2026-08-16: a use_generated=False regeneration of pron_gnv.json
+# dropped 496 keys that occur 11,185 times in the RAW Geneva text — including
+# dauid x1027 ("DOW-id"), gaue, fiue, couenant. The committed assets are the
+# good state; regeneration needs the derive pass rekeyed on RAW tokens (with
+# normalize used as the ORACLE for the replacement, not as a filter).
 
 ROOT = Path(__file__).resolve().parent.parent
 A = ROOT / "app/src/main/assets"
@@ -62,6 +80,9 @@ SETS = [
 # swaps and silent-e forms that the corroboration method misses because the
 # KJV spells the same word differently enough to score low.
 SHARED = {
+    # ⚠ Wycliffe's "psalm" (230 verses + plurals). In SHARED so a regeneration
+    # keeps it — it was hand-added to the shipped pron_wyc.json on 2026-08-16.
+    "salm": "psalm", "salmes": "psalms",
     "heauen": "heaven", "heauens": "heavens", "heauenly": "heavenly",
     "heuene": "heaven", "heuenes": "heavens", "heuenly": "heavenly",
     "heuenli": "heavenly", "heuen": "heaven", "heuenys": "heavens",
@@ -104,7 +125,7 @@ def derive(asset, dialect):
         for ci in range(min(len(tch), len(kch))):
             for vi in range(min(len(tch[ci]), len(kch[ci]))):
                 tw = re.findall(r"[A-Za-z]+",
-                                normalize(clean(tch[ci][vi]), dialect))
+                                normalize(clean(tch[ci][vi]), dialect, use_generated=False))
                 kraw = re.findall(r"[A-Za-z]+", clean(kch[ci][vi]))
                 for w in kraw:
                     kv[w.lower()] += 1
@@ -164,7 +185,7 @@ def coverage(asset, dialect, table):
     for bk in b:
         for ch in bk.get("chapters", []):
             for v in ch:
-                for w in re.findall(r"[A-Za-z]+", normalize(clean(v), dialect)):
+                for w in re.findall(r"[A-Za-z]+", normalize(clean(v), dialect, use_generated=False)):
                     lw = table.get(w.lower(), w.lower())
                     tot += 1
                     if lw not in known:

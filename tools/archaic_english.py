@@ -502,6 +502,31 @@ def normalize(text, dialect, use_generated=True):
     Returns:
         text with spellings normalized for modern TTS pronunciation
     """
+    # ⚠ YOUNG'S 1898 NEEDS NO SPELLING NORMALIZATION - its spelling is modern.
+    # What it needs is PUNCTUATION normalization, and it is the ONLY English
+    # asset that does. Measured over the four:
+    #     ylt  31,102 verses | em-dash 5,456 (17.5%) | backtick 7,085 (22.8%)
+    #     tyn / gnv / kjv                    0 (0.0%)            0 (0.0%)
+    # which is exactly why no earlier English render exercised this and why ylt
+    # shipped with `normalizer: None`.
+    #   . The BACKTICK is Young's OPENING QUOTE ("saith, `This is..."), the same
+    #     shape as the Wycliffe supplied-word marker handled below: it glues to
+    #     the following word, so no later stage can see it and TTS receives the
+    #     raw marked form.
+    #   . The EM-DASH is UNSPACED between words ("helper-as", "himself-unto",
+    #     "morning-day"), so the tokenizer meets one unknown glued token rather
+    #     than two words. Young uses it where modern English uses a comma, so
+    #     that is what it becomes.
+    # ⚠ These were caught BY EAR in the ylt pilot (Matthew 5), not by any
+    # screen: the render appended a spoken word that is not in the text - "pole"
+    # after v1, "nass" after "kindness" in v7, "accord" after "Sons of God" in
+    # v9. qa_narration.py passed the chapter with clean numbers, because a
+    # one-syllable insertion moves a five-second verse by ~0.3 s.
+    if dialect == "ylt":
+        text = text.replace("`", "")
+        text = re.sub(r"\s*—\s*", ", ", text)
+        return text
+
     if dialect not in _NORMALIZERS:
         return text
     # ⚠ Wycliffe carries a stray backtick in 4,960 verses (13.7%) — an

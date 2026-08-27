@@ -196,7 +196,8 @@ def check_chapter(lang, books, cfg, book_idx, ch_idx):
             status = "WARN"
 
     try:
-        offsets = json.load(open(jsn))["offsets"]
+        side = json.load(open(jsn))
+        offsets = side["offsets"]
     except Exception as e:
         return "FAIL", [f"FAIL unreadable json: {e}"], {}
 
@@ -273,11 +274,20 @@ def check_chapter(lang, books, cfg, book_idx, ch_idx):
                      f"in ENGLISH: {t[:60]!r}")
                 break
 
+    # ⚠ SUBTRACT THE EDGE PADDING BEFORE MEASURING PACE. Chatterbox verses are
+    # padded to a fixed lead/trail so the rhythm matches the kokoro sets (owner,
+    # 2026-08-21: "starts and stops awkwardly"), and the figure is recorded per
+    # chapter in the sidecar. It is a CONSTANT per verse, so it distorts short
+    # verses far more than long ones: the first padded Matthew 5 measured a
+    # 12.2x pace spread and FAILED this check while sounding correct.
+    # Read it from the sidecar rather than hardcoding it - the constant lives in
+    # narrate.py and would drift the moment LEAD_MS or TRAIL_MS is tuned.
+    pad = side.get("edge_pad_ms", 0)
     rates = []
     if dur and len(offsets) == len(raw):
         for i in range(len(offsets)):
             end = (offsets[i + 1] - SILENCE_MS) if i + 1 < len(offsets) else dur * 1000
-            ms = end - offsets[i]
+            ms = end - offsets[i] - pad
             if len(texts[i]) >= MIN_CHARS and ms > 0:
                 rates.append(len(texts[i]) / (ms / 1000))
     # Vocoder-artifact scan. Skipped unless librosa is importable — the QA tool

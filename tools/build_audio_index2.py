@@ -23,7 +23,36 @@ NAMES = [
     "1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon",
     "Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation",
 ]
+
+# ⚠⚠ THE APP GRID IS 83 SLOTS, NOT 66. `NAMES` above is the Protestant canon
+# only, and for years both this script and v3 looped `enumerate(NAMES)` — so a
+# rebuild covered books 0-65 and nothing else. LibriVox DOES have complete KJV
+# apocrypha recordings, and six of them are in the shipped index (68 Tobit,
+# 69 Judith, 72 Baruch, 74 Prayer of Manasses, 75 1 Maccabees, 76 2 Maccabees);
+# a canon-only rebuild dropped all six while printing "indexed: N/66 books" and
+# exiting 0. This is the `66` bug, and it has now been found in seven tools.
+# ⚠ Slots 66, 67, 70, 71, 78-81 are deliberately ABSENT here: LibriVox never
+# recorded them, which is why we rendered them ourselves. Adding them would
+# only make the search waste requests failing to find them.
+# ⚠ Slots 73, 77, 82 are empty in en_kjv.json (no text at all).
+APOCRYPHA_NAMES = {
+    68: "Tobit",
+    69: "Judith",
+    72: "Baruch",
+    74: "Prayer of Manasses",
+    75: "1 Maccabees",
+    76: "2 Maccabees",
+}
+
+# Book index -> search name, for EVERY slot this tool may discover.
+# Both v2 and v3 iterate this; neither may go back to `enumerate(NAMES)`.
+BOOKS = dict(enumerate(NAMES))
+BOOKS.update(APOCRYPHA_NAMES)
+
 ALIASES = {
+    "1 Maccabees": ["1 maccabees", "1 machabees", "first maccabees", "1maccabees"],
+    "2 Maccabees": ["2 maccabees", "2 machabees", "second maccabees", "2maccabees"],
+    "Prayer of Manasses": ["prayer of manasses", "prayer of manasseh", "manasses"],
     "Song of Solomon": ["song of solomon", "song of songs", "canticles"],
     "Psalms": ["psalms", "psalm"],
     "1 Kings": ["1 kings", "1 king", "1kings", "1king"],
@@ -108,11 +137,42 @@ def covers(sections, expected):
             return False
     return True
 
+def merge_into_existing(found_index, out_path):
+    """Overlay newly-discovered books onto the shipped index, never clobbering it.
+
+    ⚠⚠ THIS FUNCTION EXISTS BECAUSE THE OLD `json.dump(index)` WAS A LOADED GUN.
+    `audio_index.json` is NOT purely what this script discovers. Measured
+    2026-08-17, the shipped file holds 80 non-empty books:
+        50 LibriVox books (this script's output), AND
+        30 books of OUR OWN renders, added by a different path and kept here
+           deliberately as an offline fallback for the generated index.
+    A plain overwrite therefore destroyed 36 of 80 books — our 30, plus the 6
+    apocrypha LibriVox books missing from NAMES — and reported success.
+
+    Rule: a book this run did not RESOLVE is left exactly as it was. Only books
+    actually found are replaced. Deleting an entry is never this tool's job.
+    """
+    try:
+        with open(out_path, encoding="utf-8") as f:
+            existing = json.load(f)
+    except FileNotFoundError:
+        existing = {}
+    merged = dict(existing)
+    merged.update(found_index)
+    kept = sorted(set(existing) - set(found_index), key=int)
+    if kept:
+        print(f"kept {len(kept)} pre-existing book(s) this run did not resolve: "
+              f"{','.join(kept)}")
+    return merged
+
+
 def main():
     kjv = json.load(open(APP_KJV, encoding="utf-8"))
-    expected = {i: len(kjv[i]["chapters"]) for i in range(66)}
+    if isinstance(kjv, dict):
+        kjv = kjv["books"]
+    expected = {i: len(kjv[i]["chapters"]) for i in BOOKS}
     index = {}
-    for i, book in enumerate(NAMES):
+    for i, book in sorted(BOOKS.items()):
         want = expected[i]
         found = None
         for item in search_items(book):
@@ -128,9 +188,11 @@ def main():
             print(f"OK  {book}: {len(found)} sections")
         else:
             print(f"--  {book}: no complete item")
+    merged = merge_into_existing(index, OUT)
     with open(OUT, "w", encoding="utf-8") as f:
-        json.dump(index, f, separators=(",", ":"))
-    print(f"\nindexed: {len(index)}/66 books")
+        json.dump(merged, f, separators=(",", ":"))
+    print(f"\nindexed: {len(index)}/{len(BOOKS)} books searched; "
+          f"{len(merged)} in the written index")
 
 if __name__ == "__main__":
     main()

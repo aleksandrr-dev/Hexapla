@@ -41,6 +41,39 @@ APP = "https://aleksandrr-dev.github.io/Hexapla/"
 # Per-set metadata. Keep descriptions factual: what the text is, that the
 # reading is synthetic, and that everything is free.
 SETS = {
+    # ⚠⚠ `en` IS THE KJV SET, AND IT IS THE ODD ONE OUT IN THREE WAYS. It was
+    # missing from this table entirely until 2026-08-21, which is why the
+    # upload chain died two seconds in with rc=1 on its first step.
+    #   1. FLAT NAMES. The item has held 245 `kjv_<book>_<chapter>.ogg` files at
+    #      its root since before this uploader existed, and
+    #      build_audio_index_gen.py addresses them with the same template. See
+    #      remote_name().
+    #   2. IT IS AN EXTENSION, NOT A NEW SET. 245 chapters are already public
+    #      (22 LibriVox-gap books + the apocrypha); this adds the 247 rendered
+    #      for the 13 books whose LibriVox items vanished from archive.org in
+    #      August 2026. checksum=True leaves the existing 245 alone, so the
+    #      derive stays small - provided remote_name() is used on BOTH sides of
+    #      the new/replaced comparison.
+    #   3. IT IS PERMANENTLY PARTIAL. 492 chapters against a 1,189-chapter
+    #      canon is the INTENDED end state: LibriVox covers the rest and the app
+    #      merges the two indexes. So `title_partial` here must not read like an
+    #      unfinished job - PROGRESS_NOTE's "still being produced" would be a
+    #      false statement about a set that is doing exactly what it should.
+    "en": {
+        "asset": "en_kjv.json",
+        "identifier": "hexapla-audio-en",
+        "flat": "kjv_{b}_{c}.ogg",
+        # Complete for its purpose, not a canon in progress — see SCOPE_NOTE.
+        "scope_note": True,
+        "title": "The King James Bible (1611) — narrated audio for the books LibriVox does not cover",
+        "title_partial": "The King James Bible (1611) — narrated audio for the books LibriVox does not cover",
+        "translation": "King James Version, 1611",
+        "language": "eng",
+        "voice": "Kokoro text-to-speech (Apache-2.0), voice am_adam",
+        "subject": ["bible", "audiobook", "king james version", "kjv",
+                    "public domain", "scripture", "christianity",
+                    "text to speech", "hexapla", "audio bible"],
+    },
     "wbt": {
         "asset": "en_webster.json",
         "identifier": "hexapla-audio-webster-1833",
@@ -62,6 +95,27 @@ SETS = {
         "subject": ["bible", "audiobook", "geneva bible", "public domain",
                     "scripture", "christianity", "text to speech",
                     "hexapla", "audio bible"],
+    },
+    # wyc — kokoro, so NOT cloned and NOT watermarked (Perth is Chatterbox's).
+    # ⚠ The voice string must say what is unusual here, because a listener
+    # hearing 1395 pronunciation from a 2026 synthesiser deserves to know it is
+    # a RECONSTRUCTION and whose: the phoneme mapping is this project's
+    # (tools/me_phonemes.py), not a scholarly edition's, and reasonable
+    # reconstructions differ. Do not shorten this to "voice am_adam".
+    "wyc": {
+        "asset": "enm_wycliffe.json",
+        "identifier": "hexapla-audio-wycliffe-1395",
+        "title": "The Wycliffe Bible (1395) — complete audio narration in reconstructed Middle English",
+        "translation": "Wycliffe Bible, later version, 1395",
+        "language": "enm",
+        "voice": ("Kokoro text-to-speech (Apache-2.0), voice am_adam, driven "
+                  "from IPA rather than English spelling: the reading follows "
+                  "a reconstruction of late-14th-century Middle English "
+                  "pronunciation made for this project, so it is an "
+                  "interpretation and not the only defensible one"),
+        "subject": ["bible", "audiobook", "wycliffe bible", "middle english",
+                    "public domain", "scripture", "christianity",
+                    "text to speech", "hexapla", "audio bible"],
     },
     # ⚠ NAME POLICY for sv/ru: BOTH are cloned from real people's consented
     # reference recordings (sv = the owner's friend, ru = the owner). The
@@ -110,6 +164,39 @@ SETS = {
                     "елизаветинская библия", "библия", "public domain",
                     "scripture", "christianity", "text to speech", "hexapla",
                     "audio bible"],
+    },
+    # William Tyndale, 1525/1531. Narration folder "tyn", app id "tyn".
+    # ⚠⚠ PARTIAL BY NATURE, NOT BY PROGRESS — and the honesty gate handles it
+    # correctly WITHOUT a special case, which is worth understanding before
+    # anyone "fixes" it. Tyndale never translated the whole Bible; en_tyndale
+    # carries 33 non-empty books (Pentateuch, Jonah, NT) and its other 33 canon
+    # slots have a ZERO-LENGTH chapters list. canon_chapters() therefore returns
+    # **451**, not 1189, so a full render gives have_canon == expected and
+    # is_partial is False. The set is COMPLETE against its own text while
+    # covering half the canon.
+    # ▶ The title still NAMES the scope, because "complete audio narration" on
+    #   its own would imply a whole Bible to anyone reading the item page.
+    # ⚠ title_partial is kept anyway: if a chapter is ever lost, the gate must
+    #   have an honest title to fall back to rather than hard-exiting.
+    # ⚠ The voice is CLONED FROM A CONSENTED RECORDING — "cloned": True is
+    #   required, and the no-personal-names rule applies: credit the consent,
+    #   never the person.
+    "tyn": {
+        "asset": "en_tyndale.json",
+        "identifier": "hexapla-audio-tyndale-1525",
+        "title": "Tyndale's Bible (1525/1531) — complete audio narration of "
+                 "the Pentateuch, Jonah and the New Testament",
+        "title_partial": "Tyndale's Bible (1525/1531) — audio narration "
+                         "(in progress)",
+        "translation": "Tyndale Bible, 1525/1531 (Pentateuch, Jonah, New Testament)",
+        "language": "eng",
+        "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
+                 "from a consented reference recording",
+        "cloned": True,
+        "watermark": True,   # Chatterbox embeds Resemble's Perth watermark
+        "subject": ["bible", "audiobook", "tyndale bible", "early modern english",
+                    "public domain", "scripture", "christianity",
+                    "text to speech", "hexapla", "audio bible"],
     },
     "ru": {
         "asset": "ru_synodal.json",
@@ -181,6 +268,20 @@ def canon_ogg_count(src, asset_name):
                 n += 1
     return n
 
+# ⚠ A SET CAN BE PARTIAL AGAINST THE CANON AND STILL BE FINISHED. `en` is the
+# KJV gap-refill: 492 chapters covering the books LibriVox does not, with
+# LibriVox supplying the rest and the app merging both indexes. Nothing more is
+# coming, so PROGRESS_NOTE's "still being produced ... added to this item as
+# they are rendered" would be a plain falsehood on its item page - the same
+# class of error as Karl XII sitting publicly at "(in progress)" after it
+# finished. A set says so with `scope_note`, and then it is described by its
+# PURPOSE rather than by a fraction of a canon it was never meant to cover.
+SCOPE_NOTE = """
+<p><b>This item covers {n_chapters} chapters: the books of the King James Bible
+that LibriVox's public-domain recordings do not include.</b> It is complete for
+that purpose and is not waiting on further chapters.</p>
+"""
+
 DESCRIPTION = """<p>{opening} chapter-by-chapter audio narration of
 <b>{translation}</b>, produced for <a href="{app}">Hexapla</a>, a free and
 offline parallel Bible app for Android.</p>
@@ -190,7 +291,7 @@ reading is <b>synthetic speech</b>, generated with {voice} — it is not a human
 performance.{provenance}</p>
 
 <p>Files are one Ogg audio file per chapter, laid out as
-<code>&lt;book&gt;/&lt;chapter&gt;.ogg</code> using the standard 66-book
+<code>{layout}</code> using the standard 66-book
 Protestant order with zero-based book numbering (0 = Genesis, 65 =
 Revelation). Each audio file has a matching <code>.json</code> sidecar
 listing the start time in milliseconds of every verse, so players can
@@ -230,6 +331,30 @@ be present later. Nothing already uploaded changes.</p>
 """
 
 
+def remote_name(rel_path, meta_src):
+    """Local <book>/<chapter><suffix> -> the name this item actually uses.
+
+    Most sets keep the directory layout. `en` does NOT: the KJV item
+    `hexapla-audio-en` has held 245 files named `kjv_<book>_<chapter>.ogg` at
+    the root since long before this uploader existed, and
+    build_audio_index_gen.py builds its URLs from that same "flat" template.
+    Uploading `<book>/<chapter>.ogg` there would publish 247 chapters that the
+    index cannot address, beside 245 that it can - so the set would look
+    complete and be half unreachable.
+
+    ⚠ The suffix is preserved verbatim so `.w.json` survives: Audio.kt derives
+    the word-sidecar URL as `oggUrl.removeSuffix(".ogg") + ".w.json"`, which for
+    this item means `kjv_<b>_<c>.w.json` and nothing else.
+    """
+    rel = str(rel_path).replace("\\", "/")
+    flat = meta_src.get("flat")
+    if not flat:
+        return rel
+    book, tail = rel.split("/", 1)
+    chapter, _, suffix = tail.partition(".")
+    return flat.format(b=book, c=chapter).rsplit(".", 1)[0] + "." + suffix
+
+
 def build(set_key, dry_run=False):
     meta_src = SETS[set_key]
     src = NARRATION / set_key
@@ -237,7 +362,14 @@ def build(set_key, dry_run=False):
         sys.exit(f"no narration directory at {src}")
 
     oggs = sorted(src.rglob("*.ogg"))
-    jsons = sorted(src.rglob("*.json"))
+    # ⚠ EXCLUDE `.eos.json`. Those are narrate.py's per-chapter QA
+    # diagnostics (`long_tail` flags etc.), not app data — every other
+    # tool that walks a set already skips them (offset_drift,
+    # repair_offsets, tail_hallucinations, zero_duration_verses). This
+    # walk did not, so a tyn upload would have published 451 internal
+    # diagnostic files to a public item and paid for their derives.
+    jsons = sorted(f for f in src.rglob("*.json")
+                   if not f.name.endswith(".eos.json"))
     if not oggs:
         sys.exit(f"no .ogg files under {src}")
     # Every chapter must carry its offsets sidecar, or verse highlighting
@@ -277,19 +409,31 @@ def build(set_key, dry_run=False):
                   "is machine-generated and placed in the public domain.",
         "originalurl": APP,
         "description": DESCRIPTION.format(
-            opening="An in-progress" if is_partial else "A complete",
-            progress=PROGRESS_NOTE.format(n_chapters=len(oggs))
-                     if is_partial else "",
+            opening=("A complete" if not is_partial
+                     else "A" if meta_src.get("scope_note")
+                     else "An in-progress"),
+            progress=(SCOPE_NOTE.format(n_chapters=len(oggs))
+                      if meta_src.get("scope_note")
+                      else PROGRESS_NOTE.format(n_chapters=len(oggs))
+                      if is_partial else ""),
             translation=meta_src["translation"], app=APP,
             provenance=(PROVENANCE_CLONED if meta_src.get("cloned")
                         else PROVENANCE_STOCK)
                        + (WATERMARK_NOTE if meta_src.get("watermark") else ""),
-            voice=meta_src["voice"], n_chapters=len(oggs)),
+            voice=meta_src["voice"], n_chapters=len(oggs),
+            # ⚠ TELL THE TRUTH ABOUT THE LAYOUT. A flat item does NOT use
+            # <book>/<chapter>.ogg, and the old wording said it did — a public
+            # false statement, and one that would send anyone reading the item
+            # page looking for directories that are not there.
+            layout=(meta_src["flat"].replace("{b}", "&lt;book&gt;")
+                                    .replace("{c}", "&lt;chapter&gt;")
+                    if meta_src.get("flat")
+                    else "&lt;book&gt;/&lt;chapter&gt;.ogg")),
     }
 
     files = {}
     for f in oggs + jsons:
-        files[str(f.relative_to(src)).replace("\\", "/")] = str(f)
+        files[remote_name(f.relative_to(src), meta_src)] = str(f)
     cover = NARRATION / "cover.jpg"
     if cover.exists():
         files["cover.jpg"] = str(cover)
@@ -299,11 +443,79 @@ def build(set_key, dry_run=False):
     print(f"canon     : {have_canon}/{expected}")
     print(f"size      : {total_bytes / 1e9:.2f} GB")
     print(f"metadata  : {json.dumps(metadata, ensure_ascii=False, indent=1)}")
+    from internetarchive import upload, get_item
+
+    # ⚠⚠ DECIDE THE DERIVE FROM WHAT THIS RUN ACTUALLY CHANGES — see the long
+    # note at the derive call. Classify BEFORE uploading, while the item still
+    # shows its pre-run state.
+    _pre = get_item(meta_src["identifier"])
+    _remote = {f["name"]: f.get("md5") for f in _pre.files} if _pre.exists else {}
+
+    def _md5(path):
+        import hashlib
+        h = hashlib.md5()
+        with open(path, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        return h.hexdigest()
+
+    audio_new, audio_replaced = [], []
+    for _f in oggs:
+        # ⚠ MUST use the same mapping as the upload itself. With a flat set,
+        # comparing "<b>/<c>.ogg" against an item that holds "kjv_<b>_<c>.ogg"
+        # makes every existing file look NEW, which queues a full derive over
+        # 245 chapters that did not change.
+        _name = remote_name(_f.relative_to(src), meta_src)
+        if _name not in _remote:
+            audio_new.append(_name)
+        elif _remote[_name] and _md5(_f) != _remote[_name]:
+            audio_replaced.append(_name)
+    print(f"audio      : {len(audio_new)} new, {len(audio_replaced)} replaced, "
+          f"{len(oggs) - len(audio_new) - len(audio_replaced)} unchanged")
+
+    # A task already RUNNING on this item holds everything queued behind it —
+    # archive.org works an item's tasks in order. That is how one stray derive
+    # blocked the whole account for three days. Warn, but do not refuse: the
+    # upload itself is still correct and resumable.
+    try:
+        from internetarchive import get_session
+        _mine = list(get_session().get_my_catalog())
+        _here = [x for x in _mine if x.identifier == meta_src["identifier"]]
+        _run = [x for x in _here if x.color == "blue"]
+        _q = [x for x in _here if x.color == "green"]
+        if _run or _q:
+            print(f"⚠ item queue : {len(_run)} running, {len(_q)} queued "
+                  f"on this item ALREADY")
+            for x in _run:
+                print(f"    running since {x.submittime}  {x.cmd}  "
+                      f"task {x.task_id}")
+            print("  New uploads queue BEHIND these. If a derive has been "
+                  "running for days, that is the blocker.")
+        if len(_mine) >= 150:
+            print(f"⚠ account queue: {len(_mine)} tasks — at or over the "
+                  f"per-access-key ration of 150. Uploads will be refused "
+                  f"until it drains.")
+    except Exception as e:                                     # noqa: BLE001
+        print(f"  (could not read the task catalog: {type(e).__name__})")
+
+
+    # State the derive decision HERE, where a dry run can still show it. An
+    # unnecessary remove_derived rebuild is the most expensive mistake this
+    # script can make - it blocked the whole account for three days - so it has
+    # to be visible BEFORE anyone commits to the run, not only in hindsight.
+    if audio_replaced:
+        print(f"derive plan: remove_derived=* ({len(audio_replaced)} replaced "
+              f"originals) - EXPENSIVE, rebuilds every derivative on the item")
+    elif audio_new:
+        print(f"derive plan: plain derive ({len(audio_new)} new chapters)")
+    else:
+        print("derive plan: NONE - no audio added or replaced")
+
     if dry_run:
         print("\nDRY RUN — nothing uploaded.")
         return
 
-    from internetarchive import upload
+
     # checksum=True skips files already on the item whose MD5 matches, which
     # makes a re-upload INCREMENTAL. This matters for any set published in
     # stages: Karl XII was uploaded partial at ~940 chapters, so finishing it
@@ -354,7 +566,6 @@ def build(set_key, dry_run=False):
     # Verified afterwards rather than trusted: a stale "in progress" title on a
     # finished set is a public false claim, and it is the one thing here that
     # no amount of successful file uploads would reveal.
-    from internetarchive import get_item
     item = get_item(meta_src["identifier"])
     r = item.modify_metadata(metadata)
     code = getattr(r, "status_code", None)
@@ -381,9 +592,41 @@ def build(set_key, dry_run=False):
     # this point, and this runs unattended from finish_sidecars.py. A derive
     # that cannot be queued must not turn a good upload into a failed run —
     # it must be LOUD instead, so the next session re-submits it by hand.
+    # ⚠⚠⚠ THE DERIVE IS NOW CONDITIONAL. READ THIS BEFORE MAKING IT
+    # UNCONDITIONAL AGAIN — an unconditional `remove_derived="*"` is what
+    # jammed the account for three days (2026-08-15 to 08-18).
+    # WHAT HAPPENED: a SIDECAR-ONLY run (uploading .w.json word timings, which
+    # have no derivatives at all and change no audio) still fired a full
+    # remove_derived rebuild of all 1,362 cu originals. That derive was still
+    # RUNNING three days later; archive.org works an item's tasks IN ORDER, so
+    # the 150 archive.php tasks from the next cu run queued behind it, and 150
+    # is the per-access-key ration — so every other upload, on every other
+    # item, was blocked too. gnv had the same thing running for six days.
+    # THE RULE:
+    #   audio REPLACED  -> derive(remove_derived="*")  the ONLY case that needs
+    #                      it: stale mp3s must be torn down and rebuilt, or the
+    #                      web player keeps serving the old take (the Geneva
+    #                      "God created the HORN" incident, 2026-08-12).
+    #   audio ADDED     -> derive()  plain; archive.org derives what lacks
+    #                      derivatives and leaves everything else alone.
+    #   neither         -> NO DERIVE. Sidecars and metadata produce no
+    #                      derivatives; queuing one is pure cost and is exactly
+    #                      the mistake above.
+    # `queue_derive=False` on upload() is CORRECT and stays: it suppresses the
+    # per-FILE derive tasks (1,362 of them). It was never the bug — this was.
     try:
-        item.derive(remove_derived="*", reduced_priority=True)
-        print("derive queued (remove_derived=*)")
+        if audio_replaced:
+            item.derive(remove_derived="*", reduced_priority=True)
+            print(f"derive queued (remove_derived=*) — {len(audio_replaced)} "
+                  f"replaced originals have stale derivatives")
+        elif audio_new:
+            item.derive(reduced_priority=True)
+            print(f"derive queued (plain) — {len(audio_new)} new chapters")
+        else:
+            print("no derive queued: no audio was added or replaced. "
+                  "Sidecars and metadata have no derivatives, and an "
+                  "unnecessary remove_derived rebuild blocks the item's "
+                  "queue for days.")
     except Exception as e:                                    # noqa: BLE001
         print(f"\n⚠ DERIVE NOT QUEUED: {e}")
         print("  Files and metadata ARE correct; only archive.org's own")

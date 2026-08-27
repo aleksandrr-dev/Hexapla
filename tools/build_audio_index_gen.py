@@ -120,6 +120,28 @@ SETS = [
     #   book sets are disjoint, verified 2026-08-16.
     # ⚠ "flat" is required: this item names files kjv_<book>_<chapter>.ogg at
     #   the root, not <book>/<chapter>.ogg.
+    # William Tyndale, 1525/1531. Render + word alignment COMPLETE 2026-08-20
+    # (451/451 oggs, 451 offsets, 451 .w.json, 0 failed).
+    # ⚠⚠ "partial": False IS CORRECT AND IS NOT A CLAIM ABOUT THE CANON.
+    #   Tyndale never translated the whole Bible: en_tyndale has 33 non-empty
+    #   books (Pentateuch, Jonah, NT) totalling 451 chapters, and its other 33
+    #   canon slots hold a ZERO-LENGTH chapters list. The completeness guard
+    #   counts NON-EMPTY books, so it asks for 451 and gets 451. Setting
+    #   partial: True here would silently permit a holed set later.
+    # ⚠ NO "apocrypha" flag: every book index is 0-65, so the canon slice
+    #   [:CANON_BOOKS] already reaches all of them. Adding the flag would be
+    #   harmless today but would misdescribe the set.
+    # ⚠ NO "flat": this item uses the standard <book>/<chapter>.ogg layout.
+    # ⛔⛔ NOT YET UPLOADED. The item `hexapla-audio-tyndale-1525` DOES NOT
+    #   EXIST as of 2026-08-20 — the upload is queued behind the cu derive (see
+    #   the handoff §1). This entry is correct and validated against the local
+    #   render, but **regenerating audio_index_gen.json with it and shipping a
+    #   build before the upload lands would point every Tyndale chapter at a
+    #   404**, and the app would silently fall back to TTS. Activate this only
+    #   after upload_narration.py has run for tyn AND the live item has been
+    #   re-read. Same discipline as gnv/kxii on 2026-08-01.
+    {"tid": "tyn", "dir": "tyn", "asset": "en_tyndale.json",
+     "item": "hexapla-audio-tyndale-1525", "partial": False},
     {"tid": "kjv", "dir": "en", "asset": "en_kjv.json",
      "item": "hexapla-audio-en", "partial": True,
      "apocrypha": True, "flat": "kjv_{b}_{c}.ogg"},

@@ -74,6 +74,37 @@ SETS = {
     "tyn":     {"dir": "tyn", "asset": "en_tyndale.json",  "lang": "tyn",        "script": "latin"},
     "syn":     {"dir": "ru",  "asset": "ru_synodal.json",  "lang": "ru",         "script": "cyrillic"},
     "csl":     {"dir": "cu",  "asset": "cu_elizabeth.json","lang": "cu",         "script": "cyrillic"},
+    # ⚠⚠ THE KJV SET WAS MISSING FROM THIS TABLE ENTIRELY UNTIL 2026-08-17, so
+    # our own 245 KJV chapters (22 LibriVox-gap + 114 apocrypha + the rest)
+    # could never be aligned — `--set` simply had no value that reached them.
+    # Symptom on device: Sirach followed by VERSE while every other generated
+    # set followed by WORD, with nothing anywhere reporting an error. The
+    # `hexapla-audio-en` item carried 245 oggs and 0 .w.json.
+    # ⚠ This is NOT the range(min(66, …)) bug (fixed below) — it is the same
+    # family: a missing entry, like a canon-only loop, fails by producing
+    # nothing while every command that WAS run still exits 0.
+    # ⚠ dir "en" holds the standard <book>/<chapter>.ogg layout; only the
+    # ARCHIVE.ORG item is flat (kjv_<book>_<ch>.ogg), which is why
+    # build_audio_index_gen.py needs its `flat` option and this table does not.
+    "kjv":     {"dir": "en",  "asset": "en_kjv.json",      "lang": "en",         "script": "latin"},
+    # ⚠⚠ wyc IS THE ONLY SET WHOSE AUDIO WAS NOT RENDERED FROM GRAPHEMES.
+    # narrate.py gives it `"ipa": "middle_english"`, so me_phonemes.to_ipa
+    # produced the phoneme string and kokoro's G2P was bypassed entirely — the
+    # voice speaks RECONSTRUCTED 1395 pronunciation. MMS_FA, meanwhile, aligns
+    # audio against SPELLING. For every other set those two agree closely; here
+    # they do not, and nothing in this file can make them agree.
+    # ▶ So DO NOT trust a clean exit on this set. Probe one chapter with
+    #   `--book 0 --chapter 0 --report` and read the null/unmapped counts before
+    #   committing a full sweep: a set that aligns badly emits verses as null
+    #   (by design — see the per-verse self-check) and the app then falls back
+    #   to verse-level highlighting, which is exactly the outcome word-level
+    #   alignment exists to avoid. A high null rate means this entry needs a
+    #   phoneme-aware path, not a longer run.
+    "wyc":     {"dir": "wyc", "asset": "enm_wycliffe.json","lang": "wyc",        "script": "latin"},
+    # ⚠ ylt WAS MISSING TOO (added 2026-08-21) - the same omission as kjv above
+    # and as the two render screens and the supervisor's two maps. A set that is
+    # not in a table does not fail loudly; it becomes unreachable.
+    "ylt":     {"dir": "ylt", "asset": "en_ylt.json",      "lang": "ylt",        "script": "latin"},
 }
 
 MARGIN_NOTE = re.compile(r"\{[^{}]*:[^{}]*\}")
@@ -209,7 +240,27 @@ class Aligner:
         with torch.inference_mode():
             emission, _ = self.model(waveform.unsqueeze(0).to(self.device))
             targets = torch.tensor([tokens], dtype=torch.int32, device=self.device)
-            aligned, scores = AF.forced_align(emission, targets, blank=0)
+            try:
+                aligned, scores = AF.forced_align(emission, targets, blank=0)
+            except RuntimeError:
+                # ⚠⚠ CTC CANNOT ALIGN MORE TARGET TOKENS THAN IT HAS FRAMES, and
+                # torchaudio raises rather than returning — so ONE bad verse used
+                # to kill the WHOLE SWEEP. Symptom seen 2026-08-20 on tyn 42/15:
+                #   "targets length is too long for CTC. Found log_probs length:
+                #    114, targets length: 124"
+                # 114 frames at MMS_FA's 20 ms = 2.28 s of audio for 124 characters
+                # (~54 chars/s, about 4x real speech), i.e. the RENDER truncated
+                # that verse. The supervisor then restarted the sweep every 10 min,
+                # it hit the same chapter, and it died again — **114 chapters sat
+                # unaligned for 80 minutes with a ticking log and a live
+                # supervisor.** A crash loop looks exactly like slow progress.
+                # This is NOT a reason to widen the alignment: a verse whose audio
+                # is too short for its text is a DEFECTIVE RENDER, and the honest
+                # outcome is the null that already exists here — the verse degrades
+                # to verse-level highlighting and the chapter still aligns.
+                # ▶ The real defect is upstream. Find such verses with
+                #   tools/tyn_short_verses.py, and RE-RENDER them.
+                return None
         # merge_tokens collapses the per-frame labels into one span per TARGET
         # token, in target order — so span index i is tokens[i]. Doing this by
         # hand (counting non-blank runs) miscounts legitimately repeated

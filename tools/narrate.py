@@ -271,13 +271,49 @@ LANG_CONFIG = {
         "default_books": None,
         "normalizer": "wycliffe",
     },
+    # ★ SWITCHED TO THE OWNER'S VOICE 2026-08-21, on his pick from the round-2
+    # ear test ("the voice at ref_K_dfneq_long sounds great, we can use that").
+    #   PREVIOUS (kept for a quick revert): engine "kokoro", voice "am_adam",
+    #   no language_id/cfg_weight/exaggeration.
+    # ⚠ THE REFERENCE IS DENOISED, and that is not cosmetic. It is cut from a
+    # recording made beside a bonfire — speech -28.7 dBFS over a continuous
+    # -43.7 dBFS bed, ~15 dB SNR, with no clean stretch anywhere in the two
+    # minutes to cut from. Cloning a raw cut puts that bed into EVERY rendered
+    # verse: measured over three seeds, a raw reference yields a clone floor
+    # 35.9 dB below its own speech (audible on headphones) against 54.7 dB for
+    # the scrubbed one. Mixing 20-35% of the original back in - tried, on the
+    # theory that it protects timbre - restores the fire and buys 3 dB. Do not
+    # re-try it.
+    #   PIPELINE: DeepFilterNet3, then a MEASURED corrective EQ (+3.8 dB at
+    #   3-6 kHz, +4.0 at 6-12 kHz, +6 capped at 12-16.5 kHz, flat below,
+    #   anchored to the 300 Hz-3 kHz core), because the scrub's cost is all at
+    #   the top and a scrubbed-flat clip stopped sounding like him. Full
+    #   record, scripts and the rejected variants:
+    #   narration/_ylt_voice_candidates/README.md.
+    # ⚠ Its RMS is -25.5 dB against _en_ref_kjv.wav's -19.8 - that is a crest
+    # factor of 24 dB vs 19 dB, i.e. a more dynamic reading, NOT a level error.
+    # Do not "fix" it with compression; Chatterbox clones whatever dynamics the
+    # reference has.
+    # ⚠⚠ THIS MAKES ylt A **GPU** RENDER (chatterbox, ~4 GB, in-process model),
+    # with the same consequences recorded for wyc above:
+    #   . it must NOT share the 8 GB card with a live CosyVoice render;
+    #   . its supervisor needs the 75-minute RECYCLE, not revive-only -
+    #     in-process engines decay with process age, kokoro ones do not;
+    #   . it runs from .chatterbox_venv, not .kokoro_venv.
+    # Nothing was rendered in am_adam before the switch, so unlike wyc there is
+    # no quarantine to do - but if that ever changes, quarantine rather than
+    # mix voices inside one translation.
     "ylt": {
         "asset": "en_ylt.json",
-        "engine": "kokoro",
-        "voice": "am_adam",
+        "engine": "chatterbox",
+        "voice": str(OUTPUT / "_en_ref_ylt.wav"),
+        "language_id": "en",
+        "cfg_weight": 0.5,
+        "exaggeration": 1.0,
         "strip_notes": True,
         "default_books": None,
-        "normalizer": None,
+        # Punctuation only - Young's spelling is modern. See archaic_english.
+        "normalizer": "ylt",
     },
     "ru": {
         "asset": "ru_synodal.json",
@@ -675,7 +711,7 @@ def normalize_text(text, normalizer_name):
         # tools/audit_ru_stress.py. Do not use until the table is rebuilt.
         import ru_stress
         return strip_ru_variant_numbers(ru_stress.apply_stress(text))
-    if normalizer_name in ("geneva", "tyndale", "wycliffe"):
+    if normalizer_name in ("geneva", "tyndale", "wycliffe", "ylt"):
         import archaic_english
         return archaic_english.normalize(text, normalizer_name)
     return text
@@ -1014,8 +1050,43 @@ def _get_chatterbox():
     return _chatterbox_model
 
 
+# ★ VERSE-EDGE RHYTHM (owner, 2026-08-21: "starts and stops awkwardly").
+# MEASURED over the word timings of six finished sets - silence before the first
+# word and after the last, in ms:
+#     kokoro  wbt  lead 306 sd 20 | trail 715 sd 36
+#             gnv  lead 305 sd 21 | trail 715 sd 36
+#             wyc  lead 304 sd 22 | trail 717 sd 40
+#     chatter sv   lead 130 sd 53 | trail 597 sd 264
+#             tyn  lead  94 sd143 | trail 292 sd 443  (max 3505)
+#             ylt  lead  63 sd 25 | trail 326 sd 393
+# Kokoro output is written through UNTOUCHED, so every verse carries the same
+# breath and every join is the same ~1.6 s once the 600 ms concat gap is added.
+# That is why Wycliffe and Geneva sound composed and the chatterbox sets do not:
+# _trim_and_fade runs on the chatterbox and cosyvoice paths ONLY, and it cuts to
+# within 40 ms of the first and last loud sample - so a chatterbox verse starts
+# the instant the gap ends, with no breath, and the pause after it swings from a
+# fifth of a second to three and a half.
+# ⚠ The trim is NOT damaging speech and must not be blamed for that: measured on
+# eight ylt verses, what it discards at the head is 0-168 ms sitting at -61 to
+# -99 dB. The defect is that it removes the PACING along with the artifact.
+# So: keep the trim (it exists to kill the click and the vocoder whirr), then
+# pad the edges back to the figures the owner already likes.
+LEAD_MS = 305
+TRAIL_MS = 715
+# ⚠⚠ THE PADDING MUST BE SUBTRACTED BEFORE ANY PACE MEASUREMENT. It adds a
+# CONSTANT ~940 ms to every verse, which distorts SHORT verses far more than
+# long ones - a 2 s verse drops 33% in chars/sec, a 10 s verse only 9%. Left
+# uncorrected, repace_outliers reads every short verse as a slow outlier and
+# re-rolls audio that was perfectly good, which is both wasted render time and
+# a fresh roll of the dice on a verse that had already come out right.
+# Caught on the first padded render: the chapter median fell 17.1 -> 15.1 ch/s
+# and verse 7 was re-paced for no reason.
+EDGE_PAD_MS = (LEAD_MS - 40) + (TRAIL_MS - 40)   # keep_ms is kept by the trim
+
+
 def _trim_and_fade(audio, sr, thresh=0.0025, keep_ms=40,
-                   fade_in_ms=12, fade_out_ms=45):
+                   fade_in_ms=12, fade_out_ms=45,
+                   lead_ms=0, trail_ms=0, tail_keep_ms=None):
     """Trim near-silent head/tail, then fade both ends to zero.
 
     ⚠ WHY THIS EXISTS. Verses are synthesized separately and stitched by
@@ -1048,9 +1119,20 @@ def _trim_and_fade(audio, sr, thresh=0.0025, keep_ms=40,
     loud = np.nonzero(np.abs(audio) > thresh)[0]
     if len(loud) == 0:
         return audio
+    # ⚠ tail_keep_ms EXISTS BUT NO CALLER PASSES IT (2026-08-22). It was added
+    # to preserve word decay after the owner heard "'the earth' ends too
+    # abruptly" in a PREVIEW CLIP - and the abruptness turned out to be the
+    # preview's own 8-second cut, not the render: he then listened to the full
+    # file and retracted ("it sounds good, maybe it was just in the preview").
+    # The pipeline he approved by ear uses the plain 40 ms keep, so that is
+    # what runs. If a REAL gated-ending complaint ever arrives, this parameter
+    # is the fix (tail_keep_ms=220, fade_out_ms=180, and EDGE_PAD_MS must
+    # become (LEAD_MS-40)+(TRAIL_MS-tail_keep)) - do not re-derive it.
+    if tail_keep_ms is None:
+        tail_keep_ms = keep_ms
     keep = int(sr * keep_ms / 1000)
     start = max(0, loud[0] - keep)
-    end = min(len(audio), loud[-1] + keep)
+    end = min(len(audio), loud[-1] + int(sr * tail_keep_ms / 1000))
     audio = audio[start:end].copy()
     fi = int(sr * fade_in_ms / 1000)
     fo = int(sr * fade_out_ms / 1000)
@@ -1058,6 +1140,17 @@ def _trim_and_fade(audio, sr, thresh=0.0025, keep_ms=40,
         audio[:fi] *= np.linspace(0.0, 1.0, fi, dtype=audio.dtype)
     if fo and len(audio) > fo:
         audio[-fo:] *= np.linspace(1.0, 0.0, fo, dtype=audio.dtype)
+    # Pad AFTER the fades, so the padding is true digital silence and the fade
+    # still lands on the waveform rather than on the padding.
+    if lead_ms or trail_ms:
+        # ⚠ The trim already left `keep_ms` of sub-threshold material at each
+        # end, so pad the DIFFERENCE. Adding the full figure on top overshoots
+        # by exactly keep_ms (measured: 345 ms against a 305 ms target), and the
+        # point of this is to match the kokoro sets, not to beat them.
+        pad_l = max(0, int(sr * (lead_ms - keep_ms) / 1000))
+        pad_t = max(0, int(sr * (trail_ms - tail_keep_ms) / 1000))
+        audio = np.concatenate([np.zeros(pad_l, dtype=audio.dtype), audio,
+                                np.zeros(pad_t, dtype=audio.dtype)])
     return audio
 
 
@@ -1105,9 +1198,246 @@ logging.getLogger("chatterbox").addHandler(_eos_watcher)
 logging.getLogger("chatterbox").setLevel(logging.WARNING)
 
 
-def synthesize_chatterbox(text, cfg, output_wav):
+# ── Hallucinated-tail cutter ─────────────────────────────────────────────
+# ⚠ WHY (owner, 2026-08-21, ylt pilot): Chatterbox sometimes fails to stop at
+# the end of a verse and re-emits a fragment of the final word as a NEW word -
+# "kindness" -> "nass", "saying" -> "say", "enemy" -> "nenemy", or an invented
+# one ("pole"). Measured with forced alignment: 9 of 48 verses in one Matthew 5
+# render. NOTHING else can catch it:
+#   . duration/pace screens - one syllable moves a 5 s verse by ~0.3 s;
+#   . _trim_and_fade - it removes a ~-41 dB vocoder tail; this is speech;
+#   . the token_repetition retry - flagged verses come back "clean" and still
+#     carry a tail (v1 "pole" survived a clean retry);
+#   . whisper - handed scripture it recites the next verse from memory.
+# THE ORACLE: MMS_FA forced alignment against the KNOWN text. Audio after the
+# last aligned word is, by construction, audio no word of the verse accounts
+# for. Cut there. The aligner cannot invent content - it is only ever asked
+# where the text it was given actually lands.
+# ⚠ CPU on purpose (the GPU is mid-render), one model load per process.
+# ⚠ FAIL OPEN: if alignment fails, return the audio unchanged - a kept tail is
+# a known small defect, an over-cut verse is a missing half-sentence.
+_tail_aligner = None
+TAIL_GAP_MS = 200         # a hallucinated word sits after >= this much quiet
+# ⚠ 60, NOT 100 (owner, 2026-08-22): with the floor at 100 ms a short vocal
+# blip - "a slight 'a' sound after the pause" in the Genesis 1 header -
+# survived the cutter: the pause-guard confirmed the gap, then dismissed the
+# burst as breath. Real breaths sit below the -28 dB relative level; anything
+# ABOVE that level after a 200 ms pause is voice, however short.
+TAIL_MIN_RUN_MS = 60
+# A gap this long means the utterance ENDED; anything voiced after it is
+# spurious however short. See the unioned rule in _cut_spoken_tail.
+TAIL_LONG_GAP_MS = 800
+TAIL_LONG_MIN_RUN_MS = 20
+_tail_fail_n = 0              # silent-failure counter, see the except below
+
+
+_ONES = ["", "one", "two", "three", "four", "five", "six", "seven", "eight",
+         "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+         "sixteen", "seventeen", "eighteen", "nineteen"]
+_TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy",
+         "eighty", "ninety"]
+
+
+def _int_words(n):
+    """1..999 as spoken English words, chatterbox-style ('a hundred five')."""
+    if n < 20:
+        return _ONES[n]
+    if n < 100:
+        return (_TENS[n // 10] + (" " + _ONES[n % 10] if n % 10 else "")).strip()
+    rest = n % 100
+    return (_ONES[n // 100] + " hundred"
+            + (" " + _int_words(rest) if rest else ""))
+
+
+def _cut_spoken_tail(audio, sr, text, script="latin", lang="en"):
+    """Trim audio that continues after the last forced-aligned word."""
+    global _tail_aligner
+    import numpy as np
+    try:
+        from align_words import Aligner, align_key, WORD
+        import torch
+        import torchaudio.functional as AF
+        if _tail_aligner is None:
+            _tail_aligner = Aligner(device="cpu")
+        # ⚠⚠ DIGITS ARE SPOKEN BUT NOT ALIGNABLE. align_words' WORD pattern
+        # deliberately excludes digits, so "Matthew, Chapter 5" aligned as
+        # ["matthew", "chapter"] - and the spoken "five" landed AFTER the last
+        # aligned word, where this function cut it off as a hallucinated tail.
+        # The owner heard it immediately on the first otherwise-clean render:
+        # the ONE defect in the chapter was introduced by the defect-remover.
+        # Chapter headers are the main digit carriers; expand them to the words
+        # the voice actually says. Non-English chatterbox sets (sv) must FAIL
+        # OPEN here rather than cut on an English expansion of a Swedish number.
+        if any(ch.isdigit() for ch in text):
+            if lang not in ("en", "ylt", "tyn"):
+                return audio, False
+            text = re.sub(r"\d+",
+                          lambda m: _int_words(int(m.group(0)))
+                          if 0 < int(m.group(0)) < 1000 else m.group(0),
+                          text)
+            if any(ch.isdigit() for ch in text):
+                return audio, False          # something we cannot expand
+        keys = [k for k in (align_key(w, script, lang)
+                            for w in WORD.findall(text)) if k]
+        if not keys:
+            return audio, False
+        wav16 = torch.from_numpy(np.ascontiguousarray(audio, dtype=np.float32))
+        if sr != _tail_aligner.sample_rate:
+            wav16 = AF.resample(wav16, sr, _tail_aligner.sample_rate)
+        spans = _tail_aligner.align(wav16, keys)
+        if spans is None or spans[-1] is None:
+            return audio, False
+        # ⚠⚠ SCAN FROM THE LAST WORD'S **START**, NOT ITS END. MMS_FA must
+        # assign every frame to some token, so a hallucination that follows the
+        # final word gets ABSORBED INTO THAT WORD'S SPAN. Measured on the ylt
+        # Genesis 1 header 2026-08-22: the audio is "Genesis chapter one"
+        # (290-1550 ms), a 440 ms pause, then 390 ms of "dad did" — and the
+        # aligner returned `one` = 1.347-2.353 s, swallowing the tail whole.
+        # `last_end` therefore landed AFTER the hallucination, nothing remained
+        # to scan, and the cutter reported no cut on a chapter that plainly had
+        # one. The owner caught it by ear on the first banked chapter.
+        # Starting the walk at the word's START is strictly safer than its end:
+        # the discriminator is still the >= TAIL_GAP_MS quiet gap, and a single
+        # word contains no such gap (a plosive closure is 50-80 ms, well under
+        # 200), so the first gap found is still the one AFTER the real word.
+        # This also subsumes the "MMS_FA ends long vowels early" defect that
+        # forced the pause rule in the first place — an early end no longer
+        # matters when we do not read the end at all.
+        last_end = spans[-1][0]                      # seconds
+        # ⚠⚠ CUT AT A PAUSE, NEVER AT AN ALIGNMENT TIMESTAMP. The first version
+        # cut at last_end + 120 ms, trusting MMS_FA's end time - and MMS_FA
+        # ends a word early on a long vowel (the docstring's own warning), so
+        # "Matthew, Chapter five" shipped as "Chapter fiii". The owner caught
+        # it on the first campaign header; every chapter header was at risk.
+        # A REAL hallucinated word is separated from the verse by silence -
+        # every confirmed case had a 0.15-1.1 s gap. Contiguous speech after
+        # the aligned end is the WORD STILL FINISHING. So: walk forward from
+        # last_end, find the first genuine quiet gap (>= TAIL_GAP_MS), and cut
+        # there. Speech before any such gap is kept; no gap, no cut.
+        ref = np.percentile(np.abs(audio), 90) + 1e-9
+        h = max(1, int(0.02 * sr))
+        start_i = int(last_end * sr)
+        tail = audio[start_i:]
+        nw = len(tail) // h
+        # ⚠ MUST NOT REFERENCE TAIL_LONG_MIN_RUN_MS — it is None while the
+        # long-gap rule is disabled, and `200 + None` raises TypeError
+        # straight into this function's bare `except`, which silently
+        # returns "no cut" for EVERY verse. That is exactly how a guard
+        # dies without a trace: the regression showed 0/121 cuts where the
+        # proven rule gives 13/121, and nothing logged anything.
+        if nw < (TAIL_GAP_MS + TAIL_MIN_RUN_MS) // 20:
+            return audio, False
+        db = 20 * np.log10(
+            np.sqrt((tail[:nw * h].reshape(nw, h) ** 2).mean(1)) + 1e-9)
+        loud = db > (20 * np.log10(ref) - 28)
+
+        # ⚠⚠ TWO RULES, UNIONED — calibrated against the owner's ear 2026-08-22.
+        # A single duration floor cannot cover this defect class:
+        #   · a hallucinated WORD ("pole", "nass", "accord") sits after a
+        #     0.15-1.1 s gap and is long: gap 200 / run 60 catches it;
+        #   · a BLIP (the "uh" after Genesis 1:1; the tick after "and I do eat"
+        #     in Genesis 3:13) is 20-60 ms — ONE OR TWO FRAMES — and no duration
+        #     floor that still suppresses breath noise can reach it.
+        # What identifies the blip is not its length but the SILENCE BEFORE IT.
+        # Real speech does not resume for 20 ms after 1.26 s of quiet; that
+        # verse had ended. So a LONG gap licenses cutting anything voiced, while
+        # a shorter gap still demands a substantial run.
+        # Measured: ~2 such tails per chapter across the first six ylt chapters,
+        # i.e. ~2,300 over the 1189-chapter set. The owner independently
+        # reported three of them by ear; all three are in the scanner's list.
+        # ⚠ THE FIRST ATTEMPT AT THIS RULE WAS INERT. It derived the gap length
+        # by counting quiet frames BACKWARDS from the point where the gap was
+        # first declared — which is by construction exactly the `need` minimum,
+        # so the long-gap branch could never fire and the 20 ms blip still got
+        # through. Measure each quiet stretch FORWARD, in full, per run.
+        need = TAIL_GAP_MS // 20
+        n = len(loud)
+
+        # ── RULE 1: the PROVEN rule, reproduced exactly ──────────────────────
+        # First quiet gap of >= TAIL_GAP_MS after the last word, then ANY run of
+        # >= TAIL_MIN_RUN_MS anywhere after it. ⚠ Do not "tighten" this into a
+        # gap-immediately-followed-by-run pairing: that is stricter, and on 121
+        # verses of approved audio it dropped 3 real cuts (tyn Mt 5:4, 5:19,
+        # John 3:29) that this form catches. Proven behaviour stays byte-for-byte.
+        rule1_at = None
+        quiet = 0
+        gap_end = None
+        for i, v in enumerate(loud):
+            quiet = 0 if v else quiet + 1
+            if quiet >= need:
+                gap_end = i
+                break
+        if gap_end is not None:
+            best = cur = 0
+            for v in loud[gap_end:]:
+                cur = cur + 1 if v else 0
+                best = max(best, cur)
+            if best * 20 >= TAIL_MIN_RUN_MS:
+                rule1_at = gap_end - need + 2
+
+        # ── RULE 2: a LONG silence, then anything voiced ─────────────────────
+        # Measures each quiet stretch in FULL and requires the run to follow it
+        # directly. This is the blip case; see the calibration note above.
+        rule2_at = None
+        if TAIL_LONG_MIN_RUN_MS is not None:
+            i = 0
+            while i < n and loud[i]:
+                i += 1
+            while i < n:
+                q0 = i
+                while i < n and not loud[i]:
+                    i += 1
+                quiet_frames = i - q0
+                if i >= n:
+                    break
+                r0 = i
+                while i < n and loud[i]:
+                    i += 1
+                if (quiet_frames * 20 >= TAIL_LONG_GAP_MS
+                        and (i - r0) * 20 >= TAIL_LONG_MIN_RUN_MS):
+                    rule2_at = q0 + min(need, quiet_frames) // 2
+                    break
+
+        cands = [c for c in (rule1_at, rule2_at) if c is not None and c > 0]
+        cut_at = min(cands) if cands else None
+        if cut_at is None:
+            return audio, False
+        cut_from = start_i + cut_at * h
+        return audio[:cut_from].copy(), True
+    except Exception as e:
+        # ⚠⚠ NEVER SWALLOW THIS SILENTLY. A bare `except` here once turned a
+        # one-character bug (`TAIL_GAP_MS + None`) into "the tail cutter is
+        # disabled for every verse in the run", with nothing in any log and a
+        # perfectly normal-looking render. Failing open is the right BEHAVIOUR —
+        # a cutter that cannot decide must not cut — but it must be VISIBLE.
+        # Reported once per process, with the count, so a systematic failure
+        # cannot hide behind a plausible-looking output.
+        global _tail_fail_n
+        _tail_fail_n += 1
+        if _tail_fail_n in (1, 10, 100, 1000):
+            print(f"    ⚠ tail cutter FAILED OPEN ({_tail_fail_n} so far): "
+                  f"{type(e).__name__}: {e}", file=sys.stderr, flush=True)
+        return audio, False
+
+
+def synthesize_chatterbox(text, cfg, output_wav, cut_tail=True):
     """Synthesize one verse with Chatterbox Multilingual (zero-shot clone,
-    no transcript needed). Params come from the ear-test-picked config."""
+    no transcript needed). Params come from the ear-test-picked config.
+
+    ⚠⚠ `cut_tail=False` DISABLES THE TAIL CUTTER FOR THIS CALL, and the
+    announcement component builder is the reason it exists. The cutter walks
+    forward from the last aligned word's START (see _cut_spoken_tail) and the
+    LAST WORD OF A CHAPTER HEADER IS THE NUMERAL — so on a header there is
+    nothing after it but the word we most need kept, and any cut is a cut into
+    real speech. The owner heard exactly that on ylt Genesis 14-17
+    (2026-08-22): «Genesis, Chapter seven-». Chapter 17 is confirmed by
+    measurement — forced alignment has to stretch «seventeen» 394 ms into
+    audio containing no speech, while «seven» ends exactly where speech stops.
+    ⚠ Do NOT "fix" this by retuning TAIL_LONG_GAP_MS instead: that constant is
+    calibrated (see the sweep in the 2026-08-22 handoff) and lowering it
+    over-cuts real speech across the whole corpus. Components are ASR-gated
+    and tail-polished by build_announcements.polish_tail, which is a better
+    guard than the cutter and does not depend on a gap threshold at all."""
     try:
         model = _get_chatterbox()
         wav = model.generate(
@@ -1119,7 +1449,20 @@ def synthesize_chatterbox(text, cfg, output_wav):
         )
         import numpy as np
         audio = np.clip(wav.squeeze(0).cpu().numpy(), -1.0, 1.0)
-        audio = _trim_and_fade(audio, model.sr)
+        # Cut a hallucinated tail BEFORE trim/fade/pad, so the fade lands on
+        # the true final word and the pad is measured from it.
+        if cut_tail:
+            audio, cut = _cut_spoken_tail(audio, model.sr, text)
+        else:
+            cut = False
+        if cut:
+            print("    [tail cut]", flush=True)
+        # ⚠ The padding is applied HERE and not in the cosyvoice path: ru and cu
+        # are rendered, uploaded and shipped, and changing their verse edges
+        # would mean re-rendering 2,724 chapters to fix a rhythm nobody has
+        # complained about. Chatterbox is where the owner heard it.
+        audio = _trim_and_fade(audio, model.sr,
+                               lead_ms=LEAD_MS, trail_ms=TRAIL_MS)
         # PCM_16 to match make_silence_wav()'s gaps (same reason as CosyVoice).
         sf.write(str(output_wav), (audio * 32767).astype(np.int16),
                  model.sr, subtype="PCM_16")
@@ -1330,7 +1673,8 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
             return synthesize_chatterbox(text, cfg, alt_path)
         return synthesize_cosyvoice3(text, cfg, book_idx, alt_path)
 
-    rates = [r for r in (_verse_rate(verses[i], d)
+    pad = EDGE_PAD_MS if cfg["engine"] == "chatterbox" else 0
+    rates = [r for r in (_verse_rate(verses[i], d - pad)
                          for i, (w, d) in enumerate(pairs)
                          if w and len(verses[i]) >= PACE_MIN_CHARS) if r]
     if len(rates) < 4:
@@ -1349,7 +1693,7 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
     for i, (wav, dur) in enumerate(pairs):
         if not wav or len(verses[i]) < PACE_MIN_CHARS:
             continue
-        rate = _verse_rate(verses[i], dur)
+        rate = _verse_rate(verses[i], dur - pad)
         if rate is None or lo <= rate <= hi:
             continue
         best = (abs(math.log(rate / median)), wav, dur, rate)
@@ -1361,7 +1705,7 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
                 alt_dur = get_wav_duration_ms(alt)
             except Exception:
                 break
-            alt_rate = _verse_rate(verses[i], alt_dur)
+            alt_rate = _verse_rate(verses[i], alt_dur - pad)
             if alt_rate is None:
                 break
             score = abs(math.log(alt_rate / median))
@@ -1686,6 +2030,34 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
                             wav_path, dur = alt, alt_dur
                             retried.append((i + 1, attempt, "clean"))
                             break
+                        # ⚠⚠ THE RETRY OVERWRITES verse_<i>.wav — same index,
+                        # same path. So when every attempt stays flagged and we
+                        # fall through to "still flagged" below, the FILE on
+                        # disk is the last retry while `dur` still holds the
+                        # FIRST take's length. concatenate_with_silence()
+                        # accumulates the DURATIONS and concatenates the FILES,
+                        # never re-measuring, so from that verse on every offset
+                        # in the sidecar is wrong by the difference — and the
+                        # error ACCUMULATES.
+                        #   Measured on ylt Matthew 5 (2026-08-21): verses 22,
+                        #   30, 32 and 42 stayed flagged, and the sidecar ran
+                        #   5.45 s ahead of the audio from v23, stepping to
+                        #   4.63 s at v33 and 4.08 s at v43 — the step points
+                        #   are exactly the verses after each failed retry.
+                        # ⚠ NOTHING CATCHES THIS. The audio is complete and in
+                        # the right order; only the offsets lie. qa_narration
+                        # passes, zero_duration_verses passes, and the only
+                        # visible symptom was the LAST verse looking truncated
+                        # because the accumulated error ate its slice.
+                        # In the app it is worse than a bad verse: verse
+                        # highlighting and word-level following drift apart from
+                        # the audio for the rest of the chapter.
+                        # Keeping the last take's duration alongside the last
+                        # take's file is what makes the pair consistent; the
+                        # take is no worse than the one it replaced (all three
+                        # are flagged) and now the sidecar tells the truth.
+                        if alt and alt_dur > 0:
+                            wav_path, dur = alt, alt_dur
                     else:
                         retried.append((i + 1, 3, "still flagged"))
                 pairs.append((wav_path, dur))
@@ -1700,6 +2072,7 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
             print(f" FAILED (duration: {e})")
             return False
 
+        pad_ms = EDGE_PAD_MS if cfg["engine"] == "chatterbox" else 0
         header_prefix_ms = 0
         if hdr_wav and hdr_dur > 0:
             header_prefix_ms = hdr_dur + 900  # header + longer pause before verses
@@ -1718,8 +2091,20 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
             print(" FAILED (encode)")
             return False
 
+        # ⚠ RECORD THE EDGE PADDING IN THE SIDECAR, do not hardcode it in the
+        # screens. Every pace-based check - qa_narration.py, tyn_short_verses.py,
+        # repace_outliers - divides text length by a verse's DURATION and
+        # assumes that duration is speech. Padding breaks that assumption, and
+        # it breaks it hardest on SHORT verses: the first padded Matthew 5
+        # failed qa_narration at 12.2x spread while sounding correct. Writing
+        # the figure here means a screen subtracts what this chapter actually
+        # carries, instead of four tools each holding a copy of a constant that
+        # will drift the first time LEAD_MS or TRAIL_MS is tuned.
+        side = {"offsets": offsets}
+        if pad_ms:
+            side["edge_pad_ms"] = pad_ms
         with open(json_file, "w", encoding="utf-8") as f:
-            json.dump({"offsets": offsets}, f, separators=(",", ":"))
+            json.dump(side, f, separators=(",", ":"))
 
     size_kb = ogg_file.stat().st_size // 1024
     print(f" OK ({size_kb} KB)")

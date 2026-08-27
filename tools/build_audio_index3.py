@@ -7,8 +7,8 @@ import urllib.parse
 import urllib.request
 
 from build_audio_index2 import (
-    APP_KJV, OUT, NAMES, ALIASES, norm, fetch_json, metadata, is_kjv,
-    sections_for, covers,
+    APP_KJV, OUT, BOOKS, ALIASES, norm, fetch_json, metadata, is_kjv,
+    sections_for, covers, merge_into_existing,
 )
 
 KNOWN = [
@@ -58,11 +58,15 @@ def bulk_docs():
 
 def main():
     kjv = json.load(open(APP_KJV, encoding="utf-8"))
-    expected = {i: len(kjv[i]["chapters"]) for i in range(66)}
+    if isinstance(kjv, dict):
+        kjv = kjv["books"]
+    # ⚠ BOOKS, not enumerate(NAMES) — the 83-slot grid includes six apocrypha
+    # books LibriVox really does have. See build_audio_index2.APOCRYPHA_NAMES.
+    expected = {i: len(kjv[i]["chapters"]) for i in BOOKS}
     docs = bulk_docs()
     print("bulk candidates:", len(docs))
     index = {}
-    for i, book in enumerate(NAMES):
+    for i, book in sorted(BOOKS.items()):
         want = expected[i]
         keys = ALIASES.get(book, [norm(book)])
         cands = list(KNOWN)
@@ -84,9 +88,11 @@ def main():
             print(f"OK  {book}: {len(found)} sections", flush=True)
         else:
             print(f"--  {book}", flush=True)
+    merged = merge_into_existing(index, OUT)
     with open(OUT, "w", encoding="utf-8") as f:
-        json.dump(index, f, separators=(",", ":"))
-    print(f"\nindexed: {len(index)}/66 books")
+        json.dump(merged, f, separators=(",", ":"))
+    print(f"\nindexed: {len(index)}/{len(BOOKS)} books searched; "
+          f"{len(merged)} in the written index")
 
 if __name__ == "__main__":
     main()

@@ -53,10 +53,36 @@ import soundfile as sf
 
 import narrate
 
-NARR = Path("C:/Projects/Hexapla-releases/narration/ru")
-BACKUP = Path("C:/Projects/Hexapla-releases/narration/ru_pre_announce")
-LIB = Path("C:/Projects/Hexapla-releases/narration/ru_announce_lib")
-ASSET = Path(__file__).parent.parent / "app/src/main/assets/bibles/ru_synodal.json"
+# ⚠⚠ SET-PARAMETERISED 2026-08-22. Defaults are ru so every existing
+# invocation behaves identically; `--set ylt` points all three paths at the
+# ylt set and its own library. A run must NEVER mix a library from one set
+# with the oggs of another — the voices differ, and the splice would be
+# silently audible rather than an error.
+_ROOT = Path("C:/Projects/Hexapla-releases/narration")
+SET = "ru"
+NARR = _ROOT / "ru"
+BACKUP = _ROOT / "ru_pre_announce"
+LIB = _ROOT / "ru_announce_lib"
+
+
+def _configure(set_key):
+    """Point NARR/BACKUP/LIB at one narration set, and the builder with it."""
+    global SET, NARR, BACKUP, LIB
+    SET = set_key
+    NARR = _ROOT / set_key
+    BACKUP = _ROOT / f"{set_key}_pre_announce"
+    LIB = _ROOT / f"{set_key}_announce_lib"
+    import build_announcements as _ba
+    _ba._configure(set_key)          # keeps ba.asr()/words_present() in-language
+    global ASSET
+    ASSET = _ASSET_DIR / narrate.LANG_CONFIG[set_key]["asset"]
+    if not ASSET.exists():
+        raise SystemExit(f"asset not found for set {set_key!r}: {ASSET}")
+    return SET
+# ⚠ Derived from the set's own LANG_CONFIG in _configure(); the literal below
+# is only the ru default so an unconfigured import still resolves.
+_ASSET_DIR = Path(__file__).parent.parent / "app/src/main/assets/bibles"
+ASSET = _ASSET_DIR / "ru_synodal.json"
 
 SR = 48000            # opus decodes at 48 kHz; everything is resampled to it
 # Imported, never redefined: the owner reviews an assembled reel, so the pause
@@ -220,9 +246,13 @@ def verify(todo, bible):
             w = Path(tmp) / "h.wav"
             sf.write(str(w), (a * 32767).astype(np.int16), sr, subtype="PCM_16")
             heard = ba.asr(w)
-        want = narrate.chapter_header_text("ru", bi, ci, n_ch,
+        want = narrate.chapter_header_text(SET, bi, ci, n_ch,
                                            book_name=bible[bi]["name"])
-        if bi in ba._DATIVE_EPISTLES:
+        # Same spoken-form transform the builder used, or every numbered book
+        # would be compared against the unspoken asset name and fail.
+        _head = want.split(",")[0]
+        want = want.replace(_head, ba.spoken_book_name(_head), 1)
+        if ba.CFG["dative_epistles"] and bi in ba._DATIVE_EPISTLES:
             p = want.split(",")[0].split()
             want = want.replace(want.split(",")[0],
                                 f"{p[0]} к {' '.join(p[1:])}" if len(p) > 1
@@ -246,7 +276,10 @@ def main():
     ap.add_argument("--verify", action="store_true",
                     help="ASR the head of each finished ogg (end-to-end proof)")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--set", default="ru",
+                    help="narration set (default ru — unchanged behaviour)")
     args = ap.parse_args()
+    _configure(args.set)
 
     bible = json.loads(ASSET.read_text(encoding="utf-8"))
     comps = {}

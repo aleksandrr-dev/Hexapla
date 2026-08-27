@@ -38,11 +38,24 @@ def main():
             # ⚠ NO `initial_prompt`. Seeding whisper with the expected text is
             # how you build a detector that always agrees with you: it will
             # decode the words you handed it out of audio lacking them.
+            # ⚠ `word_timestamps=True` ADDED 2026-08-22 and it is ADDITIVE:
+            # "text" is unchanged, so every existing caller (and the whole ru
+            # library) behaves exactly as before. The new "words" list exists
+            # for build_announcements.polish_tail, which was written in
+            # 2026-08 to cut a clip just after its last real word and then
+            # never wired up for want of these timestamps.
             segs, _ = model.transcribe(path, language=args.lang, beam_size=5,
                                        condition_on_previous_text=False,
-                                       vad_filter=False)
-            print(json.dumps({"text": " ".join(s.text for s in segs).strip()}),
-                  flush=True)
+                                       vad_filter=False, word_timestamps=True)
+            segs = list(segs)
+            words = []
+            for sg in segs:
+                for w in (getattr(sg, "words", None) or []):
+                    words.append({"w": w.word.strip(),
+                                  "start": round(w.start * 1000),
+                                  "end": round(w.end * 1000)})
+            print(json.dumps({"text": " ".join(s.text for s in segs).strip(),
+                              "words": words}), flush=True)
         except Exception as e:                      # never kill the build
             print(json.dumps({"text": "", "err": str(e)}), flush=True)
 

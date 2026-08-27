@@ -147,3 +147,149 @@ Split out of CLAUDE.md 2026-08-09. What shipped when, and the fixes that went wi
   something gripping, not Genesis 1), with a small caption under
   the button (welcome_read_note, ×12 locales: "an eyewitness
   account of Jesus… jump anywhere from there").
+
+
+---
+
+# ── MOVED OUT OF CLAUDE.md, 2026-08-25 (context budget) ──
+
+Everything below was in the project `CLAUDE.md` and is a COMPLETED RECORD. It is
+kept verbatim. Nothing here is a live warning; the live ⚠ stayed in CLAUDE.md.
+Reason for the move: `CLAUDE.md` is auto-loaded into every session, and at ~8k
+tokens it was spending a fifth of the first turn's budget on finished history.
+
+## The play-flavor donation regression, in full (fixed 2026-07-20)
+
+  - `play` — Google Play. `EXTERNAL_DONATIONS=false`; R8 strips the ЮMoney
+    donation path entirely (verified absent from dex). ⚠ THIS SILENTLY
+    REGRESSED IN 1.4.0: the empty-Support restructure moved Donation.links
+    into a plain `else` branch — runtime-unreachable on play (outer gate
+    requires playTips) but not PROVABLY dead, so the string shipped in every
+    1.4.0-1.5.1 play dex. FIXED 2026-07-20: the branch is now
+    `else if (BuildConfig.EXTERNAL_DONATIONS)` (identical runtime semantics,
+    provably dead for R8); re-verified absent from play dex / present in
+    rustore dex, under AGP 9.3.0. Re-check this grep before every Play
+    upload: `unzip -p app-play-release.apk "classes*.dex" | grep -ac yoomoney`
+    must print 0.
+
+▶ **The live rule that stayed in CLAUDE.md** is the grep plus its positive
+control. This block is why the rule exists.
+
+## The Locale(String) modernization — DONE, shipped in 1.6.4 / code 17
+
+- ★ **TODO, DO IN THE NEXT BUILD** (owner asked 2026-08-05, deliberately
+  deferred past 1.6.3 because its artifacts were already built and verified):
+  replace the **25 deprecated `Locale("xx")` call sites in `Bible.kt`** — the
+  one-arg `Locale(String)` constructor, deprecated in Java 19, which the
+  Android Studio JBR (JDK 21) flags on every translation not covered by a
+  built-in like `Locale.ENGLISH`. They are warnings only: the constructor
+  still works on every supported Android version and the app behaves
+  identically. They are worth clearing because 25 sites (reported as ~50
+  warnings — Kotlin counts each twice) drown out warnings that DO matter.
+  ⚠⚠ **USE `Locale.forLanguageTag("sv")`, NOT `Locale.of("sv")`.** `Locale.of`
+  is Java's official replacement but it is Java 19 = **API 36**, against this
+  app's **minSdk 26** — it compiles clean and then crashes on essentially every
+  real device. `forLanguageTag` is API 21+ and equivalent for the plain
+  language codes used here (all 25 are bare two-letter tags, no country or
+  variant). Re-run the donation grep with its positive control after, since
+  any Bible.kt change invalidates a built artifact.
+
+✅ **VERIFIED COMPLETE 2026-08-25**: `grep -c 'Locale("' Bible.kt` = **0**,
+`grep -c 'Locale.forLanguageTag' Bible.kt` = **25**. The ⚠ about `Locale.of`
+being API 36 against minSdk 26 is retained in CLAUDE.md's build section, because
+it can still bite anyone modernizing another file.
+
+## 1.6.3 (code 16), and the GitHub-releases correction
+
+**1.6.3 (code 16) was UPLOADED to Play and RuStore on 2026-08-05** — 35
+translations in 30 languages, the Georgian Bakar and its UI locale, the
+Armenian Zohrab OT, music by mood, the swap-translations button, and the
+Russian Synodal narration (1192 chapters, streamed from
+`hexapla-audio-synodal-1876`). Next versionCode is 17.
+
+✅ **GITHUB RELEASES ARE CURRENT** (checked 2026-08-10 with `gh release list`).
+The old warning here — "v1.6.1 is still `releases/latest`, 1.6.3 was never
+published" — was STALE: v1.6.3 was published 2026-08-05 and was `Latest`.
+v1.6.4 is now published and is `Latest`. ⚠ 1.6.2 was never published and is
+not back-filled; that is a deliberate gap, not an oversight to re-fix. The
+landing page's direct-APK button points at `releases/latest`, and the upload
+is always the **RuStore APK**, never the Play AAB.
+
+## Roadmap items that have SHIPPED (were items 0, 1b, 3 and 6)
+
+0. ~~Tester requests~~ DONE 2026-07-08 (in versionCode 5, not yet released):
+   a) ~~Webster Bible 1833~~ shipped (`wbt`, en_webster.json; converter now
+      strips scrollmapper's [supplied-word] brackets; book names normalized
+      to KJV style). Tester confirmed he also wanted the 1828 Dictionary —
+      ~~tap-a-word~~ shipped in-tree for versionCode 6: Webster1828 in
+      Bible.kt (lazy 13 MB asset, +5.5 MB APK; archaic-form lemmatizer
+      mirrored in tools/check_1828_coverage.py, 95.9% token coverage,
+      misses ≈ proper names), converter tools/convert_webster1828.py from
+      the DataWar/1828-dictionary MySQL dump (mshaffer digitization, PD).
+      Off by default; toggle under Strong's. Tap word → definition dialog
+      (word taps and Strong's superscript numbers are separate targets).
+   b) ~~1-year chronological plan~~ shipped ("chrono" in Plans; order lives
+      in ChronoOrder.kt, curated + verified by tools/build_chrono_plan.py,
+      which documents every placement decision and asserts all 1189 canon
+      chapters appear exactly once and the anchor verses say what the
+      placements assume. KJV numbering; LXX psalters remapped like
+      chapterIndexFor; Heb Joel 4 special-cased; partial texts filtered).
+      Era headings (18, ×5 locales) over the chrono day list added
+      post-1.2.0 — in-tree for the NEXT release (versionCode 6).
+1. ~~QR share screen~~ DONE (Settings → Share this app; encodes landing page).
+1b. **Translation lineup for v1.4** (all deity-verse-tested, see commits):
+   BBE removed (Critical Text — failed every litmus verse). Added:
+   Almeida Bíblia Livre TR (pt, scrollmapper PorBLivreTR, passes all 8),
+   明治元訳 Meiji Motoyaku 1880/87 (ja, Wikisource NT scrape via
+   tools/build_meiji_nt.py + scrollmapper Meiji OT; TR-core, committee
+   omissions documented in commit), 和合本 CUV 1919 (zh, both scripts —
+   Simplified derived from the PD Traditional text via OpenCC t2s in
+   tools/convert_cuv.py, avoiding the UBS 1988 punctuation layer).
+   Now 15 translations / 11 languages; zh default picks script by
+   locale (Hant/TW/HK/MO → traditional).
+
+3. ~~Original-language interlinear~~ shipped in-tree for v1.4/code 7:
+   tap any word in grc/wlc → Strong's entry + decoded morphology
+   (Robinson for Greek, OSHM for Hebrew; decoders in Interlinear.kt).
+   Data via tools/build_interlinear.py from openscriptures/morphhb
+   (CC-BY) + byztxt csv-unicode (PD); per-verse text-verified alignment
+   with difflib recovery for split names/enlarged letters — 100% of
+   verses tagged both testaments; word-level 100% Greek, 98.0% Hebrew
+   (the rest have no Strong's number in morphhb itself). Tokenizer
+   contract proven identical Java-vs-Python over all 31,166 tagged
+   verses (scratch TokCheck). No settings toggle — always
+   active on the original texts. +1.7 MB compressed in APK.
+
+6. ~~fonts~~ SHIPPED (Literata bundled for reading, commit 8c04580 — the
+   "NOT in the app" note here was true only until that landed).
+   ~~rotating covers~~ DONE 2026-08-10: `BookArt.kt` indexes
+   `bookart/<idx>_N.webp` variants and picks one with the widget's own
+   date-seeded trick (`year*1000 + dayOfYear`, offset by bookIdx so books do
+   not turn over in lockstep). `tools/build_bookart3.py` added 31 extra Doré
+   plates — **9 books rotate** (Genesis 7 plates, Matthew 6, Luke 6, Mark 5,
+   Acts 5, John 4, Daniel 3, 1 Samuel 2, 1 Kings 2) for **+1.36 MB
+   compressed**, far under the 2.5 MB the plan assumed.
+   ⚠ Its plate numbers were DERIVED from Gutenberg #8710's own printed
+   scripture references, not recalled, and the derivation reproduces
+   build_bookart.py's existing curated map exactly. Re-derive rather than
+   hand-edit. Psalms/Proverbs/Isaiah/Exodus/Revelation cannot rotate yet —
+   Doré has only the one plate each; Schnorr has 219 unused plates but no
+   transcribed index.
+   ★ **COVER GAPS: 54 of 83 books now have art; the remaining 29 are DONE
+   being hunted — do not re-search.** `tools/build_bookart4.py` filled the
+   last coverable five (Song of Solomon, Hosea, Haggai, Malachi from Merian's
+   *Icones Biblicae*; 1 Peter from Schnorr plate 231). What is left is
+   **16 epistles, 8 apocrypha, 5 minor prophets**, and the reason is
+   structural, not a gap in our sources: **17th-c. picture Bibles illustrate
+   NARRATIVE**, so epistles were never given plates, and the leftover
+   apocrypha (1/2 Esdras, 3 Macc, Laodiceans…) are not even in the Lutheran
+   canon. Both Weigel volumes were indexed page by page to prove it — the
+   1708 *Historiae celebriores* (Luyken engravings) runs Genesis → Acts 28
+   and stops. These 29 keep `BookArt.kt`'s generated title pages, which is
+   the right answer. Full audit:
+   `research/bookart_gap_sources_2026-08-10.md`.
+   ~~music download-on-demand~~ SHIPPED
+   (Settings → Download music pack; music_pack_* strings ×26 locales).
+   ~~`foss` flavor~~ EXISTS in build.gradle.kts with the src/foss stub —
+   what remains is the LISTING (IzzyOnDroid takes a released APK; F-Droid
+   proper needs an fdroiddata MR with gradle:[foss]).

@@ -202,3 +202,155 @@ the shipped Geneva audio (1,189 chapters) would need a re-render in Early
 Modern pronunciation to comply. **Owner is aware; not yet scheduled.** Do not
 start it without an explicit go — Geneva has already been re-rendered once, for
 the "God created the HORN" defect.
+
+
+## ★★ PRONUNCIATION: USE VOICE CONVERSION, NOT RESPELLING (2026-08-23)
+
+⚠⚠ **DO NOT START A NEW SET'S ANNOUNCEMENTS WITH A RESPELLING TABLE.** That is
+what `_SPOKEN_VARIANTS_EN` in `build_announcements.py` is, and on ylt it cost
+six review rounds and ~90 draws on ONE book name before the right tool was
+tried. The owner's words: "if that worked we should have done that from the
+beginning, if we have a full render of right pronunciations."
+
+**Why respelling hits a wall.** Chatterbox `generate()` takes **TEXT ONLY** —
+it has no phoneme argument (verified; it is why Wycliffe had to move to Kokoro
+to get Middle English IPA, see the `wyc` note in `narrate.py`). So the only
+lever is graphemes, and graphemes cannot reach a stress pattern the model will
+not produce. Measured on Obadiah: chatterbox says **Messiah** and **Josiah**
+correctly, but the diagnostic **`Obasiah`** — the same 4-syllable frame with
+only d->s — ALSO fails. The model will not stress syllable 3 of a 4-syllable
+word, so `-iah` always reduces to `-ee-ah`. No spelling fixes that.
+⚠ And the ASR gate cannot referee pronunciation at all (whisper writes "Jobe"
+and "job" identically), so it silently rejects the respelling that would FIX
+the sound and falls back to the one already rejected by ear.
+
+**The fix — pronunciation from one render, timbre from another.**
+
+```python
+from chatterbox.vc import ChatterboxVC          # ships with the package
+m = ChatterboxVC.from_pretrained("cuda")
+out = m.generate(source_wav, target_voice_path=REF)   # REF = the set's voice
+```
+
+Worked example (Obadiah, owner-approved on first listen):
+1. Pick a donor render that says the word correctly. **Webster (`wbt`) is
+   kokoro `am_adam` and handles English proper names well.**
+2. Cut the word out of the donor. The announcement sits at the HEAD of the
+   chapter file and the **offsets sidecar gives the exact boundary** — verse 1
+   of `wbt/30/0.ogg` starts at 1975 ms, so the name is before that. Costs no
+   model tokens and no guessing.
+3. `ChatterboxVC.generate(cut, target_voice_path=_en_ref_ylt.wav)`.
+4. Trim to the first voiced run, fade, and run the normal gates
+   (`tail_energy`, `looks_doubled`, duration).
+
+⚠ **A single-chapter book is the easy case** — its announcement is the bare
+name. For a multi-chapter book the donor says "Genesis, Chapter one" as ONE
+utterance, and the library needs the name and the numeral as SEPARATE
+components, so it must be split at the comma pause — which is not guaranteed to
+exceed the 250 ms `voiced_runs` needs. Budget for that before promising a
+wholesale harvest.
+
+⚠ **This only works where a correct-pronunciation donor EXISTS.** Webster covers
+English. For `ru`, `cu` and `sv` there is no donor render, so the respelling
+table still earns its keep there.
+
+
+---
+
+# ── MOVED OUT OF CLAUDE.md, 2026-08-25 (context budget) ──
+
+The `ReadingService` audio-backend record, verbatim from the project
+`CLAUDE.md`. It is a COMPLETED RECORD of how the generated-narration path was
+built and of the two sets that shipped on it. CLAUDE.md keeps only the
+behaviour a session must know plus a pointer here.
+⚠ The `internetarchive.upload(metadata=…)` landmine below is STILL LIVE and is
+also carried in the current SESSION_HANDOFF.
+
+- `ReadingService`: foreground media service. Backends — TTS (per-verse
+  feeding; NEVER pre-queue a chapter, engines drop utterances while loading
+  a language); MediaPlayer for LibriVox sections (`assets/audio_index.json`,
+  50 books covered; download+cache); and (NEW 2026-07-22, in tree for 1.5.2/
+  code 13) MediaPlayer STREAMING of self-generated per-chapter narration for
+  non-kjv translations via `assets/audio_index_gen.json` (built by
+  tools/build_audio_index_gen.py from the rendered narration/<id> sets +
+  the archive.org item). Webster (wbt) is the first: streams
+  hexapla-audio-webster-1833 per chapter. `AudioRepo.generated()` yields
+  single-chapter Sections (first==last, generated=true). Generated audio
+  DOWNLOADS-AND-CACHES like LibriVox (offline after first listen) via
+  `ensureDownloadedGen`/`generatedFile`; the latter keys the cache by the
+  full archive path (`item_book_chapter.ogg`) because generated URLs share
+  a `<ch>.ogg` tail that localFile's last-segment rule would collide on
+  (the LibriVox `localFile` path is untouched). Download-fail + missing/
+  unrendered → TTS fallback.
+  ✅ VERSE-FOLLOWING DURING GENERATED NARRATION — DONE 2026-07-24 (in tree,
+  uncommitted, compiles; NOT yet on-device-verified or shipped). Section now
+  carries the per-verse `o` offsets (Audio.kt), and ReadingService.
+  startVerseFollow polls player.currentPosition (~250ms) → offsets → publishes
+  Playback.verse, so recorded audio highlights + auto-scrolls exactly like TTS
+  (ReaderScreen highlights when Playback.verse==i). No word-level highlight for
+  recorded audio (offsets are per-verse). ✅ EXACT seek-to-verse from offsets
+  DONE 2026-07-24: playSection takes startVerse; onPreparedListener seeks to
+  offsets[startVerse]-250ms when the section carries offsets (verse 0 → no seek,
+  chapter announcement plays), else the sectionFraction verse-count estimate.
+  Makes stop→resume land exactly on the verse for generated audio (TTS was
+  already exact). Translation-agnostic — every render that emits "o" gets it.
+  ✅ WORD-LEVEL following on recorded narration SHIPPED (commit 8b0d050):
+  tools/align_words.py emits per-word .w.json sidecars; ReadingService
+  fetches them in the background and publishes wordStart/wordEnd exactly
+  as TTS does. Chapters without a sidecar degrade to verse-level.
+  ⚠ The old 'FUTURE IDEA / deferred' note sat here after shipping and
+  misled a session into calling this feature missing (2026-08-09).
+  ✅ GENERATED AUDIO "REVERTS TO TTS AFTER SOME CHAPTERS" BUG — FIXED
+  2026-07-24 (owner heard it on Webster; in tree, uncommitted). Root cause:
+  on auto-advance, playSection downloads the next chapter on demand and
+  downloadTo had NO retry — one transient archive.org failure → null →
+  immediate TTS fallback (ReadingService ~L315). Fix: (a) downloadTo now
+  retries 3× with backoff (Audio.kt, helps LibriVox too); (b) new
+  ReadingService.prefetchAhead caches the next 2 generated chapters in the
+  background while the current one plays (skipped in stream-don't-save mode
+  and for LibriVox multi-chapter sections). followJob+prefetchJob cancelled
+  in releasePlayer.
+  ✅ RESOLVED (verified 2026-07-31): the audio_note string is NO LONGER
+  KJV-worded — all 25 locales now read generically ("recorded narration where
+  it exists, otherwise the device's text-to-speech"). Nothing to reword for a
+  new generated translation.
+  ✅ **GENEVA 1599 SHIPPED 2026-08-01 in 1.6.2 (code 15).** Render finished
+  1189/1189; uploaded to archive.org `hexapla-audio-geneva-1599` (2379/2379
+  requests, 0 failed) and verified public; `gen1599` activated in
+  tools/build_audio_index_gen.py — 66 books, 1189 chapters, 31,104 verse
+  offsets embedded. No Kotlin change was needed; the audio path is index-driven,
+  exactly as the runbook predicted. Full record + two bugs found during
+  activation: **tools/GENEVA_AUDIO_RUNBOOK.md** (now marked COMPLETED and kept
+  as the model for the next narration set).
+  ⚠ Two things that will recur for any FUTURE narration set:
+  (a) the index completeness guard compared books-with-audio against ALL grid
+      slots, so an asset with empty apocrypha slots (Geneva has 83 slots, 66
+      non-empty) false-failed a complete set — fixed to count non-empty books;
+  (b) the yoomoney donation check needs a POSITIVE CONTROL — 0 in the Play AAB
+      only means something because the same grep returns 1 on the RuStore APK.
+      Path differs: `classes*.dex` (APK) vs `base/dex/classes*.dex` (AAB).
+  ✅ **KARL XII 1703 SHIPPED 2026-08-01 in the same 1.6.2 (code 15).** Render
+  finished 1189/1189; uploaded to `hexapla-audio-karlxii-1703` (2379/2379
+  requests, 0 failed — only 1378 files actually sent, the rest skipped by
+  `checksum=True` since the set had been published partial at ~940). `kxii`
+  is now `partial: False` in tools/build_audio_index_gen.py — 66 books, 1189
+  chapters, 31,102 verse offsets. Version was deliberately NOT bumped (owner:
+  reuse 1.6.2 / code 15); the staged artifacts were rebuilt in place.
+  ⚠⚠ **A BUG THAT WILL BITE EVERY FUTURE NARRATION SET — upload metadata does
+  not reach an EXISTING item.** `internetarchive.upload(metadata=…)` applies
+  metadata only when it CREATES the item; on a pre-existing one archive.org
+  ignores the headers. Karl XII therefore finished complete but stayed
+  publicly titled «(pågår / in progress)» — the exact inversion the honesty
+  gate exists to prevent, and invisible behind a clean `0 failed`. Geneva
+  looked fine only because its item was brand new. FIXED: upload_narration.py
+  now calls `modify_metadata()` explicitly and re-reads the live title to
+  verify. **Any set published in stages (ru is next) hits this.**
+  ⚠ Also fixed there: the description said "no narrator is credited because
+  none was involved" — false for sv and ru, whose voices are cloned from
+  consenting volunteers. Now branches on a `cloned` flag, plus a `watermark`
+  flag disclosing the inaudible Perth watermark Chatterbox embeds.
+  Both audio items live on archive.org (webster-1833
+  = wbt via audio_index_gen; hexapla-audio-en = 22 KJV Kokoro gap books via
+  audio_index.json as kjv_<book>_<ch>.ogg, which also cache offline). Music bed rotates
+  through `assets/music/` (Kevin MacLeod CC-BY, perceptual x² volume curve).
+  Settings are observed live via Store.settings collect in onCreate.

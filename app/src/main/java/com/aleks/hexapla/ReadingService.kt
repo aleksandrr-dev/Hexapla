@@ -98,6 +98,12 @@ class ReadingService : Service() {
                 if (s.musicEnabled != old.musicEnabled) {
                     if (!s.musicEnabled) releaseMusic()
                     else if (Playback.playing.value) startMusic()
+                } else if (s.bedKind != old.bedKind) {
+                    // Switching music <-> fireside mid-listen swaps the bed
+                    // rather than waiting for the next mood change, which in
+                    // fireside mode may never come.
+                    releaseMusic()
+                    if (Playback.playing.value) startMusic()
                 } else if (s.musicVolume != old.musicVolume) {
                     val v = musicVol()
                     try { musicPlayer?.setVolume(v, v) } catch (_: Exception) { }
@@ -546,6 +552,10 @@ class ReadingService : Service() {
        track instead. ---- */
 
     private var currentMood: String? = null
+    private var firesidePlaying = false
+
+    /** The short fire loop bundled in the APK, so Fireside works offline. */
+    private val FIRESIDE_ASSET = "ambience/fire_loop.ogg"
     private var musicFading: MediaPlayer? = null
     private var fadeJob: Job? = null
 
@@ -571,6 +581,22 @@ class ReadingService : Service() {
     private fun updateMusicForPassage() {
         if (!settings.musicEnabled) return
         val bed = bedNow() ?: return
+
+        // ⚠ FIRESIDE IS ONE CONTINUOUS BED, so mood changes must NOT restart
+        // it — only the silence boundary matters. Restarting a fire recording
+        // at every mood change would be audible as a seam and would defeat the
+        // point of choosing ambience over music.
+        if (settings.bedKind == BED_FIRESIDE) {
+            val wantSilence = bed.mood == MoodMap.SILENCE
+            currentMood = bed.mood
+            if (wantSilence) {
+                if (firesidePlaying) { firesidePlaying = false; crossfadeTo(null) }
+            } else if (!firesidePlaying) {
+                startFireside()
+            }
+            return
+        }
+
         if (bed.mood == currentMood) return
         currentMood = bed.mood
         if (bed.mood == MoodMap.SILENCE) {
@@ -658,6 +684,14 @@ class ReadingService : Service() {
             try { it.setVolume(vol, vol); if (!it.isPlaying) it.start() } catch (_: Exception) { }
             return
         }
+        if (settings.bedKind == BED_FIRESIDE) {
+            val bed = bedNow()
+            currentMood = bed?.mood
+            // A null bed means uniform-bed or an unloaded map, not silence.
+            if (bed?.mood == MoodMap.SILENCE) return
+            startFireside()
+            return
+        }
         val bed = bedNow()
         if (bed != null) {
             currentMood = bed.mood
@@ -667,6 +701,35 @@ class ReadingService : Service() {
         }
         playMusicTrack(musicIndex)
     }
+
+    /**
+     * Start the fireside bed, best source first.
+     *
+     * ⚠ THE FALLBACK CHAIN MUST NEVER END IN SILENCE. Downloaded 10-minute
+     * recording, else the short loop bundled in the APK, else — if neither is
+     * present — the music bed, because a listener who picked Fireside and got
+     * nothing cannot tell that from a bug. Only MoodMap.SILENCE is allowed to
+     * produce no sound.
+     */
+    private fun startFireside() {
+        val downloaded = MusicRepo.cachedAmbience(this)
+        if (downloaded != null) {
+            firesidePlaying = true
+            crossfadeToFile(downloaded)
+            return
+        }
+        if (assetExists(FIRESIDE_ASSET)) {
+            firesidePlaying = true
+            crossfadeTo(FIRESIDE_ASSET)
+            return
+        }
+        firesidePlaying = false
+        crossfadeTo(bundledFor(currentMood ?: "narrative"))
+    }
+
+    private fun assetExists(path: String): Boolean = try {
+        assets.openFd(path).close(); true
+    } catch (_: Exception) { false }
 
     /** Start one specific asset as the bed. Falls back to the rotation on error. */
     private fun playMusicAsset(asset: String, startVolume: Float) {
@@ -729,6 +792,8 @@ class ReadingService : Service() {
     }
 
     private fun releaseMusic() {
+        firesidePlaying = false
+        currentMood = null
         // ⚠ A crossfade leaves a SECOND player alive. Releasing only musicPlayer
         // would leak it and keep the outgoing bed audible after the reader
         // stopped — the fade job holds the reference, not the field.

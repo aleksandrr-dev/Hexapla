@@ -215,6 +215,10 @@
     <string name="music_pack_have">Music pack downloaded: %1$d tracks, %2$d MB</string>
     <string name="music_pack_delete">Delete downloaded music</string>
     <string name="music_pack_progress">Downloading %1$d of %2$d…</string>
+    <string name="bed_kind">What plays underneath</string>
+    <string name="bed_kind_music">Music</string>
+    <string name="bed_kind_fireside">Fireside</string>
+    <string name="bed_kind_fireside_note">A crackling fire instead of music. It still falls silent at the passages where silence is intended.</string>
     <string name="music_uniform">Same music throughout</string>
     <string name="music_uniform_note">Off by default: the music changes to suit what is being read, and falls silent at a few passages where no music is better.</string>
     <!-- Interlinear morphology (Interlinear.kt decoders) -->

@@ -105,11 +105,38 @@ object MoodMap {
         if (!loaded || book < 0 || chapter < 0) return Bed("narrative")
 
         // ── the pivot. Everything below is canonical. ────────────────────
-        val (kc, kv) = try {
-            VerseMap.toKjv(translationId, book, chapter, if (verse >= 0) verse else 0)
+        // ⚠⚠ VerseMap IS 1-BASED ON BOTH SIDES; THIS MAP IS 0-BASED.
+        // build_mood_map.py emits 0-based book/chapter/verse (see its header),
+        // and every other VerseMap caller in the app converts on the way in —
+        // ReaderScreen does `chapter + 1, verse + 1` in seven places. This one
+        // did not, and passed raw 0-based coordinates into a 1-based API.
+        // TWO defects came out of that, found 2026-08-23 when the owner heard
+        // CHEERFUL music under the Synodal Psalm 87 (= KJV 88, the darkest
+        // psalm in the psalter):
+        //   1. At CHAPTER START the pivot silently did nothing. Playback.verse
+        //      is -1 between chapters, so verse 0 went in, and 0 never falls
+        //      inside a 1-based run — toKjv fell through to identity and the
+        //      LXX psalter was never pivoted at all. Chapter start is exactly
+        //      when the bed is chosen, so this is the case that is heard.
+        //   2. The 1-based chapter it returned was then looked up in the
+        //      0-based map. Mid-chapter the two errors happened to cancel for
+        //      equal-length runs, which is why this looked fine when spot-
+        //      checked on a verse.
+        // Measured across every mapped translation: 644 of 7311 chapters
+        // resolved to the wrong mood at chapter start (syn 101, csl 101,
+        // wyc 106, zoh 103, vul 100, bak 100, and a tail of others).
+        // ▶ Convert in, convert back out. Unmapped translations still resolve
+        //   to identity, so kjv/ylt and friends are unaffected.
+        val (kc1, kv1) = try {
+            VerseMap.toKjv(
+                translationId, book, chapter + 1,
+                if (verse >= 0) verse + 1 else 1
+            )
         } catch (_: Exception) {
-            chapter to (if (verse >= 0) verse else 0)
+            (chapter + 1) to (if (verse >= 0) verse + 1 else 1)
         }
+        val kc = kc1 - 1
+        val kv = kv1 - 1
 
         // Apocrypha (book >= 66) resolve by book default plus ranges only; the
         // generator refuses anchors there because verse numbering inside the

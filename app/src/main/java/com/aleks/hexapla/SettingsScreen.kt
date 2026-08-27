@@ -193,6 +193,29 @@ fun SettingsScreen(settings: AppSettings) {
                 onValueChange = { scope.launch { Store.setMusicVolume(context, it) } },
                 valueRange = 0.1f..1f
             )
+            // Music or fire, not both. Fire has no melody to compete with a
+            // reading, which is why it is offered as a peer of music rather
+            // than as one more mood.
+            Text(
+                stringResource(R.string.bed_kind),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Row {
+                ChoiceChip(
+                    stringResource(R.string.bed_kind_music),
+                    settings.bedKind == BED_MUSIC
+                ) { scope.launch { Store.setBedKind(context, BED_MUSIC) } }
+                ChoiceChip(
+                    stringResource(R.string.bed_kind_fireside),
+                    settings.bedKind == BED_FIRESIDE
+                ) { scope.launch { Store.setBedKind(context, BED_FIRESIDE) } }
+            }
+            if (settings.bedKind == BED_FIRESIDE) {
+                Text(
+                    stringResource(R.string.bed_kind_fireside_note),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
             // Phrased as the OPT-OUT it is: scene-matched is the new default,
             // and this restores the single unchanging bed for anyone who
             // preferred it. Named for what the listener hears, not for the

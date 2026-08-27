@@ -61,8 +61,16 @@ data class AppSettings(
     // regardless of what is being read. Some people prefer an unchanging bed,
     // and a scene-matched one is a bigger change than it sounds.
     val uniformBed: Boolean = false,
+    // Which KIND of bed plays under the narration: "music" or "fireside".
+    // Fireside is one continuous fire recording instead of the mood rotation.
+    // ⚠ It still honours MoodMap.SILENCE — the passages chosen to have no bed
+    // were chosen for reverence, not because music specifically was wrong.
+    val bedKind: String = BED_MUSIC,
     val lastPlanId: String = ""
 )
+
+const val BED_MUSIC = "music"
+const val BED_FIRESIDE = "fireside"
 
 object Store {
     private val THEME = stringPreferencesKey("theme")
@@ -99,6 +107,7 @@ object Store {
     private val MUSIC_ON = booleanPreferencesKey("music_on")
     private val MUSIC_UNIFORM = booleanPreferencesKey("music_uniform")
     private val MUSIC_VOL = floatPreferencesKey("music_vol")
+    private val BED_KIND = stringPreferencesKey("bed_kind")
     private val BOOKMARKS = stringSetPreferencesKey("bookmarks")
 
     fun settings(context: Context): Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -132,6 +141,7 @@ object Store {
             musicEnabled = p[MUSIC_ON] ?: false,
             uniformBed = p[MUSIC_UNIFORM] ?: false,
             musicVolume = p[MUSIC_VOL] ?: 0.45f,
+            bedKind = p[BED_KIND] ?: BED_MUSIC,
             lastPlanId = p[LAST_PLAN] ?: ""
         )
     }
@@ -202,6 +212,7 @@ object Store {
     suspend fun setMusicEnabled(c: Context, v: Boolean) = c.dataStore.edit { it[MUSIC_ON] = v }
     suspend fun setMusicVolume(c: Context, v: Float) = c.dataStore.edit { it[MUSIC_VOL] = v }
     suspend fun setUniformBed(c: Context, v: Boolean) = c.dataStore.edit { it[MUSIC_UNIFORM] = v }
+    suspend fun setBedKind(c: Context, v: String) = c.dataStore.edit { it[BED_KIND] = v }
 
     /** Bumps the daily reading streak; call once per app open. */
     suspend fun touchStreak(c: Context) = c.dataStore.edit { p ->

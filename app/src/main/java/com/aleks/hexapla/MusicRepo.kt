@@ -26,6 +26,10 @@ object MusicRepo {
     private var base: String = ""
     private var byMood: Map<String, List<Track>> = emptyMap()
     private var pinned: Map<String, Track> = emptyMap()
+    // The fireside bed: ONE long recording, looped, offered as an alternative
+    // to music entirely. Not a mood — fire does not suit lament any more or
+    // less than it suits praise, so mood resolution never picks it.
+    private var ambience: Track? = null
     private var credits: List<String> = emptyList()
     private var loaded = false
 
@@ -60,6 +64,10 @@ object MusicRepo {
                         }
                     }
                 } ?: emptyMap()
+                ambience = root.optJSONObject("ambience")?.let { o ->
+                    Track(o.getString("f"), o.getString("t"),
+                          o.getInt("ms"), o.getString("by"))
+                }
                 credits = root.optJSONArray("credits")?.let { a ->
                     List(a.length()) { a.getString(it) }
                 } ?: emptyList()
@@ -82,10 +90,12 @@ object MusicRepo {
     fun downloadedCount(context: Context): Int =
         dir(context).listFiles()?.count { it.length() > 0 } ?: 0
 
-    fun trackCount(): Int = byMood.values.sumOf { it.size } + pinned.size
+    fun trackCount(): Int =
+        byMood.values.sumOf { it.size } + pinned.size + (if (ambience != null) 1 else 0)
 
     /** Every track, for the download-all action. */
-    fun allTracks(): List<Track> = byMood.values.flatten() + pinned.values
+    fun allTracks(): List<Track> =
+        byMood.values.flatten() + pinned.values + listOfNotNull(ambience)
 
     /**
      * A cached track for [mood], or null to use a bundled one.
@@ -99,6 +109,21 @@ object MusicRepo {
         if (list.isNullOrEmpty()) return null
         return cacheFile(context, list[Math.floorMod(seed, list.size)].file)
     }
+
+    /**
+     * The long fireside recording, if downloaded.
+     *
+     * ⚠ Null here is NOT silence. The caller must fall back to the bundled
+     * short loop, and failing that to music — same rule as every other bed:
+     * only MoodMap.SILENCE may produce no sound.
+     */
+    fun cachedAmbience(context: Context): File? {
+        val t = ambience ?: return null
+        val f = cacheFile(context, t.file)
+        return if (f.exists() && f.length() > 0) f else null
+    }
+
+    fun ambienceCredit(): String? = ambience?.credit
 
     /** A specific pinned track (mood_map.json trackPin), if downloaded. */
     fun cachedPinned(context: Context, id: String): File? {

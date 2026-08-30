@@ -26,11 +26,15 @@ tighten, raise it to reduce noise.
 ("...oc h sade: ... och sade:"). Read the verse, and if it looks like an overlap,
 check the strip boundary it sits on before deleting anything.
 
-CALIBRATION - THE KNOWN-BENIGN BASELINE (updated 2026-08-26, n=5)
-The corpus yields exactly SIXTEEN candidates and **all sixteen were read and
+CALIBRATION - THE KNOWN-BENIGN BASELINE (updated 2026-08-30, n=6)
+The corpus yields exactly TWENTY candidates and **all twenty were read and
 are genuine PARALLELISM or a printed repetition**, not overlap damage.
 ⚠ Sirach alone prints FOURTEEN of them, so `kxii_dup_runs.py sirach` printing 14
-is the correct result (Judith 5:3 and Tobit 13:16 sit in other files).
+is the correct result. The other six sit in four different files: Judith 5:3,
+Tobit 13:16, 2 Maccabees 3:15 / 5:8 / 15:40, and Bel and the Dragon 23.
+⚠ PER-BOOK EXPECTED COUNTS, so a single-book run can be checked on its own:
+tobit 1 · judith 1 · sirach 14 · 2maccabees 3 · daniel_additions 1 · wisdom 0 ·
+baruch 0 · 1maccabees 0 · esther_additions 0. Anything above these is NEW.
 ⚠ THE PREVIOUS HEADER SAID "THIRTEEN corpus-wide / TWELVE Sirach" WHILE THE
 TABLE BELOW ALREADY LISTED FOURTEEN ROWS - 12 Sirach + Judith + Tobit = 14, not
 13. The row list was right and the sentence was wrong; the corpus figure is
@@ -52,6 +56,17 @@ corrected here. Count the table, not the prose.
     sirach.md    Sirach 33:31   «hafwer tu en tienare»       (adjudicated 2026-08-25)
     sirach.md    Sirach 34:4    «är huru kan thet»           (adjudicated 2026-08-25)
     sirach.md    Sirach 37:20   «förr än tu något»           (adjudicated 2026-08-26)
+    2maccabees.md 2 Macc 3:15    «i goda troo nedersatt»   (adjudicated 2026-08-30)
+    2maccabees.md 2 Macc 5:8     «war och hwar man»        (adjudicated 2026-08-30)
+    2maccabees.md 2 Macc 15:40   «watn dricka thet»        (adjudicated 2026-08-30)
+    daniel_add.md Bel+Dragon 23  «säija at han icke»     (adjudicated 2026-08-29)
+
+⚠ THE FOUR ROWS ABOVE WERE ADDED 2026-08-30, ALL CLEARED BY THE NEXT-WORD
+DISCRIMINATOR ALONE (rule 1 below) - each repetition diverges at the very next
+word, which an overlap duplicate cannot do: 3:15 «är/ icke förfara» vs
+«hade/ wille thet förwara»; 5:8 «war honom hätsk» vs «förbannade honom»;
+15:40 «icke lustigt» vs «lustigt» (the book's closing antithesis);
+Bel 23 «annat är» vs «en lefwande gudh är». None needed a sheet or a witness.
 
 ★ 37:20 IS THE CHEAPEST CLEAR SO FAR, AND IT SHOWS THE NEXT-WORD TEST WORKING
 FIRST TRY. «Förr än tu något begynner/ befråga tigh; och förr än tu något

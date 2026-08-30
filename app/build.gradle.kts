@@ -91,6 +91,15 @@ android {
     buildFeatures {
         compose = true
     }
+    androidResources {
+        // ⚠ ReadingService.assetExists() uses assets.openFd(), which THROWS on a
+        // COMPRESSED asset. If ambience/fire_loop.ogg were deflated into the APK
+        // the Fireside check would return false and silently fall back to the
+        // music bed -- indistinguishable from the bug this asset fixes. AAPT2
+        // leaves .ogg uncompressed by default; this pins it so a default change
+        // cannot reintroduce a silent failure.
+        noCompress += "ogg"
+    }
 }
 
 dependencies {

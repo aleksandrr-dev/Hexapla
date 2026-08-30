@@ -19,6 +19,58 @@ Two independent readers of the same page agreeing on the same wrong character
 is rare, so agreement is real evidence. Disagreement is NOT evidence that we
 are wrong - it means one of us is, and only the image can say which.
 
+## ⚠⚠ 2026-08-29: THE PLAIN FETCH IS BLOCKED - THIS TOOL CANNOT RUN
+
+kxii.se now answers EVERY path, including known-good ones, with a ~12 KB
+anti-bot interstitial titled "One moment, please..." that reloads itself after
+5 seconds. `parse_kxii` finds no `<section id="kap_">` and silently yields an
+empty book.
+
+POSITIVE CONTROL, and it is what makes this a finding rather than a guess:
+`https://kxii.se/vish` returns 12 KB with 0 `<p>` today, while the cached copy
+at `_kxii_cache/kxii_vish.html` is 84 KB with 469. **The slug is not wrong and
+the parser is not wrong - the fetch no longer reaches the text.** The in-app
+browser did not get through the challenge either.
+
+## ✓ SETTLED 2026-08-30: IT IS NOT THE PROXY. kxii.se IS BLOCKING THIS HOST.
+
+The 2026-08-29 note left this undetermined and named the local
+`mitmdump --listen-port 8080` proxy as the prime suspect, following the session
+handoff. **That suspicion is now falsified.** Measured, all three in one run,
+same shell, same opener:
+
+    litteraturbanken.se   200, 17 KB      <- our cc-0 source
+    archive.org           200, 1.1 MB     <- metadata API
+    kxii.se               TLS handshake TIMEOUT
+
+The proxy carries every other host fine, so it is healthy. Only kxii.se fails.
+⚠ Note also that `HTTPS_PROXY=http://127.0.0.1:8080` IS set in this shell and
+urllib honours it (`urllib.request.getproxies()` shows it), and that DIRECT,
+proxy-bypassing egress does not exist here at all — a no-proxy opener also times
+out at the handshake. So "just bypass the proxy" is not an available fix, and it
+would not have helped anyway.
+
+⚠⚠ AND IT GOT WORSE BETWEEN 08-29 AND 08-30. On 08-29 kxii.se answered with a
+~12 KB "One moment, please..." anti-bot interstitial. On 08-30 it does not
+complete a TLS handshake at all. **The most likely cause is our own automated
+fetch volume tripping an escalating block.**
+
+⛔ DO NOT TRY TO EVADE IT. Rotating the User-Agent, forging browser headers,
+cycling IPs or scripting the challenge are all circumvention of an access
+control on someone else's server, and this campaign's whole legal position with
+kxii.se rests on being the well-behaved party. **Stop fetching.** The block may
+lapse on its own; retry at most once, days apart, not in a loop.
+
+▶ THE LEGITIMATE ROUTE, and it already exists: the campaign has correspondence
+with kxii.se's operator (`karlxii_apoc_navigation.md` §1 records the retraction
+sent to Cai Alfredson). If the witness matters enough, ASK — for access, or for
+a text dump for QA use. That is a human step, not a code change.
+
+Meanwhile the four books diffed before the block (vish, judit, syr, 2-mack)
+still have their cached HTML in `_kxii_cache/`; every other book, including the
+whole `karlxii_daniel_additions.md` unit, is UNWITNESSED. That is a stated gap
+in the campaign's QA, not a passed check.
+
 ## NORMALISATION
 
 Comparison is on a folded form, because the two transcriptions differ in

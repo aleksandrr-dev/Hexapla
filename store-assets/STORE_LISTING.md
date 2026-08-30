@@ -1717,3 +1717,26 @@ Tyndale completed (33 books); precise verse-by-verse alignment in
 split view; welcome screen opens the Gospel of John; bug fixes.
 
 ---
+
+
+# ── MOVED OUT OF CLAUDE.md, 2026-08-28 (context budget) ──
+
+Verbatim from `CLAUDE.md`'s "Store status" section. Nothing was changed; it was
+moved because it is submission-time procedure, needed a few times a year, and
+was being loaded into EVERY session. CLAUDE.md keeps the live status and points
+here.
+
+## RuStore — every-upload procedure
+
+  ⚠ Every upload re-asks the Safety form (answers at the top of
+  `store-assets/STORE_LISTING.md`), and a new version draft does **NOT** inherit
+  media — re-upload the icon (`store-assets/icon_512_store.png`) and 6
+  screenshots (5 JPGs in `store-assets/rustore/`, order 120537, 120212, 120307,
+  120326, 120426, then `screenshot_widget.png`). The browser extension cannot
+  upload local files; the owner picks them in the native dialog. Review ≈ a day.
+
+## Google Play — submission answers already on file
+
+  IARC done (purchases answered NO — tip products deliberately not created so
+  Brazil rates Livre; tips exist only in code). Target audience 13+, no
+  ads/ad-ID/health. Third-party syndication: publish-all. Play App Signing.

@@ -28,9 +28,14 @@ the **KJV** one, and they genuinely disagree about what a book even is:
   · The KJV grid folds the Epistle of Jeremiah into Baruch 6 (slot 73 empty,
     Baruch 6 chapters). Where THIS print puts it is unestablished — record what
     the page does and decide the slot at integration.
-  · «Stycker af Daniel» is printed as ONE continuously-numbered sequence with
-    internal headings, feeding KJV slots 79/80/81 (and Manasse Bön, 74). It
-    cannot be audited against per-book counts at all. See PRINT_UNITS.
+  · «Stycker af Daniel» was believed to be ONE continuously-numbered
+    sequence feeding slots 79/80/81 (and Manasse Bon, 74). ✗ IT IS NOT, and
+    the PRINT_UNITS entry below is retained only as a record of that belief.
+    Read off the pages (2026-08-29): it is an UMBRELLA TITLE over four pieces,
+    each with its own title and its own numbering - Susanna 1-64, Bel and the
+    Dragon 1-41, Prayer of Azariah 24-91 (the Vulgate Daniel 3 numbering,
+    declared on the page), Prayer of Manasses 1-14. So each one IS auditable
+    against its own slot, and all four are, via KNOWN_DIVERGENCE.
   · «Stycker af Esthers Book» will not match the KJV's 10-16 chapter fiction.
 
 ▶ So a count mismatch here is a QUESTION, not a verdict. Every one must be
@@ -112,17 +117,49 @@ NOT_IN_PRINT = {
 # never pass/failed, and they stay flagged until a curated split map exists.
 # name -> (slots it feeds, note)
 PRINT_UNITS = {
+    # ✗✗ FALSIFIED 2026-08-29 - kept so the claim cannot come back.
+    # The pages show four separately-titled, separately-numbered pieces, each
+    # audited against its own slot. NO chunk file uses this heading, and none
+    # should: use the en_kjv book names. See karlxii_daniel_additions.md.
     "Stycker af Daniel": ((79, 80, 81, 74),
-                          "continuous numbering across Prayer of Azariah / "
-                          "Susanna / Bel, with Manasse Bön appended; split at "
-                          "conversion with a curated map, NOT on the page"),
+                          "SUPERSEDED: the print does NOT number this unit "
+                          "continuously. Four pieces, four numberings; they "
+                          "are pinned individually in KNOWN_DIVERGENCE"),
 }
 
 # Edition differences established WITH EVIDENCE by a chunk. Until a mismatch is
 # investigated it does NOT belong here — an entry means "we looked at the page
 # and the print really says this", not "the numbers disagreed".
 # (book index, chapter) -> (printed count, note)
-KNOWN_DIVERGENCE = {}
+#   or           -> (printed count, note, expected verse NUMERALS)
+# The third form exists because a divergence is not always a matter of COUNT:
+# «Asarie Böön» carries exactly 68 verses, the grid's number, but numbers them
+# 24-91 because the print declares the Vulgate's Daniel 3 numbering on the page.
+# Without an explicit numeral set the audit reports that as "missing 1-23" —
+# a 23-verse gap that does not exist. An entry here is still only ever written
+# after the page has been read; see the note text for where the evidence lives.
+#
+# ⚠ A pinned entry is REPORTED, not silenced — see the "RECORDED EDITION
+# DIFFERENCES" block in the output. It must never become a way to make a real
+# gap invisible.
+KNOWN_DIVERGENCE = {
+    # Bel and the Dragon (slot 81), one chapter.
+    (81, 1): (41, "print merges KJV 1+2 into an UNNUMBERED v1 carrying a "
+                  "§F5 paragraph break (decorated O, no numeral, next numeral "
+                  "is 2 at KJV v3); thereafter print v(n) = KJV v(n+1), so "
+                  "print 41 = KJV 42 and nothing is missing "
+                  "— karlxii_daniel_additions.md", range(1, 42)),
+    # Prayer of Azariah (slot 79) = «Asarie Böön» + «The tre Måns Loffång».
+    (79, 1): (68, "print sets the Vulgate's Daniel 3 numbering, declared on "
+                  "the page in the sub-title «Efter Daniels 3 cap. 23 v.»: "
+                  "verses run 24-91, which is 68 verses, the grid's own count. "
+                  "grid v(n) = print v(n+23) "
+                  "— karlxii_daniel_additions.md", range(24, 92)),
+    # Prayer of Manasses (slot 74) = «Manasse Böön», p746 right column.
+    (74, 1): (14, "en_kjv.json holds the whole prayer as ONE verse; this print "
+                  "versifies it into 14. Same prayer, a versification "
+                  "difference — karlxii_daniel_additions.md", range(1, 15)),
+}
 
 
 def load_kjv():
@@ -172,6 +209,7 @@ def main():
     # fragment of one chunk AND in full in the chunk that owns it. Keep the BEST
     # copy per chapter, or the fragment manufactures a phantom "short".
     best, sources, all_units, unknown_books = {}, {}, {}, set()
+    pinned_notes = []
     mute = []
     files = 0
     for path in sorted(glob.glob(str(RESEARCH / "karlxii_*.md"))):
@@ -272,10 +310,15 @@ def main():
         bad = []
         for c in have:
             verses = best[(b, c)]
-            target, note = expected_pair(counts, (b, c))
+            target, note, numerals = expected_triple(counts, (b, c))
+            if (b, c) in KNOWN_DIVERGENCE:
+                pinned_notes.append(f"{booknames[b]} {c}: {note}")
+            if numerals is None:
+                numerals = list(range(1, target + 1))
             dupes = sorted({v for v in verses if verses.count(v) > 1})
-            gaps = [v for v in range(1, target + 1) if v not in verses]
-            extra = [v for v in verses if v > target]
+            want_set = set(numerals)
+            gaps = [v for v in numerals if v not in verses]
+            extra = sorted({v for v in verses if v not in want_set})
             if dupes or gaps or extra:
                 bad.append((c, len(verses), target, dupes, gaps, extra, note))
         status = "OK" if not missing and not bad and not over else "!!"
@@ -347,6 +390,14 @@ def main():
                     f"{name}: feeds slots {list(slots)} and has NO curated "
                     f"split map yet, so none of it is in the asset. {note}")
 
+    if pinned_notes:
+        # A pinned divergence is REPORTED, never silenced. If one of these
+        # ever stops matching the page, delete the entry - do not widen it.
+        print("\nRECORDED EDITION DIFFERENCES (pinned with page evidence, "
+              "not gaps):")
+        for n in pinned_notes:
+            print("  · " + n)
+
     if notes:
         print("\nEXPECTED ABSENCES (recorded, not gaps):")
         for n in notes:
@@ -367,10 +418,18 @@ def expected(counts, key):
 
 
 def expected_pair(counts, key):
+    return expected_triple(counts, key)[:2]
+
+
+def expected_triple(counts, key):
+    """-> (count, note, expected numerals or None for the default 1..count)"""
     b, c = key
     if key in KNOWN_DIVERGENCE:
-        return KNOWN_DIVERGENCE[key]
-    return (counts[b][c - 1] if c - 1 < len(counts[b]) else 0), ""
+        pinned = KNOWN_DIVERGENCE[key]
+        if len(pinned) == 3:
+            return pinned[0], pinned[1], sorted(pinned[2])
+        return pinned[0], pinned[1], None
+    return (counts[b][c - 1] if c - 1 < len(counts[b]) else 0), "", None
 
 
 def better(new, old, exp):

@@ -169,6 +169,18 @@ NOTE_PREFIX = ("·", "-", "|", ">")
 NOTE_START = ("⚠", "✅", "★", "▶", "⛔", "ℹ")
 
 
+# A note paragraph that follows the last verse of a chapter with NO blank
+# line between them was being swallowed as a continuation of that verse,
+# which made the differ report the whole note as text kxii.se "lacks" - two
+# invented delete-sites at Sirach 50:31 and 51:38 on 2026-08-30. Neither a
+# NOTE_PREFIX nor a NOTE_START character opens those lines; they open
+# "Notes on ch50, CLOSED (Argument from p694_L5; ...)".
+# These two patterns are safe stops because NO scripture line can contain
+# either: a strip id is our own coordinate system, and "Notes on ch<N>" is
+# the chunk format's own section opener.
+NOTE_LINE = re.compile(r"^Notes on ch\d+|p\d{3}_[LR]\d")
+
+
 def parse_chunk(path, name):
     """Our chunk file -> {chapter: {verse: text}}, joining wrapped lines."""
     out = {}
@@ -194,8 +206,10 @@ def parse_chunk(path, name):
             out[cur][vnum] = vm.group(2).strip()
             continue
         stripped = line.strip()
-        if not stripped or stripped.startswith(NOTE_PREFIX) or \
-                stripped[:1] in NOTE_START or stripped.startswith("Argument:"):
+        if (not stripped or stripped.startswith(NOTE_PREFIX) or
+                stripped[:1] in NOTE_START or
+                stripped.startswith("Argument:") or
+                NOTE_LINE.search(stripped)):
             vnum = None
             continue
         if vnum is not None:  # continuation of a wrapped verse

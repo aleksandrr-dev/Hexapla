@@ -32,3 +32,7 @@ CLAUDE.md.doctor-backup
 # Timestamped working backups (foo.py.bak-0823). Local scratch from long
 # editing sessions; the history is in git, not in these.
 *.bak-*
+
+# Claude Code local state
+.claude/settings.local.json
+.claude/skills/

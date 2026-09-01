@@ -53,130 +53,130 @@ the descriptions section.
 ★ **ONLY THE CURRENT RELEASE'S NOTES LIVE AT THE TOP** (owner, 2026-07-28).
 When a release ships, move its block down under the
 `# ── ARCHIVE: older release notes (historical) ──` banner at the END of this
-## 1.6.4 release notes (paste per store)
+## 1.6.5 release notes (paste per store)
 
 <en-US>
-The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. The Church Slavonic Bible is now fully narrated, and the Russian apocrypha too. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day. Now 36 translations in 30 languages.
+The Swedish Bible gains its apocrypha: seventeen books transcribed page by page from the Karl XII printing of 1703 for this app — Tobit, Judith, Wisdom, Sirach, the books of the Maccabees and the rest. And a crackling fire can now play under the reading in place of music; it still falls silent at the passages where silence is intended.
 </en-US>
 
 <ar>
-اكتمل الكتاب المقدس بالفارسية: عهد وليم غلن القديم (1856) ينضم إلى عهد هنري مارتن الجديد، منسوخًا صفحةً صفحةً عن الطبعة الأصلية من أجل هذا التطبيق. والكتاب المقدس بالسلافونية الكنسية صار له تسجيل صوتي كامل، وكذلك الأسفار القانونية الثانية بالروسية. وقاموس سترونغ صار متاحًا بالروسية بكل مداخله العبرية واليونانية. وأغلفة الأسفار صارت تتبدل: الأسفار الأكثر قراءةً تعرض نقشًا مختلفًا كل يوم. الآن 36 ترجمة بـ30 لغة.
+الكتاب المقدس السويدي ينال أسفاره القانونية الثانية: سبعة عشر سفرًا منسوخة صفحةً صفحةً عن طبعة كارل الثاني عشر لعام 1703 من أجل هذا التطبيق: طوبيا ويهوديت والحكمة ويشوع بن سيراخ والمكابيين وسواها. وصار في الإمكان أن تسمع طقطقة نار تحت القراءة بدل الموسيقى، وتسكت عند المواضع التي يُقصد فيها الصمت.
 </ar>
 
 <be>
-Персідская Біблія поўная: Стары Запавет Уільяма Глена 1856 года далучыўся да Новага Запавету Генры Мартына — перапісаны старонка за старонкай з арыгінальнага друку. Царкоўнаславянская Біблія поўнасцю агучана, як і рускія апокрыфы. Слоўнік Стронга цяпер чытаецца па-руску: усе яўрэйскія і грэчаскія артыкулы. Вокладкі кніг цяпер чаргуюцца: найбольш чытаныя кнігі паказваюць новую гравюру кожны дзень. Цяпер 36 перакладаў на 30 мовах.
+Швеدская Біблія атрымлівае свае апокрыфы: семнаццаць кніг, перапісаных старонка за старонкай з друку Карла XII 1703 года для гэтага дадатку: Тавіт, Юдзіф, Премудрасць, Сірах, Макавейскія кнігі і іншыя. А пад чытанне цяпер можа гучаць трэск вогнішча замест музыкі — і яно заціхае там, дзе так задумана.
 </be>
 
 <cs-CZ>
-Perská Bible je úplná: Starý zákon Williama Glena z roku 1856 se připojuje k Novému zákonu Henryho Martyna — přepsán stránku po stránce z původního tisku. Církevněslovanská Bible má nyní úplnou zvukovou nahrávku, stejně jako ruské apokryfy. Strongův slovník je nyní i rusky, všechna hebrejská i řecká hesla. Obálky knih se nyní střídají: nejčtenější knihy ukazují každý den jinou rytinu. Nyní 36 překladů ve 30 jazycích.
+Švédská Bible získává své apokryfy: sedmnáct knih přepisovaných stránku po stránce z tisku Karla XII. z roku 1703 pro tuto aplikaci — Tobiáš, Judit, Moudrost, Sírachovec, knihy Makabejské a další. A pod čtením může nyní místo hudby praskání ohně; stále ztichá v místech, kde má být ticho.
 </cs-CZ>
 
 <da-DK>
-Den persiske bibel er komplet: William Glens Gamle Testamente fra 1856 slutter sig til Henry Martyns Nye Testamente — afskrevet side for side fra originaltrykket. Den kirkeslaviske bibel er nu fuldt indlæst, og de russiske apokryfer med. Strongs ordbog findes nu på russisk med alle hebraiske og græske opslag. Bogomslag skifter nu: de mest læste bøger viser et nyt stik hver dag. Nu 36 oversættelser på 30 sprog.
+Den svenske bibel får sine apokryfer: sytten bøger afskrevet side for side fra Karl XII's tryk fra 1703 til denne app — Tobit, Judit, Visdommens Bog, Siraks Bog, Makkabæerbøgerne og de øvrige. Og en knitrende ild kan nu lyde under læsningen i stedet for musik; den tier stadig de steder, hvor stilhed er tilsigtet.
 </da-DK>
 
 <de-DE>
-Die persische Bibel ist vollständig: das Alte Testament von William Glen (1856) tritt zum Neuen Testament Henry Martyns — Seite für Seite aus dem Originaldruck übertragen. Die kirchenslawische Bibel ist jetzt vollständig vertont, ebenso die russischen Apokryphen. Strongs Wörterbuch gibt es jetzt auf Russisch, alle hebräischen und griechischen Einträge. Buchtitelbilder wechseln nun täglich bei den meistgelesenen Büchern. Jetzt 36 Übersetzungen in 30 Sprachen.
+Die schwedische Bibel erhält ihre Apokryphen: siebzehn Bücher, für diese App Seite für Seite aus dem Druck Karls XII. von 1703 übertragen — Tobit, Judit, Weisheit, Jesus Sirach, die Makkabäerbücher und die übrigen. Und unter der Lesung kann jetzt ein knisterndes Feuer statt Musik laufen; an den Stellen, an denen Stille gemeint ist, schweigt es weiterhin.
 </de-DE>
 
 <el-GR>
-Η περσική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ουίλιαμ Γκλεν (1856) προστίθεται στην Καινή Διαθήκη του Χένρι Μάρτιν — αντιγραμμένη σελίδα προς σελίδα από την αρχική έκδοση. Η εκκλησιαστική σλαβονική Βίβλος ηχογραφήθηκε πλήρως, όπως και τα ρωσικά απόκρυφα. Το λεξικό Strong διατίθεται τώρα και στα ρωσικά. Τα εξώφυλλα εναλλάσσονται: τα πιο διαβασμένα βιβλία δείχνουν κάθε μέρα άλλη χαλκογραφία. Τώρα 36 μεταφράσεις σε 30 γλώσσες.
+Η σουηδική Βίβλος αποκτά τα απόκρυφά της: δεκαεπτά βιβλία, αντιγραμμένα σελίδα σελίδα από την έκδοση του Κάρολου ΙΒ’ του 1703 για αυτήν την εφαρμογή — Τωβίτ, Ιουδίθ, Σοφία Σολομώντος, Σοφία Σειράχ, οι Μακκαβαίων και τα υπόλοιπα. Και κάτω από την ανάγνωση μπορεί τώρα να ακούγεται φωτιά αντί για μουσική· σωπαίνει πάντα όπου η σιωπή είναι το ζητούμενο.
 </el-GR>
 
 <en-IN>
-The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. The Church Slavonic Bible is now fully narrated, and the Russian apocrypha too. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day. Now 36 translations in 30 languages.
+The Swedish Bible gains its apocrypha: seventeen books transcribed page by page from the Karl XII printing of 1703 for this app — Tobit, Judith, Wisdom, Sirach, the books of the Maccabees and the rest. And a crackling fire can now play under the reading in place of music; it still falls silent at the passages where silence is intended.
 </en-IN>
 
 <es-419>
-La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
+La Biblia sueca recibe sus libros deuterocanónicos: diecisiete libros transcritos página a página de la impresión de Carlos XII de 1703 para esta aplicación — Tobías, Judit, Sabiduría, Eclesiástico, los libros de los Macabeos y los demás. Y bajo la lectura puede sonar ahora una hoguera crepitante en vez de música; sigue callándose en los pasajes donde se busca el silencio.
 </es-419>
 
 <es-ES>
-La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
+La Biblia sueca recibe sus libros deuterocanónicos: diecisiete libros transcritos página a página de la impresión de Carlos XII de 1703 para esta aplicación — Tobías, Judit, Sabiduría, Eclesiástico, los libros de los Macabeos y los demás. Y bajo la lectura puede sonar ahora una hoguera crepitante en vez de música; sigue callándose en los pasajes donde se busca el silencio.
 </es-ES>
 
 <es-US>
-La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
+La Biblia sueca recibe sus libros deuterocanónicos: diecisiete libros transcritos página a página de la impresión de Carlos XII de 1703 para esta aplicación — Tobías, Judit, Sabiduría, Eclesiástico, los libros de los Macabeos y los demás. Y bajo la lectura puede sonar ahora una hoguera crepitante en vez de música; sigue callándose en los pasajes donde se busca el silencio.
 </es-US>
 
 <fi-FI>
-Persiankielinen Raamattu on täydellinen: William Glenin vuoden 1856 Vanha testamentti liittyy Henry Martynin Uuteen testamenttiin — jäljennettynä sivu sivulta alkuperäisestä painoksesta. Kirkkoslaavilainen Raamattu on nyt kokonaan äänitetty, samoin venäjän apokryfikirjat. Strongin sanakirja on nyt myös venäjäksi, kaikki heprean ja kreikan hakusanat. Kirjojen kannet vaihtuvat: luetuimmat kirjat näyttävät joka päivä eri kuparipiirroksen. Nyt 36 käännöstä 30 kielellä.
+Ruotsalainen Raamattu saa apokryfikirjansa: seitsemäntoista kirjaa, jotka on tätä sovellusta varten kirjoitettu sivu sivulta Kaarle XII:n vuoden 1703 painoksesta — Tobit, Judit, Viisauden kirja, Sirak, Makkabilaiskirjat ja muut. Ja lukemisen alla voi nyt riseä nuotio musiikin sijaan; se vaikenee yhä niissä kohdissa, joihin hiljaisuus kuuluu.
 </fi-FI>
 
 <fr-CA>
-La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine. La Bible en slavon d'église est désormais entièrement narrée, et les apocryphes russes aussi. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent chaque jour pour les livres les plus lus. Désormais 36 traductions en 30 langues.
+La Bible suédoise reçoit ses deutérocanoniques : dix-sept livres transcrits page à page de l'impression de Charles XII de 1703 pour cette application — Tobie, Judith, la Sagesse, le Siracide, les livres des Maccabées et les autres. Et un feu crépitant peut désormais accompagner la lecture à la place de la musique ; il se tait toujours aux passages où le silence est voulu.
 </fr-CA>
 
 <fr-FR>
-La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine. La Bible en slavon d'église est désormais entièrement narrée, et les apocryphes russes aussi. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent chaque jour pour les livres les plus lus. Désormais 36 traductions en 30 langues.
+La Bible suédoise reçoit ses deutérocanoniques : dix-sept livres transcrits page à page de l'impression de Charles XII de 1703 pour cette application — Tobie, Judith, la Sagesse, le Siracide, les livres des Maccabées et les autres. Et un feu crépitant peut désormais accompagner la lecture à la place de la musique ; il se tait toujours aux passages où le silence est voulu.
 </fr-FR>
 
 <hu-HU>
-A perzsa Biblia teljes: William Glen 1856-os Ószövetsége Henry Martyn Újszövetségéhez csatlakozik — oldalról oldalra átírva az eredeti nyomtatványból. Az egyházi szláv Biblia most teljes hangfelvételt kapott, és az orosz apokrifok is. A Strong-szótár mostantól oroszul is olvasható, minden héber és görög szócikkel. A könyvborítók váltakoznak: a legolvasottabb könyvek naponta más metszetet mutatnak. Most 36 fordítás 30 nyelven.
+A svéd Biblia megkapja apokrif könyveit: tizenhét könyv, amelyet XII. Károly 1703-as nyomtatványából oldalról oldalra írtunk át ehhez az alkalmazáshoz — Tóbiás, Judit, Bölcsesség, Sirák fia, a Makkabeusok könyvei és a többi. És az olvasás alatt most ropó tűz is szólhat zene helyett; továbbra is elhallgat ott, ahol a csend a szándék.
 </hu-HU>
 
 <hy-AM>
-Պարսկերեն Աստվածաշունչն ամբողջական է՝ Ուիլյամ Գլենի 1856 թ. Հին Կտակարանը միանում է Հենրի Մարտինի Նոր Կտակարանին՝ էջ առ էջ ընդօրինակված բնօրինակ տպագրությունից։ Եկեղեցասլավոներեն Աստվածաշունչն այժմ ամբողջությամբ ընթերցվում է, ինչպես նաև ռուսերեն պարականոն գրքերը։ Սթրոնգի բառարանն այժմ կարդացվում է նաև ռուսերեն։ Գրքերի շապիկներն այժմ հերթափոխվում են ամեն օր։ Այժմ 36 թարգմանություն 30 լեզվով։
+Շվեդական Աստվածաշունչը ստանում է իր ապոկրիֆ գրքերը՝ տասնյոթ գիրք, ընդօրինակված էջ առ էջ Քարլոս XII-ի 1703 թվականի տպագրությունից՝ Հոբիթ, Հուդիթ, Իմաստություն, Սիրաք, Մակաբայեցիները և մնացածը։ Եւ ընթերցման տակ այժմ կարող է հնչել ծածանվող կրակ՝ երաժշտության փոխարեն. Այն այնպես էլ լռում է այնտեղ, ուր լռությունն է նախատեսված։
 </hy-AM>
 
 <it-IT>
-La Bibbia in persiano è completa: l'Antico Testamento di William Glen (1856) si unisce al Nuovo Testamento di Henry Martyn, trascritto pagina per pagina dalla stampa originale. La Bibbia in slavo ecclesiastico è ora narrata per intero, e anche gli apocrifi russi. Il dizionario di Strong si legge ora anche in russo, con tutte le voci ebraiche e greche. Le copertine ruotano: i libri più letti mostrano ogni giorno un'incisione diversa. Ora 36 traduzioni in 30 lingue.
+La Bibbia svedese riceve i suoi deuterocanonici: diciassette libri trascritti pagina per pagina dalla stampa di Carlo XII del 1703 per questa applicazione — Tobia, Giuditta, Sapienza, Siracide, i libri dei Maccabei e gli altri. E sotto la lettura può ora scorrere un fuoco crepitante invece della musica; tace ancora nei passi in cui il silenzio è voluto.
 </it-IT>
 
 <iw-IL>
-התנ"ך והברית החדשה בפרסית הושלמו: הברית הישנה של ויליאם גלן (1856) מצטרפת לברית החדשה של הנרי מרטין — מועתקת עמוד אחר עמוד מן הדפוס המקורי. לתנ"ך בסלאבית כנסייתית יש כעת הקראה קולית מלאה, וכן לספרים החיצוניים הרוסיים. מילון סטרונג נקרא כעת גם ברוסית, כל הערכים בעברית וביוונית. עטיפות הספרים מתחלפות: הספרים הנקראים ביותר מציגים תחריט אחר בכל יום. כעת 36 תרגומים ב-30 שפות.
+התנ״ך השוודי מקבל את הספרים החיצוניים שלו: שבעה עשר ספרים שהועתקו עמוד אחר עמוד מדפוס קרל השנים־עשר משנת 1703 עבור היישום הזה — טוביה, יהודית, חוכמת שלמה, בן סירא, ספרי החשמונאים והשאר. ומתחת לקריאה אפשר כעת להשמיע אש מפצפצת במקום מוזיקה; היא עדיין שותקת בקטעים שבהם השתיקה מכוונת.
 </iw-IL>
 
 <ja-JP>
-ペルシア語聖書が完成しました。ウィリアム・グレンの1856年旧約が、ヘンリー・マーティンの新約に加わります。原本から一頁ずつ本アプリのために書き起こしたものです。教会スラヴ語聖書に全章の音声朗読が加わり、ロシア語外典も朗読されます。ストロング辞典がロシア語でも読めるようになり、ヘブライ語・ギリシア語の全項目を収録。書物の表紙が日替わりになり、さらに五つの書物に初めて挿絵が付きました。現在36訳・30言語。
+スウェーデン語聖書に外典が加わりました。カール12世の1703年版から、このアプリのために一頁ずつ翻刻した17巻—トビト記、ユディト記、知恵の書、シラキの書、マカバイ記など。また、朗読の下に音楽の代わりに焚き火の音を流せるようになりました。沈黙が意図された箇所では、これまでどおり静かになります。
 </ja-JP>
 
 <lv>
-Persiešu Bībele ir pilnīga: Viljama Glena 1856. gada Vecā Derība pievienojas Henrija Mārtina Jaunajai Derībai — pārrakstīta lapu pa lapai no oriģinālizdevuma. Baznīcslāvu Bībele tagad ir pilnībā ieskaņota, tāpat krievu apokrifi. Stronga vārdnīca tagad lasāma arī krieviski, visi ebreju un grieķu šķirkļi. Grāmatu vāki tagad mainās: visvairāk lasītās grāmatas katru dienu rāda citu gravīru. Tagad 36 tulkojumi 30 valodās.
+Zviedru Bībele iegūst savus apokrifus: septiņpadsmit grāmatas, kas šai lietotnei pārrakstītas lappusi pa lappusei no Kārļa XII 1703. gada izdevuma — Tobija, Judite, Gudrības grāmata, Sīraha grāmata, Makabeju grāmatas un pārējās. Un zem lasījuma tagad var skaņēt sprakstējošs ugunskurs mūzikas vietā; tās vietas, kur paredzēts klusums, joprojām paliek klusas.
 </lv>
 
 <nl-NL>
-De Perzische Bijbel is compleet: het Oude Testament van William Glen (1856) voegt zich bij het Nieuwe Testament van Henry Martyn — pagina voor pagina overgeschreven uit de oorspronkelijke druk. De kerkslavische Bijbel is nu volledig ingesproken, en de Russische apocriefen ook. Strongs woordenboek is nu ook in het Russisch te lezen. De omslagen wisselen nu: de meestgelezen boeken tonen elke dag een andere gravure. Nu 36 vertalingen in 30 talen.
+De Zweedse Bijbel krijgt zijn apocriefen: zeventien boeken, voor deze app bladzijde voor bladzijde overgeschreven uit de druk van Karel XII uit 1703 — Tobit, Judit, Wijsheid, Jezus Sirach, de boeken van de Makkabeeën en de rest. En onder het lezen kan nu een knetterend vuur klinken in plaats van muziek; op de plaatsen waar stilte bedoeld is, zwijgt het nog steeds.
 </nl-NL>
 
 <pl-PL>
-Biblia perska jest kompletna: Stary Testament Williama Glena z 1856 roku dołącza do Nowego Testamentu Henry'ego Martyna — przepisany strona po stronie z pierwodruku. Biblia cerkiewnosłowiańska ma teraz pełne nagranie audio, podobnie jak apokryfy rosyjskie. Słownik Stronga czyta się teraz po rosyjsku, wszystkie hasła hebrajskie i greckie. Okładki ksiąg się zmieniają: najczęściej czytane księgi pokazują co dzień inny sztych. Teraz 36 przekładów w 30 językach.
+Szwedzka Biblia otrzymuje swoje księgi deuterokanoniczne: siedemnaście ksiąg przepisanych strona po stronie z druku Karola XII z 1703 roku na potrzeby tej aplikacji — Tobiasz, Judyta, Mądrość, Mądrość Syracha, Księgi Machabejskie i pozostałe. A pod czytaniem może teraz trzeszczeć ogień zamiast muzyki; wciąż milknie w miejscach, gdzie cisza jest zamierzona.
 </pl-PL>
 
 <pt-BR>
-A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original. A Bíblia em eslavo eclesiástico agora está narrada por completo, e os apócrifos russos também. O dicionário de Strong agora se lê em russo, com todos os verbetes hebraicos e gregos. As capas alternam: os livros mais lidos mostram uma gravura diferente a cada dia. Agora 36 traduções em 30 idiomas.
+A Bíblia sueca recebe seus deuterocanônicos: dezessete livros transcritos página a página da impressão de Carlos XII de 1703 para este aplicativo — Tobias, Judite, Sabedoria, Eclesiástico, os livros dos Macabeus e os demais. E sob a leitura pode agora soar uma fogueira crepitante em vez de música; ela continua a silenciar nas passagens em que o silêncio é pretendido.
 </pt-BR>
 
 <pt-PT>
-A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original. A Bíblia em eslavo eclesiástico está agora narrada por completo, e os apócrifos russos também. O dicionário de Strong lê-se agora em russo, com todos os verbetes hebraicos e gregos. As capas alternam: os livros mais lidos mostram uma gravura diferente cada dia. Agora 36 traduções em 30 idiomas.
+A Bíblia sueca recebe os seus deuterocanónicos: dezassete livros transcritos página a página da impressão de Carlos XII de 1703 para esta aplicação — Tobias, Judite, Sabedoria, Eclesiástico, os livros dos Macabeus e os restantes. E sob a leitura pode agora ouvir-se uma fogueira crepitante em vez de música; continua a calar-se nas passagens em que o silêncio é pretendido.
 </pt-PT>
 
 <ru-RU>
-Персидская Библия стала полной: Ветхий Завет Уильяма Глена 1856 года присоединился к Новому Завету Генри Мартина — переписанный страница за страницей с оригинального издания. Церковнославянская Библия полностью озвучена, как и русские апокрифы. Словарь Стронга теперь читается по-русски: все еврейские и греческие статьи. Обложки книг теперь чередуются: самые читаемые книги каждый день показывают другую гравюру. Теперь 36 переводов на 30 языках.
+Шведская Библия получает свои апокрифы: семнадцать книг, переписанных страница за страницей с печатного издания Карла XII 1703 года для этого приложения: Товит, Иудифь, Премудрость Соломона, Сирах, Маккавейские книги и прочие. А под чтением теперь может трещать очаг вместо музыки — и он по-прежнему смолкает там, где задумана тишина.
 </ru-RU>
 
 <sr>
-Персијска Библија је потпуна: Стари завет Вилијама Глена из 1856. придружује се Новом завету Хенрија Мартина — преписан страну по страну са изворног издања. Црквенословенска Библија сада има потпуно аудио читање, као и руски апокрифи. Стронгов речник сада се чита и на руском, све јеврејске и грчке одреднице. Корице књига се сада смењују: најчитаније књиге сваког дана приказују други бакрорез. Сада 36 превода на 30 језика.
+Шведска Библија добија своје апокрифе: седамнаест књига преписаних страну по страну из штампе Карла XII из 1703. године за ову апликацију — Товит, Јудита, Премудрост, Сирах, Књиге Макавејске и остале. А испод читања сада може да пуцкета ватра уместо музике; и даље утихне тамо где је тишина намера.
 </sr>
 
 <sv-SE>
-Den persiska bibeln är fullständig: William Glens Gamla testamente från 1856 sluter sig till Henry Martyns Nya testamente — avskrivet sida för sida ur originaltrycket. Den kyrkslaviska bibeln är nu fullständigt inläst, liksom de ryska apokryferna. Strongs lexikon går nu att läsa på ryska, alla hebreiska och grekiska uppslagsord. Bokomslagen växlar nu: de mest lästa böckerna visar ett nytt kopparstick varje dag. Nu 36 översättningar på 30 språk.
+Den svenska bibeln får sina apokryfer: sjutton böcker, avskrivna sida för sida ur Karl XII:s tryck från 1703 för den här appen — Tobit, Judit, Salomos vishet, Syraks bok, Mackabéerböckerna och de övriga. Texten är 1703 års egen, med dess stavning och versindelning bevarad. Och under läsningen kan nu en sprakande brasa höras i stället för musik; den tystnar fortfarande där tystnad är meningen.
 </sv-SE>
 
 <ta-IN>
-பாரசீக பைபிள் முழுமை அடைந்தது: வில்லியம் கிளென்னின் 1856 பழைய ஏற்பாடு, ஹென்றி மார்ட்டினின் புதிய ஏற்பாட்டுடன் இணைந்தது. திருச்சபை ஸ்லாவோனிக் பைபிளுக்கும் ரஷ்ய அபோக்ரிபா நூல்களுக்கும் இப்போது முழு ஒலி வாசிப்பு. ஸ்ட்ராங் அகராதி இப்போது ரஷ்ய மொழியிலும். புத்தக அட்டைகள் இப்போது மாறும்: அதிகம் வாசிக்கப்படும் புத்தகங்கள் நாள்தோறும் வேறு படத்தைக் காட்டும். இப்போது 36 மொழிபெயர்ப்புகள், 30 மொழிகளில்.
+ஸ்வீடிஷ் பைபிள் தனது அபோக்ரிபா நூல்களைப் பெறுகிறது: 1703 ஆம் ஆண்டு கார்ல் XII பதிப்பிலிருந்து இந்தச் செயலிக்காகப் பக்கம் பக்கமாக நகலெடுக்கப்பட்ட பதினேழு நூல்கள் — தோபித், யூதித், ஞானம், சீராக், மக்கபேயர் மற்றும் பிற. மேலும், வாசிப்பின் கீழ் இசைக்குப் பதிலாக நெருப்பின் படபடப்பு ஒலிக்கலாம்; அமைதி நோக்கமான பகுதிகளில் அது இப்போதும் அமைதியாகிவிடும்.
 </ta-IN>
 
 <zh-CN>
-波斯语圣经已完整：威廉·格伦1856年的旧约与亨利·马丁的新约合璧，逐页照原版刻本为本应用抄录。教会斯拉夫语圣经现已有全部章节的语音朗读，俄文次经也已录制。斯特朗词典现可用俄文阅读，希伯来语与希腊语词条一应俱全。书卷封面开始轮换：最常阅读的书卷每天显示不同的版画，另有五卷书首次拥有插图。现有36部译本、30种语言。
+瑞典语圣经新增次经：为本应用从卡尔十二世 1703 年版逐页转写的十七卷——多比亚传、友弟德传、智慧书、使徒行实训、马加比与其余各卷。另外，诵读时可以用壁炉火声代替音乐；在应当安静的段落，它依然会停下。
 </zh-CN>
 
 <zh-HK>
-波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。教會斯拉夫語聖經現已有全部章節的語音朗讀，俄文次經也已錄製。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
+瑞典語聖經新增次經：為本應用從卡爾十二世 1703 年版逐頁轉寫的十七卷——多比亞傳、友弟德傳、智慧書、使徒行實訓、馬加比與其餘各卷。另外，誦讀時可以用壁爐火聲代替音樂；在應當安靜的段落，它依然會停下。
 </zh-HK>
 
 <zh-TW>
-波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。教會斯拉夫語聖經現已有全部章節的語音朗讀，俄文次經也已錄製。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
+瑞典語聖經新增次經：為本應用從卡爾十二世 1703 年版逐頁轉寫的十七卷——多比亞傳、友弟德傳、智慧書、使徒行實訓、馬加比與其餘各卷。另外，誦讀時可以用壁爐火聲代替音樂；在應當安靜的段落，它依然會停下。
 </zh-TW>
 
 ## Store descriptions (per language — English first, then alphabetical)
@@ -900,6 +900,132 @@ Alla texter är allmän egendom. Appen samlar inte in några data.
 எல்லா உரைகளும் பொதுக் களம் (public domain). ஆப் எந்தத் தரவையும் சேகரிப்பதில்லை.
 
 # ── ARCHIVE: older release notes (historical) ──
+
+## 1.6.4 release notes (paste per store)
+
+<en-US>
+The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. The Church Slavonic Bible is now fully narrated, and the Russian apocrypha too. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day. Now 36 translations in 30 languages.
+</en-US>
+
+<ar>
+اكتمل الكتاب المقدس بالفارسية: عهد وليم غلن القديم (1856) ينضم إلى عهد هنري مارتن الجديد، منسوخًا صفحةً صفحةً عن الطبعة الأصلية من أجل هذا التطبيق. والكتاب المقدس بالسلافونية الكنسية صار له تسجيل صوتي كامل، وكذلك الأسفار القانونية الثانية بالروسية. وقاموس سترونغ صار متاحًا بالروسية بكل مداخله العبرية واليونانية. وأغلفة الأسفار صارت تتبدل: الأسفار الأكثر قراءةً تعرض نقشًا مختلفًا كل يوم. الآن 36 ترجمة بـ30 لغة.
+</ar>
+
+<be>
+Персідская Біблія поўная: Стары Запавет Уільяма Глена 1856 года далучыўся да Новага Запавету Генры Мартына — перапісаны старонка за старонкай з арыгінальнага друку. Царкоўнаславянская Біблія поўнасцю агучана, як і рускія апокрыфы. Слоўнік Стронга цяпер чытаецца па-руску: усе яўрэйскія і грэчаскія артыкулы. Вокладкі кніг цяпер чаргуюцца: найбольш чытаныя кнігі паказваюць новую гравюру кожны дзень. Цяпер 36 перакладаў на 30 мовах.
+</be>
+
+<cs-CZ>
+Perská Bible je úplná: Starý zákon Williama Glena z roku 1856 se připojuje k Novému zákonu Henryho Martyna — přepsán stránku po stránce z původního tisku. Církevněslovanská Bible má nyní úplnou zvukovou nahrávku, stejně jako ruské apokryfy. Strongův slovník je nyní i rusky, všechna hebrejská i řecká hesla. Obálky knih se nyní střídají: nejčtenější knihy ukazují každý den jinou rytinu. Nyní 36 překladů ve 30 jazycích.
+</cs-CZ>
+
+<da-DK>
+Den persiske bibel er komplet: William Glens Gamle Testamente fra 1856 slutter sig til Henry Martyns Nye Testamente — afskrevet side for side fra originaltrykket. Den kirkeslaviske bibel er nu fuldt indlæst, og de russiske apokryfer med. Strongs ordbog findes nu på russisk med alle hebraiske og græske opslag. Bogomslag skifter nu: de mest læste bøger viser et nyt stik hver dag. Nu 36 oversættelser på 30 sprog.
+</da-DK>
+
+<de-DE>
+Die persische Bibel ist vollständig: das Alte Testament von William Glen (1856) tritt zum Neuen Testament Henry Martyns — Seite für Seite aus dem Originaldruck übertragen. Die kirchenslawische Bibel ist jetzt vollständig vertont, ebenso die russischen Apokryphen. Strongs Wörterbuch gibt es jetzt auf Russisch, alle hebräischen und griechischen Einträge. Buchtitelbilder wechseln nun täglich bei den meistgelesenen Büchern. Jetzt 36 Übersetzungen in 30 Sprachen.
+</de-DE>
+
+<el-GR>
+Η περσική Βίβλος ολοκληρώθηκε: η Παλαιά Διαθήκη του Ουίλιαμ Γκλεν (1856) προστίθεται στην Καινή Διαθήκη του Χένρι Μάρτιν — αντιγραμμένη σελίδα προς σελίδα από την αρχική έκδοση. Η εκκλησιαστική σλαβονική Βίβλος ηχογραφήθηκε πλήρως, όπως και τα ρωσικά απόκρυφα. Το λεξικό Strong διατίθεται τώρα και στα ρωσικά. Τα εξώφυλλα εναλλάσσονται: τα πιο διαβασμένα βιβλία δείχνουν κάθε μέρα άλλη χαλκογραφία. Τώρα 36 μεταφράσεις σε 30 γλώσσες.
+</el-GR>
+
+<en-IN>
+The Persian Bible is complete: William Glen's Old Testament of 1856 joins Henry Martyn's New Testament, transcribed page by page from the original printing for this app. The Church Slavonic Bible is now fully narrated, and the Russian apocrypha too. Strong's dictionary now reads in Russian — every Hebrew and Greek entry — for readers of the Synodal Bible. Book covers now rotate: the most-read books show a different engraving each day. Now 36 translations in 30 languages.
+</en-IN>
+
+<es-419>
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
+</es-419>
+
+<es-ES>
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
+</es-ES>
+
+<es-US>
+La Biblia en persa está completa: el Antiguo Testamento de William Glen (1856) se une al Nuevo Testamento de Henry Martyn, transcrito página por página de la impresión original. La Biblia en eslavo eclesiástico ya está narrada por completo, y los apócrifos rusos también. El diccionario de Strong ya se lee en ruso, con todas sus entradas hebreas y griegas. Las portadas rotan: los libros más leídos muestran cada día otro grabado. Ahora 36 traducciones en 30 idiomas.
+</es-US>
+
+<fi-FI>
+Persiankielinen Raamattu on täydellinen: William Glenin vuoden 1856 Vanha testamentti liittyy Henry Martynin Uuteen testamenttiin — jäljennettynä sivu sivulta alkuperäisestä painoksesta. Kirkkoslaavilainen Raamattu on nyt kokonaan äänitetty, samoin venäjän apokryfikirjat. Strongin sanakirja on nyt myös venäjäksi, kaikki heprean ja kreikan hakusanat. Kirjojen kannet vaihtuvat: luetuimmat kirjat näyttävät joka päivä eri kuparipiirroksen. Nyt 36 käännöstä 30 kielellä.
+</fi-FI>
+
+<fr-CA>
+La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine. La Bible en slavon d'église est désormais entièrement narrée, et les apocryphes russes aussi. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent chaque jour pour les livres les plus lus. Désormais 36 traductions en 30 langues.
+</fr-CA>
+
+<fr-FR>
+La Bible en persan est complète : l'Ancien Testament de William Glen (1856) rejoint le Nouveau Testament d'Henry Martyn, transcrit page à page depuis l'impression d'origine. La Bible en slavon d'église est désormais entièrement narrée, et les apocryphes russes aussi. Le dictionnaire Strong se lit désormais en russe, toutes ses entrées hébraïques et grecques. Les couvertures changent chaque jour pour les livres les plus lus. Désormais 36 traductions en 30 langues.
+</fr-FR>
+
+<hu-HU>
+A perzsa Biblia teljes: William Glen 1856-os Ószövetsége Henry Martyn Újszövetségéhez csatlakozik — oldalról oldalra átírva az eredeti nyomtatványból. Az egyházi szláv Biblia most teljes hangfelvételt kapott, és az orosz apokrifok is. A Strong-szótár mostantól oroszul is olvasható, minden héber és görög szócikkel. A könyvborítók váltakoznak: a legolvasottabb könyvek naponta más metszetet mutatnak. Most 36 fordítás 30 nyelven.
+</hu-HU>
+
+<hy-AM>
+Պարսկերեն Աստվածաշունչն ամբողջական է՝ Ուիլյամ Գլենի 1856 թ. Հին Կտակարանը միանում է Հենրի Մարտինի Նոր Կտակարանին՝ էջ առ էջ ընդօրինակված բնօրինակ տպագրությունից։ Եկեղեցասլավոներեն Աստվածաշունչն այժմ ամբողջությամբ ընթերցվում է, ինչպես նաև ռուսերեն պարականոն գրքերը։ Սթրոնգի բառարանն այժմ կարդացվում է նաև ռուսերեն։ Գրքերի շապիկներն այժմ հերթափոխվում են ամեն օր։ Այժմ 36 թարգմանություն 30 լեզվով։
+</hy-AM>
+
+<it-IT>
+La Bibbia in persiano è completa: l'Antico Testamento di William Glen (1856) si unisce al Nuovo Testamento di Henry Martyn, trascritto pagina per pagina dalla stampa originale. La Bibbia in slavo ecclesiastico è ora narrata per intero, e anche gli apocrifi russi. Il dizionario di Strong si legge ora anche in russo, con tutte le voci ebraiche e greche. Le copertine ruotano: i libri più letti mostrano ogni giorno un'incisione diversa. Ora 36 traduzioni in 30 lingue.
+</it-IT>
+
+<iw-IL>
+התנ"ך והברית החדשה בפרסית הושלמו: הברית הישנה של ויליאם גלן (1856) מצטרפת לברית החדשה של הנרי מרטין — מועתקת עמוד אחר עמוד מן הדפוס המקורי. לתנ"ך בסלאבית כנסייתית יש כעת הקראה קולית מלאה, וכן לספרים החיצוניים הרוסיים. מילון סטרונג נקרא כעת גם ברוסית, כל הערכים בעברית וביוונית. עטיפות הספרים מתחלפות: הספרים הנקראים ביותר מציגים תחריט אחר בכל יום. כעת 36 תרגומים ב-30 שפות.
+</iw-IL>
+
+<ja-JP>
+ペルシア語聖書が完成しました。ウィリアム・グレンの1856年旧約が、ヘンリー・マーティンの新約に加わります。原本から一頁ずつ本アプリのために書き起こしたものです。教会スラヴ語聖書に全章の音声朗読が加わり、ロシア語外典も朗読されます。ストロング辞典がロシア語でも読めるようになり、ヘブライ語・ギリシア語の全項目を収録。書物の表紙が日替わりになり、さらに五つの書物に初めて挿絵が付きました。現在36訳・30言語。
+</ja-JP>
+
+<lv>
+Persiešu Bībele ir pilnīga: Viljama Glena 1856. gada Vecā Derība pievienojas Henrija Mārtina Jaunajai Derībai — pārrakstīta lapu pa lapai no oriģinālizdevuma. Baznīcslāvu Bībele tagad ir pilnībā ieskaņota, tāpat krievu apokrifi. Stronga vārdnīca tagad lasāma arī krieviski, visi ebreju un grieķu šķirkļi. Grāmatu vāki tagad mainās: visvairāk lasītās grāmatas katru dienu rāda citu gravīru. Tagad 36 tulkojumi 30 valodās.
+</lv>
+
+<nl-NL>
+De Perzische Bijbel is compleet: het Oude Testament van William Glen (1856) voegt zich bij het Nieuwe Testament van Henry Martyn — pagina voor pagina overgeschreven uit de oorspronkelijke druk. De kerkslavische Bijbel is nu volledig ingesproken, en de Russische apocriefen ook. Strongs woordenboek is nu ook in het Russisch te lezen. De omslagen wisselen nu: de meestgelezen boeken tonen elke dag een andere gravure. Nu 36 vertalingen in 30 talen.
+</nl-NL>
+
+<pl-PL>
+Biblia perska jest kompletna: Stary Testament Williama Glena z 1856 roku dołącza do Nowego Testamentu Henry'ego Martyna — przepisany strona po stronie z pierwodruku. Biblia cerkiewnosłowiańska ma teraz pełne nagranie audio, podobnie jak apokryfy rosyjskie. Słownik Stronga czyta się teraz po rosyjsku, wszystkie hasła hebrajskie i greckie. Okładki ksiąg się zmieniają: najczęściej czytane księgi pokazują co dzień inny sztych. Teraz 36 przekładów w 30 językach.
+</pl-PL>
+
+<pt-BR>
+A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original. A Bíblia em eslavo eclesiástico agora está narrada por completo, e os apócrifos russos também. O dicionário de Strong agora se lê em russo, com todos os verbetes hebraicos e gregos. As capas alternam: os livros mais lidos mostram uma gravura diferente a cada dia. Agora 36 traduções em 30 idiomas.
+</pt-BR>
+
+<pt-PT>
+A Bíblia em persa está completa: o Antigo Testamento de William Glen (1856) junta-se ao Novo Testamento de Henry Martyn, transcrito página a página da impressão original. A Bíblia em eslavo eclesiástico está agora narrada por completo, e os apócrifos russos também. O dicionário de Strong lê-se agora em russo, com todos os verbetes hebraicos e gregos. As capas alternam: os livros mais lidos mostram uma gravura diferente cada dia. Agora 36 traduções em 30 idiomas.
+</pt-PT>
+
+<ru-RU>
+Персидская Библия стала полной: Ветхий Завет Уильяма Глена 1856 года присоединился к Новому Завету Генри Мартина — переписанный страница за страницей с оригинального издания. Церковнославянская Библия полностью озвучена, как и русские апокрифы. Словарь Стронга теперь читается по-русски: все еврейские и греческие статьи. Обложки книг теперь чередуются: самые читаемые книги каждый день показывают другую гравюру. Теперь 36 переводов на 30 языках.
+</ru-RU>
+
+<sr>
+Персијска Библија је потпуна: Стари завет Вилијама Глена из 1856. придружује се Новом завету Хенрија Мартина — преписан страну по страну са изворног издања. Црквенословенска Библија сада има потпуно аудио читање, као и руски апокрифи. Стронгов речник сада се чита и на руском, све јеврејске и грчке одреднице. Корице књига се сада смењују: најчитаније књиге сваког дана приказују други бакрорез. Сада 36 превода на 30 језика.
+</sr>
+
+<sv-SE>
+Den persiska bibeln är fullständig: William Glens Gamla testamente från 1856 sluter sig till Henry Martyns Nya testamente — avskrivet sida för sida ur originaltrycket. Den kyrkslaviska bibeln är nu fullständigt inläst, liksom de ryska apokryferna. Strongs lexikon går nu att läsa på ryska, alla hebreiska och grekiska uppslagsord. Bokomslagen växlar nu: de mest lästa böckerna visar ett nytt kopparstick varje dag. Nu 36 översättningar på 30 språk.
+</sv-SE>
+
+<ta-IN>
+பாரசீக பைபிள் முழுமை அடைந்தது: வில்லியம் கிளென்னின் 1856 பழைய ஏற்பாடு, ஹென்றி மார்ட்டினின் புதிய ஏற்பாட்டுடன் இணைந்தது. திருச்சபை ஸ்லாவோனிக் பைபிளுக்கும் ரஷ்ய அபோக்ரிபா நூல்களுக்கும் இப்போது முழு ஒலி வாசிப்பு. ஸ்ட்ராங் அகராதி இப்போது ரஷ்ய மொழியிலும். புத்தக அட்டைகள் இப்போது மாறும்: அதிகம் வாசிக்கப்படும் புத்தகங்கள் நாள்தோறும் வேறு படத்தைக் காட்டும். இப்போது 36 மொழிபெயர்ப்புகள், 30 மொழிகளில்.
+</ta-IN>
+
+<zh-CN>
+波斯语圣经已完整：威廉·格伦1856年的旧约与亨利·马丁的新约合璧，逐页照原版刻本为本应用抄录。教会斯拉夫语圣经现已有全部章节的语音朗读，俄文次经也已录制。斯特朗词典现可用俄文阅读，希伯来语与希腊语词条一应俱全。书卷封面开始轮换：最常阅读的书卷每天显示不同的版画，另有五卷书首次拥有插图。现有36部译本、30种语言。
+</zh-CN>
+
+<zh-HK>
+波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。教會斯拉夫語聖經現已有全部章節的語音朗讀，俄文次經也已錄製。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
+</zh-HK>
+
+<zh-TW>
+波斯文聖經已完整：威廉·格倫1856年的舊約與亨利·馬丁的新約合璧，逐頁依原版刻本為本應用抄錄。教會斯拉夫語聖經現已有全部章節的語音朗讀，俄文次經也已錄製。斯特朗詞典現可用俄文閱讀，希伯來文與希臘文詞條一應俱全。書卷封面開始輪換：最常閱讀的書卷每天顯示不同的版畫，另有五卷書首次擁有插圖。現有36部譯本、30種語言。
+</zh-TW>
 
 ## 1.6.3 release notes (paste per store)
 

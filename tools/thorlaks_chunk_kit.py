@@ -86,15 +86,14 @@ def main():
                  "there first, or this book invents its own rule like the last six:\n  "
                  + "\n  ".join(ln[:120] for ln in open_items))
 
-    # 2. KJV grid
-    sys.path.insert(0, str(HERE))
-    import narrate
-    names = [n.lower() for n in narrate.BOOK_NAMES]
-    if a.book.lower() not in names:
-        sys.exit(f"unknown book {a.book!r}; KJV names: {', '.join(narrate.BOOK_NAMES)}")
-    bi = names.index(a.book.lower())
+    # 2. KJV grid — book names from the asset itself (no narrate import: the
+    #    system python has no soundfile, and this tool must run anywhere)
     kjv = json.loads(KJV.read_text(encoding="utf-8"))
     kjv = kjv["books"] if isinstance(kjv, dict) else kjv
+    names = [str(b.get("name", "")).lower() for b in kjv]
+    if a.book.lower() not in names:
+        sys.exit(f"unknown book {a.book!r}; asset names: {', '.join(n for n in names if n)}")
+    bi = names.index(a.book.lower())
     grid = [sum(1 for v in ch if v and v.strip()) for ch in kjv[bi]["chapters"]]
 
     chunk = a.chunk or f"{a.book.lower().replace(' ', '')}_kit"

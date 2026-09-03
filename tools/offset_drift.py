@@ -77,6 +77,17 @@ def boundaries(ogg):
     if s is not None:
         runs.append((s * 0.02, nw * 0.02))
     gaps = [g for g in runs if g[1] - g[0] > 0.35]
+    # ⚠⚠ A SILENCE RUN THAT ENDS AT EOF IS NOT A BOUNDARY - nothing follows it.
+    # It is the trailing padding the concat pipeline leaves. Counting it adds one
+    # phantom segment, so every chapter comes out as `gaps = verses + 1` and is
+    # rejected as UNCHECKABLE. Measured on ylt 2026-09-02: that was EVERY chapter
+    # in the set, i.e. the whole 1,189-chapter render was unauditable and the
+    # tool reported it as "0 checked" rather than as a failure.
+    # ▶ Dropping it cannot corrupt a good comparison: a set with no trailing
+    # silence has no such gap, and a set with one was already UNCHECKABLE.
+    total = nw * 0.02
+    if gaps and abs(gaps[-1][1] - total) < 0.05:
+        gaps = gaps[:-1]
     return [0.0] + [b for _, b in gaps]
 
 

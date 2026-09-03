@@ -198,6 +198,30 @@ SETS = {
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
     },
+    # Young's Literal Translation, 1898. Narration folder "ylt", app id "ylt"
+    # — no tid/dir split here, unlike sv/gnv/cu.
+    # ⚠ The voice is CLONED FROM THE OWNER'S OWN consented recording, the same
+    # basis as ru and cu, so "cloned": True is required and the no-personal-names
+    # rule applies: credit the consent, never the person.
+    # ⚠ Canon is 1,189 chapters. en_ylt.json has no non-empty apocrypha slots,
+    # so canon_chapters() returns 1189 and no "apocrypha" flag belongs here.
+    # ⚠ Layout is the standard <book>/<chapter>.ogg — no "flat".
+    "ylt": {
+        "asset": "en_ylt.json",
+        "identifier": "hexapla-audio-ylt-1898",
+        "title": "Young's Literal Translation (1898) — complete audio narration",
+        "title_partial": "Young's Literal Translation (1898) — audio "
+                         "narration (in progress)",
+        "translation": "Young's Literal Translation, 1898",
+        "language": "eng",
+        "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
+                 "from a consented reference recording",
+        "cloned": True,
+        "watermark": True,   # Chatterbox embeds Resemble's Perth watermark
+        "subject": ["bible", "audiobook", "young's literal translation", "ylt",
+                    "public domain", "scripture", "christianity",
+                    "text to speech", "hexapla", "audio bible"],
+    },
     "ru": {
         "asset": "ru_synodal.json",
         "identifier": "hexapla-audio-synodal-1876",
@@ -368,8 +392,11 @@ def build(set_key, dry_run=False):
     # repair_offsets, tail_hallucinations, zero_duration_verses). This
     # walk did not, so a tyn upload would have published 451 internal
     # diagnostic files to a public item and paid for their derives.
+    # ⚠ .eos.json and .qa.json are narrate.py's per-chapter QA records (the
+    # forced-EOS flags and the verse gate's verdicts). They are diagnostics for
+    # this machine, not app data — the app reads <c>.json and <c>.w.json only.
     jsons = sorted(f for f in src.rglob("*.json")
-                   if not f.name.endswith(".eos.json"))
+                   if not f.name.endswith((".eos.json", ".qa.json")))
     if not oggs:
         sys.exit(f"no .ogg files under {src}")
     # Every chapter must carry its offsets sidecar, or verse highlighting

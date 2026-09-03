@@ -239,12 +239,41 @@ def short_line_rects(page, block, lines):
     def prof_row(pt):
         return int((pt - page.rect.y0) * PROFILE_ZOOM)
 
-    # gaps between consecutive detected lines, in profile rows
+    # Regions to search, in profile rows.
+    #
+    # ⚠⚠ THIS USED TO BE ONLY `zip(lines, lines[1:])` — the gaps BETWEEN
+    # detected lines — which left the strip above the first line and the strip
+    # below the last line NEVER EXAMINED. That is a coverage hole, not a
+    # threshold problem: the cluster test below was never even reached for a
+    # line in those strips.
+    #
+    # It cost real scripture. On v3:182 the page's last text line is
+    # «er sijne þocknan.» — the tail of Philippians 2:13, which otherwise ends
+    # on a dangling preposition («...giorningeñ/ept» / «er sijne þocknan.»).
+    # It sits BELOW the last line_rects() line, so no gap contained it and no
+    # crop was ever cut. Found 2026-09-01, by reading the sentence.
+    #
+    # ▶ The foot strip is the dangerous one and it is dangerous on EVERY page,
+    # because that row is also where the signature («D ij») and the catchword
+    # sit — so a page always has ink there, and a reader scanning crops has no
+    # way to notice that scripture was sharing the row with them.
+    #
+    # ⚠ Over-recovery here is CHEAP and under-recovery is not: an extra crop of
+    # a catchword or a running head costs one small PNG, and the manifest
+    # already warns that line N is not verse N. A missing crop costs a verse.
     gaps = []
+    if lines:
+        head = prof_row(lines[0].y0)
+        if head >= 6:
+            gaps.append((0, head))
     for a, b in zip(lines, lines[1:]):
         r0, r1 = prof_row(a.y1), prof_row(b.y0)
         if r1 - r0 >= 6:
             gaps.append((r0, r1))
+    if lines:
+        foot = prof_row(lines[-1].y1)
+        if h - foot >= 6:
+            gaps.append((foot, h))
 
     out = []
     for g0, g1 in gaps:

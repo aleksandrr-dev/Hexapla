@@ -72,6 +72,8 @@ current one**, exactly as the handoff skill says of figures.
 | store listing texts, screenshot order, RuStore/Play upload procedure | `store-assets/STORE_LISTING.md` |
 | the KJV re-render in the owner's voice | `tools/KJV_VOICE_RUNBOOK.md` |
 | transcribing a Karl XII strip | `research/KXII_AGENT_BRIEF.md` — read it BEFORE touching a strip |
+| starting an Icelandic (Þorláksbiblía) book | `python tools/thorlaks_chunk_kit.py --book <Name> --vol N --pages a-b` — builds prep + coverage + sheets + verse grid + report skeleton, 0 tokens; pastes `research/THORLAKS_CONVENTIONS.md` and REFUSES while a convention there is OPEN |
+| why a render carried a tail defect, how repairs work now | the newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases` (`ls -t … | head -1`) |
 | what is actually running (live checks, not logs) | run **`/status`** (`.claude/skills/status/`) |
 | adjudicating many diacritics/uncertain glyphs at once | `tools/contact_sheet.py` — tile the crops into ONE image; separate zoom reads cost ~8x more |
 | verifying a finished transcription chunk | `tools/kxii_diff.py` — diffs against **kxii.se**, an independent witness. **0 model tokens.** ⚠ WITNESS ONLY, never a correction source: transcribe from the image first, diff after — that order is the legal position |
@@ -193,6 +195,108 @@ before editing that area.**
   install over it (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). Use
   `assembleRustoreDebug`. adb: `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`;
   in Git Bash prefix device-path commands with `MSYS_NO_PATHCONV=1`.
+
+## ★★ RENDERS AND REPAIRS, SINCE 2026-09-03 — read this block before the one below it
+
+The tail defect (a re-spoken or garbled verse end) hit ~13 % of chapters in
+EVERY chatterbox set because the only in-flight guard was Chatterbox's own
+token flag (tracked nothing audible, cost half the render) and every real
+screen ran days later per chapter. Fixed structurally; the diagnosis and the
+evidence are in the newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases`
+(`ls -t C:\Projects\Hexapla-releases\RENDER_GATE_BRIEF_*.md | head -1`).
+
+- ✅ **`narrate.py` now GATES EVERY VERSE at render time** with the ear-validated
+  screens (`tools/qa_gate.py`: ASR self-repeat, English APPEND) and re-draws a
+  failing verse up to 3×. Validated 10/10 confirmed / 0/40 controls; Swedish
+  control 5/6. It writes `<chapter>.qa.json`; `render_preflight.py report`
+  reads them — that IS the "first 50 chapters" screen, at zero model cost.
+- ⚠ **THE DETECTOR IS WHISPER, NOT KOKORO.** faster-whisper lives in
+  `tools/.kokoro_venv` (venv name only). The self-repeat screen needs no
+  reference text, so it works on 1703 Swedish; only APPEND needs readable
+  English. Novel hallucinations in sv/wyc/cu have NO screen — never call
+  those sets clean, only "clean on what can be detected".
+- ✅ **REPAIR BY THE VERSE — `tools/repair_verses.py --set <KEY> --queue …`**
+  (dry-run by default, `--apply` to write; backs originals up to
+  `narration/<dir>_qa_fail_originals/`, gates the new take, splices, re-aligns).
+  ~1 min/verse instead of ~9 min/chapter, and untouched verses stay untouched.
+  ⛔ `narrate.py --force` on a chapter is for the truncation class ONLY
+  (`zero_duration_verses` hits); the hook blocks it otherwise.
+- ✅ **BEFORE ANY RENDER: `render_preflight.py check --lang <set>`** (gate
+  stamp, ASR worker, GPU, VRAM, voice, alignment key, fresh log, disk). The
+  hook refuses `narrate.py --lang …` without a stamp < 6 h old. `launch`
+  prints the command; starting a GPU job stays the owner's call.
+- ⚠ **KEEPALIVE-MANAGED JOBS CANNOT BE STOPPED BY KILLING THEM.** Task
+  Scheduler re-arms them within seconds (`narration/logs/render_bootstrap.ps1`
+  gates on counts). Create `narration/logs/PAUSE_<job>` FIRST, then kill.
+  A cu uploader was killed and back under a new PID in under a minute.
+- ▶ The seven mistakes that recurred across sessions are now a PreToolUse hook:
+  `~/.claude/hooks/guard_hexapla_bash.py` (wrong `--set` key, chapter `--force`,
+  unstamped launch, `tools/` from the data dir, kills without `# owner-approved`,
+  redirect onto an existing log, second uploader). If it blocks you, it is
+  right more often than you are — read its message.
+
+## ⛔⛔ THE RENDER GATE — SCREEN THE FIRST 50 CHAPTERS BEFORE RENDERING 1,189
+
+**No render longer than ~100 chapters continues past its first 50 without an
+ASR screen of those 50.** Owner's instruction, 2026-09-02.
+
+    tools\.kokoro_venv\Scripts\python.exe tools\qa_asr_sweep.py --lang <set> --every 8
+    python tools\qa_asr_triage.py _work\qa_asr_<set>.log      # APPEND -> NOVEL/REPEAT/NOISE
+    tools\.chatterbox_venv\Scripts\python.exe tools\qa_asr_clips.py \
+        _work\qa_asr_<set>.log --lang <set> --out _work\<set>_earcheck.ogg   # then LISTEN
+
+▶ **WHY.** ylt rendered for ~11 days and shipped a repetition defect in roughly
+**15 % of chapters** — Chatterbox re-saying the tail of a verse
+(«putteth washing putteth washing»). The tool that finds it existed since the
+2026-08-21 pilot and had never been run across a whole set, because it took
+`--book`, rebuilt its model per call, and cost ~36 h. It was found on day 12.
+**90 minutes of CPU on the first 50 chapters would have caught it on day 1.**
+
+⚠ **THE COUNT IS NOT A CHECK.** ylt passed 1189/1189 while 1 Samuel 28 held
+141.8 s of audio for 25 verses — twelve verses silent. Size and count heuristics
+both waved it through; `zero_duration_verses.py` caught it in one run.
+
+⚠⚠ **A CHECK THAT CANNOT RUN IS NOT A CHECK THAT PASSED.** Three separate tools
+returned "no information" while printing clean-looking output on 2026-09-02:
+`offset_drift` reported `0 chapters checked` on the whole set (it counted a
+silence run ending at EOF as a boundary — now fixed), and `tail_hallucinations`
+reported `0 verses judged` because ylt has no `.w.json`. **Confirm the
+denominator is the whole corpus before believing any green result.**
+
+⚠ **VALIDATE A SCREEN AGAINST GROUND TRUTH BEFORE TRUSTING IT, AND BEFORE
+WRITING IT INTO A HANDOFF.** Two heuristics built for this defect failed:
+a duration cross-check (a doubled tail does NOT reliably lengthen a verse —
+disproved by ear on 4/4 controls) and an audio self-similarity detector
+(confirmed 1.000 vs random 0.999, no separation). `qa_asr_sweep`'s APPEND flag
+is the one that works, and only because the owner confirmed it 10/10 by ear.
+**A screen that produces false NEGATIVES is worse than no screen** — it licenses
+discarding real defects.
+
+⚠ **`qa_asr_sweep` IS ENGLISH-ONLY IN PRACTICE** — it now refuses an `.en`
+model on a non-English set, but whisper cannot read Karl XII's 1703 Swedish
+either (measured: 97.5 % of verses flagged, i.e. useless).
+
+✅ **USE `qa_selfrepeat.py` FOR NON-ENGLISH SETS.** It finds a re-spoken tail
+from ASR **self-repetition** and needs NO reference text, so the ASR does not
+have to read the language — it only has to emit the same tokens twice when the
+audio says them twice. Validated against the ten ear-confirmed ylt verses:
+**9/10 caught, 0/40 false positives.**
+
+    tools\.kokoro_venv\Scripts\python.exe tools\qa_selfrepeat.py --validate
+    tools\.kokoro_venv\Scripts\python.exe tools\qa_selfrepeat.py --lang sv --every 10
+
+⚠ It finds REPEATS only, never a novel hallucination («saying suik») — use
+`qa_asr_sweep` for those where the reference text is readable. ru/cu are
+cosyvoice3 and have never shown this defect class.
+
+▶ Deterministic checks are cheap and cover every set at once — run them after
+any render, and they need no GPU, model or ear:
+
+    tools\.chatterbox_venv\Scripts\python.exe tools\qa_all_sets.py
+
+  It reports missing audio and sidecar drift for all nine sets in ~20 minutes.
+  ⚠ It is BLIND to repeated/hallucinated audio; a clean report means "nothing
+  missing or misplaced", never "good".
 
 ## Data pipelines (tools/)
 

@@ -71,6 +71,14 @@ KNOWN_DIVERGENCE = {
     # numerals the print does not have. The converter maps the prelude to
     # KJV 5:25-26; see the divergence note in thorlaks_galatians.md.
     (47, 5): (24, "KJV 5:25-26 printed unnumbered at the head of chapter VI"),
+    # Philippians 2, found by the ch1-2 chunk 2026-09-01. KJV 2:30 is printed
+    # with NO NUMERAL, running straight on from the end of v29 - the same
+    # class as Galatians 5/6 above, and the second data point for the refined
+    # "Cap. N" rule: a VERSE-level shift carries no marginal marking.
+    # The text IS present in the chunk file, as an unnumbered line under
+    # "## Philippians 2", which this parser cannot see BY DESIGN.
+    # Do not "fix" the chunk by inventing a 30 the print does not have.
+    (49, 2): (29, "KJV 2:30 printed unnumbered, running on from v29"),
 }
 
 

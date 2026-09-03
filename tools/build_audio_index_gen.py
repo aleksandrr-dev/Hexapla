@@ -142,6 +142,21 @@ SETS = [
     #   re-read. Same discipline as gnv/kxii on 2026-08-01.
     {"tid": "tyn", "dir": "tyn", "asset": "en_tyndale.json",
      "item": "hexapla-audio-tyndale-1525", "partial": False},
+    # ★★ YOUNG'S LITERAL 1898 — PREPARED 2026-09-01, DELIBERATELY COMMENTED OUT.
+    #   tid == dir == "ylt" (no split), item hexapla-audio-ylt-1898, canon 1189,
+    #   no apocrypha slots, standard <book>/<chapter>.ogg layout.
+    # ⛔⛔ DO NOT UNCOMMENT BEFORE THE UPLOAD HAS LANDED AND THE LIVE ITEM
+    #   HAS BEEN RE-READ. This is exactly the tyn discipline recorded above: an
+    #   index entry whose item does not yet exist points every chapter at a 404
+    #   and the app silently falls back to TTS — no error, nothing to debug.
+    # ⚠ "partial": False is a real assertion. It hard-fails on any missing
+    #   .ogg or offsets sidecar, which is the check we want once the render
+    #   claims 1189/1189. Do not soften it to True to get a build through.
+    # ⚠ The .eos.json files in narration/ylt are narrate.py QA diagnostics,
+    #   NOT app data. upload_narration.py already excludes them; nothing here
+    #   should ever index them.
+    # {"tid": "ylt", "dir": "ylt", "asset": "en_ylt.json",
+    #  "item": "hexapla-audio-ylt-1898", "partial": False},
     {"tid": "kjv", "dir": "en", "asset": "en_kjv.json",
      "item": "hexapla-audio-en", "partial": True,
      "apocrypha": True, "flat": "kjv_{b}_{c}.ogg"},

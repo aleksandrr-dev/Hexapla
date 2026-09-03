@@ -58,7 +58,42 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 ASSETS = HERE.parent / "app" / "src" / "main" / "assets" / "bibles"
-OUTPUT = Path("C:/Projects/Hexapla-releases/narration")
+# ⚠ HEXAPLA_NARRATION_OUT redirects the whole narration tree, for A/B renders
+# that must NOT touch shipped audio. Default is unchanged. Note cfg["voice"] is
+# built from OUTPUT below, so a redirected run needs the reference wav copied
+# into the scratch tree — the chatterbox preflight fails loudly if it is absent.
+OUTPUT = Path(os.environ.get("HEXAPLA_NARRATION_OUT",
+                             "C:/Projects/Hexapla-releases/narration"))
+
+# ★ THE VERSE GATE (owner decision 2026-09-03) — see synthesize_verse_gated.
+# Up to the sv apocrypha render, the ONLY in-flight guard was a retry on
+# Chatterbox's own token_repetition warning. Measured on Tobit (297 verses): it
+# stayed raised on 23.9 % of verses, cost ~53 % of the render in re-syntheses,
+# and tracked the audible defect NOT AT ALL (qa_selfrepeat 0/40 on the flagged
+# verses, 0/40 on controls) — while ylt shipped a re-spoken tail in 152 of
+# 1,189 chapters that the flag never saw. Every verse is now judged by the
+# screens that were validated BY EAR (tools/qa_gate.py) and re-drawn only if
+# one fires. The token flag is still RECORDED in .eos.json (data for the
+# token-id lead); it no longer spends GPU.
+#   HEXAPLA_NO_GATE=1              render without the gate. A/B ONLY — a set
+#                                  rendered this way has no .qa.json and must
+#                                  be swept the slow way.
+#   HEXAPLA_RETRY_ON_TOKEN_FLAG=1  the pre-2026-09-03 trigger, IN ADDITION.
+#   HEXAPLA_GATE_TAIL_PEAK=0.75    also fail a verse whose post-word tail peaks
+#                                  at/above this. RECORD-ONLY until calibrated
+#                                  (qa_gate.py docstring says against what).
+#   HEXAPLA_NO_REP_RETRY           retired 2026-09-03 (its A/B is in the
+#                                  2026-09-02 handoff §3c); now a no-op.
+_GATE_OFF = bool(os.environ.get("HEXAPLA_NO_GATE"))
+_RETRY_ON_TOKEN_FLAG = bool(os.environ.get("HEXAPLA_RETRY_ON_TOKEN_FLAG"))
+_GATE_TAIL_PEAK = (float(os.environ["HEXAPLA_GATE_TAIL_PEAK"])
+                   if os.environ.get("HEXAPLA_GATE_TAIL_PEAK") else None)
+GATE_ATTEMPTS = 3
+# ASR language per set. ⚠ THIS IS WHISPER (faster-whisper in .kokoro_venv),
+# NOT KOKORO. cu has no whisper model; 'ru' is the nearest, and only the
+# text-free self-repeat screen is meaningful on it.
+ASR_LANG = {"en": "en", "ylt": "en", "tyn": "en", "wbt": "en", "gnv": "en",
+            "wyc": "en", "sv": "sv", "ru": "ru", "cu": "ru"}
 
 # ⚠ Do NOT invoke .kokoro_venv's own Scripts/python.exe. On this machine it is
 # a launcher that internally re-execs into a SECOND, separate OS process (the
@@ -498,6 +533,38 @@ def sv_cardinal(n):
     return out + _SV_TENS[tens] + (_SV_ONES[ones] if ones else "")
 
 
+# The sv asset gives its APOCRYPHA books ENGLISH names ("Wisdom of Solomon",
+# "Bel and the Dragon") while its canonical books are Swedish ("1 Mosebok") —
+# so the asset name, correct for books 0-65, would have every apocryphal
+# chapter announce an English title inside a Swedish sentence, in the Swedish
+# friend's cloned voice. This is exactly the BOOK_NAMES_RU failure described
+# below, in a different translation: wrong, confidently, for 147 chapters.
+#
+# Owner's call 2026-09-02: use THE PRINT'S OWN TITLES for authenticity, not
+# modern Swedish forms, falling back to modern only where the print has none.
+# Every one of the twelve printed books turned out to carry a title, so there
+# is no fallback entry. Each is derived from the 1703 print itself — running
+# head, display title, or closing colophon — recorded in the campaign files
+# under research/karlxii_*.md; the source is named per line. ⚠ These are 1703
+# spellings on purpose. Do NOT "correct" them to modern Swedish.
+# ⚠ Books 66, 67, 73, 77 and 82 are absent from this Lutheran print and
+# render nothing, so they are deliberately not listed here.
+SV_APOC_NAMES = {
+    68: "Tobie Book",                        # colophon «Ände på Tobie book.»
+    69: "Judiths Book",                      # colophon «Ände på Judiths book.»
+    70: "Wijshetenes Book",                  # running head «Wijshetenes Book /»
+    71: "Jesu Syrachs Book",                 # running head «Jesu Syrachs Book. Cap. I.»
+    72: "Propheten Baruch",                  # colophon «Ände på Propheten Baruch.»
+    74: "Manasse Böön",                      # section title «Manasse Böön»
+    75: "Then Första Boken the Maccabeers",  # display title
+    76: "Then Andra Boken the Maccabeers",   # display title
+    78: "Stycker af Esthers Book",           # display title
+    79: "Asarie Böön",                       # section title «Asarie Böön»
+    80: "Historia om Susanna och Daniel",    # «Historia om Susanna/ och Daniel.»
+    81: "Om Bel och Drakan i Babel",         # «Om Bel/ och Drakan i Babel»
+}
+
+
 def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None):
     """Generate the spoken chapter header, e.g. 'Genesis, Chapter 5'.
 
@@ -524,7 +591,9 @@ def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None)
         # spelled out (sv_cardinal) so Chatterbox cannot read digits the
         # English way. Swedish convention says «Psalm 23», not «kapitel 23»,
         # for the Psalter. ⚠ Native-review welcome: ask the Swedish friend.
-        book = book_name or f"Bok {book_idx + 1}"
+        # SV_APOC_NAMES wins over the asset name for the apocrypha ONLY (see
+        # its comment); books 0-65 are untouched and still read the asset.
+        book = SV_APOC_NAMES.get(book_idx) or book_name or f"Bok {book_idx + 1}"
         if n_chapters == 1:
             return book
         if book == "Psaltaren":
@@ -810,6 +879,134 @@ def _kokoro_request(text, voice, output_wav, timeout=180, ipa=None):
     if not resp.get("ok"):
         raise RuntimeError(resp.get("err", "unknown kokoro error"))
     return True
+
+
+# ── ASR worker for the verse gate ─────────────────────────────────────────
+# Same shape as the kokoro worker above: ONE process, ONE model load, JSON
+# lines, a thread-guarded read so a wedged worker cannot stall the render.
+# Lives in .kokoro_venv because that is where faster-whisper is installed.
+_ASR_PROC = None
+_ASR_FAILS = 0
+
+
+def _asr_worker():
+    global _ASR_PROC
+    if _ASR_PROC is None or _ASR_PROC.poll() is not None:
+        _ASR_PROC = subprocess.Popen(
+            [KOKORO_PYTHON, "-u", str(HERE / "_asr_worker.py")],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            text=True, encoding="utf-8", errors="replace",
+            env={**os.environ, "PYTHONPATH": KOKORO_SITE_PACKAGES},
+            creationflags=_NO_WINDOW,
+        )
+        hello = _ASR_PROC.stdout.readline()
+        if not hello or not json.loads(hello).get("ready"):
+            raise RuntimeError(f"asr worker failed to start: {hello!r}")
+    return _ASR_PROC
+
+
+def asr_transcribe(wav_path, asr_lang, timeout=240):
+    """-> {"text", "tokens", "model"} or None. ⚠ None is VISIBLE: the failure
+    count is printed at 1/10/100/1000 like the tail cutter's, because a gate
+    that cannot run must never look like a gate that passed."""
+    global _ASR_PROC, _ASR_FAILS
+    import threading
+    try:
+        proc = _asr_worker()
+        proc.stdin.write(json.dumps({"wav": str(wav_path), "lang": asr_lang}) + "\n")
+        proc.stdin.flush()
+        box = {}
+
+        def _read():
+            box["line"] = proc.stdout.readline()
+
+        t = threading.Thread(target=_read, daemon=True)
+        t.start()
+        t.join(timeout)
+        if t.is_alive():
+            proc.kill()
+            raise TimeoutError("asr worker timed out")
+        line = box.get("line")
+        if not line:
+            raise RuntimeError("asr worker closed the pipe")
+        resp = json.loads(line)
+        if not resp.get("ok"):
+            raise RuntimeError(resp.get("err", "unknown asr error"))
+        return resp
+    except Exception as e:
+        _ASR_FAILS += 1
+        if _ASR_FAILS in (1, 10, 100, 1000):
+            print(f"    ⚠ ASR gate UNAVAILABLE ({_ASR_FAILS} so far): "
+                  f"{type(e).__name__}: {e}", file=sys.stderr, flush=True)
+        try:
+            if _ASR_PROC is not None:
+                _ASR_PROC.kill()
+        except Exception:
+            pass
+        _ASR_PROC = None
+        return None
+
+
+def synthesize_verse_gated(text, lang, temp_dir, verse_idx, book_idx=None):
+    """Synthesize one verse and JUDGE it with the validated screens; re-draw
+    while a screen fires, up to GATE_ATTEMPTS. -> (wav_path, dur_ms, info).
+
+    info = {"attempts": [{attempt, reasons, tail, cut, tail_peak}], "kept": n,
+            "reasons": reasons of the kept take (empty = clean)} or None when
+    the gate did not run (header, empty text, HEXAPLA_NO_GATE).
+
+    ⚠ THE DURATION KEPT IS THE DURATION OF THE FILE KEPT. Attempts overwrite
+    verse_<i>.wav, so each take is copied aside and the best one copied back;
+    the sidecar drifted 5.45 s on ylt Matthew 5 when file and duration once
+    disagreed (see the comment that used to live in narrate_chapter).
+    ⚠ Kokoro is deterministic — a second draw is the same audio — so kokoro
+    sets are judged and RECORDED but never re-drawn.
+    ⚠ An unavailable ASR does not burn draws: the take is kept, the verse is
+    recorded as UNJUDGED, and the chapter line says so.
+    """
+    import shutil
+    if _GATE_OFF or verse_idx < 0 or not text or not text.strip():
+        wav, dur = synthesize_verse(text, lang, temp_dir, verse_idx, book_idx)
+        return wav, dur, None
+    from qa_gate import gate_reasons
+    cfg = LANG_CONFIG[lang]
+    max_attempts = 1 if cfg["engine"] == "kokoro" else GATE_ATTEMPTS
+    base = Path(temp_dir) / f"verse_{verse_idx:04d}.wav"
+    history, best = [], None
+    for attempt in range(1, max_attempts + 1):
+        if attempt > 1:
+            _eos_watcher.hits.pop(verse_idx, None)
+        _cut_info.clear()
+        wav, dur = synthesize_verse(text, lang, temp_dir, verse_idx, book_idx)
+        if not wav or dur <= 0:
+            history.append({"attempt": attempt, "reasons": ["synthesis-failed"]})
+            continue
+        asr = asr_transcribe(wav, ASR_LANG.get(lang, "en"))
+        if asr is None:
+            reasons = ["asr-unavailable"]
+        else:
+            reasons = gate_reasons(asr.get("text"), asr.get("tokens"), text, lang,
+                                   tail_peak=_cut_info.get("tail_peak"),
+                                   tail_peak_limit=_GATE_TAIL_PEAK)
+        if _RETRY_ON_TOKEN_FLAG and _repetition_flagged(verse_idx):
+            reasons.append("token-flag")
+        history.append({"attempt": attempt, "reasons": reasons,
+                        "tail": " ".join(asr["tokens"][-8:]) if asr else None,
+                        "cut": bool(_cut_info.get("cut")),
+                        "tail_peak": _cut_info.get("tail_peak"),
+                        "eos": sorted(set(_eos_watcher.hits.get(verse_idx, [])))})
+        keep = Path(temp_dir) / f"verse_{verse_idx:04d}_a{attempt}.wav"
+        shutil.copy2(wav, keep)
+        judged = [r for r in reasons if r != "asr-unavailable"]
+        if best is None or len(judged) < best[0]:
+            best = (len(judged), attempt, keep, dur, reasons)
+        if not judged or "asr-unavailable" in reasons:
+            break
+    if best is None:
+        return None, 0, {"attempts": history, "kept": None, "reasons": ["synthesis-failed"]}
+    if best[2].resolve() != base.resolve():
+        shutil.copy2(best[2], base)
+    return str(base), best[3], {"attempts": history, "kept": best[1], "reasons": best[4]}
 
 
 def synthesize_kokoro(text, voice, output_wav, ipa=None):
@@ -1229,6 +1426,11 @@ TAIL_MIN_RUN_MS = 60
 TAIL_LONG_GAP_MS = 800
 TAIL_LONG_MIN_RUN_MS = 20
 _tail_fail_n = 0              # silent-failure counter, see the except below
+# What the cutter saw on the LAST verse, for the gate's record: where the last
+# aligned word sits, whether a cut was made, and the peak of whatever follows
+# the first ≥ TAIL_GAP_MS quiet gap after it (the metric that separated the
+# owner's "garbled tail" verdicts — RECORDED here, gated only once calibrated).
+_cut_info = {}
 
 
 _ONES = ["", "one", "two", "three", "four", "five", "six", "seven", "eight",
@@ -1304,6 +1506,8 @@ def _cut_spoken_tail(audio, sr, text, script="latin", lang="en"):
         # forced the pause rule in the first place — an early end no longer
         # matters when we do not read the end at all.
         last_end = spans[-1][0]                      # seconds
+        _cut_info.update(last_word_start_s=float(spans[-1][0]),
+                         last_word_end_s=float(spans[-1][1]))
         # ⚠⚠ CUT AT A PAUSE, NEVER AT AN ALIGNMENT TIMESTAMP. The first version
         # cut at last_end + 120 ms, trusting MMS_FA's end time - and MMS_FA
         # ends a word early on a long vowel (the docstring's own warning), so
@@ -1368,6 +1572,8 @@ def _cut_spoken_tail(audio, sr, text, script="latin", lang="en"):
                 gap_end = i
                 break
         if gap_end is not None:
+            _cut_info["tail_peak"] = (float(np.abs(tail[gap_end * h:]).max())
+                                      if len(tail) > gap_end * h else 0.0)
             best = cur = 0
             for v in loud[gap_end:]:
                 cur = cur + 1 if v else 0
@@ -1403,6 +1609,7 @@ def _cut_spoken_tail(audio, sr, text, script="latin", lang="en"):
         if cut_at is None:
             return audio, False
         cut_from = start_i + cut_at * h
+        _cut_info["cut"] = True
         return audio[:cut_from].copy(), True
     except Exception as e:
         # ⚠⚠ NEVER SWALLOW THIS SILENTLY. A bare `except` here once turned a
@@ -2006,67 +2213,38 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
 
             pairs = []
             _eos_watcher.hits.clear()
-            retried = []
+            gate_log = {}
             for i, v_text in enumerate(verses):
                 _eos_watcher.current = i        # attribute warnings to THIS verse
-                wav_path, dur = synthesize_verse(v_text, lang, tmp, i, book_idx)
-                # ── AUTO-RETRY ON REPETITION ────────────────────────────────
-                # The stutter/whirr/repeat class is stochastic, so the SAME
-                # prompt usually comes back clean on another draw. Retrying
-                # here — while the verse is in hand — is what makes 451
-                # chapters possible: nobody can listen to 2.7 days of audio to
-                # find six bad verses, and a duration check cannot see this
-                # (a forced EOS makes the clip SHORTER, not longer).
-                # Only token/alignment repetition triggers a retry. long_tail
-                # fires on ~97% of verses and means nothing (measured: 30 of 31
-                # in Tyndale Gen 1) — retrying on it would triple render time
-                # for no gain.
-                if _repetition_flagged(i):
-                    for attempt in range(2, 4):
-                        _eos_watcher.hits.pop(i, None)
-                        alt, alt_dur = synthesize_verse(v_text, lang, tmp, i,
-                                                        book_idx)
-                        if alt and not _repetition_flagged(i):
-                            wav_path, dur = alt, alt_dur
-                            retried.append((i + 1, attempt, "clean"))
-                            break
-                        # ⚠⚠ THE RETRY OVERWRITES verse_<i>.wav — same index,
-                        # same path. So when every attempt stays flagged and we
-                        # fall through to "still flagged" below, the FILE on
-                        # disk is the last retry while `dur` still holds the
-                        # FIRST take's length. concatenate_with_silence()
-                        # accumulates the DURATIONS and concatenates the FILES,
-                        # never re-measuring, so from that verse on every offset
-                        # in the sidecar is wrong by the difference — and the
-                        # error ACCUMULATES.
-                        #   Measured on ylt Matthew 5 (2026-08-21): verses 22,
-                        #   30, 32 and 42 stayed flagged, and the sidecar ran
-                        #   5.45 s ahead of the audio from v23, stepping to
-                        #   4.63 s at v33 and 4.08 s at v43 — the step points
-                        #   are exactly the verses after each failed retry.
-                        # ⚠ NOTHING CATCHES THIS. The audio is complete and in
-                        # the right order; only the offsets lie. qa_narration
-                        # passes, zero_duration_verses passes, and the only
-                        # visible symptom was the LAST verse looking truncated
-                        # because the accumulated error ate its slice.
-                        # In the app it is worse than a bad verse: verse
-                        # highlighting and word-level following drift apart from
-                        # the audio for the rest of the chapter.
-                        # Keeping the last take's duration alongside the last
-                        # take's file is what makes the pair consistent; the
-                        # take is no worse than the one it replaced (all three
-                        # are flagged) and now the sidecar tells the truth.
-                        if alt and alt_dur > 0:
-                            wav_path, dur = alt, alt_dur
-                    else:
-                        retried.append((i + 1, 3, "still flagged"))
+                # ── THE VERSE GATE (2026-09-03) ─────────────────────────────
+                # Judge every take with the ear-validated screens and re-draw
+                # while one fires (synthesize_verse_gated). This replaced the
+                # retry on Chatterbox's token_repetition flag, which cost ~53 %
+                # of a render and tracked nothing audible (see the env block
+                # at the top of the file). The overwrite-vs-duration trap that
+                # bit ylt Matthew 5 (sidecar 5.45 s ahead of the audio) is
+                # handled inside: the duration returned is always the kept
+                # file's own.
+                wav_path, dur, ginfo = synthesize_verse_gated(v_text, lang, tmp, i,
+                                                              book_idx)
+                if ginfo:
+                    gate_log[i + 1] = ginfo
                 pairs.append((wav_path, dur))
             _eos_watcher.current = None
-            if retried:
-                ok_n = sum(1 for _, _, s in retried if s == "clean")
-                print(f"    retried {len(retried)} repetition-flagged verse(s), "
-                      f"{ok_n} cleared: "
-                      + ", ".join(f"v{v}({s})" for v, _, s in retried))
+            if gate_log:
+                redrawn = [v for v, g in gate_log.items() if len(g["attempts"]) > 1]
+                failing = {v: g["reasons"] for v, g in gate_log.items()
+                           if g["reasons"] and g["reasons"] != ["asr-unavailable"]}
+                unjudged = [v for v, g in gate_log.items()
+                            if any("asr-unavailable" in a["reasons"] for a in g["attempts"])]
+                line = (f"    gate: {len(gate_log)} judged, {len(redrawn)} re-drawn, "
+                        f"{len(failing)} still failing")
+                if failing:
+                    line += ": " + ", ".join(f"v{v}({'|'.join(r)})"
+                                            for v, r in sorted(failing.items()))
+                if unjudged:
+                    line += f"; ⚠ {len(unjudged)} UNJUDGED (ASR unavailable)"
+                print(line, flush=True)
             pairs = repace_outliers(verses, pairs, lang, tmp, book_idx)
         except Exception as e:
             print(f" FAILED (duration: {e})")
@@ -2130,6 +2308,24 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
         if suspect:
             print(f"    ⚠ repetition-flagged verses: "
                   f"{', '.join(str(k + 1) for k in suspect)}")
+    # ★ THE GATE'S RECORD — narration/<set>/<b>/<c>.qa.json. One file per
+    # chapter with every take's verdict, so a repair queue is built from these
+    # (qa_rerender_queue.py --qa / render_preflight.py report) with ZERO
+    # re-sweeping, and "unjudged" is written down instead of vanishing.
+    # ⚠ upload_narration.py excludes *.qa.json; keep it that way.
+    if gate_log:
+        qa = {"gate_version": 1,
+              "judged": len(gate_log),
+              "redrawn": sorted(v for v, g in gate_log.items() if len(g["attempts"]) > 1),
+              "failing": {str(v): g["reasons"] for v, g in gate_log.items()
+                          if g["reasons"] and g["reasons"] != ["asr-unavailable"]},
+              "unjudged": sorted(v for v, g in gate_log.items()
+                                 if any("asr-unavailable" in a["reasons"]
+                                        for a in g["attempts"])),
+              "gate": {str(v): g for v, g in gate_log.items()}}
+        with open(str(json_file).replace(".json", ".qa.json"), "w",
+                  encoding="utf-8") as f:
+            json.dump(qa, f, separators=(",", ":"), ensure_ascii=False)
     return True
 
 

@@ -53,7 +53,16 @@ MAX_K = 6
 FUZZ = 0.85
 
 ASR_LANG = {"ylt": "en", "tyn": "en", "wbt": "en", "gnv": "en", "wyc": "en",
-            "en": "en", "sv": "sv", "ru": "ru"}
+            "en": "en", "sv": "sv", "ru": "ru",
+            # cu = Church Slavonic 1757, screened with the RUSSIAN model.
+            # whisper has no Church Slavonic, and it does not need one: this
+            # screen asks only whether the transcript's tail repeats the
+            # tokens before it, so the ASR must be DETERMINISTIC, not correct.
+            # ⚠ Validated by the synthetic splice control, not by faith:
+            #     qa_gate.py --validate-splice cu
+            # If that control does not separate, cu has NO screen and must be
+            # reported as unscreened, never as clean.
+            "cu": "ru"}
 EAR_CONFIRMED_YLT = [(0, 8, 26), (0, 18, 27), (0, 33, 2), (0, 35, 11),
                      (1, 4, 20), (1, 5, 11), (1, 33, 23), (1, 34, 11),
                      (1, 38, 33), (1, 39, 30)]
@@ -150,6 +159,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", default="ylt")
     ap.add_argument("--every", type=int, default=8)
+    # Resume handle. A whole-Bible run at --every 1 is ~22 h of CPU and has no
+    # checkpoint of its own; a restart without this re-scores everything.
+    # Accepts "12", "0-38" or "12-" (open-ended).
+    ap.add_argument("--books")
     ap.add_argument("--model")
     ap.add_argument("--validate", action="store_true")
     ap.add_argument("--out")
@@ -189,8 +202,16 @@ def main():
             print("  \u26d4 NOT SEPARATED — do not use it.")
         return
 
+    lo, hi = 0, 10**6
+    if a.books:
+        parts = a.books.split("-")
+        lo = int(parts[0])
+        hi = int(parts[1]) if len(parts) > 1 and parts[1] else (
+            lo if len(parts) == 1 else 10**6)
     hits, n = [], 0
-    items = list(iter_verses(a.lang, a.every))
+    items = [t for t in iter_verses(a.lang, a.every) if lo <= t[0] <= hi]
+    print(f"{len(items)} verses to score"
+          + (f" (books {lo}-{hi})" if a.books else ""), flush=True)
     res = score_set(model, a.lang, items, asr_lang, progress=True)
     for k, b, ch, v, tail in res:
         n += 1

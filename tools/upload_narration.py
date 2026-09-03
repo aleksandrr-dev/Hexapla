@@ -538,6 +538,48 @@ def build(set_key, dry_run=False):
     else:
         print("derive plan: NONE - no audio added or replaced")
 
+    # !! DO NOT DELEGATE THE "IS IT ALREADY THERE" DECISION TO THE LIBRARY.
+    # internetarchive's upload(checksum=True) skips a matching file ONLY when
+    # the item has NO pending tasks. From internetarchive/item.py:
+    #     if (not self.tasks) and (ia_file) and (ia_file.md5 == md5_sum):
+    # so ONE queued derive silently turns the skip OFF and the run re-sends
+    # EVERY file. That is exactly what happened on 2026-09-03: one file had
+    # actually changed (wyc 66/4.w.json), 150 archive.php tasks were queued,
+    # the 150-per-access-key ration cut it off, and NOTHING landed. The remote
+    # MD5s were readable the whole time - the library simply refused to trust
+    # them while tasks were pending. It is also self-perpetuating: the tasks it
+    # queues keep item.tasks non-empty, so the NEXT run cannot skip either.
+    # > So the decision is made HERE, from MD5s we read ourselves, and only the
+    # difference is sent. checksum=True stays on at the upload call as
+    # belt-and-braces - it is never again the guard.
+    if _pre.exists:
+        if not _remote:
+            # A readable item that returns NO file metadata is a FAILED READ,
+            # not an empty item. Uploading the whole set on that basis is the
+            # entire bug class this guard exists to stop: a failed read must
+            # never be indistinguishable from a real "nothing is there yet".
+            print("\nREFUSING: the item exists but returned no file metadata. "
+                  "That is an unreadable remote state, not an empty item - "
+                  "sending on this basis would re-upload the entire set. "
+                  "Re-run when the item's metadata reads.")
+            sys.exit(3)
+        outstanding, unchanged = {}, 0
+        for _name, _path in files.items():
+            _rmd5 = _remote.get(_name)
+            if _rmd5 and _md5(_path) == _rmd5:
+                unchanged += 1
+            else:
+                outstanding[_name] = _path
+        print(f"outstanding: {len(outstanding)} of {len(files)} to send "
+              f"({unchanged} already present with a matching MD5)")
+        if not outstanding:
+            print("\nNothing to upload - every local file is already on the "
+                  "item with a matching MD5.")
+            return
+        files = outstanding
+    else:
+        print(f"outstanding: {len(files)} of {len(files)} to send (new item)")
+
     if dry_run:
         print("\nDRY RUN — nothing uploaded.")
         return

@@ -175,16 +175,46 @@ def validate():
     return 0 if ok else 1
 
 
+# Which whisper model reads which set for the SELF-REPEAT screen.
+# ⚠ THE ASR DOES NOT HAVE TO UNDERSTAND THE LANGUAGE. The self-repeat screen
+# asks only whether the transcript's tail repeats the tokens before it, so the
+# model needs to be DETERMINISTIC, not correct. That is why `cu` (Church
+# Slavonic 1757) is screened with the RUSSIAN model: whisper has no Church
+# Slavonic, but it transcribes cu audio phonetically and will emit the same
+# wrong tokens twice when the audio says the same thing twice.
+# ⚠ THAT IS A CLAIM, NOT A FACT, until the splice control below separates on
+# the set itself. Do not screen a set whose control has not run.
+SPLICE_ASR = {"sv": "sv", "ru": "ru", "cu": "ru"}
+SPLICE_LABEL = {"sv": "Swedish", "ru": "Russian", "cu": "Church Slavonic"}
+
+
 def validate_sv():
-    """Synthetic Swedish positive control. See handoff §3c: trim to the last
-    loud sample BEFORE splicing, or the appended 1.4 s is concat padding."""
+    return validate_splice("sv")
+
+
+def validate_splice(set_key, asr_lang=None, books=(0, 18, 39)):
+    """Synthetic positive control for the SELF-REPEAT screen, on any set.
+
+    Splices a word-boundary repeat into verses that are presumed clean and
+    checks the gate fires on the splice and stays silent on the original.
+    That manufactures ground truth, which is the only way to validate a
+    screen on a set with no ear-confirmed defects (ru, cu) or whose text the
+    ASR cannot read (cu, sv).
+
+    See handoff §3c: trim to the last loud sample BEFORE splicing, or the
+    appended audio is concat padding and the control proves nothing."""
+    asr_lang = asr_lang or SPLICE_ASR.get(set_key)
+    label = SPLICE_LABEL.get(set_key, set_key)
+    if not asr_lang:
+        print(f"no ASR language mapped for set {set_key!r}")
+        return 1
     import numpy as np
     import soundfile as sf
     import narrate
     random.seed(11)
     cands = []
-    for b in (0, 18, 39):
-        for js in sorted((NAR / "sv" / str(b)).glob("*.json")):
+    for b in books:
+        for js in sorted((NAR / set_key / str(b)).glob("*.json")):
             if js.name.endswith((".w.json", ".eos.json", ".qa.json")):
                 continue
             n = len(json.loads(js.read_text())["offsets"])
@@ -201,15 +231,15 @@ def validate_sv():
             # phrase said twice. A real defect re-says WHOLE words after a
             # short gap. So the repeat is cut at WORD boundaries from the
             # chapter's own .w.json and joined with a 150 ms gap.
-            wjs = NAR / "sv" / str(b) / f"{ch}.w.json"
-            side = NAR / "sv" / str(b) / f"{ch}.json"
+            wjs = NAR / set_key / str(b) / f"{ch}.w.json"
+            side = NAR / set_key / str(b) / f"{ch}.json"
             if not wjs.exists():
                 continue
             words = json.loads(wjs.read_text(encoding="utf-8"))["v"][v - 1]
             off = json.loads(side.read_text(encoding="utf-8"))["offsets"][v - 1]
             if not words or len(words) < 5:
                 continue
-            w = verse_wav("sv", b, ch, v, td)
+            w = verse_wav(set_key, b, ch, v, td)
             if w is None:
                 continue
             a, sr = sf.read(str(w), dtype="float32")
@@ -226,13 +256,13 @@ def validate_sv():
             gap = np.zeros(int(0.15 * sr), dtype="float32")
             spl = Path(td) / f"spl_{b}_{ch}_{v}.wav"
             sf.write(str(spl), np.concatenate([a, gap, tail]), sr)
-            r0 = narrate.asr_transcribe(str(w), "sv")
-            r1 = narrate.asr_transcribe(str(spl), "sv")
+            r0 = narrate.asr_transcribe(str(w), asr_lang)
+            r1 = narrate.asr_transcribe(str(spl), asr_lang)
             if r0 is None or r1 is None:
                 print(f"  {b}/{ch} v{v}: ASR UNAVAILABLE")
                 continue
-            g0 = [r for r in gate_reasons(r0["text"], r0["tokens"], "", "sv") if r.startswith("repeat")]
-            g1 = [r for r in gate_reasons(r1["text"], r1["tokens"], "", "sv") if r.startswith("repeat")]
+            g0 = [r for r in gate_reasons(r0["text"], r0["tokens"], "", set_key) if r.startswith("repeat")]
+            g1 = [r for r in gate_reasons(r1["text"], r1["tokens"], "", set_key) if r.startswith("repeat")]
             n_done += 1
             fired_clean += bool(g0)
             fired_spliced += bool(g1)
@@ -245,9 +275,18 @@ def validate_sv():
     # recall limit the English validation shows at 9/10. 0 on the clean side
     # is required — a false positive costs a needless re-draw on every verse.
     ok = n_done == 6 and fired_spliced >= 5 and fired_clean == 0
-    print("VERDICT: " + ("VALIDATED on Swedish (recall ≈ 5/6 by this control; "
+    # ⚠ PRINT THE MEASURED RECALL, NEVER A LITERAL. This line said
+    # "recall ≈ 5/6" unconditionally until 2026-09-03, which under-reported
+    # cu's actual 6/6 — and anyone reading only the VERDICT line would have
+    # carried the wrong figure into a handoff.
+    print("VERDICT: " + (f"VALIDATED on {label} (recall {fired_spliced}/{n_done} "
+                         "by this control; "
                          "a miss is a defect that survives — the post-render "
-                         "screens still run)" if ok else "NOT VALIDATED on Swedish"))
+                         "screens still run)" if ok
+                         else f"NOT VALIDATED on {label} — this set has NO "
+                              "self-repeat screen. Report it as unscreened, "
+                              "never as clean."))
+    return 0 if ok else 1
     return 0 if ok else 1
 
 
@@ -255,11 +294,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--validate", action="store_true")
     ap.add_argument("--validate-sv", action="store_true")
+    ap.add_argument("--validate-splice", metavar="SET",
+                    help="run the synthetic splice control on any set "
+                         "(sv, ru, cu) — the only way to validate the "
+                         "self-repeat screen without ear-confirmed defects")
+    ap.add_argument("--asr-lang", help="override the whisper model language "
+                                       "for --validate-splice")
     a = ap.parse_args()
     if a.validate:
         return validate()
     if a.validate_sv:
         return validate_sv()
+    if a.validate_splice:
+        return validate_splice(a.validate_splice, a.asr_lang)
     ap.print_help()
     return 0
 

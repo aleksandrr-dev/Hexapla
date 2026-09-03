@@ -55,7 +55,13 @@ NOTE = re.compile(r"\{[^{}]*:[^{}]*\}")
 
 ASSET = {"tyn": "en_tyndale.json", "sv": "sv_karlxii.json", "ylt": "en_ylt.json",
          "wbt": "en_webster.json", "gnv": "en_geneva.json",
-         "wyc": "enm_wycliffe.json", "en": "en_kjv.json"}
+         "wyc": "enm_wycliffe.json", "en": "en_kjv.json",
+         # ru and cu were MISSING until 2026-09-03, so this tool raised
+         # KeyError and judged nothing on either set. That reads as "the check
+         # ran and found nothing" only if you trust an exit code: it exits 1
+         # both when it flags verses and when it dies here. Neither set had
+         # ever been screened by it.
+         "ru": "ru_synodal.json", "cu": "cu_elizabeth.json"}
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 

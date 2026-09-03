@@ -51,7 +51,14 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 RESEARCH = Path(r"C:/Projects/Hexapla-releases/research")
 VERSE = re.compile(r"^(\d+)\s+(.*)$")
 HEAD = re.compile(r"^##\s+(.+?)\s+(\d+)\s*$")
-WORD = re.compile(r"[^\s/()\[\]?!.,;:«»]+")
+# ⚠ THE UNCERTAINTY MARKERS MUST BE EXCLUDED, NOT JUST THE `?` INSIDE THEM.
+# Transcribers mark a doubtful glyph inline as `Fodur⟨?ø⟩`. Until 2026-09-03
+# this class excluded `?` but not `⟨⟩`, so that tokenised to
+# ['Fodur⟨', 'ø⟩'] — `Fodur⟨` never grouped with plain `Fodur`, and EVERY
+# marked word silently dropped out of the o/ø grouping. That is the exact
+# analysis the markers exist to feed, so the sites needing review were the
+# ones being hidden. Colossians alone carries 83 marked sites.
+WORD = re.compile(r"[^\s/()\[\]?!.,;:«»⟨⟩]+")
 
 PAIRS = [("o", "\u00f8"), ("f", "\uA751")]   # o/ø, f/ꝑ
 

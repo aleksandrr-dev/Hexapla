@@ -54,6 +54,32 @@ LOOSE_CHAPTER_RE = re.compile(
     r"^##+\s*(?:[^A-Za-z0-9]*\s*)?(?:Chapter|Cap\.?|Kafli)\s+(\d+)", re.I)
 
 
+# ⛔⛔ LOOSE_CHAPTER_RE IS BOOK-BLIND, AND THAT SILENTLY CROSS-CONTAMINATES.
+# `## Chapter 2 - verses 1-14` names no book, so it matches whatever --book you
+# happen to pass. MEASURED 2026-09-04: merging --book "2 John" over the parts
+# 1john_p209-210.md + 1john_p211-212.md + johannine_p213.md returned
+# "chapters: 3  verses: 45" - chapters 1 and 2 with 10 and 29 verses. Those are
+# 1 JOHN's chapters, harvested out of p209-210's bare `## Chapter N` headings
+# and relabelled `## 2 John 1` / `## 2 John 2` in the output. 2 John has ONE
+# chapter and 13 verses; the merge reported three chapters and did not complain.
+# ▶ books_named() below lets main() SAY SO. It cannot decide for you: a bare
+#   `## Chapter N` in a single-book part file is correct and common, which is
+#   why the loose match exists at all. Read the warning and check the grid.
+BOOKNAME_RE = re.compile(r"^##\s+([0-9]?\s*[A-Za-z][A-Za-z ]*?)\s+(\d+)\b")
+
+
+def books_named(path):
+    """-> set of book names that this part file's headings EXPLICITLY name."""
+    out = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if LOOSE_CHAPTER_RE.match(line):
+            continue                       # `## Chapter N` names no book
+        m = BOOKNAME_RE.match(line)
+        if m:
+            out.add(" ".join(m.group(1).split()).lower())
+    return out
+
+
 def chapter_of(line, book):
     """-> chapter number, for any heading style an agent has actually used."""
     m = LOOSE_CHAPTER_RE.match(line)
@@ -62,6 +88,35 @@ def chapter_of(line, book):
     m = AUDIT_CHAPTER_RE.match(line)
     if m and m.group(1).strip().lower() == book.strip().lower():
         return int(m.group(2))
+    # "## 1 Peter 4 - KJV 19 verses", "## 1 Peter 3 (continued from idx 203-204)".
+    # Agents annotate the heading, which defeats AUDIT_CHAPTER_RE above (it
+    # anchors the number to END of line). Measured 2026-09-03: this silently
+    # dropped 49 of 1 Peter's 105 verses into the appendix - the merge reported
+    # 56 and looked plausible. Match the book name, take the next token as the
+    # chapter, ignore whatever the agent appended.
+    t = line.lstrip("#").strip()
+    b = book.strip()
+    if t.lower().startswith(b.lower()):
+        rest = t[len(b):]
+        # Agents separate the book from the chapter every way imaginable:
+        # "1 Peter 4 - KJV 19 verses", "1 Peter 3 (continued...)",
+        # "3 JOHN - chapter 1 (verses 1-4 confirmed...)". Drop a separator run,
+        # then an optional "chapter"/"cap"/"kafli", then take the number.
+        rest = rest.lstrip(" 	-:.,)(–—")
+        m2 = re.match("(?i)^(?:chapter|cap[.]?|kafli)[ 	]+", rest)
+        if m2:
+            rest = rest[m2.end():]
+        toks = rest.split()
+        if toks:
+            # ⚠ THE COMMA COST 7 VERSES. romans_p136-137.md heads its scripture
+            # `### Romans chapter 1, verses 1-7 (...)`; without "," in this set
+            # the token is "1," which is not a digit, chapter_of returns None,
+            # and Romans 1:1-7 - the book's OPENING, the whole point of the
+            # idx-137 correction - went silently into the appendix. Measured
+            # 2026-09-04. Strip every separator an agent has actually used.
+            num = toks[0].strip(".:,;)(–—-")
+            if num.isdigit():
+                return int(num)
     return None
 
 
@@ -106,22 +161,60 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--book", required=True,
                     help="book name as it appears in the '## <Book> <N>' headings")
-    ap.add_argument("--prefix", help="part-file prefix (default: book name lowercased, spaces stripped)")
+    ap.add_argument("--prefix", action="append",
+                    help="part-file prefix; REPEATABLE. A book can straddle two "
+                         "prefixes - measured 2026-09-03: 2 John's verses live in "
+                         "BOTH 1john_p211-212.md and johannine_p213.md. Passing one "
+                         "prefix would silently leave the other half in the appendix. "
+                         "(default: book name lowercased, spaces stripped)")
     ap.add_argument("--out", help="override the canonical output path")
     ap.add_argument("--apply", action="store_true", help="actually write (default is a dry run)")
     a = ap.parse_args()
 
-    prefix = a.prefix or a.book.lower().replace(" ", "")
-    parts = sorted(PARTS.glob(f"{prefix}_p*.md"),
-                   key=lambda p: int(PAGE_RE.search(p.name).group(1)))
+    prefixes = a.prefix or [a.book.lower().replace(" ", "")]
+    seen, parts = set(), []
+    for pre in prefixes:
+        for f in PARTS.glob(f"{pre}_p*.md"):
+            if f.name not in seen:
+                seen.add(f.name)
+                parts.append(f)
+    parts.sort(key=lambda p: int(PAGE_RE.search(p.name).group(1)))
     if not parts:
-        print(f"NO PART FILES matching {PARTS}\{prefix}_p*.md")
+        pats = ", ".join(f"{pre}_p*.md" for pre in prefixes)
+        print(f"NO PART FILES matching {PARTS}\{{{pats}}}")
         sys.exit(2)
 
     print(f"book   : {a.book}")
     print(f"parts  : {len(parts)}")
+    blind, others = [], set()
     for p in parts:
-        print(f"    {p.name}")
+        named = books_named(p)
+        others |= {n for n in named if n != a.book.strip().lower()}
+        loose = any(LOOSE_CHAPTER_RE.match(l)
+                    for l in p.read_text(encoding="utf-8").splitlines())
+        if loose:
+            blind.append(p.name)
+        tag = ""
+        if named:
+            tag += "   names: " + ", ".join(sorted(named))
+        if loose:
+            tag += "   ⚠ has book-blind '## Chapter N' headings"
+        print(f"    {p.name}{tag}")
+
+    if blind and others:
+        print(f"\n⛔⛔ CROSS-BOOK CONTAMINATION IS POSSIBLE IN THIS MERGE — CHECK "
+              f"THE PER-CHAPTER COUNTS BELOW AGAINST {a.book.upper()}'s KJV GRID "
+              f"BEFORE --apply.")
+        print(f"    These parts carry bare '## Chapter N' headings, which name no "
+              f"book and are therefore attributed to --book '{a.book}':")
+        for n in blind:
+            print(f"        {n}")
+        print(f"    But headings in this merge set explicitly name other book(s): "
+              f"{', '.join(sorted(others))}.")
+        print(f"    ▶ If a chapter below does not exist in {a.book}, or its verse "
+              f"count belongs to one of those other books, it came from a "
+              f"book-blind heading. FIX THE SOURCE PART FILE's heading to read "
+              f"'## <Book> <N>', then re-run. Do not --apply through this.")
 
     merged, prose, conflicts = {}, [], []
     for p in parts:
@@ -152,7 +245,17 @@ def main():
         for ch, v, name in conflicts[:20]:
             print(f"    ch {ch} v{v}  (also in {name})")
 
-    out = Path(a.out) if a.out else RESEARCH / f"thorlaks_{prefix}.md"
+    if a.out:
+        out = Path(a.out)
+    elif len(prefixes) > 1:
+        # Deriving a filename from one of several prefixes would overwrite
+        # another book's canonical file. Refuse rather than guess.
+        print("\n⛔ several --prefix values given: pass --out explicitly, or this "
+              "would derive the output name from one prefix and overwrite the "
+              "OTHER book's canonical file.")
+        sys.exit(2)
+    else:
+        out = RESEARCH / f"thorlaks_{prefixes[0]}.md"
     body = [f"# Þorláksbiblía 1644 — {a.book.upper()} (merged chunk report)", "",
             f"Merged by tools/thorlaks_merge_parts.py from {len(parts)} part files "
             f"on {datetime.now():%Y-%m-%d %H:%M}. Each part was read from page images "
@@ -161,11 +264,45 @@ def main():
         body.append(f"## {a.book} {ch}")
         body.append("")
         for v in sorted(merged[ch]):
-            body.extend(merged[ch][v])
+            # ⛔ A VERSE SPLIT ACROSS A SHEET BOUNDARY IS ONE VERSE, NOT TWO.
+            # Agents label the resumption with the same numeral at column 0:
+            # «8 [O][?] Fyrer Truna vard Abraham hlyden…» then, after the page
+            # break, «8 (cont'd) [?] hñ erfa skylde…». parse_part correctly
+            # files both under verse 8, but emitting both at column 0 makes the
+            # audit count two. MEASURED 2026-09-04: Hebrews 11 reported
+            # 29 verses, «duplicate [8, 12]», against a real 27.
+            # Only the FIRST line of a verse keeps its numeral at column 0.
+            for k, l in enumerate(merged[ch][v]):
+                body.append(l if k == 0 or not re.match(r"^\d+\s", l)
+                            else "  " + l)
         body.append("")
     body += ["", "---", "", "# Appendix — per-part notes, page tables and findings", ""]
     for name, pr in prose:
-        body += [f"## from {name}", ""] + pr + [""]
+        # ⛔ DEMOTE EVERY HEADING CARRIED INTO THE APPENDIX.
+        # A part file that straddles a book boundary leaves the OTHER book's
+        # `## 3 John 1` heading in this prose, and the corpus audit's
+        # CHAPTER_RE is `^##\s+…` — it does not care which file it is in or
+        # that it sits under "Appendix". MEASURED 2026-09-04: 3 John's verses
+        # were counted out of thorlaks_2john.md's appendix as well as out of
+        # thorlaks_3john.md, i.e. the same verses in the corpus twice.
+        # `######` still reads as a heading to a human and is invisible to
+        # `^##\s`. Verse numerals at column 0 are left alone; without a
+        # chapter heading above them the audit has no key to file them under.
+        # ⛔ AND INDENT ANY APPENDIX LINE THAT LOOKS LIKE A VERSE.
+        # Demoting the headings alone is not enough: the audit does not reset
+        # its chapter key at the appendix, so it carries the LAST chapter of
+        # the BODY into it and counts verse-shaped prose there as that
+        # chapter's verses. MEASURED 2026-09-04: 2timothy_p199.md wraps a
+        # sentence as «...Only the / 2 Timothy portion is transcribed here»,
+        # and «2 Timothy portion is transcribed here» was counted as
+        # 2 Timothy 4:2. Two spaces is invisible to `^(\d+)\s` and to a reader.
+        body += [f"###### from {name}", ""]
+        for l in pr:
+            l = re.sub(r"^#{1,6}(?=\s)", "######", l)
+            if re.match(r"^\d+\s+\S", l):
+                l = "  " + l
+            body.append(l)
+        body += [""]
     text = "\n".join(body) + "\n"
 
     if not a.apply:

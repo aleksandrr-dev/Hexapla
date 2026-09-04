@@ -235,6 +235,144 @@ evidence are in the newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases`
   redirect onto an existing log, second uploader). If it blocks you, it is
   right more often than you are — read its message.
 
+## ★★ SUBSTITUTION IS A FOURTH DEFECT CLASS — added 2026-09-04
+
+The render can SPEAK THE WRONG WORD. ylt Genesis 12:14 (`0/12 v14`) says
+«westward» where Young's reads «and **eastward**, and westward» — owner
+confirmed BY EAR. Neither existing screen is aimed at it: `qa_asr_sweep`'s
+APPEND test never fired because nothing was appended, and `qa_selfrepeat`
+caught it only BY LUCK, because the substituted word happened to duplicate its
+neighbour.
+
+- ✅ **`tools/qa_substitution.py`** reports only **NEIGHBOUR-COPY**: the heard
+  word does not match the text here but EXACTLY matches a word elsewhere in the
+  same verse. Printing every mid-verse `replace` is useless (~3/chapter on
+  archaic English, ~0 true positives); this sub-class is the one with an
+  argument behind it. `--validate` fires on the ground truth and stays silent
+  on an identical transcript. End-to-end on the real Genesis 12 audio:
+  1 NEIGHBOUR-COPY (the real one), 6 other mid-verse subs suppressed.
+- ⚠⚠ **IT IS NOT VALIDATED FOR RECALL AND CANNOT BE.** Exactly ONE ground-truth
+  positive exists in this project. `--validate` proves it FIRES; it says nothing
+  about what it MISSES, and a screen with false negatives licenses discarding
+  real defects. **A substitution into a word that duplicates nothing in its verse
+  has no instrument at all.** Report ylt as "clean on what can be detected".
+
+## ★★ MISPRONUNCIATION IS A FIFTH DEFECT CLASS — owner's ear, 2026-09-04
+
+Confirmed on the ylt repair pilot (`0/8 v26`, Genesis 9:26). The owner listened
+to the before/after and reported: the repeat is gone, **but the render says
+«can-a-yin» where the name is «Canaan»** (/ˈkeɪnən/). The words are all correct;
+the PHONETICS are wrong.
+
+- ⚠ **It is PRE-EXISTING, not caused by the repair.** faster-whisper transcribes
+  `Kanan` from BOTH the shipped take and the re-drawn one. It is already in the
+  shipped audio.
+- ⚠⚠ **IT IS NOT INVISIBLE — IT IS DELIBERATELY SUPPRESSED.** The ASR emits a
+  different token, so the signal is right there in the diff. But every screen
+  discards that class on purpose: mid-verse and end-substitution flags on
+  archaic English ran ~3 per chapter with essentially no true positives
+  (measured on ylt Genesis 1-34), so they are filtered as ASR noise. **The
+  instrument sees it and we throw it away.**
+- ⛔ **A screen for it faces the SAME wall as the substitution class:** it must
+  separate «the ASR misheard the audio» from «the TTS mispronounced the word»,
+  and **text evidence alone cannot do that — only an ear can** (owner's rule,
+  established on 0/12 v14). Do not build one that dismisses hits on text.
+- ▶ **SCOPE, derived not guessed: «Canaan» alone is in 156 ylt verses across 87
+  chapters.** It will not be the only name. Candidate second instance, NOT yet
+  ear-confirmed: «he saith» transcribes as «he's safe» in both takes.
+- ⛔⛔ **THE CLASS SPLITS IN TWO, AND THEY NEED OPPOSITE TOOLS.**
+  * **SYSTEMATIC** — always wrong: `Canaan`, `Levites`, `Abraham`, `Ephraim`,
+    `Job` («Jahb»), `Hezekiah` («Hez-a-KEE-yah»), `calleth`/`falleth` (the a of
+    apple, not the aw of call), `fleeth`/`seeth` (the «ee»+«eth» syllable
+    collapses). A respelling fixes these — `tools/pronounce_lexicon.py`,
+    16 entries, **1,485 verses / 493 chapters**, all still UNVALIDATED.
+  * **SPORADIC** — `Jehovah`, wrong maybe 1 time in 7 across **6,626 verses**.
+    A respelling is the WRONG tool: it would rewrite every one to fix a
+    minority. ⛔ **The ASR cannot find the bad ones** (both ear-flagged verses
+    transcribe as `jehovah`, same as ones the owner passed), and **acoustic
+    clustering was built, validated against his 14 labels, and FAILED** —
+    `qa_pronounce_cluster.py --validate` clustered by SURROUNDING PHRASE, not
+    pronunciation. ▶ **Owner's decision 2026-09-04: leave it**, recorded as a
+    measured limitation. Re-opening it means asking him.
+- ⚠ **THE EAR SHRANK THIS THREE TIMES — never scope it from a spelling rule.**
+  «-eth is broken» would have condemned 618 forms / 6,499 verses; the ear said
+  only the double-e stems, 3 forms / 231 occurrences. «a+ll is broken» would
+  have rewritten `all` (5,482 places); the ear said only `calleth`/`falleth`.
+  A prefix rule on `canaan` would have missed `Canaanite` and hit nothing else.
+- ⚠ **A LEXICON ENTRY IS A HYPOTHESIS ABOUT HOW THE MODEL READS LETTERS.**
+  Every entry is marked unvalidated and the tool says so on every run. One test
+  verse per entry must be rendered and HEARD before any of it ships — and only
+  an ear can tell whether the respelling helped, for the same reason text cannot
+  clear a self-repeat hit.
+- ▶ The fix is a pronunciation lexicon applied to the SYNTHESIS INPUT ONLY (never
+  to the displayed text), then a re-render of every affected verse. That is a far
+  bigger job than the repeat/append queue, and the lexicon itself needs an ear to
+  build. **Do not start it without the owner.**
+- ✅ Repeat/append repairs are ORTHOGONAL to this and were explicitly approved to
+  proceed anyway (owner, 2026-09-04): they do not make pronunciation worse.
+
+⚠ **So ylt has FIVE known defect classes and screens for two.** Repeat
+(`qa_selfrepeat`) and novel-append (`qa_asr_sweep`) are validated; substitution
+has an unvalidated screen with one ground-truth positive; mispronunciation has
+none; and a substitution into a word that duplicates nothing has no instrument
+at all. **Never call the set clean — only "clean on what can be detected".**
+
+## ⛔ DO NOT USE HAIKU FOR THE Þorláksbiblía TRANSCRIPTION — measured 2026-09-04
+
+Controlled test at the owner's request: Haiku and Sonnet read the SAME two
+sheets (`2timothy_v3` p199 sheets 1-2, 2 Tim 4:7-22) under the same brief.
+Sonnet's output is the one the corpus already accepted (2 Timothy audits 83/83).
+
+| | Sonnet | Haiku |
+|---|---|---|
+| character similarity to Sonnet | — | **70.9 % mean, 55 % worst** |
+| verses identical | — | **0 of 16** |
+| proper nouns of 2 Tim 4 recovered | **17/17** | **10/17** |
+
+Haiku lost Crescens, Erastus, Linus, Marcum, Pudens, Titus and Tychicum;
+invented an abbreviation «DXDSSE» for DROTTIN and then REPORTED it as faithfully
+kept-as-printed; and **shifted verse boundaries** — its v14 opens with the tail
+of v13, so text is filed under the wrong verse numbers. It also self-certified
+(«current reading stable at native magnification», «no inferences from modern
+text»), none of which held. ▶ Confident, wrong, and unverifiable without a
+reference — the exact failure the kit manifest warns about: *the failure this
+guards against is not misreading, it is supplying the letter the WORD wants.*
+Evidence kept at `research/_haiku_test/`.
+
+
+## ⚠⚠ ONE SCREEN'S OUTPUT FILE IS NOT THE REPAIR SCOPE
+
+`_work/<set>_rerender.txt` holds only the APPEND sweep. The self-repeat screen's
+hits sat in 66 per-book logs that nothing had ever merged. Measured for ylt on
+2026-09-04: APPEND 169 verses, self-repeat 214, **UNION 280 across 233
+chapters** — so a queue built from the one file was **60 % of the real scope and
+looked complete**.
+
+- ✅ **`tools/qa_verse_queue.py`** merges every screen into a plain
+  `book chapter verses` queue for `repair_verses.py`. It emits data, not
+  commands, because `<set>_rerender.txt` LOOKS like a runnable script and
+  running it is chapter `--force` — forbidden for this defect class.
+- ⛔ It **exits non-zero when a named source is read and yields nothing**, with
+  a different message for "no file matched". Both were needed: the first build
+  used `re.match` where the pattern needed `search` (the rerender lines start
+  with the interpreter path), contributed **+0 verses**, and printed a
+  believable 214-verse total.
+- ⛔ It also **refuses to build from a self-repeat log with no completion line.**
+  The Task Scheduler keepalive can start a SECOND `qa_cpu_chain` instance, which
+  goes back to the ylt job whenever sentinels are missing and RE-RUNS complete
+  books, truncating each log to in-progress. A rebuild in that window silently
+  drops the in-flight book's hits and totals up fine.
+- ⚠ **Text evidence cannot clear a hit** — it cannot tell "the ASR misheard A as
+  B" from "the TTS SPOKE B where the text has A". Established by ear on
+  0/12 v14. Queue every hit; only an ear removes one (`--exclude`).
+
+⚠ The handoff instruction to "backfill sentinels because the running chain is
+OLD code" is **obsolete**: `qa_cpu_chain.ps1` was fixed 2026-09-03 08:52, three
+hours after that instance started, and its pattern already handles both
+`^[0-9]+ verses scored,` and `^\[book .* done\]`. Any instance started since
+sentinels correctly. Backfill only what an anchored grep proves finished.
+
+
 ## ⛔⛔ THE RENDER GATE — SCREEN THE FIRST 50 CHAPTERS BEFORE RENDERING 1,189
 
 **No render longer than ~100 chapters continues past its first 50 without an

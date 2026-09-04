@@ -108,18 +108,64 @@ def speech_rms(a, sr):
     return float(np.sqrt((active ** 2).mean())) if len(active) else float(env.mean())
 
 
+def _own_process_tree():
+    """-> {pid} of this process and every ANCESTOR of it.
+
+    ⚠⚠ EXCLUDING ONLY os.getpid() IS NOT ENOUGH — THE TOOL REFUSES ITSELF.
+    Measured 2026-09-04: run from a shell, `repair_verses.py --set ylt --book 0
+    --chapter 8 --verses 26 --apply` reported «another render/repair holds the
+    GPU» and listed FOUR processes, every one of them its own: three ancestor
+    bash.exe wrappers whose command line QUOTES the command being run, plus a
+    python whose pid was not getpid(). The card was idle. Nothing was repaired.
+    ▶ A guard that fires on its own invocation is indistinguishable from a real
+    refusal, and it fails CLOSED — so the work silently does not happen and the
+    log says something reassuringly sensible. Exclude the whole ancestor chain.
+    """
+    own = {os.getpid()}
+    if os.name != "nt":
+        return own
+    r = subprocess.run(
+        ["powershell", "-NoProfile", "-Command",
+         "Get-CimInstance Win32_Process | ForEach-Object "
+         "{ \"$($_.ProcessId) $($_.ParentProcessId)\" }"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        creationflags=NO_WINDOW)
+    parent = {}
+    for line in (r.stdout or "").splitlines():
+        bits = line.split()
+        if len(bits) == 2 and bits[0].isdigit() and bits[1].isdigit():
+            parent[int(bits[0])] = int(bits[1])
+    pid, hops = os.getpid(), 0
+    while pid in parent and hops < 40:        # bounded: never trust a pid graph
+        pid = parent[pid]
+        if pid in own:
+            break
+        own.add(pid)
+        hops += 1
+    return own
+
+
 def gpu_busy():
     if os.name != "nt":
         return []
+    own = _own_process_tree()
     r = subprocess.run(
         ["powershell", "-NoProfile", "-Command",
          "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match "
-         "'narrate\\.py|repair_verses\\.py' -and $_.ProcessId -ne " + str(os.getpid()) +
-         " } | ForEach-Object { \"$($_.ProcessId) $($_.CommandLine)\" }"],
+         "'narrate\\.py|repair_verses\\.py' } | ForEach-Object "
+         "{ \"$($_.ProcessId) $($_.CommandLine)\" }"],
         capture_output=True, text=True, encoding="utf-8", errors="replace",
         creationflags=NO_WINDOW)
-    return [l for l in (r.stdout or "").splitlines() if "python" in l.lower()
-            and str(os.getpid()) not in l.split()[:1]]
+    out = []
+    for l in (r.stdout or "").splitlines():
+        bits = l.split()
+        if not bits or not bits[0].isdigit():
+            continue
+        if int(bits[0]) in own:
+            continue                          # self, or a shell that launched us
+        if "python" in l.lower():
+            out.append(l)
+    return out
 
 
 def decode(ogg, dst):
@@ -348,6 +394,23 @@ def main():
             print(f"    -> {'OK' if good else 'FAIL'}: {msg}", flush=True)
             ok += good
             fail += not good
+            # ⛔⛔ FREE THIS CHAPTER'S SCRATCH BEFORE THE NEXT ONE.
+            # `tmp_root` is ONE TemporaryDirectory for the whole run, and
+            # repair_chapter writes three decoded WAVs into `<b>_<c>/`
+            # (src, chk, chapter) — MEASURED 2026-09-04 at ~92 MB per chapter.
+            # Nothing removed them until the process exited, so a 233-chapter
+            # run accumulates ~21 GB of scratch it never reads again. That run
+            # took the disk from 51 GB free to 23 GB in 90 minutes and would
+            # have ended with ~5 GB of margin.
+            # ▶ Why that matters more than housekeeping: a disk that fills
+            #   mid-render produces the 1 Samuel 28 truncation class — offsets
+            #   piled at EOF, verses silent — and it does so SILENTLY. The
+            #   render-gate brief already records `render_preflight check`
+            #   failing below 10 GB for exactly this reason.
+            # Each chapter's scratch is dead the moment its chapter is done.
+            scratch = Path(tmp_root) / f"{b}_{c}"
+            if scratch.exists():
+                shutil.rmtree(scratch, ignore_errors=True)
     print(f"\n{'repaired' if a.apply else 'planned'} {ok}, failed {fail}, "
           f"already done {done}")
     if a.apply:

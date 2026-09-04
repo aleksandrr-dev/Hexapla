@@ -35,8 +35,12 @@ Exits 1 if any real defect is found, so a wrapper cannot print success over it.
 import io
 import json
 import os
+import re
 import subprocess
 import sys
+
+# The per-chapter offsets file, and nothing else in the directory beside it.
+CHAPTER_JSON = re.compile(r"^\d+\.json$")
 
 NARRATION = r"C:\Projects\Hexapla-releases\narration"
 BIBLES = os.path.join(
@@ -93,7 +97,18 @@ def scan_set(name):
             continue
         b = int(bdir)
         for fn in sorted(os.listdir(bpath)):
-            if not fn.endswith(".json") or fn.endswith(".w.json") or fn.endswith(".eos.json"):
+            # ⚠⚠ ALLOWLIST, NOT A BLOCKLIST. The offsets file is exactly
+            # `<chapter>.json`; anything else beside it is a sidecar.
+            # This used to blocklist `.w.json` and `.eos.json`, and the render
+            # gate's NEW `<chapter>.qa.json` (added 2026-09-03) was not on that
+            # list — so `int(fn[:-5])` was handed '8.qa' and the ENTIRE scan
+            # died with a ValueError. Measured 2026-09-04 on the first repaired
+            # ylt chapter. That matters more than an ordinary crash: this is the
+            # tool that caught 1 Samuel 28's twelve silent verses when both the
+            # count and the size heuristics waved them through, and a
+            # just-repaired set is exactly when it has to run. A blocklist
+            # breaks again on the next sidecar anyone adds; an allowlist will not.
+            if not CHAPTER_JSON.match(fn):
                 continue
             c = int(fn[:-5])
             checked += 1

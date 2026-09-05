@@ -105,6 +105,7 @@ def main():
 
     tot_v = tot_flag = tot_tail = tot_endsub = 0
     refused = []
+    skipped_empty = []
     t0 = time.time()
     for b in books:
         bdir = root / str(b)
@@ -123,6 +124,21 @@ def main():
             with tempfile.TemporaryDirectory() as td:
                 for i, start in enumerate(offsets):
                     end = offsets[i + 1] if i + 1 < len(offsets) else None
+                    # ⚠⚠ AN EMPTY VERSE HAS A ZERO-LENGTH SPAN AND KILLED THE
+                    # WHOLE BOOK. Measured 2026-09-05: tyn book 44 (Romans) has
+                    # an EMPTY verse 22 in the asset, so offsets[21]==offsets[22]
+                    # and ffmpeg was handed `-ss 171.898 -to 171.898`. It aborts
+                    # with "-to value smaller than -ss", qav.cut raises
+                    # CalledProcessError, and the sweep DIES for the entire book.
+                    # Romans was therefore never APPEND-screened, and the chain
+                    # retried and re-failed it on every pass.
+                    # ▶ Skip it, but SAY SO and count it — a verse silently
+                    #   dropped from a screen is a verse the screen cannot speak
+                    #   for, and this project treats that as unscreened, never
+                    #   as passed.
+                    if not texts[i].strip() or (end is not None and end <= start):
+                        skipped_empty.append(f"{b}/{ch} v{i + 1}")
+                        continue
                     wav = Path(td) / f"v{i}.wav"
                     qav.cut(ogg, start, end, wav)
                     segs, _ = model.transcribe(
@@ -188,6 +204,16 @@ def main():
         print(f"{len(refused)} chapter(s) REFUSED (offsets/verses mismatch):")
         for r in refused[:20]:
             print("  " + r)
+    if skipped_empty:
+        # Visible on purpose: these verses were NOT screened. An empty verse in
+        # the asset is a legitimate skip, but the count must be stated so nobody
+        # reads "N verses checked" as "the whole book".
+        print(f"{len(skipped_empty)} verse(s) SKIPPED as empty/zero-span "
+              f"(not screened, not passed):")
+        for r in skipped_empty[:20]:
+            print("  " + r)
+        if len(skipped_empty) > 20:
+            print(f"  ... {len(skipped_empty) - 20} more")
     print("\n⚠ APPEND is the real defect class and every one needs an ear. "
           "end-substitutions\n  and mid-verse flags are mostly ASR "
           "mis-hearings of archaic English - on ylt\n  Genesis they ran ~3 per "

@@ -317,6 +317,96 @@ has an unvalidated screen with one ground-truth positive; mispronunciation has
 none; and a substitution into a word that duplicates nothing has no instrument
 at all. **Never call the set clean — only "clean on what can be detected".**
 
+## ⛔⛔ THE GATE HAD FALSE NEGATIVES — FOUND BY EAR, FIXED, 2026-09-04
+
+The owner listened to six ear-confirmed repeat repairs. **The gate had PASSED two
+takes that still contained the defect** — the failure this file elsewhere calls
+worse than no screen, because it licenses calling a set clean. Two independent
+mechanisms, both now fixed and re-validated (10/10 confirmed, 1/40 controls):
+
+- **`tail_repeat` joined tokens into one string**, so ONE mistranscribed word
+  diluted the whole span below FUZZ. ylt 19/30 v21: the kept take's own recorded
+  transcript reads «clothed WAS scarlet WITH scarlet» — a real doubling in which
+  the ASR merely heard the first copy differently — and scored 0.762 vs FUZZ 0.85.
+  ▶ Fixed with a per-token majority path (`STRONG_TOKEN`/`MIN_STRONG_LEN`).
+- **`append_tail` fired only on a PURE trailing insert.** When the LAST wanted
+  word is also mistranscribed (`shaul` -> `shawl`), difflib emits one `replace`
+  and the extra word is swallowed inside it. ylt 12/3 v24: «...zerah shaul SHOP»
+  flagged, «...zera shawl SHRI» PASSED. ▶ Fixed by also reading the excess out of
+  a final `replace`, gated on the aligned words actually resembling each other.
+
+⚠ **COST, MEASURED, NOT HIDDEN:** controls went 0/40 -> 1/40. The new flag is
+Gen 36:29 «chief Lotan, chief Shobal, chief Zibeon...», which repeats IN THE
+PRINTED TEXT — the already-known text-repeat class.
+⛔ **DO NOT RAISE `PAIR_JOINED_FLOOR` TO 0.75 TO REMOVE IT.** The true positive
+scores 0.762 and that control 0.700; picking a number between them is fitting the
+threshold to the validation set. A false POSITIVE costs seconds of listening; a
+false NEGATIVE ships a defect.
+
+⚠⚠ **SO «repaired 169 chapters OK» FROM THE 2026-09-04 ylt RUN IS NOT EVIDENCE
+THE DEFECTS ARE GONE** — that number was produced by the buggy gate. Treat it as
+unverified. The build gate stays closed at versionCode 18.
+
+## ⛔⛔ THE REPAIR OVERWRITES THE VALIDATION GROUND TRUTH
+
+`repair_verses.py` splices fresh takes into `narration/<set>/`, so **after a
+repair the live tree no longer contains the defects the screens were validated
+on.** Measured 2026-09-04: `qa_selfrepeat --validate` scored the ten
+ear-confirmed ylt verses **0/10** and printed «⛔ do not use it» — it was reading
+REPAIRED audio. Trusting that would have condemned a working detector, or worse,
+prompted "retuning" it against audio the defect had been removed from.
+
+- ✅ Both validators now read the confirmed verses from
+  `narration/<set>_qa_fail_originals/` and PRINT how many came from there.
+- ⚠ **Never delete `*_qa_fail_originals/` — it is the project's only copy of the
+  ground truth**, not merely a backup of shipped audio.
+- ⛔ `qa_selfrepeat --validate` also **exited 0 while printing «do not use it»**,
+  so ✅ and ⛔ were indistinguishable to anything gating on the exit code —
+  including the preflight stamp that licenses a render. Now exits non-zero.
+
+## ⛔ A MID-VERSE REPEAT HAS NO INSTRUMENT — structural, but NO CONFIRMED CASE
+
+⚠ **THE GAP IS REAL. Every screen looks at the ends:** `qa_selfrepeat` reads the
+TAIL, `qa_asr_sweep` APPEND tests for words AFTER the last text word,
+`qa_substitution` reports only single-word neighbour-copies. Nothing looks in the
+middle, so a mid-verse repeat in a verse with a clean tail is invisible today.
+
+⛔⛔ **BUT THE ONE ALLEGED INSTANCE WAS WITHDRAWN — owner's ear, 2026-09-05.**
+This block was founded entirely on Isaiah 24:21 (`22/23 v21`), recorded on
+2026-09-04 as speaking «of the high place OF THE HIGH PLACE» where «the text
+prints it once». **Both halves were wrong.**
+
+- **The text prints it TWICE.** YLT reads «on the host of the high place **IN**
+  the high place, And on the kings of the land on the land» — doubled twice over,
+  and both doublings are scripture.
+- **The audio is CORRECT.** Re-heard on the clip set: «it sounds fine, hosts of
+  the high place in the high place». The verse has no defect of any class.
+
+▶ It is retracted from `_work/ylt_ear_confirmed_repeats.txt` (commented, not
+deleted). ⚠ It was never in `EAR_CONFIRMED_YLT`, so no validator was scored
+against it — had it been, every screen would have looked one worse for correctly
+PASSING a clean verse.
+
+⚠⚠ **MEASURED COST OF BELIEVING IT: `repair_verses.py` re-drew this clean verse
+3× on 2026-09-05 and every draw «failed».** It always will: the gate fires on
+«of the land on the land», which is printed, so **a verse whose gate flag is
+text-explained can never pass and can never be repaired by redrawing.** Check
+whether a flag is explained by the printed text BEFORE queueing draws.
+
+▶ So the honest statement is: **the instrument gap is structural and unfixed, and
+there is no confirmed mid-verse repeat in this corpus.** Do not cite Isaiah 24:21
+for it. If a real one turns up, record it here in its place.
+
+## ⚠ TWO TOOLS WRITE `<c>.qa.json` AND THEY DO NOT SHARE A SCHEMA
+
+`narrate.py`'s gate writes `{judged, redrawn, failing, unjudged}`;
+`repair_verses.py` writes `{repairs:[...], realigned:{}}`. `render_preflight.py
+report` read the first with four `q.get(key, 0)` calls, so **every
+repair-written record defaulted to zero and it printed «still failing 0» and a
+✅ VERDICT over 234 files it had not understood a byte of** (ylt, 2026-09-04 —
+all 234 records on disk were repair-schema; it was 100 % blind). Now it reads
+both and REFUSES (exit 1) on an unrecognised file instead of defaulting.
+
 ## ⛔ DO NOT USE HAIKU FOR THE Þorláksbiblía TRANSCRIPTION — measured 2026-09-04
 
 Controlled test at the owner's request: Haiku and Sonnet read the SAME two

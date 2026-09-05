@@ -198,7 +198,11 @@ def spoken_verses(lang, books, b, c):
         if cfg["normalizer"]:
             v = narrate.normalize_text(v, cfg["normalizer"])
         out.append(v)
-    return out
+    # ⚠ MUST match narrate_chapter: a per-verse synthesis override applies to a
+    # repair too, or a repaired verse silently reverts to the printed form that
+    # was condemned. ylt 12/23 v25 doubled its final name in 12/12 draws for
+    # exactly the punctuation this fixes.
+    return narrate.apply_overrides(lang, b, c, out)
 
 
 def align(set_key, b, c):

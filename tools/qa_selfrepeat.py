@@ -51,6 +51,26 @@ NAR = Path("C:/Projects/Hexapla-releases/narration")
 SR = 16000
 MAX_K = 6
 FUZZ = 0.85
+# Per-token fallback thresholds (see tail_repeat). Chosen so the measured
+# false negative fires, then CHECKED against the 40 controls — not tuned until
+# something passed.
+STRONG_TOKEN = 0.80        # a pair counts as "the same word" at/above this
+MIN_STRONG_LEN = 4         # ...but only if one side is a substantial word
+PAIR_JOINED_FLOOR = 0.70   # the span must still look broadly alike overall
+# ⚠ MEASURED COST OF THE PER-TOKEN FALLBACK, 2026-09-04. It buys back two
+# ear-confirmed FALSE NEGATIVES (ylt 19/30 v21 and, via qa_gate.append_tail,
+# 12/3 v24 — both re-drawn, both PASSED by the old gate, both still wrong to the
+# owner's ear). It costs ONE extra control flag in qa_gate --validate:
+# 0/35 v29, «chief Lotan, chief Shobal, chief Zibeon, chief Anah», which repeats
+# "chief" IN THE PRINTED TEXT. So the cost falls in the already-known
+# TEXT-REPEAT class, and 10/10 + 1/40 still meets this gate's own criterion.
+# ⛔ DO NOT RAISE THIS FLOOR TO 0.75 TO MAKE THAT CONTROL GO AWAY. The true
+# positive scores 0.762 and that false positive 0.700; choosing a number
+# between them is fitting the threshold to the validation set, which is how a
+# detector is made to look good rather than made to work (see the failed
+# acoustic-clustering attempt on `Jehovah`).
+# ▶ The asymmetry is the point: a false POSITIVE costs someone a few seconds of
+#   listening, a false NEGATIVE ships a defect and licenses calling a set clean.
 
 ASR_LANG = {"ylt": "en", "tyn": "en", "wbt": "en", "gnv": "en", "wyc": "en",
             "en": "en", "sv": "sv", "ru": "ru",
@@ -68,8 +88,24 @@ EAR_CONFIRMED_YLT = [(0, 8, 26), (0, 18, 27), (0, 33, 2), (0, 35, 11),
                      (1, 38, 33), (1, 39, 30)]
 
 
-def verse_wav(lang, b, ch, v, td):
-    side, ogg = NAR / lang / str(b) / f"{ch}.json", NAR / lang / str(b) / f"{ch}.ogg"
+def verse_wav(lang, b, ch, v, td, prefer_originals=False):
+    """Cut verse v to a 16 kHz mono wav. -> path or None.
+
+    ⚠⚠ `prefer_originals` EXISTS BECAUSE THE REPAIR OVERWRITES THE GROUND TRUTH.
+    `repair_verses.py` splices a fresh take into narration/<lang>/, so once a
+    verse has been repaired the live tree no longer contains the defect the
+    screen was validated on. Measured 2026-09-04: after the 280-verse ylt
+    repair, `--validate` scored the ten ear-confirmed verses 0/10 and declared
+    the detector unusable — it was reading REPAIRED audio. The pre-repair takes
+    survive in narration/<lang>_qa_fail_originals/, and that is what validation
+    must read.
+    """
+    root = NAR / lang
+    if prefer_originals:
+        orig = NAR / f"{lang}_qa_fail_originals" / str(b) / f"{ch}.ogg"
+        if orig.exists() and orig.with_suffix(".json").exists():
+            root = NAR / f"{lang}_qa_fail_originals"
+    side, ogg = root / str(b) / f"{ch}.json", root / str(b) / f"{ch}.ogg"
     if not side.exists() or not ogg.exists():
         return None
     off = json.loads(side.read_text())["offsets"]
@@ -103,16 +139,46 @@ def tail_repeat(tokens):
         # «its sockets ... its socket» or «kenaz ... kena». A token-list
         # comparison scores those 0.67 and 0.00 and MISSES them; measured, it
         # cost 2 of 3 misses in validation. Joined characters score ~0.96.
-        if difflib.SequenceMatcher(None, "".join(a), "".join(b)).ratio() >= FUZZ:
+        joined = difflib.SequenceMatcher(None, "".join(a), "".join(b)).ratio()
+        if joined >= FUZZ:
+            best = k
+            continue
+        # ⚠⚠ PER-TOKEN FALLBACK — added 2026-09-04 after a MEASURED FALSE
+        # NEGATIVE, the failure mode this project calls worse than no screen.
+        # ylt 19/30 v21 (Proverbs 31:21) was re-drawn, the gate PASSED it, and
+        # the owner's ear then heard "with scarlet" spoken twice. The gate's own
+        # recorded transcript was «...clothed WAS scarlet WITH scarlet»: a real
+        # doubling in which the ASR merely heard the first copy differently.
+        # Joined-character scoring dilutes one wrong word across the whole span
+        # (k=2 scored 0.762 against FUZZ 0.85) and the verse passed.
+        # ▶ So ALSO accept a span whose tokens each match their counterpart
+        #   individually. A single mistranscribed word can no longer hide a
+        #   repeat, while every token still has to line up one-for-one.
+        # ⚠ FIRST ATTEMPT AT THIS TEST REQUIRED EVERY TOKEN TO MATCH AND STILL
+        #   MISSED THE CASE IT WAS BUILT FOR. Measured: «was» vs «with» scores
+        #   0.286 — short words score badly however similar they sound — so an
+        #   all-tokens rule needed a threshold so low it would fire on anything.
+        # ▶ The real signal is that the LONG, distinctive token repeats exactly
+        #   («scarlet» == «scarlet») while a short function word differs. So
+        #   require a MAJORITY of the span's pairs to match strongly, and only
+        #   count a pair as strong if at least one side is a substantial word —
+        #   otherwise «and»/«the» pairs could carry the whole decision.
+        # ⚠ k >= 2 only: at k=1 there is no majority to take and nothing to
+        #   corroborate a single short word against.
+        strong = sum(1 for x, y in zip(b, a)
+                     if max(len(x), len(y)) >= MIN_STRONG_LEN
+                     and difflib.SequenceMatcher(None, x, y).ratio() >= STRONG_TOKEN)
+        if k >= 2 and joined >= PAIR_JOINED_FLOOR and strong >= (k + 1) // 2:
             best = k
     return best
 
 
-def score_set(model, lang, items, asr_lang, show=False, progress=False):
+def score_set(model, lang, items, asr_lang, show=False, progress=False,
+              prefer_originals=False):
     out = []
     with tempfile.TemporaryDirectory() as td:
         for b, ch, v in items:
-            w = verse_wav(lang, b, ch, v, td)
+            w = verse_wav(lang, b, ch, v, td, prefer_originals)
             if w is None:
                 continue
             segs, _ = model.transcribe(str(w), language=asr_lang, beam_size=5,
@@ -177,8 +243,22 @@ def main():
     print(f"model {name}, asr language {asr_lang}\n", flush=True)
 
     if a.validate:
-        print("ten ear-CONFIRMED ylt verses:")
-        pos = score_set(model, "ylt", EAR_CONFIRMED_YLT, "en", show=True)
+        # ⚠⚠ READ THE GROUND TRUTH FROM THE PRE-REPAIR BACKUPS.
+        # repair_verses.py splices fresh takes into narration/<lang>/, so once a
+        # verse is repaired the live tree NO LONGER CONTAINS the defect this
+        # detector was validated on. Measured 2026-09-04: after the 280-verse
+        # ylt repair this block scored the ten ear-confirmed verses 0/10 and
+        # printed "do not use it" -- it was reading REPAIRED audio. See verse_wav.
+        n_orig = sum(1 for b, ch, _ in EAR_CONFIRMED_YLT
+                     if (NAR / "ylt_qa_fail_originals" / str(b) / f"{ch}.ogg").exists())
+        print(f"ten ear-CONFIRMED ylt verses "
+              f"({n_orig}/10 read from the PRE-REPAIR originals):")
+        if n_orig < len(EAR_CONFIRMED_YLT):
+            print(f"  ⚠ {len(EAR_CONFIRMED_YLT) - n_orig} verse(s) have NO "
+                  f"pre-repair backup; if those were repaired, the recall figure "
+                  f"below is not a measurement of the detector.")
+        pos = score_set(model, "ylt", EAR_CONFIRMED_YLT, "en", show=True,
+                        prefer_originals=True)
         random.seed(7)
         pool = [t for t in iter_verses("ylt", 1)
                 if t[0] in (0, 1) and t not in EAR_CONFIRMED_YLT]
@@ -200,7 +280,11 @@ def main():
                   "novel hallucinations.")
         else:
             print("  \u26d4 NOT SEPARATED — do not use it.")
-        return
+        # ⚠ EXIT NON-ZERO WHEN IT DOES NOT SEPARATE. This used to plain
+        # `return`, so the process exited 0 and "do not use it" was
+        # INDISTINGUISHABLE from "usable" to anything gating on the exit
+        # code -- including the preflight stamp that licenses a render.
+        return 0 if (tp >= 0.7 * len(pk) and fp <= 0.05 * len(nk)) else 1
 
     lo, hi = 0, 10**6
     if a.books:
@@ -226,4 +310,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

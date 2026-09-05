@@ -2011,6 +2011,31 @@ def reroll_speaker_drift(verses, pairs, lang, temp_dir, book_idx):
     return pairs
 
 
+def apply_overrides(lang, book_idx, chapter_idx, verses):
+    """Apply per-verse SYNTHESIS-INPUT overrides to a prepared verse list.
+
+    ⚠ SYNTHESIS ONLY. The displayed verse, the asset and `align_words`'
+    reference text all keep the printed spelling — an override may change
+    punctuation or respell a word, never WHICH words are spoken.
+    ⚠ Applied AFTER strip_notes/normalize_text, because an override records the
+    final spoken form. Unvalidated rows are inert; see synthesis_overrides.py.
+    ▶ Called from narrate_chapter AND repair_verses.spoken_verses, so a fix
+      survives both a full re-render and a per-verse repair. A fix wired into
+      only one of them would be silently lost by the other.
+    """
+    try:
+        import synthesis_overrides
+    except Exception:
+        return verses
+    out = []
+    for i, v in enumerate(verses):
+        t, used = synthesis_overrides.apply(lang, book_idx, chapter_idx, i + 1, v)
+        if used:
+            print(f"    synthesis override applied to v{i+1}", flush=True)
+        out.append(t)
+    return out
+
+
 def synthesize_verse(text, lang, temp_dir, verse_idx, book_idx=None):
     """Synthesize one verse. Returns (wav_path, duration_ms) or (None, 0).
 
@@ -2179,6 +2204,7 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
         if cfg["normalizer"]:
             v = normalize_text(v, cfg["normalizer"])
         verses.append(v)
+    verses = apply_overrides(lang, book_idx, chapter_idx, verses)
 
     with tempfile.TemporaryDirectory() as tmp:
         # An unmeasurable WAV fails THIS chapter loudly rather than killing the

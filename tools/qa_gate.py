@@ -79,9 +79,35 @@ def append_tail(want, heard):
     if not want or not heard:
         return []
     sm = difflib.SequenceMatcher(None, want, heard)
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+    ops = sm.get_opcodes()
+    for tag, i1, i2, j1, j2 in ops:
         if tag == "insert" and i1 >= len(want) and j2 == len(heard):
             return heard[j1:j2]
+    # ⚠⚠ A TRAILING `replace` HIDES AN APPEND — measured false negative,
+    # 2026-09-04. ylt 12/3 v24 was re-drawn, the gate PASSED it, and the owner
+    # still heard the stray "sh". The transcripts:
+    #     attempt 1  «...zerah shaul SHOP»  -> pure insert, flagged correctly
+    #     attempt 2  «...zera  shawl SHRI»  -> PASSED
+    # In attempt 2 the ASR also mistranscribed the LAST WANTED WORD
+    # (shaul -> shawl), so difflib emitted one `replace` of ['shaul'] into
+    # ['shawl','shri'] instead of a match plus a trailing insert. The extra word
+    # was swallowed inside the replace and the pure-insert test never ran.
+    # The docstring above already warns that a prefix test misses a tail when an
+    # EARLIER word differs; this is the same blind spot from the other end.
+    # ▶ So also read the excess out of a FINAL replace, but only when the words
+    #   that DO line up actually resemble their counterparts — otherwise a
+    #   wholly misheard ending would be reported as appended speech.
+    if ops:
+        tag, i1, i2, j1, j2 = ops[-1]
+        if tag == "replace" and i2 == len(want) and j2 == len(heard):
+            n_want, n_heard = i2 - i1, j2 - j1
+            if n_heard > n_want:
+                aligned_ok = all(
+                    difflib.SequenceMatcher(None, want[i1 + n], heard[j1 + n]
+                                            ).ratio() >= 0.55
+                    for n in range(n_want))
+                if aligned_ok:
+                    return heard[j1 + n_want:j2]
     return []
 
 
@@ -118,12 +144,12 @@ def _spoken(lang, b, ch, v):
     return raw
 
 
-def _judge(lang, items, td, show):
+def _judge(lang, items, td, show, prefer_originals=False):
     """Run the RENDER-TIME path (worker + gate) over chapter-cut verses."""
     import narrate
     hits = 0
     for b, ch, v in items:
-        w = verse_wav(lang, b, ch, v, td)
+        w = verse_wav(lang, b, ch, v, td, prefer_originals)
         if w is None:
             print(f"  {b}/{ch} v{v}: cannot cut (missing or < 1.5 s)")
             continue
@@ -153,7 +179,13 @@ def validate():
     controls = random.sample(pool, 40)
     with tempfile.TemporaryDirectory() as td:
         print("EAR-CONFIRMED ylt verses (want >= 9/10 FAIL):")
-        pos = _judge("ylt", EAR_CONFIRMED_YLT, td, show=True)
+        # ⚠⚠ THE CONFIRMED VERSES MUST BE READ FROM THE PRE-REPAIR BACKUPS.
+        # repair_verses.py overwrites narration/ylt, so after a repair the live
+        # tree no longer holds the defect. Measured 2026-09-04: reading the live
+        # tree scored these 0/10, which would have written an "ok": false stamp
+        # -- condemning a working gate and blocking every future render.
+        pos = _judge("ylt", EAR_CONFIRMED_YLT, td, show=True,
+                     prefer_originals=True)
         print("\nrandom ylt controls (want <= 1/40 FAIL):")
         neg = _judge("ylt", controls, td, show=False)
     print(f"\nSUMMARY  confirmed {pos}/10   controls {neg}/40")

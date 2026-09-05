@@ -240,10 +240,49 @@ def cmd_launch(a):
     return 0
 
 
+def _read_qa(q):
+    """Return (judged, redrawn, failing, unjudged) from EITHER QA schema, or
+    None if the file is neither.
+
+    ⚠ TWO tools write `<c>.qa.json` and they do NOT share a schema:
+      * narrate.py's render gate  -> {"judged", "redrawn", "failing", "unjudged"}
+      * repair_verses.py          -> {"repairs": [ {verse, attempts, kept,
+                                      still_failing} ], "realigned": {...}}
+    This function used to be four `q.get(key, 0)` calls, which meant every
+    repair-written record read as "judged 0, failing 0" and the whole command
+    printed a ✅ VERDICT over 234 files it had not understood a byte of
+    (measured on ylt, 2026-09-04, while the repair log held 68 still-failing
+    verses). A defaulted read is indistinguishable from a real zero, so this
+    returns None instead and the caller REFUSES rather than reporting clean.
+    """
+    if "judged" in q or "unjudged" in q:            # narrate.py's gate
+        return (q.get("judged", 0), q.get("redrawn", []),
+                q.get("failing", {}), q.get("unjudged", []))
+    if "repairs" in q:                              # repair_verses.py
+        reps = q["repairs"]
+        judged, redrawn, failing, unjudged = 0, [], {}, []
+        for r in reps:
+            v = r.get("verse")
+            atts = r.get("attempts") or []
+            # an attempt whose reasons is null means the ASR worker was down:
+            # that verse was NOT judged, and must never read as a pass.
+            if not atts or any(a.get("reasons") is None for a in atts):
+                unjudged.append(v)
+                continue
+            judged += 1
+            if len(atts) > 1:
+                redrawn.append(v)
+            if r.get("still_failing"):
+                failing[str(v)] = r["still_failing"]
+        return (judged, redrawn, failing, unjudged)
+    return None
+
+
 def cmd_report(a):
     root = NARRATION / a.lang
     rows = []
     no_qa = 0
+    unreadable = []
     for bdir in sorted((p for p in root.iterdir() if p.is_dir() and p.name.isdigit()),
                        key=lambda p: int(p.name)):
         for ogg in sorted(bdir.glob("*.ogg"), key=lambda p: int(p.stem)):
@@ -252,11 +291,21 @@ def cmd_report(a):
                 no_qa += 1
                 continue
             q = json.loads(qa.read_text(encoding="utf-8"))
-            rows.append((int(bdir.name), int(ogg.stem), q.get("judged", 0),
-                         len(q.get("redrawn", [])), q.get("failing", {}),
-                         q.get("unjudged", []), qa.stat().st_mtime))
+            rec = _read_qa(q)
+            if rec is None:
+                unreadable.append(f"{bdir.name}/{ogg.stem}")
+                continue
+            judged, redrawn, failing, unjudged = rec
+            rows.append((int(bdir.name), int(ogg.stem), judged,
+                         len(redrawn), failing, unjudged, qa.stat().st_mtime))
     if a.since:
         rows = sorted(rows, key=lambda r: r[6])[-a.since:]
+    if unreadable:
+        print(f"⛔ {len(unreadable)} .qa.json file(s) under narration/{a.lang} match "
+              f"NEITHER known schema — this command cannot measure them and will "
+              f"not report a rate over them: {', '.join(unreadable[:8])}"
+              + (" ..." if len(unreadable) > 8 else ""))
+        return 1
     if not rows:
         print(f"no .qa.json under narration/{a.lang} — gate never ran here "
               f"({no_qa} chapter(s) without a record). Screen the slow way.")

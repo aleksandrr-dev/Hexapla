@@ -111,11 +111,22 @@ def gate_upload():
     return out == 0, f"{out} of {tot} files still to send to the live item"
 
 
-GATES = [("re-render finished", gate_render),
-         ("audio complete", gate_audio),
-         ("word alignment complete", gate_aligned),
-         ("screens: no append-class flags", gate_screens),
-         ("archive.org item current", gate_upload)]
+# (name, fn, cheap) — an EXPENSIVE gate is skipped once an earlier one has
+# already failed. Two reasons, both measured 2026-09-05:
+#   * cost: gate_screens re-judges every repaired verse with ASR (~8 min) and
+#     gate_upload reads the live archive.org item. Running them on every cycle
+#     of a scheduled chain, only to be blocked by a render that is obviously
+#     still going, is pure waste.
+#   * CORRECTNESS: while a re-render is writing <chapter>.qa.json, the screen
+#     can read one mid-write and refuse it — a real ERROR that means nothing
+#     except "you asked at a bad moment". Skipping it while the render gate is
+#     still WAITing removes that false alarm at the source.
+# ⚠ A skipped gate is reported as SKIP, never as PASS. It is not evidence.
+GATES = [("re-render finished", gate_render, True),
+         ("audio complete", gate_audio, True),
+         ("word alignment complete", gate_aligned, True),
+         ("screens: no append-class flags", gate_screens, False),
+         ("archive.org item current", gate_upload, False)]
 
 
 def index_has_ylt():
@@ -148,7 +159,11 @@ def main():
 
     print("ylt ship chain - every line below is measured, not remembered\n")
     blocked = []
-    for name, fn in GATES:
+    for name, fn, cheap in GATES:
+        if blocked and not cheap:
+            print(f"  [SKIP ] {name:<32} not evaluated — an earlier gate is unmet")
+            blocked.append((name, "SKIP"))
+            continue
         try:
             ok, detail = fn()
         except Exception as e:

@@ -2022,16 +2022,39 @@ def apply_overrides(lang, book_idx, chapter_idx, verses):
     ▶ Called from narrate_chapter AND repair_verses.spoken_verses, so a fix
       survives both a full re-render and a per-verse repair. A fix wired into
       only one of them would be silently lost by the other.
+
+    ⚠⚠ IT ALSO APPLIES THE PRONUNCIATION LEXICON, and the ORDER IS DELIBERATE:
+      1. synthesis_overrides — VERSE-level: punctuation and structure
+      2. pronounce_lexicon   — WORD-level: respellings
+    The override runs FIRST so the lexicon can still respell words inside it.
+    ylt 0/12 v14 is exactly why: its override string contains «Abram», which the
+    lexicon must read as «Aebram». Hard-coding that respelling into the override
+    would work today and go stale the moment the lexicon row changed, so the
+    lexicon stays the single source of truth for pronunciation and the override
+    stays the single source for punctuation.
+    ⚠ Both tables are INERT while a row is unvalidated, and neither touches the
+      DISPLAYED text — this is the synthesis boundary only.
     """
     try:
         import synthesis_overrides
     except Exception:
         return verses
+    try:
+        import pronounce_lexicon
+    except Exception:
+        pronounce_lexicon = None
     out = []
     for i, v in enumerate(verses):
         t, used = synthesis_overrides.apply(lang, book_idx, chapter_idx, i + 1, v)
         if used:
             print(f"    synthesis override applied to v{i+1}", flush=True)
+        # ⚠ ylt ONLY. Every validated row was ear-tested on this voice and this
+        #   reading; another set needs its own ear before this widens.
+        if pronounce_lexicon is not None and lang == "ylt" and t:
+            t2, hits = pronounce_lexicon.apply(t)
+            if hits:
+                print(f"    lexicon v{i+1}: {', '.join(sorted(set(hits)))}", flush=True)
+                t = t2
         out.append(t)
     return out
 

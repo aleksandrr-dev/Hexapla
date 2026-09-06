@@ -150,8 +150,17 @@ def main():
           "## Pages actually read", "", "| PDF idx | printed folio | side | content |", "|---|---|---|---|"]
     L += [f"| {p} |  |  |  |" for p in pages]
     L += ["", "## Marginal «Cap. N» sightings", "", "(idx, position, numeral)", ""]
+    # ⛔⛔ THE HEADING MUST BE `## <Book> <N>` AND NOTHING ELSE.
+    # This skeleton used to emit «## Chapter N — KJV NN verses». A chunk agent
+    # copied it (correctly — it is the skeleton it was told to fill in) while a
+    # sibling followed the campaign format, so Matthew came back in two
+    # incompatible shapes and one half had to be reparsed by hand, 2026-09-06.
+    # ▶ The KJV verse count is a fill-in AID, not part of the heading: it now
+    # sits on its own comment line, where it helps the transcriber and cannot be
+    # mistaken for the heading itself. Anything after the number in an `## `
+    # line breaks `thorlaks_corpus_audit.py` and `thorlaks_merge_parts.py`.
     for c, n in enumerate(grid, 1):
-        L += [f"## Chapter {c} — KJV {n} verses", ""]
+        L += [f"## {a.book} {c}", f"<!-- KJV has {n} verses -->", ""]
         L += [f"{v} " for v in range(1, n + 1)]
         L += [""]
     L += ["## Divergences from the KJV grid", "", "## Open sites (letters needing a half-width re-read)", ""]

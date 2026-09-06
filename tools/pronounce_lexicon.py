@@ -78,7 +78,35 @@ LEXICON = {
     # word-initial `Ay` can read /aɪ/ («eye»), which would have made THIS row
     # wrong too across 229 verses. It does not: the owner heard `Aybraham`
     # against printed `Abraham` and called it perfect. The row stands.
-    "abraham":  ("Aybraham",  "first «a» read as in apple; want acorn",   "owner ear 2026-09-05"),
+    # ⛔⛔ REJECTED IN THE REAL VERSE — owner ear 2026-09-06, on the BEFORE/AFTER
+    # set cut from the actual re-rendered audio: «he still says eye-brah-ham».
+    # So `Aybraham` reads /aɪ/ after all, EXACTLY like `Aybram` did, and the
+    # note above — «RE-CONFIRMED in a SHORT CARRIER ... the row stands» — was
+    # WRONG. It is left above verbatim as the record of how it went wrong.
+    # ⛔ THE LESSON IS THE OPPOSITE OF THE ONE WE DREW: the short carrier is
+    #   what MISLED us here. It was adopted (see `abram`) because a long verse
+    #   hid a vowel; it then PASSED a spelling that the long verse fails. So a
+    #   short carrier is a fine instrument for HEARING a vowel and NOT a
+    #   sufficient one for CLEARING a respelling. ▶ Every row in this table was
+    #   validated on a short carrier, so every row is now suspect at exactly
+    #   this point; the 2026-09-06 A/B set cleared 8 of them IN A REAL VERSE
+    #   (abram, calleth, canaan, canaanite, ephraim, falleth, levite, levites)
+    #   and those 8 are the only ones that have ever met that harder test.
+    # ⛔ `Aebraham` is the obvious next guess, since `Aebram` is the row that
+    #   works. DO NOT SHIP IT UNHEARD. `Aybraham`-right-vs-`Aybram`-wrong was
+    #   already proof that these two forms do not track each other; that pair
+    #   is now resolved the other way (both wrong), which changes nothing about
+    #   the rule — a root and a derived form still need SEPARATE verdicts.
+    # ⚠ SCOPE IF WRONG AGAIN: 229 verses / 76 chapters.
+    # ✅ SOLVED WITH `Aebraham` — owner ear 2026-09-06, TWICE: once on the
+    # candidate set (both draws) and again through the REAL text path
+    # (normalize_text applied, Gen 21:24 + Gen 22:1 where the name occurs
+    # twice). ▶ `ae` is now the shape that fixes BOTH `Abram` and `Abraham`,
+    # where word-initial `Ay` failed on both. That is the first time two rows
+    # in this table have agreed on a shape — it is a lead for the next name,
+    # NOT a licence to apply it unheard.
+    "abraham":  ("Aebraham",  "`Aybraham` read /aɪ/ like `Aybram`; ae gives the acorn a",
+                 "owner ear 2026-09-06"),
     # ✅ `Abram` SOLVED 2026-09-05 — and it took FOUR rounds because the first
     # diagnosis was wrong. Rounds 1-3 assumed `Ay` had fixed syllable one and
     # varied syllable TWO (`Aybram`, `Aybramm`, `Aybrahm`, `Ay bram`, `AyBram`,
@@ -166,6 +194,27 @@ LEXICON = {
     # «Zek-» to stop the leading «Ze-» being read long.
 }
 
+
+# ⛔⛔ A CANDIDATE TEST MUST GO THROUGH `narrate.normalize_text()`.
+# Added 2026-09-06 after a test harness produced a defect that does not exist
+# in the render. The harness typed the verse out by hand as
+#     "And Abraham saith, `I--I do swear.'"
+# and fed that straight to the TTS. The REAL pipeline normalizes the asset's
+# em-dash first, so what the render actually speaks is
+#     "And Abraham saith, I, I do swear.'"
+# A bare `--` is not a token the voice handles, and several takes stuttered on
+# it. The owner heard the doubling and reported it — correctly — as
+# «I do swear, I do swear».
+# ▶ THE COST OF NOT CATCHING THIS: it is the tail-repeat signature, on a verse
+#   whose PRINTED text already doubles a word (`I—I`). That is precisely the
+#   combination this project has twice mis-adjudicated (Isaiah 24:21, and
+#   «of the land on the land»), where a text-explained flag was read as a real
+#   defect and 3 redraws were burned on a clean verse. Here it would have been
+#   read the other way — as evidence against a respelling that is FINE.
+# ⚠ So a candidate take differs from a shipped take in TWO ways, and only one
+#   of them is the respelling. Build every candidate as:
+#       asset verse -> respelling -> narrate.normalize_text(text, lang) -> TTS
+#   and PRINT the final string, so the input is auditable rather than assumed.
 
 # ⛔ RESPELLINGS THE EAR REJECTED — 2026-09-05, on the 18-clip A/B set.
 # Kept as a RECORD, never applied. A rejected row is not an untested row: it

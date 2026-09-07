@@ -16,6 +16,14 @@ tools/piper_models/
 tools/voice_samples/
 tools/.chatterbox_venv/
 
+# Subagent scratch. Agents doing the Þorláksbiblía ø retrofit write throwaway
+# locating crops before the real windowed read, and several have dropped them
+# into a `_work/` HERE rather than in the campaign's own `_work/`, which lives
+# in the sibling C:\Projects\Hexapla-releases and is not a git repo at all.
+# One such crop reached `git status` on 2026-09-06 and had to be caught by hand
+# before the commit. Nothing in this repo's `_work/` is project content.
+_work/
+
 # Correspondence drafts — PERSONAL, never commit (owner instruction 2026-07-27).
 # These are permission/enquiry emails to third parties and contain other
 # people's names and contact addresses. 17 of them had been tracked and were

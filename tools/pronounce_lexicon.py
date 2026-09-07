@@ -199,8 +199,52 @@ LEXICON = {
     # is the fifth defect class doing what this file says it does — the screens
     # cannot see it, only an ear can.
     #
-    # ⛔ `elisha` IS NOT IN THIS TABLE — see the rejected list below. The defect
-    #   is real and ear-confirmed; the RESPELLING `Elysha` was tested and failed.
+    # ── `elisha` — WIRED IN 2026-09-07 BY THE OWNER'S EXPLICIT DIRECTION, ─────
+    #    OVER A STATED OBJECTION. Read this whole block before touching the row.
+    #
+    # The defect is real and ear-confirmed («el-EE-sha», want «ee-LYE-sha»).
+    # `Elysha` was tested 2026-09-06 and heard UNCHANGED — it is in REJECTED.
+    # On 2026-09-07 three fresh candidates were rendered on II Kings 5:9 and the
+    # owner picked this one: «5 is good.» (`Elighsha` was also good but arrived
+    # after a slight pause; `Eelysha` was not named among the good ones, which is
+    # what identifies the `y` — not the first vowel — as why `Elysha` failed).
+    #
+    # ⛔⛔ BUT IT THEN FAILED THE SPOT-CHECK IN TWO OF THREE VERSES:
+    #      II Kings 5:9  ✅ good
+    #      II Kings 2:1  ❌ not correct — and the AS-PRINTED take was the good one
+    #      Luke 4:27     ❌ heard «Eel eesha»
+    #    One spelling, three verses, three outcomes. That is the `Jehovah`
+    #    signature — SPORADIC — and this file's own rule for that class is that a
+    #    respelling is the WRONG tool because it rewrites every occurrence to fix
+    #    a minority. It is also NOT the `Hezakyah` «no change» outcome: it does
+    #    change the reading, just not reliably in the right direction.
+    #
+    # ▶ The objection was put to the owner in those terms, with the table above,
+    #   and he directed the wire-in anyway (asked twice, because his first answer
+    #   was ambiguous between this and «leave it»). That is his call to make and
+    #   it is recorded here, not argued again.
+    # ⚠ SO THIS ROW IS NOT «ear-validated» IN THE SENSE `prophesy` IS. It is
+    #   ear-PREFERRED in one verse and ear-REJECTED in two. If a later session
+    #   sees it in the table and assumes the `prophesy` standard, it will be
+    #   wrong. Evidence:
+    #   research/_evidence/elisha_elijah_naaman_ear_2026-09-07.md
+    # ⚠ SCOPE, DERIVED: 55 verses / 13 chapters.
+    # ⚠ ONE OF THOSE 55 IS A DIFFERENT PERSON — I Chronicles 1:7, «sons of
+    #   Javan: Elisha», normally spelled *Elishah*. YLT sets him without the
+    #   final h so this whole-word row sweeps him in. Both names are ordinarily
+    #   «ee-LYE-shuh» so it is probably harmless, but it is a `Canaan`/`Canaanite`
+    #   -shaped trap and is recorded rather than ignored. `synthesis_overrides.py`
+    #   is the per-VERSE table if it ever needs excluding.
+    # ⛔ `Elishah`, `Elishama`, `Elishaphat`, `Elisheba` are DIFFERENT NAMES.
+    #   apply() matches whole words, so they are safe — do not add a prefix rule.
+    # ✅ `Elijah` is pronounced CORRECTLY (owner, 2026-09-07, II Kings 2:1) and
+    #   must NEVER enter this table. Scope, derived: 93 verses / 26 chapters.
+    "elisha":   ("Eelighsha", "heard «el-EE-sha»; want «ee-LYE-sha». `igh` for /aɪ/ "
+                              "after `prophesigh`; `Ee` for the first vowel after "
+                              "`Leevite`/`Eefraim`. ⚠ good in II Kings 5:9, WRONG in "
+                              "II Kings 2:1 and Luke 4:27 — owner directed the "
+                              "wire-in over that objection",
+                 "owner direction 2026-09-07 (NOT the prophesy standard)"),
 
     # ★ `prophesy` — Acts 2:17 (clip 20): heard «prophes-EE». The voice read the
     #   VERB as its own NOUN: `prophesy` is /ˈprɒfɪsaɪ/, `prophecy` is /-si/.
@@ -389,10 +433,26 @@ def main():
                     for h in {x.lower() for x in hits}:
                         per[h] = per.get(h, 0) + 1
     n_un = len(unvalidated())
+    # ⚠⚠ THIS LINE USED TO READ «(all ear-confirmed)» AND THAT OVERSTATED IT.
+    # `validated_by` is a single free-text stamp, so the tool knows only
+    # stamped/unstamped. It CANNOT distinguish the two clearances that this
+    # project treats as different things:
+    #   * cleared in a REAL VERSE (whole printed verse + a spot-check in a
+    #     chapter the ear was not primed on) — the standard `prophesy` met;
+    #   * cleared on a SHORT CARRIER — the standard `Aybraham` passed and then
+    #     FAILED in a real verse.
+    # CLAUDE.md claimed «the tool says which is which on every run». It did not.
+    # Rather than invent a per-row classification there is no evidence for, the
+    # line now reports exactly what the data supports and points at the comments.
     print(f"lexicon entries: {len(LEXICON)}  "
           + (f"({n_un} UNVALIDATED — no ear has confirmed them)" if n_un
-             else "(all ear-confirmed)")
+             else f"({len(LEXICON)} carry a validated_by stamp)")
           + (f"; {len(REJECTED)} rejected respellings on record" if REJECTED else ""))
+    if not n_un:
+        print("   ⚠ A STAMP IS NOT A STANDARD. This tool cannot tell a row cleared in a")
+        print("     REAL VERSE from one cleared on a SHORT CARRIER — `Aybraham` passed a")
+        print("     carrier and then failed a real verse. Only the per-row comments in")
+        print("     this file record which clearance a row actually got.")
     print(f"\n{'entry':<12}{'verses':>8}")
     for k in sorted(per, key=lambda x: -per[x]):
         print(f"{k:<12}{per[k]:>8}")

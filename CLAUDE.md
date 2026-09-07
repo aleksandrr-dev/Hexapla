@@ -237,7 +237,8 @@ evidence are in the newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases`
 
 ## ★★ SUBSTITUTION IS A FOURTH DEFECT CLASS — added 2026-09-04
 
-The render can SPEAK THE WRONG WORD. ylt Genesis 12:14 (`0/12 v14`) says
+The render can SPEAK THE WRONG WORD. ylt Genesis 13:14 (`0/12 v14` — the chapter index is ZERO-BASED; this was
+mislabelled «Genesis 12:14» here until 2026-09-07) says
 «westward» where Young's reads «and **eastward**, and westward» — owner
 confirmed BY EAR. Neither existing screen is aimed at it: `qa_asr_sweep`'s
 APPEND test never fired because nothing was appended, and `qa_selfrepeat`
@@ -301,8 +302,17 @@ the PHONETICS are wrong.
   have rewritten `all` (5,482 places); the ear said only `calleth`/`falleth`.
   A prefix rule on `canaan` would have missed `Canaanite` and hit nothing else.
 - ⚠ **A LEXICON ENTRY IS A HYPOTHESIS ABOUT HOW THE MODEL READS LETTERS.**
-  A row is unvalidated until an ear clears it IN A REAL VERSE, and the tool says
-  which is which on every run. Only an ear can tell whether the respelling
+  A row is unvalidated until an ear clears it IN A REAL VERSE.
+  ⛔⛔ **THIS FILE CLAIMED «the tool says which is which on every run». IT DID
+  NOT** — measured 2026-09-07. `validated_by` is ONE free-text stamp, so
+  `pronounce_lexicon.py` knew only stamped/unstamped and printed «(all
+  ear-confirmed)» over 13 rows, flattening the very distinction this block turns
+  on: `prophesy` was cleared in a real verse, `Aybraham` passed a SHORT CARRIER
+  and then FAILED one. ▶ Fixed to report «13 carry a validated_by stamp» plus an
+  explicit «A STAMP IS NOT A STANDARD» warning; **only the per-row comments in
+  that file record which clearance a row actually got.** No per-row
+  classification was invented, because there is no evidence for one.
+  Only an ear can tell whether the respelling
   helped, for the same reason text cannot clear a self-repeat hit.
   ⚠ **A respelling can also do NOTHING** — `Elysha` and `Hezakyah` both came back
   indistinguishable from the original. «No change» is a third outcome alongside
@@ -328,15 +338,51 @@ previously heard, then said «wire it in». Wired in: 43 chapters / 94 verses.
   (19), `prophesieth` (6) share the spelling and were NOT heard; `prophecy` the
   noun (24) is CORRECTLY said and must never enter the table.
 
-### ⛔⛔ `Elisha` IS LIVE AND UNFIXED — and letters did not move it
+### ⚠⚠ `Elisha` — `Eelighsha` WIRED IN 2026-09-07 OVER A STATED OBJECTION
 
 Ear-confirmed 2026-09-06 (II Kings 5:25): «el-EE-sha», want «ee-LYE-sha».
-**Scope, derived: 55 verses / 13 chapters.** `Elysha` was rendered and tested and
-the owner heard it **UNCHANGED** — the `Hezakyah` pattern, where a respelling
-does nothing at all. II Kings 5 was rebuilt without it; the entry is REJECTED.
-- ⛔ **DO NOT GUESS A THIRD SPELLING.** Guessing produced three dead rows in that
-  table. `zechariah`'s target was only pinned by ASKING him what he heard.
-- ⛔ `Elijah` is NOT a safe model: the `y` does not force /aɪ/ before `sh` here.
+**Scope, derived: 55 verses / 13 chapters.** `Elysha` was tested and heard
+UNCHANGED (the `Hezakyah` pattern) and is REJECTED.
+
+On 2026-09-07 three candidates were rendered on II Kings 5:9 and the owner chose
+**`Eelighsha`** («5 is good»). `Elighsha` was also good but arrived after a
+slight pause; `Eelysha` was NOT named good — **which is what identifies the `y`,
+not the first vowel, as why `Elysha` failed.**
+
+⛔⛔ **BUT IT THEN FAILED THE SPOT-CHECK IN TWO VERSES OF THREE:**
+
+| verse | verdict |
+|---|---|
+| II Kings 5:9 | ✅ good |
+| II Kings 2:1 | ❌ wrong — and the **as-printed** take was the good one |
+| Luke 4:27 | ❌ «Eel eesha» |
+
+One spelling, three verses, three outcomes = the **`Jehovah` signature,
+SPORADIC**, for which this file's own rule says a respelling is the WRONG tool.
+▶ **The owner was told exactly that and directed the wire-in anyway** (asked
+twice; his first answer was ambiguous). His call, recorded — do not re-litigate.
+⚠ **So this row is NOT «ear-validated» in the `prophesy` sense.** It is
+ear-preferred in one verse and ear-rejected in two. A later session that sees it
+in the table and assumes the `prophesy` standard will be wrong.
+▶ Evidence: `research/_evidence/elisha_elijah_naaman_ear_2026-09-07.md`.
+
+- ✅✅ **`Elijah` IS PRONOUNCED CORRECTLY** — owner, 2026-09-07, on II Kings 2:1,
+  the one verse carrying both names. **Scope, derived: 93 verses / 26 chapters —
+  LARGER than Elisha's.** It was CHECKED, not assumed, and it must NEVER enter
+  the lexicon. ⚠ The old line «`Elijah` is not a safe model» was only ever about
+  inferring Elisha's SPELLING from it; it said nothing about how Elijah is
+  spoken, and nobody had checked until now.
+- ⚠ **NEW, UNSCOPED: `Naaman`** — «Na min» right, «Nah min» wrong, varying
+  between draws of an IDENTICAL input (owner, 2026-09-07, Luke 4:27). Sporadic
+  class. ⚠ It came out right in the `Eelighsha` take in BOTH of two independent
+  renders (2/2) though its own spelling never changed — an observation with n=2,
+  not a technique.
+- ⚠ **One of the 55 is a DIFFERENT PERSON**: I Chronicles 1:7 «sons of Javan:
+  Elisha» is normally *Elishah*. YLT drops the final h so the whole-word row
+  sweeps him in. Probably harmless; `synthesis_overrides.py` is the per-verse
+  table if it ever needs excluding.
+- ⛔ **DO NOT GUESS A FOURTH SPELLING.** Guessing produced three dead rows;
+  `Elysha` and (on the evidence above) `Eelighsha` make five.
 - ⛔ `Elishah`, `Elishama`, `Elishaphat`, `Elisheba` are DIFFERENT NAMES — the
   `canaan`/`Canaanite` trap, one careless prefix rule away.
 
@@ -530,6 +576,88 @@ Spot-checks confirmed both a positive and a negative on the same line, so whethe
 p13 is a genuinely low page or still under-read is **OPEN**.
 ⚠ Every Matthew part file still reports 0.1-1.8 % via `thorlaks_part_check.py`
 because the retrofit sites have **not been patched into the part files yet**.
+
+## ⛔⛔ AND THE RETROFIT'S RECORDS CANNOT BE APPLIED TO THE CORPUS — 2026-09-07
+
+`tools/thorlaks_o_patch.py` was built to patch confirmed ø sites into the part
+files. Report mode over Matthew's **34** crop-method sites:
+**UNIQUE 7 · AMBIGUOUS 9 · MISSING 15 · unparseable 3.** ⛔ **Nothing was
+written.** That is why the «not patched in yet» note kept surviving: there was no
+tool, and the tool now says the job cannot be done this way.
+
+**It is structural.** A record is addressed `p<page> line<NN> <L|R>`; the part
+files are indexed by VERSE and hold no line numbers, so the only handle is the
+word. `sogdu` occurs **32×** in one part file and two records point at it.
+MISSING means the adjudicator's spelling and the transcriber's disagree
+(`Kicrollð`, `thorj`, `Spamañoñu`) — a finding about one of the two readings,
+never a patch to force.
+
+- ⚠⚠ **TWO BUGS IN THE NEW TOOL, BOTH UNDER-REPORTING** — the sixth and seventh
+  such in this family. (1) It demanded a ø/ö in the record, but adjudicators
+  inconsistently write the PRINTED form (`Fodur`); a word with exactly one `o`
+  is unambiguous. Cost: 22 of 34. (2) It discarded the adjudicator's own
+  bracketed correction (`fogdu (sogdu)` — long-s read as `f`), blaming the
+  transcription for a noted slip. UNIQUE went 2 → 5 → 7.
+  ▶ **Assume a new screen is broken until a control fires** — again.
+- ⛔ **A PARTIAL PATCH IS WORSE THAN NONE.** It raises the per-file ø rate that
+  `thorlaks_part_check.py` prints, and that rate is the campaign's only signal
+  that a page was read at the wrong resolution. `--apply` therefore also demands
+  `--i-know-the-retrofit-is-partial`.
+- ▶ **THE REAL FIX IS AT SOURCE: make the adjudicator record the VERSE.** It has
+  the line image in front of it and the part files are verse-indexed, so this
+  costs nothing per site. Put it in the brief BEFORE the next page is read, or
+  every future retrofit produces the same unusable records.
+- ✅ `tools/thorlaks_o_merge.py` merges the adjudication files and **labels each
+  by METHOD**, because they are not interchangeable: CROP (validated) vs SHEET
+  (disproved). It prints which pages have crop data at all.
+  ⚠⚠ **THE SHEET METHOD ERRED IN BOTH DIRECTIONS.** Measured 2026-09-07:
+  `p17 line02 høpdu` was a sheet-method POSITIVE and the crop read shows a clean
+  open bowl — a FALSE POSITIVE. **So its positives are no more usable than its
+  negatives**, and its 47 Matthew claims are claims, not findings.
+  ⚠ Crop-method coverage as of 2026-09-07 is **p12, p13, p16, p17, p18 only**.
+  Every other Matthew page has NO trustworthy ø measurement in either direction —
+  not a low rate, no measurement.
+- ⚠ The 2026-09-06 p16/p17 pass was **sound but not exhaustive**: its verdicts
+  held 3 of 4 on re-audit, but `p16 line19 L «Kicrøllð»` was never listed as a
+  candidate at all and IS ø.
+
+## ✅ MATTHEW IS MERGED AND COMPLETE — 1071/1071, 2026-09-07
+
+`thorlaks_corpus_audit.py` reports **Matthew 28/28 chapters, 1071/1071 verses,
+OK**; `thorlaks_part_check.py --book Matthew` reports **0 problems**. Corpus
+total went 2756 -> 3827 of 31,102. ⚠ Derive both; never quote these here.
+
+Getting there took two SILENT verse-losing bugs, both found only because the
+merge grid and the per-file check disagreed:
+
+- ⛔⛔ **`thorlaks_merge_parts.py` RESET THE CHAPTER ON ANY `#` LINE**, so a
+  `### idx 14 (…)` page marker *inside* a chapter ended it. **122 of Matthew's
+  1071 verses went into the appendix.** ⚠⚠ **AND THE GRID LOOKED FINE:** it
+  printed «ch 12: 4 verses, 1-4», which reads as a legitimately short chunk
+  because the range is CONTIGUOUS — the ⚠ MISSING marker only fires on a HOLE.
+  ▶ Fixed: only a `##`-level heading ends a chapter; `###` does not.
+  ▶ **A contiguous range is not evidence of completeness.** Compare against the
+  expected verse count, which is what the corpus audit (not the merge) does.
+- ⛔ **MATTHEW 10:41-42 WERE TRANSCRIBED BUT UNREACHABLE.** They open
+  `matthew_p13-21.md`, whose first chapter heading is `## Matthew 11` — so they
+  sat under no chapter and every tool dropped them. ▶ Fixed by adding a
+  `## Matthew 10` heading there; the merge joins by (chapter, verse), so a
+  chapter living in two part files is normal.
+  ⚠ **«Transcribed in full» is not the same as «reachable».** The 2026-09-06 note
+  saying these two verses were safe in p13-21 was TRUE and they were still lost.
+- ⚠ Matthew 10:3-4 were printed INLINE inside v2's paragraph. The audit reads
+  only the FIRST numeral on a line, so it reported them missing while both sat in
+  plain sight. Split onto their own lines — a formatting fix, nothing recovered.
+
+▶ Also fixed this session, all image-verified: **Mt 1:25 and Mt 9:38** were
+merged into the preceding verse and are UNNUMBERED in the print (pinned by
+position per convention, not supplied from the KJV); **Mt 8:32 is printed
+TWICE** — a printer's error, so it is RECORDED, not corrected, and
+`_work/MATTHEW_REPAIR_LIST.md`'s instruction to drop the second numeral was
+WRONG; **Mt 4:19's «Fiskemeñ»** was a page-top tail the transcriber numbered
+(the print has no numeral there) and now ends v18. ⚠ The checker could not see
+that last one — it reads the first numeral per line, so Matthew 4 said 25/25 ok
+while scripture sat under the wrong number.
 
 ## ⛔ MATTHEW idx 12 ENDS AT 10:40 — the «prep defect» is WITHDRAWN, do not re-open
 

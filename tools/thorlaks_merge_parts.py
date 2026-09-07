@@ -140,8 +140,22 @@ def parse_part(path, book):
         if ch is None:
             prose.append(line)
             continue
-        if line.startswith("#"):
+        # ⛔⛔ ONLY A `##`-LEVEL HEADING ENDS A CHAPTER. A `###` SUB-HEADING DOES NOT.
+        # This used to reset on ANY line starting with `#`, and that silently
+        # dropped 122 of Matthew's 1071 verses into the appendix — measured
+        # 2026-09-07. matthew_p13-21.md heads each page inside the transcription
+        # with `### idx 14 (page.png header …)`, so Matthew 12 kept the 4 verses
+        # printed before that line and lost the other 46.
+        # ⚠ IT LOOKED FINE IN THE GRID. The report said «ch 12: 4 verses, 1-4»,
+        # which reads as a legitimately short chunk because the range is
+        # CONTIGUOUS — the ⚠ MISSING marker only fires on a hole. Nothing warned.
+        # ▶ `##` still resets, because `## Open sites` / `## Divergences` really
+        #   do end the scripture; `###` is a page marker inside one.
+        if line.startswith("##") and not line.startswith("###"):
             ch, verse = None, None
+            prose.append(line)
+            continue
+        if line.startswith("#"):
             prose.append(line)
             continue
         v = VERSE_RE.match(line)

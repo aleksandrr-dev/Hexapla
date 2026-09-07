@@ -192,6 +192,35 @@ LEXICON = {
     # ▶ Same defect SHAPE as `hezekiah` (heard «-KEE-yah», want «-KY-ah»), so the
     # respelling follows that row's pattern: «-ryah» for the «-riah» tail, and
     # «Zek-» to stop the leading «Ze-» being read long.
+
+    # ── ear-confirmed 2026-09-06 (evening), on the 24-verse ear clip set ───
+    # Both surfaced INCIDENTALLY: the verses were in the ear queue because the
+    # GATE flagged them, and the owner reported a mispronunciation instead. That
+    # is the fifth defect class doing what this file says it does — the screens
+    # cannot see it, only an ear can.
+    #
+    # ⛔ `elisha` IS NOT IN THIS TABLE — see the rejected list below. The defect
+    #   is real and ear-confirmed; the RESPELLING `Elysha` was tested and failed.
+
+    # ★ `prophesy` — Acts 2:17 (clip 20): heard «prophes-EE». The voice read the
+    #   VERB as its own NOUN: `prophesy` is /ˈprɒfɪsaɪ/, `prophecy` is /-si/.
+    # ✅✅ EAR-VALIDATED IN THE REAL VERSE — owner, 2026-09-06 evening, on the
+    #   BEFORE/AFTER pair cut from the actual re-rendered Acts 2:17: «second
+    #   prophesy was correct». Not a short carrier: this is the whole printed
+    #   verse, which is the standard `Aybraham` failed. ▶ This is the FIRST row
+    #   in this table to be cleared that way.
+    # ⚠ SCOPE, DERIVED: 62 verses / 42 chapters.
+    # ⛔⛔ AND NOTHING ELSE IN THE FAMILY, ON PURPOSE. `prophesying` (43 verses),
+    #   `prophesied` (19) and `prophesieth` (6) share the spelling and were NOT
+    #   heard. «-sy is broken» is precisely the shape of rule this project's ear
+    #   has cut down three times (see the -eth and a+ll notes above). They are
+    #   OUT FOR AN EAR CHECK — do not assume they share it, do not assume they
+    #   don't.
+    # ⛔ `prophecy` (24 verses) is CORRECTLY said «prophesee» and must never
+    #   enter this table. A careless rule on «prophes» would also be wrong for
+    #   it, since the noun is spelled with a c.
+    "prophesy": ("prophesigh", "verb read as the noun «prophecy»; want «-sigh»",
+                 "owner ear 2026-09-06"),
 }
 
 
@@ -272,6 +301,19 @@ REJECTED = {
     # degrade a word the model already handled acceptably — which is the whole
     # argument for testing every row before it ships.
     "zechariah": ("Zekaryah", "REJECTED: A sounds better than B"),
+    # ⛔ REJECTED 2026-09-06 evening, owner's ear on the BEFORE/AFTER pair cut
+    # from the real re-rendered II Kings 5:25: «elisha still needs to be redone».
+    # The DEFECT IS STILL LIVE AND EAR-CONFIRMED — heard «el-EE-sha», want
+    # «ee-LYE-sha» (/ɪˈlaɪʃə/), 55 verses / 13 chapters. Only the respelling is
+    # dead.
+    # ⚠ The bet was that `y` forces /aɪ/ as it does in `Elijah`. It does not do
+    # so before `sh` in this voice, so `Elijah` is NOT a safe model for it.
+    # ▶ NEXT ATTEMPT MUST START BY ASKING WHAT HE NOW HEARS, not by guessing.
+    # That is how `zechariah`'s target was finally pinned («zee-ka-REE-ah»);
+    # guessing produced three dead rows above.
+    # ⛔ Do NOT ship any `elisha` respelling until one is heard in a REAL verse.
+    "elisha__elysha": ("Elysha", "REJECTED: still wrong; defect live, target "
+                                 "«ee-LYE-sha», next spelling needs his ear"),
 }
 
 

@@ -108,7 +108,7 @@ def _runs(vals, frac, min_len):
     return out
 
 
-def text_block(page):
+def text_block(page, robust=False):
     """(rect, note) — the main text column, marginal apparatus excluded.
 
     ⚠ MEAN DARKNESS DOES NOT SEPARATE THE MARGIN. Tried first and it failed:
@@ -134,7 +134,24 @@ def text_block(page):
     binary = im.point(lambda v, t=ink: 255 if v <= t else 0)
     cov = [c / 255.0 for c in binary.resize((im.width, 1)).tobytes()]
     r = page.rect
+    # ⛔⛔ `peak = max(cov)` IS A SINGLE-COLUMN STATISTIC AND A DARK SCAN EDGE
+    # BEATS THE TEXT. Measured 2026-09-06 on v3 idx 12: max coverage 0.553 at
+    # x=11 — 2 % across the page, a binding/edge artefact — against a 0.271 peak
+    # on idx 11 and 13. The 45 %-of-peak threshold then sits above the real
+    # text's coverage, the block comes out 47 % of the page instead of ~85 %,
+    # and EVERY line crop is cut off mid-word («4 Simon af Cana…»). Three
+    # transcription agents produced nothing on that page before anyone looked at
+    # the crops. Full write-up: research/THORLAKS_CAMPAIGN.md.
+    #
+    # ⚠⚠ `--robust-block` USES THE 90th PERCENTILE INSTEAD, AND IS OPT-IN ON
+    # PURPOSE. It is NOT validated as a global default: swept over all of v3 it
+    # moves 120 pages by >3pp, and 28 of those were already healthy. Changing the
+    # default would silently re-cut finished books. Use it per page, look at the
+    # crops afterwards, and record which pages were prepped with it.
     peak = max(cov) if cov else 0
+    if robust and cov:
+        srt = sorted(cov)
+        peak = srt[int(len(srt) * 0.90)]
     if peak <= 0:
         return r, "blank page"
     hits = [x for x, c in enumerate(cov) if c > peak * 0.45]
@@ -350,6 +367,12 @@ def main():
     ap.add_argument("--gaps", action="store_true",
                     help="report pitch anomalies — where a short line may have "
                          "been dropped (see line_rects docstring)")
+    ap.add_argument("--robust-block", action="store_true",
+                    help="use the 90th-percentile column instead of the MAX "
+                         "when finding the text block. For a page whose crops "
+                         "come out cut off mid-word because a dark scan edge "
+                         "beat the text (v3 idx 12). OPT-IN: not validated as "
+                         "a default, it moves 28 healthy v3 pages too.")
     a = ap.parse_args()
 
     lo, _, hi = a.pages.partition("-")
@@ -377,7 +400,7 @@ def main():
     n_recovered = {}
     for idx in idxs:
         page = doc[idx]
-        block, note = text_block(page)
+        block, note = text_block(page, robust=a.robust_block)
         lines = line_rects(page, block)
         # Recover one-word lines the mean-threshold detector drops, and merge
         # them into reading order. See short_line_rects: on v3:208 this is the

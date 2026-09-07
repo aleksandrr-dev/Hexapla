@@ -318,6 +318,42 @@ def check(path, book):
         problems.append(f"{longs} long-s")
         print(f"  ⛔ {longs} long-s (ſ) not normalised to plain s.")
 
+    # ⛔⛔ CYRILLIC HOMOGLYPHS — INVISIBLE CORRUPTION, FOUND 2026-09-07.
+    # `mark_p41-49.md` came back from a transcriber carrying 22 Cyrillic
+    # letters inside otherwise-Latin Icelandic words: «Kuollд», «hrækтu»,
+    # «byggеr», «Blessadа», «trydе». They RENDER IDENTICALLY to the Latin
+    # letters, so every existing check passed the file and a reader cannot
+    # see them. Almost certainly a tokenisation artefact of the model doing
+    # the reading, not anything on the page.
+    # ▶ Nothing was looking for this class. It costs 0 tokens to look.
+    # ⚠ The fix is mechanical ONLY because context disambiguates every case;
+    #   this check REPORTS, it does not repair. Never bulk-replace without
+    #   printing the surrounding word first.
+    # ⚠ Greek β is NOT this defect and must not be swept up with it. It is the
+    # `ꝑ` sort (`aβ`=af, `tolβ`=tolf, `β̃`=fyrer), which the corpus writes
+    # correctly as U+A751 elsewhere — EXCEPT that romans_p140-141.md also uses
+    # β deliberately as a printed FOOTNOTE MARKER. Converting it either way
+    # asserts a sort the convention says must be SEEN on the image, so it is an
+    # image/owner question. Reported separately, and NOT counted as a problem.
+    homo, beta = {}, 0
+    for ch in txt:
+        if ch == "β":
+            beta += 1
+        elif 0x0400 <= ord(ch) <= 0x04FF or 0x0370 <= ord(ch) <= 0x03FF:
+            homo[ch] = homo.get(ch, 0) + 1
+    if homo:
+        n = sum(homo.values())
+        problems.append(f"{n} Cyrillic homoglyph(s)")
+        detail = ", ".join(f"U+{ord(c):04X} «{c}» x{k}"
+                           for c, k in sorted(homo.items(), key=lambda x: -x[1]))
+        print(f"  ⛔⛔ {n} CYRILLIC HOMOGLYPH(S) — invisible corruption: {detail}")
+        print("       They render as Latin letters. Print the containing WORD "
+              "for each before changing anything, and map by the Cyrillic "
+              "letter's PHONETIC value (р=r, с=s), never its shape.")
+    if beta:
+        print(f"  ⚠ {beta} Greek β — the `ꝑ`/footnote-marker question, OPEN by "
+              f"design; not counted as a problem (see the comment in this tool).")
+
     vtext = "\n".join(body)
     o = vtext.count("o") + vtext.count("O")
     oe = vtext.count("ø") + vtext.count("Ø")

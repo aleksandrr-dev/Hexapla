@@ -147,6 +147,41 @@ LEXICON = {
     "canaanites":   ("Kaynanites",   "derived from canaan",     "owner ear 2026-09-05"),
     "levitical":    ("Leevitical",   "derived from levite",     "owner ear 2026-09-05"),
 
+    # ── `Naaman`, 2026-09-07. Owner: "try it the same way we fixed Canaan" ──
+    # Heard «Nah min» (broad a) where the name is «Na min»; A/B on II Kings 5:1
+    # with three respellings in the `Kaynen` shape (long-a written «ay»).
+    # ★ Owner's ear, 2026-09-07: "3 for Naaman" = take 3 = `Naymen`.
+    #   `Nayamen` and `Naymun` were heard and NOT chosen — see REJECTED below.
+    # ✅✅ SPOT-CHECK PASSED — the `prophesy` standard is MET, 2026-09-07.
+    #   Rendered in TWO chapters the ear had not been primed on —
+    #   Numbers 26:40 and Genesis 46:21 — and the owner's verdict on the
+    #   respelled take in both was «4 works, pronounced correctly».
+    #   Clips: _work/EAR_variants_ylt_3_25_v40.ogg, _work/EAR_variants_ylt_0_45_v21.ogg
+    # ⚠ THE CLASS CAVEAT STILL STANDS, and it is not pedantry. `Naaman` is the
+    #   SPORADIC class: CLAUDE.md records it coming out BOTH right and wrong
+    #   from draws of an IDENTICAL input (Luke 4:27, 2026-09-07). So this row
+    #   has cleared the procedural bar `prophesy` set, but a sporadic word can
+    #   still draw badly on a verse nobody has heard. ⛔ Do not upgrade this
+    #   note to «always correct».
+    # ⛔ Scope is 15 verses / 5 chapters — DERIVE it, never quote that here.
+    #   Genesis 46, Numbers 26, II Kings 5 (10 of them), I Chronicles 8, Luke 4.
+    # ⛔⛔ THE LOOK-ALIKES ARE THE `canaan`/`Canaanite` TRAP, AND ONE IS A
+    #   DIFFERENT PERSON. A whole-word key excludes all of them, which is why
+    #   this row is whole-word and must stay so:
+    #     · `Naamite`     (Numbers 26:40) — a DERIVED form; needs its own ear.
+    #       ⚠ STILL UNRULED as of 2026-09-07. It was deliberately left AS
+    #       PRINTED in the Numbers 26:40 spot-check clip so it could be heard
+    #       in the same breath, and the owner's «4 works» spoke to `Naaman`
+    #       only — he was not asked to, and did not, rule on `Naamite`.
+    #       ⛔ Silence is not a pass: `canaan` needed FOUR separate verdicts
+    #       for its four forms. Ask before assuming this one is fine.
+    #     · `Naamathite`  (Job x4) — Zophar. A DIFFERENT NAME. Never sweep it in.
+    #     · `Naamah`, `Naarah` — different names again.
+    "naaman":       ("Naymen",       "heard «Nah min» (broad a); the Kaynen "
+                                     "shape. ⚠ SPORADIC class — one draw, "
+                                     "un-primed spot-check still owed",
+                     "owner ear 2026-09-07"),
+
     # ── the -eth question, SETTLED SMALL by ear 2026-09-04 ──────────────────
     # The owner heard 13 forms. Wrong: `fleeth`, `seeth`. FINE: `goeth`,
     # `dieth`, `lieth` — so it is NOT vowel-stems in general — and fine across
@@ -323,6 +358,16 @@ REJECTED = {
     # varying the FINAL SYLLABLE while keeping the ear-validated Kayn- stem
     # produced three passes on the first attempt.
     "canaan__kaynan": ("Kaynan", "REJECTED: heard «can i an» — superseded by Kaynen"),
+    # ⚠ NOT CHOSEN is weaker evidence than HEARD WRONG, and the difference
+    # matters: the owner picked take 3 (`Naymen`) out of three candidates on
+    # II Kings 5:1 and said nothing about how these two sounded. They are
+    # recorded so nobody re-proposes them as if they were untried — NOT as a
+    # finding that they are bad. If `Naymen` fails its owed spot-check, either
+    # of these is a legitimate next test rather than a known dead end.
+    "naaman__nayamen": ("Nayamen", "NOT CHOSEN 2026-09-07 (owner picked Naymen); "
+                                   "no verdict recorded on this one"),
+    "naaman__naymun":  ("Naymun",  "NOT CHOSEN 2026-09-07 (owner picked Naymen); "
+                                   "no verdict recorded on this one"),
     # ★ THE HYPHEN IS READ AS A PAUSE. All three double-e stems came back with
     # the two syllables separated by an audible gap — «flee-eeth», not
     # «FLEE-eth». The syllable count was fixed and the word still wrong.

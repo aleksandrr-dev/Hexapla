@@ -8,9 +8,13 @@ collect no data.
 ▶ **AUTO-LOADED INTO EVERY SESSION — SO IT HOLDS ONLY WHAT IS TRUE NOW AND
 NEEDED OFTEN.** A completed record belongs in a topic doc; a ⚠ that can still
 bite belongs here or is pointed at from here — never silently dropped. Condensed
-2026-08-09, -08-25, -08-28. **Nothing was ever deleted:** moved blocks sit
-verbatim under `── MOVED OUT OF CLAUDE.md ──` at the end of
-`docs/RELEASE_HISTORY.md`, `docs/NARRATION.md`, `store-assets/STORE_LISTING.md`.
+2026-08-09, -08-25, -08-28, **-09-07 (829 -> ~350 lines)**. **Nothing was ever
+deleted:** moved blocks sit verbatim under a dated `── MOVED OUT OF CLAUDE.md ──`
+marker at the end of `docs/NARRATION.md`, `docs/TRANSCRIPTION.md`,
+`docs/RELEASE_HISTORY.md`, `docs/ARCHITECTURE.md`, `store-assets/STORE_LISTING.md`.
+▶ **The two ★★ INDEX sections below are POINTERS, not the record.** Each bullet
+carries the bite so a session knows whether it must go read the full block; when
+you are about to act in that area, go read it.
 
 ⚠⚠⚠ **NEVER PIN A DATED FILENAME HERE AS "THE CURRENT ONE."** Handoffs and
 campaign books are superseded constantly, so it goes wrong within days — this
@@ -67,6 +71,8 @@ current one**, exactly as the handoff skill says of figures.
 | adding/researching a translation, licence gates, dead ends | `docs/TRANSLATIONS.md` |
 | touching a Bible asset — corruption, psalm titles, markup | `docs/ASSET_DEFECTS.md` |
 | renders, GPU contention, the recycle and keepalive, the audio backends | `docs/NARRATION.md` |
+| a render/QA defect class, a screen, or why an instrument was wrong | `docs/NARRATION.md`, under `── MOVED OUT OF CLAUDE.md, 2026-09-07 ──` — the full text of every block the ★★ NARRATION & RENDER QA index points at |
+| the Þorláksbiblía ø retrofit, Matthew's completion, the Haiku test | `docs/TRANSCRIPTION.md` — the full text behind the ★★ TRANSCRIPTION index |
 | what shipped when, and why a behaviour changed | `docs/RELEASE_HISTORY.md` |
 | why a UI/service/widget bug must not be reintroduced | `docs/ARCHITECTURE.md` |
 | store listing texts, screenshot order, RuStore/Play upload procedure | `store-assets/STORE_LISTING.md` |
@@ -95,18 +101,30 @@ data THERE — run tools by absolute path from `C:\Projects\Hexapla-releases`.
 decision, never for current state. When you write a new handoff, fold forward
 what is still live and archive the old one.
 
-- **Transcription:** the Karl XII 1703 (Swedish) apocrypha.
-  ⚠⚠ **NO BOOK NAME IS WRITTEN HERE ON PURPOSE.** Derive what is left with
+- **The LIVE transcription campaign is the Icelandic Þorláksbiblía 1644.**
+  ⚠⚠ **NO BOOK NAME IS WRITTEN HERE ON PURPOSE** — derive with
+  `python tools/thorlaks_corpus_audit.py` and `thorlaks_part_check.py --book <B>`,
+  and take the next chunk from the ONE current handoff, never from a page note.
+  Folio↔index navigation for all three volumes AND the ⚠ «Cap. N»
+  chapter-numbering rules (subtler than a summary here can carry — a marginal
+  «Cap. N» is authoritative, but a verse-level shift can go unmarked) are in
+  `research/THORLAKS_CAMPAIGN.md`. Volunteer overlap is SETTLED (owner,
+  2026-08-10): two Icelandic Bibles is the intended outcome.
+  ⚠⚠ **THE AUDIT'S DENOMINATOR IS 31,102 — THE PROTESTANT CANON — AND THE
+  SCAN CONTAINS AN APOCRYPHA IT DOES NOT COUNT** (Sirach + 1-2 Maccabees, ~114
+  pages of v2). **It could one day print «31102/31102 OK» with all of that
+  untranscribed and nothing reporting a gap.** Scope is an OWNER decision and he
+  has not been asked; until he rules, report «N of the PROTESTANT canon; the
+  Apocrypha in this edition is un-scoped and uncounted», never a bare
+  «complete». ▶ `research/_evidence/thorlaks_ot_apocrypha_scope_2026-09-07.md`.
+  ⚠ v1's page geometry differs (472x635 vs ~331x484) — prep zoom and crop boxes
+  are calibrated for v3 and **cannot be assumed to carry over.**
+- **Karl XII 1703 (Swedish) apocrypha — the PREVIOUS campaign, all but done.**
+  ⛔ Do not call it finished from this line: derive with
   `python tools/karlxii_apoc_corpus_audit.py`, then read the `Resume:` line at
   the TOP of that book's own `research/karlxii_<book>.md`. **Never take the next
   book from a handoff summary and never from a page note** — "Baruch starts 696"
   is a page location, not a work queue, and a session lost time to exactly that.
-- **Next campaign after it:** the Icelandic **Þorláksbiblía 1644** (31,102
-  verses), no blockers. Folio↔index navigation for all three volumes AND the
-  ⚠ «Cap. N» chapter-numbering rules (subtler than a summary here can carry —
-  a marginal «Cap. N» is authoritative, but a verse-level shift can go unmarked)
-  are in `research/THORLAKS_CAMPAIGN.md`. Volunteer overlap is SETTLED (owner,
-  2026-08-10): two Icelandic Bibles is the intended outcome.
 - ⚠⚠ **RUN THE CORPUS AUDIT BEFORE BELIEVING ANY COMPLETENESS CLAIM** —
   `tools/glen_corpus_audit.py`, `tools/thorlaks_corpus_audit.py`,
   `tools/karlxii_apoc_corpus_audit.py`. One of these exists because a chunk
@@ -196,584 +214,117 @@ before editing that area.**
   `assembleRustoreDebug`. adb: `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`;
   in Git Bash prefix device-path commands with `MSYS_NO_PATHCONV=1`.
 
-## ★★ RENDERS AND REPAIRS, SINCE 2026-09-03 — read this block before the one below it
-
-The tail defect (a re-spoken or garbled verse end) hit ~13 % of chapters in
-EVERY chatterbox set because the only in-flight guard was Chatterbox's own
-token flag (tracked nothing audible, cost half the render) and every real
-screen ran days later per chapter. Fixed structurally; the diagnosis and the
-evidence are in the newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases`
-(`ls -t C:\Projects\Hexapla-releases\RENDER_GATE_BRIEF_*.md | head -1`).
-
-- ✅ **`narrate.py` now GATES EVERY VERSE at render time** with the ear-validated
-  screens (`tools/qa_gate.py`: ASR self-repeat, English APPEND) and re-draws a
-  failing verse up to 3×. Validated 10/10 confirmed / 0/40 controls; Swedish
-  control 5/6. It writes `<chapter>.qa.json`; `render_preflight.py report`
-  reads them — that IS the "first 50 chapters" screen, at zero model cost.
-- ⚠ **THE DETECTOR IS WHISPER, NOT KOKORO.** faster-whisper lives in
-  `tools/.kokoro_venv` (venv name only). The self-repeat screen needs no
-  reference text, so it works on 1703 Swedish; only APPEND needs readable
-  English. Novel hallucinations in sv/wyc/cu have NO screen — never call
-  those sets clean, only "clean on what can be detected".
-- ✅ **REPAIR BY THE VERSE — `tools/repair_verses.py --set <KEY> --queue …`**
-  (dry-run by default, `--apply` to write; backs originals up to
-  `narration/<dir>_qa_fail_originals/`, gates the new take, splices, re-aligns).
-  ~1 min/verse instead of ~9 min/chapter, and untouched verses stay untouched.
-  ⛔ `narrate.py --force` on a chapter is for the truncation class ONLY
-  (`zero_duration_verses` hits); the hook blocks it otherwise.
-- ✅ **BEFORE ANY RENDER: `render_preflight.py check --lang <set>`** (gate
-  stamp, ASR worker, GPU, VRAM, voice, alignment key, fresh log, disk). The
-  hook refuses `narrate.py --lang …` without a stamp < 6 h old. `launch`
-  prints the command; starting a GPU job stays the owner's call.
-- ⚠ **KEEPALIVE-MANAGED JOBS CANNOT BE STOPPED BY KILLING THEM.** Task
-  Scheduler re-arms them within seconds (`narration/logs/render_bootstrap.ps1`
-  gates on counts). Create `narration/logs/PAUSE_<job>` FIRST, then kill.
-  A cu uploader was killed and back under a new PID in under a minute.
-- ▶ The seven mistakes that recurred across sessions are now a PreToolUse hook:
-  `~/.claude/hooks/guard_hexapla_bash.py` (wrong `--set` key, chapter `--force`,
-  unstamped launch, `tools/` from the data dir, kills without `# owner-approved`,
-  redirect onto an existing log, second uploader). If it blocks you, it is
-  right more often than you are — read its message.
-
-## ★★ SUBSTITUTION IS A FOURTH DEFECT CLASS — added 2026-09-04
-
-The render can SPEAK THE WRONG WORD. ylt Genesis 13:14 (`0/12 v14` — the chapter index is ZERO-BASED; this was
-mislabelled «Genesis 12:14» here until 2026-09-07) says
-«westward» where Young's reads «and **eastward**, and westward» — owner
-confirmed BY EAR. Neither existing screen is aimed at it: `qa_asr_sweep`'s
-APPEND test never fired because nothing was appended, and `qa_selfrepeat`
-caught it only BY LUCK, because the substituted word happened to duplicate its
-neighbour.
-
-- ✅ **`tools/qa_substitution.py`** reports only **NEIGHBOUR-COPY**: the heard
-  word does not match the text here but EXACTLY matches a word elsewhere in the
-  same verse. Printing every mid-verse `replace` is useless (~3/chapter on
-  archaic English, ~0 true positives); this sub-class is the one with an
-  argument behind it. `--validate` fires on the ground truth and stays silent
-  on an identical transcript. End-to-end on the real Genesis 12 audio:
-  1 NEIGHBOUR-COPY (the real one), 6 other mid-verse subs suppressed.
-- ⚠⚠ **IT IS NOT VALIDATED FOR RECALL AND CANNOT BE.** Exactly ONE ground-truth
-  positive exists in this project. `--validate` proves it FIRES; it says nothing
-  about what it MISSES, and a screen with false negatives licenses discarding
-  real defects. **A substitution into a word that duplicates nothing in its verse
-  has no instrument at all.** Report ylt as "clean on what can be detected".
-
-## ★★ MISPRONUNCIATION IS A FIFTH DEFECT CLASS — owner's ear, 2026-09-04
-
-Confirmed on the ylt repair pilot (`0/8 v26`, Genesis 9:26). The owner listened
-to the before/after and reported: the repeat is gone, **but the render says
-«can-a-yin» where the name is «Canaan»** (/ˈkeɪnən/). The words are all correct;
-the PHONETICS are wrong.
-
-- ⚠ **It is PRE-EXISTING, not caused by the repair.** faster-whisper transcribes
-  `Kanan` from BOTH the shipped take and the re-drawn one. It is already in the
-  shipped audio.
-- ⚠⚠ **IT IS NOT INVISIBLE — IT IS DELIBERATELY SUPPRESSED.** The ASR emits a
-  different token, so the signal is right there in the diff. But every screen
-  discards that class on purpose: mid-verse and end-substitution flags on
-  archaic English ran ~3 per chapter with essentially no true positives
-  (measured on ylt Genesis 1-34), so they are filtered as ASR noise. **The
-  instrument sees it and we throw it away.**
-- ⛔ **A screen for it faces the SAME wall as the substitution class:** it must
-  separate «the ASR misheard the audio» from «the TTS mispronounced the word»,
-  and **text evidence alone cannot do that — only an ear can** (owner's rule,
-  established on 0/12 v14). Do not build one that dismisses hits on text.
-- ▶ **SCOPE, derived not guessed: «Canaan» alone is in 156 ylt verses across 87
-  chapters.** It will not be the only name. Candidate second instance, NOT yet
-  ear-confirmed: «he saith» transcribes as «he's safe» in both takes.
-- ⛔⛔ **THE CLASS SPLITS IN TWO, AND THEY NEED OPPOSITE TOOLS.**
-  * **SYSTEMATIC** — always wrong: `Canaan`, `Levites`, `Abraham`, `Ephraim`,
-    `Job` («Jahb»), `Hezekiah` («Hez-a-KEE-yah»), `calleth`/`falleth` (the a of
-    apple, not the aw of call), `fleeth`/`seeth` (the «ee»+«eth» syllable
-    collapses). A respelling fixes these — `tools/pronounce_lexicon.py`.
-    ✅ **DERIVE the entry count and scope: `pronounce_lexicon.py --scope`.**
-    Never quote a figure here; the table changes every time an ear rules on it.
-  * **SPORADIC** — `Jehovah`, wrong maybe 1 time in 7 across **6,626 verses**.
-    A respelling is the WRONG tool: it would rewrite every one to fix a
-    minority. ⛔ **The ASR cannot find the bad ones** (both ear-flagged verses
-    transcribe as `jehovah`, same as ones the owner passed), and **acoustic
-    clustering was built, validated against his 14 labels, and FAILED** —
-    `qa_pronounce_cluster.py --validate` clustered by SURROUNDING PHRASE, not
-    pronunciation. ▶ **Owner's decision 2026-09-04: leave it**, recorded as a
-    measured limitation. Re-opening it means asking him.
-- ⚠ **THE EAR SHRANK THIS THREE TIMES — never scope it from a spelling rule.**
-  «-eth is broken» would have condemned 618 forms / 6,499 verses; the ear said
-  only the double-e stems, 3 forms / 231 occurrences. «a+ll is broken» would
-  have rewritten `all` (5,482 places); the ear said only `calleth`/`falleth`.
-  A prefix rule on `canaan` would have missed `Canaanite` and hit nothing else.
-- ⚠ **A LEXICON ENTRY IS A HYPOTHESIS ABOUT HOW THE MODEL READS LETTERS.**
-  A row is unvalidated until an ear clears it IN A REAL VERSE.
-  ⛔⛔ **THIS FILE CLAIMED «the tool says which is which on every run». IT DID
-  NOT** — measured 2026-09-07. `validated_by` is ONE free-text stamp, so
-  `pronounce_lexicon.py` knew only stamped/unstamped and printed «(all
-  ear-confirmed)» over 13 rows, flattening the very distinction this block turns
-  on: `prophesy` was cleared in a real verse, `Aybraham` passed a SHORT CARRIER
-  and then FAILED one. ▶ Fixed to report «13 carry a validated_by stamp» plus an
-  explicit «A STAMP IS NOT A STANDARD» warning; **only the per-row comments in
-  that file record which clearance a row actually got.** No per-row
-  classification was invented, because there is no evidence for one.
-  Only an ear can tell whether the respelling
-  helped, for the same reason text cannot clear a self-repeat hit.
-  ⚠ **A respelling can also do NOTHING** — `Elysha` and `Hezakyah` both came back
-  indistinguishable from the original. «No change» is a third outcome alongside
-  «better» and «worse», and it means letters are not the lever for that word.
-- ▶ The fix is a pronunciation lexicon applied to the SYNTHESIS INPUT ONLY (never
-  to the displayed text), then a re-render of every affected verse. That is a far
-  bigger job than the repeat/append queue, and the lexicon itself needs an ear to
-  build. **Do not start it without the owner.** ▶ It IS underway with him:
-  `prophesy` cleared and wired in 2026-09-06, `Elysha` rejected the same evening.
-- ✅ Repeat/append repairs are ORTHOGONAL to this and were explicitly approved to
-  proceed anyway (owner, 2026-09-04): they do not make pronunciation worse.
-
-### ✅ THE FIRST ROW EVER CLEARED IN A REAL VERSE — `prophesy`, 2026-09-06
-
-`prophesy` -> `prophesigh`. The voice read the VERB as its own NOUN («prophes-EE»;
-`prophesy` is /ˈprɒfɪsaɪ/, `prophecy` is /-si/). Owner confirmed it correct in the
-test verse **and** in I Corinthians 14:31 and Amos 3:8, two chapters he had not
-previously heard, then said «wire it in». Wired in: 43 chapters / 94 verses.
-- ▶ **THIS IS THE STANDARD FOR CLEARING A ROW**: the whole printed verse, plus a
-  spot-check in a chapter the ear has not already been primed on. ⛔ A short
-  carrier is NOT sufficient — that is how `Aybraham` passed and then failed.
-- ⛔ **AND NOTHING ELSE IN THE FAMILY.** `prophesying` (43 verses), `prophesied`
-  (19), `prophesieth` (6) share the spelling and were NOT heard; `prophecy` the
-  noun (24) is CORRECTLY said and must never enter the table.
-
-### ⚠⚠ `Elisha` — `Eelighsha` WIRED IN 2026-09-07 OVER A STATED OBJECTION
-
-Ear-confirmed 2026-09-06 (II Kings 5:25): «el-EE-sha», want «ee-LYE-sha».
-**Scope, derived: 55 verses / 13 chapters.** `Elysha` was tested and heard
-UNCHANGED (the `Hezakyah` pattern) and is REJECTED.
-
-On 2026-09-07 three candidates were rendered on II Kings 5:9 and the owner chose
-**`Eelighsha`** («5 is good»). `Elighsha` was also good but arrived after a
-slight pause; `Eelysha` was NOT named good — **which is what identifies the `y`,
-not the first vowel, as why `Elysha` failed.**
-
-⛔⛔ **BUT IT THEN FAILED THE SPOT-CHECK IN TWO VERSES OF THREE:**
-
-| verse | verdict |
-|---|---|
-| II Kings 5:9 | ✅ good |
-| II Kings 2:1 | ❌ wrong — and the **as-printed** take was the good one |
-| Luke 4:27 | ❌ «Eel eesha» |
-
-One spelling, three verses, three outcomes = the **`Jehovah` signature,
-SPORADIC**, for which this file's own rule says a respelling is the WRONG tool.
-▶ **The owner was told exactly that and directed the wire-in anyway** (asked
-twice; his first answer was ambiguous). His call, recorded — do not re-litigate.
-⚠ **So this row is NOT «ear-validated» in the `prophesy` sense.** It is
-ear-preferred in one verse and ear-rejected in two. A later session that sees it
-in the table and assumes the `prophesy` standard will be wrong.
-▶ Evidence: `research/_evidence/elisha_elijah_naaman_ear_2026-09-07.md`.
-
-- ✅✅ **`Elijah` IS PRONOUNCED CORRECTLY** — owner, 2026-09-07, on II Kings 2:1,
-  the one verse carrying both names. **Scope, derived: 93 verses / 26 chapters —
-  LARGER than Elisha's.** It was CHECKED, not assumed, and it must NEVER enter
-  the lexicon. ⚠ The old line «`Elijah` is not a safe model» was only ever about
-  inferring Elisha's SPELLING from it; it said nothing about how Elijah is
-  spoken, and nobody had checked until now.
-- ⚠ **NEW, UNSCOPED: `Naaman`** — «Na min» right, «Nah min» wrong, varying
-  between draws of an IDENTICAL input (owner, 2026-09-07, Luke 4:27). Sporadic
-  class. ⚠ It came out right in the `Eelighsha` take in BOTH of two independent
-  renders (2/2) though its own spelling never changed — an observation with n=2,
-  not a technique.
-- ⚠ **One of the 55 is a DIFFERENT PERSON**: I Chronicles 1:7 «sons of Javan:
-  Elisha» is normally *Elishah*. YLT drops the final h so the whole-word row
-  sweeps him in. Probably harmless; `synthesis_overrides.py` is the per-verse
-  table if it ever needs excluding.
-- ⛔ **DO NOT GUESS A FOURTH SPELLING.** Guessing produced three dead rows;
-  `Elysha` and (on the evidence above) `Eelighsha` make five.
-- ⛔ `Elishah`, `Elishama`, `Elishaphat`, `Elisheba` are DIFFERENT NAMES — the
-  `canaan`/`Canaanite` trap, one careless prefix rule away.
-
-### ⛔⛔ THE UNION-QUEUE RULE AND THE GATE LOOP NOW CONTRADICT EACH OTHER
-
-**UNRESOLVED as of 2026-09-06. It costs GPU on every repair run.**
-1. A queue line MUST name every verse in that chapter carrying a repair record or
-   a lexicon change — `repair_verses.py` rebuilds from `<set>_qa_fail_originals/`
-   and splices in ONLY the named verses, so an omitted verse **REVERTS**.
-   (18 of one run's 43 chapters carried prior repairs.)
-2. But a TEXT-EXPLAINED verse sitting in that queue is redrawn **3× and always
-   fails** — the gate is firing on scripture, so no draw can ever pass.
-
-Measured: Revelation 11:15 («to the ages of the ages») and Exodus 3:15
-(«to generation—generation») each burned 3 futile draws on 2026-09-06.
-▶ **The fix is for `repair_verses.py` to splice a text-explained verse WITHOUT
-redrawing it** (keep its take, skip the gate loop). Not made — do not make it
-mid-campaign without the owner.
-
-### ⚠ `repair_verses.py`'s SUMMARY COUNTS CHAPTERS, AND A "FAILED" CHAPTER STILL WRITES
-
-«repaired 38, failed 4, already done 1» = 43 **chapters**, not verses. ⚠ A chapter
-counted as FAILED has still been rewritten — its other verses are spliced and the
-live `.ogg` mtime changes; only the named verse is left still-failing.
-**Never read "failed" as "untouched"**, and never as "nothing shipped".
-✅ Backups are safe: it copies to `_qa_fail_originals/` **once** and never
-overwrites, and always reads its source from there (verified 2026-09-06).
-
-⚠ **So ylt has FIVE known defect classes and screens for two.** Repeat
-(`qa_selfrepeat`) and novel-append (`qa_asr_sweep`) are validated; substitution
-has an unvalidated screen with one ground-truth positive; mispronunciation has
-none; and a substitution into a word that duplicates nothing has no instrument
-at all. **Never call the set clean — only "clean on what can be detected".**
-
-## ⛔⛔ THE GATE HAD FALSE NEGATIVES — FOUND BY EAR, FIXED, 2026-09-04
-
-The owner listened to six ear-confirmed repeat repairs. **The gate had PASSED two
-takes that still contained the defect** — the failure this file elsewhere calls
-worse than no screen, because it licenses calling a set clean. Two independent
-mechanisms, both now fixed and re-validated (10/10 confirmed, 1/40 controls):
-
-- **`tail_repeat` joined tokens into one string**, so ONE mistranscribed word
-  diluted the whole span below FUZZ. ylt 19/30 v21: the kept take's own recorded
-  transcript reads «clothed WAS scarlet WITH scarlet» — a real doubling in which
-  the ASR merely heard the first copy differently — and scored 0.762 vs FUZZ 0.85.
-  ▶ Fixed with a per-token majority path (`STRONG_TOKEN`/`MIN_STRONG_LEN`).
-- **`append_tail` fired only on a PURE trailing insert.** When the LAST wanted
-  word is also mistranscribed (`shaul` -> `shawl`), difflib emits one `replace`
-  and the extra word is swallowed inside it. ylt 12/3 v24: «...zerah shaul SHOP»
-  flagged, «...zera shawl SHRI» PASSED. ▶ Fixed by also reading the excess out of
-  a final `replace`, gated on the aligned words actually resembling each other.
-
-⚠ **COST, MEASURED, NOT HIDDEN:** controls went 0/40 -> 1/40. The new flag is
-Gen 36:29 «chief Lotan, chief Shobal, chief Zibeon...», which repeats IN THE
-PRINTED TEXT — the already-known text-repeat class.
-⛔ **DO NOT RAISE `PAIR_JOINED_FLOOR` TO 0.75 TO REMOVE IT.** The true positive
-scores 0.762 and that control 0.700; picking a number between them is fitting the
-threshold to the validation set. A false POSITIVE costs seconds of listening; a
-false NEGATIVE ships a defect.
-
-⚠⚠ **SO «repaired 169 chapters OK» FROM THE 2026-09-04 ylt RUN IS NOT EVIDENCE
-THE DEFECTS ARE GONE** — that number was produced by the buggy gate. Treat it as
-unverified. The build gate stays closed at versionCode 18.
-
-## ⛔⛔ THE REPAIR OVERWRITES THE VALIDATION GROUND TRUTH
-
-`repair_verses.py` splices fresh takes into `narration/<set>/`, so **after a
-repair the live tree no longer contains the defects the screens were validated
-on.** Measured 2026-09-04: `qa_selfrepeat --validate` scored the ten
-ear-confirmed ylt verses **0/10** and printed «⛔ do not use it» — it was reading
-REPAIRED audio. Trusting that would have condemned a working detector, or worse,
-prompted "retuning" it against audio the defect had been removed from.
-
-- ✅ Both validators now read the confirmed verses from
-  `narration/<set>_qa_fail_originals/` and PRINT how many came from there.
-- ⚠ **Never delete `*_qa_fail_originals/` — it is the project's only copy of the
-  ground truth**, not merely a backup of shipped audio.
-- ⛔ `qa_selfrepeat --validate` also **exited 0 while printing «do not use it»**,
-  so ✅ and ⛔ were indistinguishable to anything gating on the exit code —
-  including the preflight stamp that licenses a render. Now exits non-zero.
-
-## ⛔ A MID-VERSE REPEAT HAS NO INSTRUMENT — structural, but NO CONFIRMED CASE
-
-⚠ **THE GAP IS REAL. Every screen looks at the ends:** `qa_selfrepeat` reads the
-TAIL, `qa_asr_sweep` APPEND tests for words AFTER the last text word,
-`qa_substitution` reports only single-word neighbour-copies. Nothing looks in the
-middle, so a mid-verse repeat in a verse with a clean tail is invisible today.
-
-⛔⛔ **BUT THE ONE ALLEGED INSTANCE WAS WITHDRAWN — owner's ear, 2026-09-05.**
-This block was founded entirely on Isaiah 24:21 (`22/23 v21`), recorded on
-2026-09-04 as speaking «of the high place OF THE HIGH PLACE» where «the text
-prints it once». **Both halves were wrong.**
-
-- **The text prints it TWICE.** YLT reads «on the host of the high place **IN**
-  the high place, And on the kings of the land on the land» — doubled twice over,
-  and both doublings are scripture.
-- **The audio is CORRECT.** Re-heard on the clip set: «it sounds fine, hosts of
-  the high place in the high place». The verse has no defect of any class.
-
-▶ It is retracted from `_work/ylt_ear_confirmed_repeats.txt` (commented, not
-deleted). ⚠ It was never in `EAR_CONFIRMED_YLT`, so no validator was scored
-against it — had it been, every screen would have looked one worse for correctly
-PASSING a clean verse.
-
-⚠⚠ **MEASURED COST OF BELIEVING IT: `repair_verses.py` re-drew this clean verse
-3× on 2026-09-05 and every draw «failed».** It always will: the gate fires on
-«of the land on the land», which is printed, so **a verse whose gate flag is
-text-explained can never pass and can never be repaired by redrawing.** Check
-whether a flag is explained by the printed text BEFORE queueing draws.
-
-▶ So the honest statement is: **the instrument gap is structural and unfixed, and
-there is no confirmed mid-verse repeat in this corpus.** Do not cite Isaiah 24:21
-for it. If a real one turns up, record it here in its place.
-
-## ⚠ TWO TOOLS WRITE `<c>.qa.json` AND THEY DO NOT SHARE A SCHEMA
-
-`narrate.py`'s gate writes `{judged, redrawn, failing, unjudged}`;
-`repair_verses.py` writes `{repairs:[...], realigned:{}}`. `render_preflight.py
-report` read the first with four `q.get(key, 0)` calls, so **every
-repair-written record defaulted to zero and it printed «still failing 0» and a
-✅ VERDICT over 234 files it had not understood a byte of** (ylt, 2026-09-04 —
-all 234 records on disk were repair-schema; it was 100 % blind). Now it reads
-both and REFUSES (exit 1) on an unrecognised file instead of defaulting.
-
-## ⛔⛔ TWO MORE SCREENS WERE FOUND UNDER-REPORTING — 2026-09-06
-
-Both failed in the direction that sends an EAR, and GPU, at verses that can never
-pass. That is now **five** instrument bugs in this family in four days, every one
-of them under-reporting. ▶ **Assume a new screen is broken until a control fires.**
-
-- ⛔ **`qa_text_explained.py` COULD NOT SEE A SINGLE-WORD DOUBLING.** Its tail scan
-  started at `n = 2`, so «…by men, Rabbi, Rabbi.» was structurally invisible: the
-  bigram `(rabbi, rabbi)` occurs ONLY at the tail, and the scan excludes the tail.
-  The midday handoff cited «rabbi rabbi» as a TEXT-EXPLAINED example — it was not;
-  that verse was in the ear queue.
-  ⚠ **The naive fix is wrong.** Starting the existing «occurs anywhere earlier»
-  rule at n=1 excuses any verse ending in «the». **A false TEXT-EXPLAINED discards
-  a real defect**, so the rule is LOCAL and CONTENTFUL (`local_tail_double`):
-  adjacent doubling of the last n words, or `X <thin joiner> X`, contentful words
-  only. ✅ `--validate` now runs **8** controls including two negatives.
-  ▶ Re-triage moved **14 of 69** rescreen verses, 13 EAR -> TEXT-EXPLAINED; the
-  ear queue went 35 -> 24. Full-corpus sweep: 54 newly caught of 31,102 (0.17 %).
-  Write-up: `research/_evidence/qa_text_explained_singleword_bug_2026-09-06.md`.
-- ⛔ **`qa_asr_clips.py` TRUNCATED SILENTLY.** Its `--limit` default of 12 kept 12
-  of the **169** verses the full sweep log selects, with no warning — an ear set
-  built from it would have covered 7 % of the scope and looked complete. Now it
-  warns whenever it truncates, `--limit 0` means all, and a `--queue` that yields
-  nothing **exits non-zero**. It also takes a plain `book chapter vN` queue and
-  prints each verse's PRINTED TEXT (a gate FAIL carries no «appended words» claim).
-
-⛔ **AND THE AUTHORITY IS THE TEE'D LOG, NEVER THE TASK OUTPUT.** A repair run was
-launched through `| tail -60`; the visible output showed **2** failures and the
-real log had **4**. Caught only because the summary line disagreed. The «do not
-pipe through `tail`» rule is elsewhere in this file and was broken anyway.
-
-## ⛔ DO NOT USE HAIKU FOR THE Þorláksbiblía TRANSCRIPTION — measured 2026-09-04
-
-Controlled test at the owner's request: Haiku and Sonnet read the SAME two
-sheets (`2timothy_v3` p199 sheets 1-2, 2 Tim 4:7-22) under the same brief.
-Sonnet's output is the one the corpus already accepted (2 Timothy audits 83/83).
-
-| | Sonnet | Haiku |
-|---|---|---|
-| character similarity to Sonnet | — | **70.9 % mean, 55 % worst** |
-| verses identical | — | **0 of 16** |
-| proper nouns of 2 Tim 4 recovered | **17/17** | **10/17** |
-
-Haiku lost Crescens, Erastus, Linus, Marcum, Pudens, Titus and Tychicum;
-invented an abbreviation «DXDSSE» for DROTTIN and then REPORTED it as faithfully
-kept-as-printed; and **shifted verse boundaries** — its v14 opens with the tail
-of v13, so text is filed under the wrong verse numbers. It also self-certified
-(«current reading stable at native magnification», «no inferences from modern
-text»), none of which held. ▶ Confident, wrong, and unverifiable without a
-reference — the exact failure the kit manifest warns about: *the failure this
-guards against is not misreading, it is supplying the letter the WORD wants.*
-Evidence kept at `research/_haiku_test/`.
-
-## ✅ THE ø RE-ADJUDICATION IS VINDICATED — the packed-sheet negatives WERE wrong
-
-Measured 2026-09-06, after the packed-sheet method was disproved:
-- **p13: 0 confirmed ø under the old method -> 6 under the crop method.**
-- **p16/p17: the calibration fired** — `p16 line49 R` and `p16 line52 L`
-  («ſøgdu»), the two known false negatives, **both show the stroke**.
-▶ So «no ø on this page» from ANY pre-2026-09-06 run is worthless. The owed list
-is **p12** (its transcription agent also read ø at sheet scale — its transcription
-is sound, its ø negatives are not), p13 (done), p16-18 (in progress).
-⚠ **A re-read is not automatically a clean bill:** p13 came back at 6/82 = 7.3 %,
-still under the convention's 19-31 % (settled from the Philippians retrofit, 74
-sites, stated **per BOOK not per page**; «under 10 % is a defect, not a dialect»).
-Spot-checks confirmed both a positive and a negative on the same line, so whether
-p13 is a genuinely low page or still under-read is **OPEN**.
-⚠ Every Matthew part file still reports 0.1-1.8 % via `thorlaks_part_check.py`
-because the retrofit sites have **not been patched into the part files yet**.
-
-## ⛔⛔ AND THE RETROFIT'S RECORDS CANNOT BE APPLIED TO THE CORPUS — 2026-09-07
-
-`tools/thorlaks_o_patch.py` was built to patch confirmed ø sites into the part
-files. Report mode over Matthew's **34** crop-method sites:
-**UNIQUE 7 · AMBIGUOUS 9 · MISSING 15 · unparseable 3.** ⛔ **Nothing was
-written.** That is why the «not patched in yet» note kept surviving: there was no
-tool, and the tool now says the job cannot be done this way.
-
-**It is structural.** A record is addressed `p<page> line<NN> <L|R>`; the part
-files are indexed by VERSE and hold no line numbers, so the only handle is the
-word. `sogdu` occurs **32×** in one part file and two records point at it.
-MISSING means the adjudicator's spelling and the transcriber's disagree
-(`Kicrollð`, `thorj`, `Spamañoñu`) — a finding about one of the two readings,
-never a patch to force.
-
-- ⚠⚠ **TWO BUGS IN THE NEW TOOL, BOTH UNDER-REPORTING** — the sixth and seventh
-  such in this family. (1) It demanded a ø/ö in the record, but adjudicators
-  inconsistently write the PRINTED form (`Fodur`); a word with exactly one `o`
-  is unambiguous. Cost: 22 of 34. (2) It discarded the adjudicator's own
-  bracketed correction (`fogdu (sogdu)` — long-s read as `f`), blaming the
-  transcription for a noted slip. UNIQUE went 2 → 5 → 7.
-  ▶ **Assume a new screen is broken until a control fires** — again.
-- ⛔ **A PARTIAL PATCH IS WORSE THAN NONE.** It raises the per-file ø rate that
-  `thorlaks_part_check.py` prints, and that rate is the campaign's only signal
-  that a page was read at the wrong resolution. `--apply` therefore also demands
-  `--i-know-the-retrofit-is-partial`.
-- ▶ **THE REAL FIX IS AT SOURCE: make the adjudicator record the VERSE.** It has
-  the line image in front of it and the part files are verse-indexed, so this
-  costs nothing per site. Put it in the brief BEFORE the next page is read, or
-  every future retrofit produces the same unusable records.
-- ✅ `tools/thorlaks_o_merge.py` merges the adjudication files and **labels each
-  by METHOD**, because they are not interchangeable: CROP (validated) vs SHEET
-  (disproved). It prints which pages have crop data at all.
-  ⚠⚠ **THE SHEET METHOD ERRED IN BOTH DIRECTIONS.** Measured 2026-09-07:
-  `p17 line02 høpdu` was a sheet-method POSITIVE and the crop read shows a clean
-  open bowl — a FALSE POSITIVE. **So its positives are no more usable than its
-  negatives**, and its 47 Matthew claims are claims, not findings.
-  ⚠ Crop-method coverage as of 2026-09-07 is **p12, p13, p16, p17, p18 only**.
-  Every other Matthew page has NO trustworthy ø measurement in either direction —
-  not a low rate, no measurement.
-- ⚠ The 2026-09-06 p16/p17 pass was **sound but not exhaustive**: its verdicts
-  held 3 of 4 on re-audit, but `p16 line19 L «Kicrøllð»` was never listed as a
-  candidate at all and IS ø.
-
-## ✅ MATTHEW IS MERGED AND COMPLETE — 1071/1071, 2026-09-07
-
-`thorlaks_corpus_audit.py` reports **Matthew 28/28 chapters, 1071/1071 verses,
-OK**; `thorlaks_part_check.py --book Matthew` reports **0 problems**. Corpus
-total went 2756 -> 3827 of 31,102. ⚠ Derive both; never quote these here.
-
-Getting there took two SILENT verse-losing bugs, both found only because the
-merge grid and the per-file check disagreed:
-
-- ⛔⛔ **`thorlaks_merge_parts.py` RESET THE CHAPTER ON ANY `#` LINE**, so a
-  `### idx 14 (…)` page marker *inside* a chapter ended it. **122 of Matthew's
-  1071 verses went into the appendix.** ⚠⚠ **AND THE GRID LOOKED FINE:** it
-  printed «ch 12: 4 verses, 1-4», which reads as a legitimately short chunk
-  because the range is CONTIGUOUS — the ⚠ MISSING marker only fires on a HOLE.
-  ▶ Fixed: only a `##`-level heading ends a chapter; `###` does not.
-  ▶ **A contiguous range is not evidence of completeness.** Compare against the
-  expected verse count, which is what the corpus audit (not the merge) does.
-- ⛔ **MATTHEW 10:41-42 WERE TRANSCRIBED BUT UNREACHABLE.** They open
-  `matthew_p13-21.md`, whose first chapter heading is `## Matthew 11` — so they
-  sat under no chapter and every tool dropped them. ▶ Fixed by adding a
-  `## Matthew 10` heading there; the merge joins by (chapter, verse), so a
-  chapter living in two part files is normal.
-  ⚠ **«Transcribed in full» is not the same as «reachable».** The 2026-09-06 note
-  saying these two verses were safe in p13-21 was TRUE and they were still lost.
-- ⚠ Matthew 10:3-4 were printed INLINE inside v2's paragraph. The audit reads
-  only the FIRST numeral on a line, so it reported them missing while both sat in
-  plain sight. Split onto their own lines — a formatting fix, nothing recovered.
-
-▶ Also fixed this session, all image-verified: **Mt 1:25 and Mt 9:38** were
-merged into the preceding verse and are UNNUMBERED in the print (pinned by
-position per convention, not supplied from the KJV); **Mt 8:32 is printed
-TWICE** — a printer's error, so it is RECORDED, not corrected, and
-`_work/MATTHEW_REPAIR_LIST.md`'s instruction to drop the second numeral was
-WRONG; **Mt 4:19's «Fiskemeñ»** was a page-top tail the transcriber numbered
-(the print has no numeral there) and now ends v18. ⚠ The checker could not see
-that last one — it reads the first numeral per line, so Matthew 4 said 25/25 ok
-while scripture sat under the wrong number.
-
-## ⛔ MATTHEW idx 12 ENDS AT 10:40 — the «prep defect» is WITHDRAWN, do not re-open
-
-A transcription agent reported sheets o13/o14 blank and Matthew **10:41-42
-missing**, and recommended a re-prep. All of that is wrong, verified at native
-resolution 2026-09-06:
-- `line56` carries v40 at **21.6 % ink** — a full line.
-- `line57` holds exactly ONE word, «ſende» (v40's last word), in its first 68
-  rows, then a **424 px bottom margin merged into the crop**. That is why the
-  sheet averaged 0.83 % ink and read as blank.
-- **10:41-42 are on idx 13** and are transcribed in full in `matthew_p13-21.md`.
-▶ The false `41 [... NOT RECOVERED]` placeholder is removed. Matthew 10 in
-`matthew_p4-12.md` now reads **38/42 range 1-40**, correct for a chunk ending at
-v40; its `GAPS [3, 4]` is a **parser artifact** — vv. 3-4 are present as inline
-numerals inside v2's paragraph.
-⚠ **A tall blank block merged into a line crop makes a full sheet look empty.**
-Measure ink PER LINE, not per sheet, before calling a crop defective.
-✅ The agent's refusal to fabricate 41-42 from the KJV parallel was RIGHT. Its
-reasoning was wrong; its discipline was not — that is the trade this project wants.
-
-
-## ⚠⚠ ONE SCREEN'S OUTPUT FILE IS NOT THE REPAIR SCOPE
-
-`_work/<set>_rerender.txt` holds only the APPEND sweep. The self-repeat screen's
-hits sat in 66 per-book logs that nothing had ever merged. Measured for ylt on
-2026-09-04: APPEND 169 verses, self-repeat 214, **UNION 280 across 233
-chapters** — so a queue built from the one file was **60 % of the real scope and
-looked complete**.
-
-- ✅ **`tools/qa_verse_queue.py`** merges every screen into a plain
-  `book chapter verses` queue for `repair_verses.py`. It emits data, not
-  commands, because `<set>_rerender.txt` LOOKS like a runnable script and
-  running it is chapter `--force` — forbidden for this defect class.
-- ⛔ It **exits non-zero when a named source is read and yields nothing**, with
-  a different message for "no file matched". Both were needed: the first build
-  used `re.match` where the pattern needed `search` (the rerender lines start
-  with the interpreter path), contributed **+0 verses**, and printed a
-  believable 214-verse total.
-- ⛔ It also **refuses to build from a self-repeat log with no completion line.**
-  The Task Scheduler keepalive can start a SECOND `qa_cpu_chain` instance, which
-  goes back to the ylt job whenever sentinels are missing and RE-RUNS complete
-  books, truncating each log to in-progress. A rebuild in that window silently
-  drops the in-flight book's hits and totals up fine.
-- ⚠ **Text evidence cannot clear a hit** — it cannot tell "the ASR misheard A as
-  B" from "the TTS SPOKE B where the text has A". Established by ear on
-  0/12 v14. Queue every hit; only an ear removes one (`--exclude`).
-
-⚠ The handoff instruction to "backfill sentinels because the running chain is
-OLD code" is **obsolete**: `qa_cpu_chain.ps1` was fixed 2026-09-03 08:52, three
-hours after that instance started, and its pattern already handles both
-`^[0-9]+ verses scored,` and `^\[book .* done\]`. Any instance started since
-sentinels correctly. Backfill only what an anchored grep proves finished.
-
-
-## ⛔⛔ THE RENDER GATE — SCREEN THE FIRST 50 CHAPTERS BEFORE RENDERING 1,189
-
-**No render longer than ~100 chapters continues past its first 50 without an
-ASR screen of those 50.** Owner's instruction, 2026-09-02.
-
-    tools\.kokoro_venv\Scripts\python.exe tools\qa_asr_sweep.py --lang <set> --every 8
-    python tools\qa_asr_triage.py _work\qa_asr_<set>.log      # APPEND -> NOVEL/REPEAT/NOISE
-    tools\.chatterbox_venv\Scripts\python.exe tools\qa_asr_clips.py \
-        _work\qa_asr_<set>.log --lang <set> --out _work\<set>_earcheck.ogg   # then LISTEN
-
-▶ **WHY.** ylt rendered for ~11 days and shipped a repetition defect in roughly
-**15 % of chapters** — Chatterbox re-saying the tail of a verse
-(«putteth washing putteth washing»). The tool that finds it existed since the
-2026-08-21 pilot and had never been run across a whole set, because it took
-`--book`, rebuilt its model per call, and cost ~36 h. It was found on day 12.
-**90 minutes of CPU on the first 50 chapters would have caught it on day 1.**
-
-⚠ **THE COUNT IS NOT A CHECK.** ylt passed 1189/1189 while 1 Samuel 28 held
-141.8 s of audio for 25 verses — twelve verses silent. Size and count heuristics
-both waved it through; `zero_duration_verses.py` caught it in one run.
-
-⚠⚠ **A CHECK THAT CANNOT RUN IS NOT A CHECK THAT PASSED.** Three separate tools
-returned "no information" while printing clean-looking output on 2026-09-02:
-`offset_drift` reported `0 chapters checked` on the whole set (it counted a
-silence run ending at EOF as a boundary — now fixed), and `tail_hallucinations`
-reported `0 verses judged` because ylt has no `.w.json`. **Confirm the
-denominator is the whole corpus before believing any green result.**
-
-⚠ **VALIDATE A SCREEN AGAINST GROUND TRUTH BEFORE TRUSTING IT, AND BEFORE
-WRITING IT INTO A HANDOFF.** Two heuristics built for this defect failed:
-a duration cross-check (a doubled tail does NOT reliably lengthen a verse —
-disproved by ear on 4/4 controls) and an audio self-similarity detector
-(confirmed 1.000 vs random 0.999, no separation). `qa_asr_sweep`'s APPEND flag
-is the one that works, and only because the owner confirmed it 10/10 by ear.
-**A screen that produces false NEGATIVES is worse than no screen** — it licenses
-discarding real defects.
-
-⚠ **`qa_asr_sweep` IS ENGLISH-ONLY IN PRACTICE** — it now refuses an `.en`
-model on a non-English set, but whisper cannot read Karl XII's 1703 Swedish
-either (measured: 97.5 % of verses flagged, i.e. useless).
-
-✅ **USE `qa_selfrepeat.py` FOR NON-ENGLISH SETS.** It finds a re-spoken tail
-from ASR **self-repetition** and needs NO reference text, so the ASR does not
-have to read the language — it only has to emit the same tokens twice when the
-audio says them twice. Validated against the ten ear-confirmed ylt verses:
-**9/10 caught, 0/40 false positives.**
-
-    tools\.kokoro_venv\Scripts\python.exe tools\qa_selfrepeat.py --validate
-    tools\.kokoro_venv\Scripts\python.exe tools\qa_selfrepeat.py --lang sv --every 10
-
-⚠ It finds REPEATS only, never a novel hallucination («saying suik») — use
-`qa_asr_sweep` for those where the reference text is readable. ru/cu are
-cosyvoice3 and have never shown this defect class.
-
-▶ Deterministic checks are cheap and cover every set at once — run them after
-any render, and they need no GPU, model or ear:
-
-    tools\.chatterbox_venv\Scripts\python.exe tools\qa_all_sets.py
-
-  It reports missing audio and sidecar drift for all nine sets in ~20 minutes.
-  ⚠ It is BLIND to repeated/hallucinated audio; a clean report means "nothing
-  missing or misplaced", never "good".
+## ★★ NARRATION & RENDER QA — INDEX
+
+▶ **Full reasoning for every line below: `docs/NARRATION.md`, under
+`── MOVED OUT OF CLAUDE.md, 2026-09-07 ──`.** Each is a bug that already
+happened. **Read the matching block before touching that area** — several of
+these were re-derived from scratch by a session that trusted a summary.
+
+- ⚠⚠ **ylt HAS FIVE KNOWN DEFECT CLASSES AND VALIDATED SCREENS FOR TWO.**
+  Repeat (`qa_selfrepeat`) and novel-append (`qa_asr_sweep`) are ear-validated;
+  SUBSTITUTION has one ground-truth positive and an unvalidated screen;
+  MISPRONUNCIATION has no screen and *cannot* have a text-only one; a mid-verse
+  repeat has no instrument at all. ⛔ **Never call a set clean — only "clean on
+  what can be detected".**
+- ⛔⛔ **ASSUME A NEW SCREEN IS BROKEN UNTIL A CONTROL FIRES.** Nine instrument
+  bugs in this family since 2026-09-03 — including two caused by the fix itself,
+  so **run the control on your own change too**. Nearly all under-report —
+  which is the direction that licenses calling a set clean, or sends an ear and
+  a GPU at verses that can never pass. Build the control first.
+- ⛔ **THE TEE'D LOG IS THE AUTHORITY — never a task's exit code and never a
+  run piped through `tail`.** A repair run showed 2 failures on screen and 4 in
+  its log; a launch ending `… > log 2>&1; echo "EXIT=$?"` reported *echo's*
+  status over «107 STILL FAILING».
+- ⚠ **A CHECK THAT CANNOT RUN IS NOT A CHECK THAT PASSED.** Confirm the
+  DENOMINATOR is the whole corpus before believing any green result.
+- ★ **REPAIR BY THE VERSE** — `tools/repair_verses.py --set <KEY> --queue …`.
+  ⛔ `narrate.py --force` on a chapter is for the TRUNCATION class only.
+  ⚠ Its summary counts CHAPTERS, and a chapter counted FAILED has still been
+  rewritten — «failed» never means «untouched».
+- ⛔⛔ **A GATE FLAG THE PRINTED TEXT EXPLAINS CAN NEVER PASS A REDRAW, AND A
+  REDRAW CAN MAKE THE VERSE WORSE.** Check `qa_text_explained.py` before
+  queueing draws. It is not only wasted GPU: when the gate cannot separate the
+  draws it falls back to attempt 1, so **a correct take can be discarded in
+  favour of a defective one.** ylt Genesis 13:14 lost a correct draw twice this
+  way and shipped «westward and westward» for two days.
+  ✅ FIXED 2026-09-07: `repair_verses.py` now KEEPS THE EXISTING TAKE on a
+  genuine tie, records a `synth_sha` of the synthesis input so a real input
+  change is still installed, and `--install-tied` takes a VERSE LIST.
+  ▶ Audit the whole history for free: `tools/qa_discarded_draws.py --set <KEY>`.
+  ⚠ A verse can be gate-flagged for a text-explained reason AND carry a real
+  defect the gate cannot see — «text-explained» never means «that verse is fine».
+- ⚠⚠ **NEVER DELETE `narration/<set>_qa_fail_originals/`** — it is the project's
+  only copy of the validation ground truth, not merely an audio backup. The
+  repair overwrites the live tree, so validators read the originals.
+- ⚠ **BEFORE ANY RENDER: `render_preflight.py check --lang <set>`**; the hook
+  refuses `narrate.py --lang …` without a stamp < 6 h old. Starting a GPU job
+  stays the owner's call, per job.
+- ⚠⚠ **KEEPALIVE-MANAGED JOBS CANNOT BE STOPPED BY KILLING THEM** — create
+  `narration/logs/PAUSE_<job>` FIRST, then kill. Task Scheduler re-arms in
+  seconds.
+- ⚠ **ONE SCREEN'S OUTPUT FILE IS NOT THE REPAIR SCOPE** — merge every screen
+  with `tools/qa_verse_queue.py`. A queue built from `<set>_rerender.txt` alone
+  was 60 % of the real scope and looked complete.
+- ⚠ **THE DETECTOR IS WHISPER, NOT KOKORO** (faster-whisper lives in
+  `tools/.kokoro_venv` — venv name only). `qa_asr_sweep` is English-only in
+  practice; use `qa_selfrepeat` for sv/wyc/cu.
+- ⛔ **THE PRONUNCIATION LEXICON IS OWNER-GATED AND MOSTLY UNVALIDATED.**
+  `prophesy -> prophesigh` is the ONLY row cleared to the real-verse standard.
+  `Eelighsha` was wired in **over a stated objection** — good in one verse,
+  ear-rejected in two; ⛔ do not re-litigate it and do not guess a fourth
+  spelling. ✅ `Elijah` is pronounced CORRECTLY (checked) — never add it.
+  ⛔ Do not start a lexicon re-render without him. **Derive scope:**
+  `pronounce_lexicon.py --scope` — a `validated_by` stamp is NOT a standard.
+- ⛔ **NO LONG RENDER PASSES ITS FIRST 50 CHAPTERS WITHOUT AN ASR SCREEN OF
+  THOSE 50** (owner, 2026-09-02). ylt shipped a defect in ~15 % of chapters
+  after 11 days; 90 minutes of CPU on day 1 would have caught it.
+
+## ★★ TRANSCRIPTION (Þorláksbiblía / Karl XII) — INDEX
+
+▶ **Full records: `docs/TRANSCRIPTION.md`, under
+`── MOVED OUT OF CLAUDE.md, 2026-09-07 ──`.** Conventions live in
+`research/THORLAKS_CONVENTIONS.md`, which `thorlaks_chunk_kit.py` pastes
+verbatim into every kit — **so a rule put THERE reaches every future chunk.**
+
+- ⛔⛔ **DO NOT USE HAIKU FOR THIS TRANSCRIPTION** — measured head-to-head
+  2026-09-04: 70.9 % character similarity to Sonnet, 0 of 16 verses identical,
+  10/17 proper nouns recovered, invented an abbreviation and **shifted verse
+  boundaries**, then self-certified. Sonnet only, fan-out 2-3.
+- ⛔⛔ **DECIDING ø FROM A PACKED SHEET IS DISPROVED IN BOTH DIRECTIONS** — it
+  produced false negatives AND a false positive. ø is read on half-width crops
+  at native 8.3x, or it is not read. ⚠ **A page with no crop-method data has NO
+  ø measurement — not a low rate.**
+- ⚠ **AN AGENT'S ø RATE IS NOT THE CONVENTION'S ø RATE** (19-31 %, per BOOK).
+  The convention counts EVERY letter o (~121/page); an adjudicator examines
+  only the positions it selects (~30 %). Always ask for the page's total
+  o-count beside the number examined.
+- ⛔⛔ **MATTHEW'S ø RETROFIT IS STRANDED AND UNPATCHABLE** — records addressed
+  `p<page> line<NN> <L|R>` cannot be located in verse-indexed part files
+  (34 sites, 7 locatable). ✅ The fix at source is in the conventions now: every
+  site must carry its VERSE. ⚠ A PARTIAL patch is worse than none — it raises
+  the per-file ø rate that is the campaign's only signal of a bad-resolution read.
+- ⚠⚠ **A CONTIGUOUS VERSE RANGE IS NOT EVIDENCE OF COMPLETENESS** — compare
+  against the expected count. A `###` page marker once ended a chapter and put
+  **122 Matthew verses in an appendix** while the grid read as a short chunk;
+  two verses were transcribed in full and unreachable under no chapter heading.
+  ▶ **«Transcribed» is not «reachable».** Run BOTH `thorlaks_corpus_audit.py`
+  and `thorlaks_part_check.py`; a defect shows only when they disagree.
+- ⛔⛔ **CYRILLIC HOMOGLYPHS ARE INVISIBLE CORRUPTION** — transcribers emit
+  `о д а е с т` inside Latin words. `thorlaks_part_check.py` detects them and
+  REFUSES to repair. ▶ Substitution is by the letter's **PHONETIC** value
+  (`р`=r never p, `с`=s never c) — a visual map turned `Vppriса` into a
+  non-word. ⚠ β is NOT this defect (it is the `ꝑ` sort) — do not sweep it up.
+- ⚠ **RUN `thorlaks_crop_widths.py` ON A KIT BEFORE READING A PAGE OF IT.**
+  Truncated preps slice glyphs mid-stroke and every judgement on them is void.
+  ⚠ It has a ~73 % false-positive rate and says SUSPECT, never TRUNCATED — an
+  eye adjudicates. Cure is `prep_chunk.py --robust-block`, **per page**.
+  ⚠ Fixing line crops does NOT fix the packed sheets; rebuild those too.
+- ⚠ **A tall blank block merged into a line crop makes a full sheet look
+  empty.** Measure ink PER LINE before calling a crop defective.
+- ⛔ **A PRINTED COUNT THAT DISAGREES WITH THE KJV IS A FINDING, NOT AN ERROR
+  TO CORRECT.** Printer's duplicates and unnumbered verses are RECORDED
+  (pinned by position), never supplied from a parallel.
 
 ## Data pipelines (tools/)
 

@@ -85,17 +85,34 @@ def gate_screens():
     PRINTED TEXT explains are expected and are not a defect."""
     if not VENV.exists():
         return None, "chatterbox venv missing"
+    # ⛔⛔ DO NOT REINSTATE A BARE `if r.returncode != 0: return None`.
+    # `qa_rescreen_repairs.py` ends with `return 1 if hits else 0`, so exit 1
+    # is its DOCUMENTED "I ran correctly and found still-failing verses" —
+    # not a crash. Treating it as ERROR threw away the result of a 79-minute
+    # ASR pass three times on 2026-09-07 and reported «no information» over a
+    # screen that had in fact completed.
+    # ▶ The SUMMARY line is the evidence that the tool ran. Parse first, and
+    #   judge the exit code only when the summary is absent.
+    log = DATA / "narration" / "logs" / "ylt_screens_last.log"
     r = _run([str(VENV), str(REPO / "tools" / "qa_rescreen_repairs.py"),
               "--set", "ylt"], cwd=str(DATA))
-    if r.returncode != 0:
-        return None, f"qa_rescreen_repairs exited {r.returncode} - a failed check is NOT a pass"
-    out = r.stdout or ""
-    m = re.search(r"SUMMARY\s+(\d+) repaired verse\(s\) re-judged, (\d+) STILL FAILING", out)
+    out = (r.stdout or "") + (r.stderr or "")
+    try:                       # persist it — an hour-long pass must survive
+        log.parent.mkdir(parents=True, exist_ok=True)
+        log.write_text(out, encoding="utf-8", errors="replace")
+    except OSError:
+        pass
+    m = re.search(r"SUMMARY\s+(\d+) repaired verse\(s\) re-judged, "
+                  r"(\d+) STILL FAILING", out)
     if not m:
-        return None, "could not parse the screen summary - REFUSING to guess"
+        return None, (f"qa_rescreen_repairs exited {r.returncode} and printed "
+                      f"no parseable SUMMARY - REFUSING to guess (see {log})")
+    if r.returncode not in (0, 1):
+        return None, (f"qa_rescreen_repairs exited {r.returncode}, which is "
+                      f"neither of its documented codes - REFUSING to guess")
     appends = len(re.findall(r"append:", out))
     return appends == 0, (f"{m.group(1)} verses re-judged, {m.group(2)} flagged, "
-                          f"{appends} of them append-class")
+                          f"{appends} of them append-class  [log: {log.name}]")
 
 
 def gate_upload():

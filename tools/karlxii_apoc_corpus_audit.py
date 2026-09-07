@@ -112,6 +112,29 @@ NOT_IN_PRINT = {
     82: "Laodiceans — not in the Lutheran apocrypha of this print",
 }
 
+# CHAPTERS of a present book that this print does not set. Same rule as
+# NOT_IN_PRINT and the same discipline as KNOWN_DIVERGENCE: an entry means the
+# page was READ and the chapter is not there, never "the numbers disagreed".
+# ⚠ These are REPORTED in their own block, not silenced — a later reader must
+# be able to tell "verified absent from this edition" from "nobody looked".
+# (book index, chapter) -> note
+CHAPTER_NOT_IN_PRINT = {
+    # Additions to Esther (slot 78). KJV ch1-9 are single-verse EMPTY
+    # placeholders in en_kjv.json (verified: each holds one verse whose text is
+    # "…"), marking where the Additions interleave with canonical Esther. They
+    # have no counterpart in ANY print, so an absence here is correct.
+    **{(78, c): "KJV grid ch%d is a single-verse EMPTY placeholder in "
+                "en_kjv.json (text is «…»), not text any print can carry "
+                "— karlxii_esther_additions.md" % c for c in range(1, 10)},
+    # ch12 is REAL text in the KJV (6 verses, Mordecai and the two eunuchs) and
+    # is genuinely not printed in this edition — verified by zoom on p742_R2:
+    # the print runs straight from the dream at ch11 v12 to the interpretation
+    # at ch10 v4. ⚠ This one is an edition fact, not a grid artifact.
+    (78, 12): "6 real KJV verses, but this edition does NOT print them "
+              "anywhere — verified by zoom on p742_R2, the print runs from "
+              "ch11 v12 straight to ch10 v4 — karlxii_esther_additions.md",
+}
+
 # Units the PRINT sets as one continuously-numbered sequence, which therefore
 # cannot be checked against per-book KJV counts. They are counted and reported,
 # never pass/failed, and they stay flagged until a curated split map exists.
@@ -159,6 +182,21 @@ KNOWN_DIVERGENCE = {
     (74, 1): (14, "en_kjv.json holds the whole prayer as ONE verse; this print "
                   "versifies it into 14. Same prayer, a versification "
                   "difference — karlxii_daniel_additions.md", range(1, 15)),
+    # Additions to Esther (slot 78), the two chapters the print DOES set but
+    # numbers against the Vulgate rather than the KJV.
+    (78, 10): (10, "KJV 10:1-3 are EMPTY placeholder verses in en_kjv.json; "
+                   "the print numbers this piece 4-13, exactly the KJV "
+                   "numbering for the text that actually exists "
+                   "— karlxii_esther_additions.md", range(4, 14)),
+    # ⚠ 16 verses, the grid's own count, but the numeral 14 IS NOT PRINTED:
+    # the column runs «13.» then «15.». So a naive check reports "missing
+    # 1-3, 14" and "beyond count 17-20" — four gaps and four extras that do
+    # not exist. Numerals are 4-13 then 15-20.
+    (78, 15): (16, "print numbers this piece 4-13 then 15-20: the numeral 14 "
+                   "is NOT printed (the column runs «13.» then «15.»), and "
+                   "KJV 15:1-3 have no counterpart here. 16 verses, the "
+                   "grid's own count — karlxii_esther_additions.md",
+               list(range(4, 14)) + list(range(15, 21))),
 }
 
 
@@ -210,6 +248,7 @@ def main():
     # copy per chapter, or the fragment manufactures a phantom "short".
     best, sources, all_units, unknown_books = {}, {}, {}, set()
     pinned_notes = []
+    chapter_absences = []
     mute = []
     files = 0
     for path in sorted(glob.glob(str(RESEARCH / "karlxii_*.md"))):
@@ -307,6 +346,22 @@ def main():
         grand += tot
         grand_exp += want
         missing = [c for c in range(1, len(exp) + 1) if c not in have]
+        # A chapter verified absent from this edition is not a gap. It is
+        # moved into its own REPORTED block, never dropped silently.
+        absent_ok = [c for c in missing if (b, c) in CHAPTER_NOT_IN_PRINT]
+        for c in absent_ok:
+            chapter_absences.append(
+                f"{booknames[b]} {c}: {CHAPTER_NOT_IN_PRINT[(b, c)]}")
+        missing = [c for c in missing if c not in absent_ok]
+        # ⛔ And the converse: text filed into a chapter recorded as absent is
+        # a contradiction that must shout, exactly as NOT_IN_PRINT does.
+        for c in have:
+            if (b, c) in CHAPTER_NOT_IN_PRINT:
+                problems.append(
+                    f"{booknames[b]} {c}: verses were transcribed into a "
+                    f"chapter recorded as NOT SET BY THIS PRINT — "
+                    f"{CHAPTER_NOT_IN_PRINT[(b, c)]}. Either the record is "
+                    f"wrong or the chunk filed it under the wrong chapter.")
         bad = []
         for c in have:
             verses = best[(b, c)]
@@ -396,6 +451,14 @@ def main():
         print("\nRECORDED EDITION DIFFERENCES (pinned with page evidence, "
               "not gaps):")
         for n in pinned_notes:
+            print("  · " + n)
+
+    if chapter_absences:
+        # Same contract as the block above: verified absent, therefore
+        # reported rather than counted as a gap — and never merely omitted.
+        print("\nCHAPTERS VERIFIED ABSENT FROM THIS PRINT (recorded, "
+              "not gaps):")
+        for n in chapter_absences:
             print("  · " + n)
 
     if notes:

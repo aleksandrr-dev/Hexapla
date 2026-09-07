@@ -51,12 +51,43 @@ OVERRIDES = {
     # ⛔ The gate flags EVERY take of this verse `repeat:k2`, correct ones
     #    included — «eastward»/«westward» score alike. It cannot adjudicate
     #    this verse; only an ear can.
+    # ⛔⛔ SUPERSEDED 2026-09-07 — THE 09-05 ROW DID NOT HOLD.
+    #   The row above was the printed text with the trailing ';' -> '.', and it
+    #   was ear-confirmed on ONE DRAW. Re-tested 2026-09-07 with fresh draws:
+    #   that exact string rendered «westward and westward» AGAIN.
+    # ⚠⚠ THE 09-05 EVIDENCE WAS «one draw each» — its own note says so. One
+    #   clean draw does not clear an input for a defect that is stochastic in
+    #   its EXPRESSION even when systematic in its cause; it is the `Eelighsha`
+    #   mistake in a different costume. ▶ THAT is why CLAUDE.md kept recording
+    #   this verse as unfixed while an ear-confirmed override sat right here:
+    #   the override was real, and it did not work.
+    # ▶ 2026-09-07, 8 variants, PUNCTUATION ONLY. The defect reproduced in
+    #   7 of 8 — so it is repeatable on demand, and this verse is now the
+    #   project's only VALIDATABLE fixture for the substitution class.
+    #   ⛔ A semicolon after «eastward» FAILED. A semicolon before it FAILED.
+    #      An em-dash FAILED. A trailing full stop (the old row) FAILED.
+    #      Only a MID-VERSE FULL STOP after «eastward» produced «eastward».
+    # ★★ EAR-CONFIRMED TWICE, 2026-09-07 — and the second one is the stronger:
+    #    (1) on the variant take: «take 7 is good»;
+    #    (2) on the SHIPPED AUDIO after the repair, sliced out of
+    #        narration/ylt/0/12.ogg: «audio is correct, eastward, and westward».
+    # ▶ THE DISTINCTION MATTERS HERE MORE THAN ANYWHERE. The row this one
+    #   replaced was cleared on a test render and the SHIPPED verse stayed
+    #   defective for two days, because the repair discarded the correct draw.
+    #   A clearance on a variant clip says the INPUT is right; only a clearance
+    #   on the shipped file says the SET is right.
+    #   Evidence: research/_evidence/gen13_14_substitution_reproduced_2026-09-07.md
+    #   Clip: _work/EAR_variants_ylt_0_12_v14.ogg (take 7).
+    # ⚠ It KEEPS the trailing ';' — that is what he heard, and a fourth string
+    #   nobody has listened to is a guess. Do not "tidy" it into a full stop.
     ("ylt", 0, 12, 14): (
         "And Jehovah said unto Abram, after Lot's being parted from him, "
         "`Lift up, I pray thee, thine eyes, and look from the place where thou "
-        "art, northward, and southward, and eastward, and westward.",
-        "trailing ';' preceded a substitution of «westward» for «eastward»",
-        "owner ear 2026-09-05"),
+        "art, northward, and southward, and eastward. And westward;",
+        "a MID-VERSE full stop after «eastward» is the only input of 8 that "
+        "stopped the substitution of «westward» for «eastward»; the 2026-09-05 "
+        "trailing-full-stop row was re-tested and FAILED",
+        "owner ear 2026-09-07"),
     # ★ EAR-CONFIRMED 2026-09-05 (owner): "2 and 3 pass" — take 2 is this row.
     # THE THIRD INSTANCE OF THE TRAILING-SEMICOLON FAULT, and the first found by
     # PREDICTION rather than by exhausting draws. The owner heard a real "sh"

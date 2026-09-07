@@ -50,6 +50,7 @@ alignment's `verses ok N` line is REQUIRED and its absence is a reported
 failure. Re-run the screen that condemned the verse afterwards regardless.
 """
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -218,7 +219,8 @@ def align(set_key, b, c):
     return int(m.group(1)) > 0, f"verses ok {m.group(1)} null {m.group(2)}"
 
 
-def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root):
+def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
+                   install_tied=()):
     scfg = SETS[set_key]
     live = NARRATION / scfg["dir"] / str(b)
     backup = NARRATION / f"{scfg['dir']}_qa_fail_originals" / str(b)
@@ -269,6 +271,19 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root):
                   f"{verses[v - 1][:60]!r}")
         return True, f"plan: {len(targets)} verse(s), backup {'exists' if src_ogg.exists() else 'will be made'}"
 
+    # Prior synthesis-input hashes, so an input CHANGE can be detected without
+    # a flag. Absent in records written before 2026-09-07 -> None -> no claim.
+    prior_shas = {}
+    _qa_live = live / f"{c}.qa.json"
+    if _qa_live.exists():
+        try:
+            for _r in (json.loads(_qa_live.read_text(encoding="utf-8"))
+                       .get("repairs") or []):
+                if _r.get("synth_sha"):
+                    prior_shas[_r.get("verse")] = _r["synth_sha"]
+        except (OSError, ValueError):
+            pass                      # unreadable history is NO information
+
     repairs = []
     for v in targets:
         old = parts[pidx + v - 1]
@@ -283,17 +298,71 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root):
         cur = speech_rms(new, SR)
         if cur > 1e-6:
             new = np.clip(new * (speech_rms(old, SR) / cur), -1.0, 1.0)
-        parts[pidx + v - 1] = new
         reasons = (info or {}).get("reasons", [])
+        atts = (info or {}).get("attempts") or []
+
+        # ⛔⛔ DO NOT INSTALL AN ARBITRARY TAKE — owner's instruction 2026-09-07.
+        # When NO draw passed and every draw carries the SAME reason set, the
+        # gate cannot tell them apart, so `synthesize_verse_gated` falls back to
+        # attempt 1 by tie-break. That choice is a coin toss, and a coin toss
+        # against SHIPPED AUDIO is a one-way bet: it can only make things worse.
+        # ▶ MEASURED: ylt Genesis 13:14 (0/12 v14), 2026-09-05T20:20. Three
+        #   draws, all gated `repeat:k2`; attempt 3 said «and eastward and
+        #   westward» (CORRECT) and attempt 1 said «and westward and westward».
+        #   Attempt 1 was kept. The run BEFORE it had already produced a correct
+        #   take, and this one overwrote it. «eastward» and «westward» are
+        #   equally good repeats of the «-ward» pattern, so the gate scored them
+        #   identically — it was blind to the only thing that mattered.
+        # ⚠ This is NARROW on purpose. If the draws differ in their reason sets
+        #   the gate DID discriminate and the best take is a justified choice,
+        #   so it is installed as before. Only a genuine tie is refused.
+        sigs = {tuple(sorted(x.get("reasons") or [])) for x in atts
+                if "synthesis-failed" not in (x.get("reasons") or [])}
+        tails = {(x.get("tail") or "").strip() for x in atts if x.get("tail")}
+        gate_blind = (len(atts) >= 2 and len(sigs) == 1
+                      and next(iter(sigs), ()) and bool(reasons))
+        # ⚠ The tie-rule protects the SHIPPED take on the assumption that it was
+        # made from the SAME synthesis string. When an override or a lexicon row
+        # changed that string, the old take is not a comparable alternative and
+        # protecting it would freeze the defect the change was made to fix.
+        # ▶ The hash below is recorded so a FUTURE run can detect this on its
+        #   own; records written before 2026-09-07 carry no hash, so the
+        #   transition needs --install-tied once.
+        synth_sha = hashlib.sha1(verses[v - 1].encode("utf-8")).hexdigest()[:12]
+        prior_sha = prior_shas.get(v)
+        input_changed = prior_sha is not None and prior_sha != synth_sha
+        if gate_blind and (v in install_tied or input_changed):
+            why = (f"--install-tied named v{v}" if v in install_tied else
+                   f"the synthesis input CHANGED ({prior_sha} -> {synth_sha})")
+            print(f"    v{v:<4} installing a tied take because {why}", flush=True)
+            gate_blind = False
+        if gate_blind:
+            kept_old = True
+            print(f"    v{v:<4} {len(old)/SR*1000:6.0f} ms  KEPT EXISTING TAKE — "
+                  f"{len(atts)} draws all gated {'|'.join(reasons)}, so the gate "
+                  f"could not choose between them"
+                  + (f"; {len(tails)} DISTINCT tails were produced — an ear may "
+                     f"want this verse" if len(tails) > 1 else ""), flush=True)
+        else:
+            kept_old = False
+            parts[pidx + v - 1] = new
+
         repairs.append({"verse": v, "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
                         "old_ms": round(len(old) / SR * 1000),
-                        "new_ms": round(len(new) / SR * 1000),
-                        "attempts": (info or {}).get("attempts"),
+                        "new_ms": round(len(old if kept_old else new) / SR * 1000),
+                        "attempts": atts,
                         "kept": (info or {}).get("kept"),
+                        # ⚠ Explicit, so a later reader never has to infer it.
+                        "kept_existing_take": kept_old,
+                        "synth_sha": synth_sha,
+                        "gate_could_not_discriminate": bool(gate_blind),
+                        "distinct_tails": sorted(tails) if gate_blind else None,
                         "still_failing": reasons, "secs": round(time.time() - t0)})
-        print(f"    v{v:<4} {len(old)/SR*1000:6.0f} -> {len(new)/SR*1000:6.0f} ms  "
-              f"attempts {len((info or {}).get('attempts') or [])}  "
-              f"{'STILL FAILING ' + '|'.join(reasons) if reasons else 'clean'}", flush=True)
+        if not kept_old:
+            print(f"    v{v:<4} {len(old)/SR*1000:6.0f} -> {len(new)/SR*1000:6.0f} ms  "
+                  f"attempts {len(atts)}  "
+                  f"{'STILL FAILING ' + '|'.join(reasons) if reasons else 'clean'}",
+                  flush=True)
 
     gap = np.zeros(int(SR * GAP_MS / 1000), dtype="float32")
     out, new_offsets, pos = [], [], 0
@@ -351,9 +420,26 @@ def main():
     ap.add_argument("--apply", action="store_true", help="write (default is a dry-run plan)")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--force", action="store_true", help="redo chapters already repaired")
+    # ⚠⚠ USE THIS ONLY WHEN THE SYNTHESIS INPUT ITSELF CHANGED — a new
+    #    synthesis_overrides row or a new lexicon respelling for this verse.
+    #    In that case the shipped take was made from a DIFFERENT string, so it
+    #    is not a comparable alternative and the tie-rule must not protect it.
+    # ⛔ It is NOT a way to get past a verse that keeps failing. Redrawing an
+    #    unchanged input on a tie is exactly the coin toss this tool now
+    #    refuses; forcing it re-opens the Genesis 13:14 bug by hand.
+    # ⚠ A VERSE LIST, not a boolean. The union-queue rule forces a repair run to
+    #   name every verse in the chapter that carries a prior repair, so a global
+    #   flag would strip the tie-protection from verses it was never meant for.
+    ap.add_argument("--install-tied", default="",
+                    help="comma list of verses (1-based) that may install a "
+                         "tied take. ONLY verses whose synthesis input changed.")
     ap.add_argument("--allow-gpu-contention", action="store_true")
     a = ap.parse_args()
 
+    tied_verses = {int(x) for x in a.install_tied.split(",") if x.strip()}
+    if tied_verses:
+        print(f"⚠ --install-tied: verses {sorted(tied_verses)} may install a "
+              f"tied take. Every OTHER verse keeps its existing take on a tie.")
     if a.queue:
         queue = read_queue(a.queue)
     elif a.book is not None and a.chapter is not None and a.verses:
@@ -392,7 +478,8 @@ def main():
                     continue
             print(f"{b}/{c}: v{targets}", flush=True)
             try:
-                good, msg = repair_chapter(a.set, lang, books, b, c, targets, a.apply, tmp_root)
+                good, msg = repair_chapter(a.set, lang, books, b, c, targets, a.apply,
+                                           tmp_root, install_tied=tied_verses)
             except Exception as e:
                 good, msg = False, f"{type(e).__name__}: {e}"
             print(f"    -> {'OK' if good else 'FAIL'}: {msg}", flush=True)

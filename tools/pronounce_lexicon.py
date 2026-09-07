@@ -168,13 +168,13 @@ LEXICON = {
     # ⛔⛔ THE LOOK-ALIKES ARE THE `canaan`/`Canaanite` TRAP, AND ONE IS A
     #   DIFFERENT PERSON. A whole-word key excludes all of them, which is why
     #   this row is whole-word and must stay so:
-    #     · `Naamite`     (Numbers 26:40) — a DERIVED form; needs its own ear.
-    #       ⚠ STILL UNRULED as of 2026-09-07. It was deliberately left AS
-    #       PRINTED in the Numbers 26:40 spot-check clip so it could be heard
-    #       in the same breath, and the owner's «4 works» spoke to `Naaman`
-    #       only — he was not asked to, and did not, rule on `Naamite`.
-    #       ⛔ Silence is not a pass: `canaan` needed FOUR separate verdicts
-    #       for its four forms. Ask before assuming this one is fine.
+    #     · `Naamite`  (Numbers 26:40) — ✅✅ **CHECKED AND CORRECT AS PRINTED.**
+    #       Owner's ear, 2026-09-07, on take 4 of the Numbers 26:40 spot-check
+    #       (where it sits UNTOUCHED beside the respelled `Naymen`):
+    #       «4th Naamite is correct». ⛔ IT MUST NEVER ENTER THIS LEXICON.
+    #       ▶ This is the `Elijah` result repeated: a derived form ASSUMED to
+    #         share its root's defect, CHECKED, and found sound. The whole-word
+    #         key already excluded it; now there is a verdict saying it should.
     #     · `Naamathite`  (Job x4) — Zophar. A DIFFERENT NAME. Never sweep it in.
     #     · `Naamah`, `Naarah` — different names again.
     "naaman":       ("Naymen",       "heard «Nah min» (broad a); the Kaynen "

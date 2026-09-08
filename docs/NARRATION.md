@@ -172,6 +172,35 @@ and hammer archive.org exactly when it is least reachable.
 
 ---
 
+## ⛔⛔ A ONE-DRAW EAR TEST DISTINGUISHES NOTHING (2026-09-08)
+
+`synthesis_variant_test.py` renders ONE take per DIFFERENT string. So when a
+variant sounds right it cannot tell you WHY, and the two explanations demand
+opposite actions:
+
+* the input change fixed it -> record it, it helps every carrier verse
+* that draw came out well    -> record NOTHING, there is no fix here
+
+Measured on tyn: the owner picked the «trailing space + stop» take for `seeth`
+in Genesis 44:31 — a full stop appended **28 words after** the word it was
+supposed to fix. Redrawing settled it: plain **0/4**, trailing-stop **0/4**.
+The punctuation lever was imaginary. Then three draws of each respelling came
+out right EVERY time — the same candidates a single draw had rejected.
+
+▶ **`tools/redraw_test.py` is the missing counterpart.** It renders the SAME
+string N times and never writes into `narration/`. Before believing a variant:
+
+1. redraw the **baseline** — if it is ever right, the variant proved nothing;
+2. redraw the **winner** — if it is only sometimes right, do not wire it.
+
+⚠ **THE ASR TARGET IS THE ORIGINAL WORD, NEVER THE RESPELLING.** ASR
+transcribes what it HEARS, so a correct rendering of `seeith` returns «seeth»;
+targeting the respelling scores 0/N whatever happens — a screen that cannot
+fire. Targeting the original makes a MISS meaningful, and that is the only
+reason `siyeth` was caught failing 0/3 where its siblings passed 3/3.
+⛔ **Ear-passed is not word-safe** — the ear judges the SOUND, only the
+transcript catches a changed WORD (`fliyeth` -> «flyeth»).
+
 ## ★ ENGLISH PRONUNCIATION POLICY (owner, 2026-08-16)
 
 **The audio should match the text on the screen.** Where the app ships archaic

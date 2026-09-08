@@ -56,6 +56,17 @@ audit script, every time.
   spot-check — II Kings 5:25 contains *Elisha* but not *Naaman*.
   ▶ `research/_evidence/ylt_ear_review_2026-09-07.md`.
 
+- **tyn's double-e is cleared: `seeth` -> `seeith`, `fleeth` -> `fleeyeth`**
+  (owner ear, 2026-09-08, on three draws each of Genesis 44:31 and
+  Deuteronomy 19:11). ⚠ tyn is chatterbox and fed TEXT, so wbt's kokoro G2P
+  evidence never applied to it.
+  ⛔ **`siyeth` is NOT to be revived**: the owner's ear passed it, but it failed
+  the ASR word-presence check 0/3 where `seeith` and `seeyeth` passed 3/3 —
+  the `fliyeth` signature. Ear-passed is not word-safe.
+  ⛔ **Punctuation is REFUTED as a lever for this defect** — plain 0/4 and
+  trailing-stop 0/4. Do not re-propose a trailing stop.
+  ▶ `research/_evidence/tyn_seeth_punctuation_refuted_2026-09-08.md`.
+
 ## archive.org uploads
 
 - **A long-running derive on an item does NOT block uploads to it** — the

@@ -148,6 +148,28 @@ the access-key form ("exceeds rationed amount") and died on the bucket form
 after the queue had drained. `upload_when_clear.py` now matches both plus the
 shared "Please reduce your request rate" prefix.
 
+**A LONG-RUNNING DERIVE ON THE ITEM IS NOT WHAT BLOCKS AN UPLOAD — THE ACCOUNT
+TASK RATION IS.** Proved by probe 2026-09-07: a 116-hour `derive.php` on the
+ylt item (task 5601127710, `wait_admin=1`) was in flight and a single-file
+upload to that same item SUCCEEDED. The refusal
+(`bucket_tasks_queued exceeds rationed amount`) is account-wide: it counts
+every task under the account catalog against a ration of 150, so an unrelated
+set's backlog stalls this one. ⛔ Do not mail archive.org about a stuck derive
+on this evidence, and do not re-probe — the question is settled.
+▶ **The consequence for practice:** retrying an upload while the ration is
+exceeded collects more refusals and lengthens the very queue being waited on.
+
+**⛔ DO NOT BABYSIT A RATIONED UPLOAD BY HAND — `tools/ia_upload_watch.py`.**
+It polls the account catalog every 10 min, resumes the set's upload only once
+the catalog drops below 100, and decides completion by RE-READING THE LIVE
+ITEM, never by a child process's exit code. Its `account_tasks()` returns
+**-1** on a failed read, never 0, because a 0 would read as «queue empty, go»
+and hammer archive.org exactly when it is least reachable.
+- check state without acting: `ia_upload_watch.py --set <KEY> --check-only`
+- stop it without a kill: `touch narration/logs/PAUSE_ia_upload_watch`
+- ⚠ It is bounded at 288 cycles (48 h). Exiting on the bound is the WATCHER's
+  limit, not an upload failure — re-run it.
+
 ---
 
 ## ★ ENGLISH PRONUNCIATION POLICY (owner, 2026-08-16)

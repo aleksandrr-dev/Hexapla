@@ -75,6 +75,7 @@ current one**, exactly as the handoff skill says of figures.
 | the Þorláksbiblía ø retrofit, Matthew's completion, the Haiku test | `docs/TRANSCRIPTION.md` — the full text behind the ★★ TRANSCRIPTION index |
 | what shipped when, and why a behaviour changed | `docs/RELEASE_HISTORY.md` |
 | why a UI/service/widget bug must not be reintroduced | `docs/ARCHITECTURE.md` |
+| whether a question is already CLOSED (and where its evidence is) | `docs/SETTLED.md` — the decisions ledger. ⚠ It closes QUESTIONS; it is never a count to quote |
 | store listing texts, screenshot order, RuStore/Play upload procedure | `store-assets/STORE_LISTING.md` |
 | the KJV re-render in the owner's voice | `tools/KJV_VOICE_RUNBOOK.md` |
 | transcribing a Karl XII strip | `research/KXII_AGENT_BRIEF.md` — read it BEFORE touching a strip |

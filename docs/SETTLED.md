@@ -42,6 +42,20 @@ audit script, every time.
   owner's call. ⛔ Do not re-litigate it and do not guess a further spelling.
   ▶ `docs/NARRATION.md`, «`Elisha` — `Eelighsha` WIRED IN».
 
+- **ylt's EAR REVIEW IS COMPLETE and the set is cleared to ship.** 2026-09-07:
+  18 flagged verses heard on the LIVE tree, 17 good; the one real defect
+  (`seeth`, II Chronicles 23:13) was fixed as `seeith`, rendered across 144
+  chapters and gated. `ylt_ship_chain.py` reports `append-class: 5 already
+  ruled on, 0 UNRULED` with every quality gate PASS.
+  ⛔ **`still failing after 3 draws` in a render log is NOT an ear queue** — it
+  is a per-draw note that reappears on every render and knows nothing about
+  what an ear later ruled. Read the newest chain report, never a render log.
+  ⛔ Re-rendering a ruled verse can ship a WORSE take (gate ties fall back to
+  attempt 1 — Genesis 13:14 lost a correct draw twice that way).
+  ⚠ STILL OPEN, and NOT cleared by that review: the `naaman` / `Naymen`
+  spot-check — II Kings 5:25 contains *Elisha* but not *Naaman*.
+  ▶ `research/_evidence/ylt_ear_review_2026-09-07.md`.
+
 ## archive.org uploads
 
 - **A long-running derive on an item does NOT block uploads to it** — the

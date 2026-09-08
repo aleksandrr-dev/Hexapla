@@ -88,7 +88,18 @@ def engine_of(set_key):
                         return eng
     raise SystemExit(f"no engine found for set {set_key!r} in narrate.py LANG_CONFIG")
 
-def row_dates(lex):
+def _pl():
+    """pronounce_lexicon, imported lazily.
+
+    ⚠ The module is imported under the alias `pl` inside main(); row_dates runs
+    before that name is in scope, so it fetches its own reference rather than
+    relying on a global that may not exist yet.
+    """
+    import pronounce_lexicon
+    return pronounce_lexicon
+
+
+def row_dates(lex, set_key):
     """word -> ISO timestamp the row became live, best evidence available.
 
     ⚠⚠ THE `validated_by` STAMP IS A DATE, AND A DATE IS NOT ENOUGH.
@@ -111,7 +122,12 @@ def row_dates(lex):
     # ⚠ Rows carry an OPTIONAL 4th element (the sets they are cleared for).
     # Unpacking exactly 3 crashed the moment the first 4-element row landed.
     for w, entry in lex.items():
-        sp, _why, by = entry[0], entry[1], entry[2]
+        # ⚠⚠ THE SPELLING IS PER SET. Reading entry[0] here would have told a
+        # tyn debt run that its carriers should say `fleeith`, when the owner's
+        # ear on tyn chose `fleeyeth` — the tool would then judge correctly
+        # rendered audio as stale for ever, or pass stale audio as done.
+        sp = _pl().spelling_for(entry, set_key)
+        _why, by = entry[1], entry[2]
         ts = ""
         try:
             r = subprocess.run(
@@ -178,7 +194,7 @@ def main():
     a = ap.parse_args()
 
     import pronounce_lexicon as pl
-    dates = row_dates(pl.LEXICON)
+    dates = row_dates(pl.LEXICON, a.set_key)
 
     sets = set_asset_map()
     if a.set_key not in sets:

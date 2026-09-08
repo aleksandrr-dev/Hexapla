@@ -263,8 +263,16 @@ LEXICON = {
                             "for that record, it is a fallback not a failure. "
                             "wbt cleared 2026-09-08 on kokoro G2P "
                             "(flˈiθ -> flˈiɪθ)",
-                 "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08",
-                 ("ylt", "wbt")),
+                 "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08; tyn by "
+                 "owner ear 2026-09-08 on the CHATTERBOX voice, which chose "
+                 "`fleeyeth` over `fleeith` - see the 5th element",
+                 ("ylt", "wbt", "tyn"),
+                 # ⚠ tyn is chatterbox on a cloned ref and is fed TEXT, not
+                 # phonemes, so none of wbt's kokoro G2P evidence carries.
+                 # The owner heard both shapes on THIS voice and chose
+                 # `fleeyeth`. ⛔ Do not collapse this to one spelling:
+                 # `fleeith` is not what he picked for tyn.
+                 {"tyn": "fleeyeth"}),
     "freeth":   ("friyeth", "same double-e collapse; ONE occurrence in ylt "
                             "(I Samuel 19:10). ⚠ owner picked a different "
                             "shape here than for seeth/fleeth",
@@ -541,6 +549,33 @@ def rows_for(set_key):
     return {w: e for w, e in LEXICON.items() if set_key in row_sets(e)}
 
 
+def spelling_for(entry, set_key):
+    """The respelling THIS set was cleared for.
+
+    ⚠⚠ ONE WORD CAN NEED DIFFERENT SPELLINGS ON DIFFERENT VOICES, and until
+    2026-09-08 this table could not say so: element 0 was the spelling for
+    every cleared set. The owner then heard `fleeth` on tyn (chatterbox, cloned
+    ref) and picked **fleeyeth**, where ylt and wbt carry **fleeith** — both
+    passed his ear on ylt, so neither is wrong; they are different voices.
+    ⛔ Widening the existing row to tyn would have given tyn `fleeith`, a
+    spelling nobody ruled on for that voice — silently substituting our
+    convenience for his ear, in a table whose entire premise is that only an
+    ear on THAT set clears a row.
+    ▶ An optional 5th element maps set -> spelling; every other set keeps
+      element 0. A per-set spelling for a set the row is NOT cleared for is a
+      contradiction and raises rather than being ignored.
+    """
+    per = entry[4] if len(entry) > 4 else None
+    if not per:
+        return entry[0]
+    unknown = set(per) - set(row_sets(entry))
+    if unknown:
+        raise ValueError(
+            f"per-set spelling names {sorted(unknown)}, which the row is not "
+            f"cleared for (cleared: {row_sets(entry)}) - clear it or drop it")
+    return per.get(set_key, entry[0])
+
+
 def apply(text, set_key="ylt"):
     """-> (synthesis_text, [words replaced]). NEVER use on displayed text.
 
@@ -572,7 +607,7 @@ def apply(text, set_key="ylt"):
         if not e:
             return w
         hits.append(base)
-        return _match_case(base, e[0]) + tail
+        return _match_case(base, spelling_for(e, set_key)) + tail
 
     return WORD.sub(sub, text), hits
 

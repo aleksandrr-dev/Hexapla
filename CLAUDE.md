@@ -110,13 +110,17 @@ what is still live and archive the old one.
   «Cap. N» is authoritative, but a verse-level shift can go unmarked) are in
   `research/THORLAKS_CAMPAIGN.md`. Volunteer overlap is SETTLED (owner,
   2026-08-10): two Icelandic Bibles is the intended outcome.
-  ⚠⚠ **THE AUDIT'S DENOMINATOR IS 31,102 — THE PROTESTANT CANON — AND THE
-  SCAN CONTAINS AN APOCRYPHA IT DOES NOT COUNT** (Sirach + 1-2 Maccabees, ~114
-  pages of v2). **It could one day print «31102/31102 OK» with all of that
-  untranscribed and nothing reporting a gap.** Scope is an OWNER decision and he
-  has not been asked; until he rules, report «N of the PROTESTANT canon; the
-  Apocrypha in this edition is un-scoped and uncounted», never a bare
-  «complete». ▶ `research/_evidence/thorlaks_ot_apocrypha_scope_2026-09-07.md`.
+  ✅ **THE APOCRYPHA IS IN SCOPE — OWNER RULED 2026-09-08**
+  («in scope as in yes, we will transcribe/render it»). Sirach + 1-2 Maccabees,
+  ~114 pages of v2.
+  ⚠⚠ **BUT THE AUDIT'S DENOMINATOR IS STILL 31,102 — THE PROTESTANT CANON —
+  AND DOES NOT ENUMERATE THOSE BOOKS.** So it could still print
+  «31102/31102 OK» with the whole apocrypha untranscribed. Until the books are
+  enumerated with real per-chapter expectations, report «N of the PROTESTANT
+  canon; apocrypha in scope, un-enumerated» — never a bare «complete».
+  ✅ `thorlaks_corpus_audit.py` now prints that caveat on EVERY run, including
+  a clean one, which is the run that needs it.
+  ▶ `research/_evidence/thorlaks_ot_apocrypha_scope_2026-09-07.md`.
   ⚠ v1's page geometry differs (472x635 vs ~331x484) — prep zoom and crop boxes
   are calibrated for v3 and **cannot be assumed to carry over.**
 - **Karl XII 1703 (Swedish) apocrypha — the PREVIOUS campaign, all but done.**

@@ -212,9 +212,39 @@ def main():
         for p in problems:
             print("  · " + p)
         print("\n⚠ Do not report this corpus as complete.")
+        _apocrypha_scope_banner()
         return 1
     print("\nNo gaps found in what has been transcribed so far.")
+    _apocrypha_scope_banner()
     return 0
+
+
+def _apocrypha_scope_banner():
+    """Print the scope caveat. ALWAYS — a clean run needs it most.
+
+    The denominator this audit uses is 31,102: the PROTESTANT CANON. The
+    Thorlaksbiblia 1644 also prints an apocrypha (Sirach, 1-2 Maccabees,
+    ~114 pages of v2) which is not enumerated here and cannot be counted.
+
+    OWNER RULED 2026-09-08: THE APOCRYPHA IS IN SCOPE -- "in scope as in yes,
+    we will transcribe/render it".
+
+    Until those books are enumerated with real per-chapter expectations, this
+    tool could print 31102/31102 with NONE of the apocrypha transcribed and
+    nothing reporting a gap. That is why this prints on success too.
+    """
+    for line in (
+        "",
+        "⚠⚠ SCOPE: the figure above counts the PROTESTANT CANON only.",
+        "   This edition also prints an apocrypha (Sirach, 1-2 Maccabees,",
+        "   ~114 pages of v2). It is IN SCOPE by the owner's ruling of",
+        "   2026-09-08, and is NOT enumerated or counted above.",
+        "   ⛔ Even a full 31102/31102 is therefore NOT 'complete'.",
+        "   Report it as 'N of the protestant canon; apocrypha in scope,",
+        "   un-enumerated'.",
+        "   ▶ research/_evidence/thorlaks_ot_apocrypha_scope_2026-09-07.md",
+    ):
+        print(line)
 
 
 def expected(counts, key):

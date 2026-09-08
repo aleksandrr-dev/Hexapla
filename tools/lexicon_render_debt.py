@@ -70,7 +70,10 @@ def row_dates(lex):
     """
     import subprocess
     out = {}
-    for w, (sp, _why, by) in lex.items():
+    # ⚠ Rows carry an OPTIONAL 4th element (the sets they are cleared for).
+    # Unpacking exactly 3 crashed the moment the first 4-element row landed.
+    for w, entry in lex.items():
+        sp, _why, by = entry[0], entry[1], entry[2]
         ts = ""
         try:
             r = subprocess.run(
@@ -157,6 +160,11 @@ def main():
               "noise, in either direction. Refusing.")
         return 2
 
+    # ⚠⚠ THE ROWS ARE SCOPED PER SET — see pronounce_lexicon.row_sets.
+    # Scoring a set against rows it is not cleared for invents a debt that
+    # cannot be paid by any render.
+    live_rows = pl.rows_for(a.set_key)
+
     books = json.loads((ASSETS / asset).read_text(encoding="utf-8"))
     nar = DATA / "narration" / a.set_key
 
@@ -165,13 +173,32 @@ def main():
     for bi, b in enumerate(books):
         for ci, ch in enumerate(b["chapters"]):
             for vi, text in enumerate(ch, 1):
-                _, hits = pl.apply(text)
+                _, hits = pl.apply(text, a.set_key)
                 if hits:
                     d = max(dates.get(h.lower(), "9999-99-99") for h in hits)
                     need[(bi, ci, vi)] = (d, sorted(set(hits)))
+    if not live_rows:
+        # ⛔⛔ NOT A CLEAN RESULT, AND NOT A DEBT OF ZERO. Until 2026-09-08 this
+        # tool called `pl.apply(text)` with no set, so EVERY set was scored
+        # with ylt's rows: `--set wbt` printed «28 falleth stale» for a set
+        # narrate.py applies no row to at all. That debt was UNPAYABLE — a
+        # re-render would have produced byte-identical audio, because
+        # `rows_for("wbt")` is empty.
+        # ▶ A set with no cleared rows has NO lexicon debt and NO lexicon
+        #   coverage. Those are different facts and this must never print the
+        #   first while meaning the second.
+        print(f"⛔ NO LEXICON ROW IS CLEARED FOR '{a.set_key}' — "
+              f"rows_for('{a.set_key}') is empty.")
+        print("   This is NOT «0 stale / clean». A re-render would change "
+              "nothing, because narrate.py applies no respelling to this set.")
+        print("   Every row was ear-validated on ylt's voice. A row reaches "
+              "another set only by naming that set in its 4th element, "
+              "and only after an ear test ON THAT SET's voice/engine.")
+        return 2
     if not need:
-        print("⛔ no verse matched any lexicon row — that is not a clean "
-              "result, it means the matcher or the asset is wrong")
+        print(f"⛔ no verse matched any of the {len(live_rows)} row(s) cleared "
+              f"for '{a.set_key}' — that is not a clean result, it means the "
+              "matcher or the asset is wrong")
         return 2
 
     # ── EXACT EVIDENCE: the recorded synthesis input ───────────────────────

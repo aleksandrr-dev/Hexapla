@@ -213,10 +213,36 @@ LEXICON = {
     #   one shape passing says nothing about another — the exact lesson the
     #   hyphen rejection recorded. Each needs ITS OWN ear test on a real verse.
     # ▶ research/_evidence/ylt_ear_review_2026-09-07.md
+    # ── CLEARED FOR wbt TOO, 2026-09-08, ON PHONEMES NOT ON AN EAR ─────────
+    # wbt is a KOKORO set (voice am_adam), and kokoro is fed PHONEMES: the
+    # misaki/espeak G2P string IS what the model speaks. So for a kokoro set
+    # the G2P output is not a proxy for the pronunciation, it is the
+    # pronunciation — a stronger instrument than an ear, at 0 GPU and 0 tokens.
+    #     he seeth  -> hi sˈiθ     ONE syllable — the defect, confirmed
+    #     seeith    ->    sˈiɪθ    two syllables «SEE-ith» — the fix
+    #     he fleeth -> hi flˈiθ    ONE syllable
+    #     fleeith   ->    flˈiɪθ   two syllables
+    # ⚠ THIS CLEARANCE IS FOR THESE TWO ROWS AND FOR wbt ONLY. The same screen
+    # over the whole table showed blanket-applying it to wbt would BREAK three
+    # names kokoro already says correctly:
+    #     abraham  ˈAbɹəhˌæm -> ˈibɹəhˌæm   («EEB-raham»)
+    #     abram    ˈAbɹæm    -> ˈibɹæm
+    #     elisha   əlˈIʃə    -> ˈilɪɡʃə     (inserts a /ɡ/ — and əlˈIʃə is
+    #                                        ALREADY the «ee-LYE-sha» target)
+    # and that calleth/falleth/canaan/canaanite(s)/prophesy are phoneme-IDENTICAL
+    # under their respellings on kokoro — pure no-ops. ▶ The per-set gate earned
+    # its keep here: «same defect class» did NOT mean «same remedy».
+    # ⛔ `freeth` is NOT cleared for wbt: it does not occur in en_webster.json.
+    # ⛔ tyn is CHATTERBOX and gets NO clearance from this — chatterbox is not
+    #   phoneme-fed, so none of the above is evidence about it. It needs a real
+    #   render and an ear. Scope there is 12 verses / 10 chapters.
+    # ▶ research/_evidence/wbt_tyn_double_e_2026-09-08.md
     "seeth":    ("seeith",  "double-e stem collapsed to ONE syllable, heard "
                             "«seethe»; want «SEE-eth». Chosen by ear on the "
-                            "whole printed II Chronicles 23:13",
-                 "owner ear 2026-09-07"),
+                            "whole printed II Chronicles 23:13. wbt cleared "
+                            "2026-09-08 on kokoro G2P (sˈiθ -> sˈiɪθ)",
+                 "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08",
+                 ("ylt", "wbt")),
     # ── the other two double-e stems, ear-tested 2026-09-07 on real verses ──
     # Each got its OWN test rather than inheriting `seeith` by analogy, and
     # the results justify that: the family does NOT take one uniform shape.
@@ -234,8 +260,11 @@ LEXICON = {
     #   «freeth»), which is why the check is per word and never per pattern.
     "fleeth":   ("fleeith", "same double-e collapse as `seeth`; heard «fleethe»."
                             " `fleeyeth` also passed the ear — see REJECTED "
-                            "for that record, it is a fallback not a failure",
-                 "owner ear 2026-09-07"),
+                            "for that record, it is a fallback not a failure. "
+                            "wbt cleared 2026-09-08 on kokoro G2P "
+                            "(flˈiθ -> flˈiɪθ)",
+                 "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08",
+                 ("ylt", "wbt")),
     "freeth":   ("friyeth", "same double-e collapse; ONE occurrence in ylt "
                             "(I Samuel 19:10). ⚠ owner picked a different "
                             "shape here than for seeth/fleeth",

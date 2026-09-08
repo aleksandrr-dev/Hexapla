@@ -82,6 +82,40 @@ REPO = Path(__file__).resolve().parent.parent
 DATA = Path("C:/Projects/Hexapla-releases")
 KJV = REPO / "app/src/main/assets/bibles/en_kjv.json"
 
+# ── RECORDED EDITION DIFFERENCES ───────────────────────────────────────────
+# (canonical book, chapter) -> (printed verse count, note with its evidence)
+#
+# ⛔⛔ A PRINTED COUNT THAT DISAGREES WITH THE KJV IS A FINDING ABOUT THIS
+# EDITION, NOT AN ERROR TO CORRECT. Never supply a verse from a parallel to
+# make a count line up. But a finding has to have somewhere to LIVE: until
+# 2026-09-07 this tool reported all three Mark divergences as
+# «COUNT n/m <-- interior chapter, so this is a REAL gap» forever, so a verse
+# that had been read off the page and settled looked identical to an unfixed
+# defect and the next session re-litigated it. Ported from
+# `karlxii_apoc_corpus_audit.py`, which solved exactly this.
+#
+# ⚠⚠ AN ENTRY IS REPORTED, NEVER SILENCED — see the "RECORDED EDITION
+# DIFFERENCES" block in the output. It must never become a way to make a real
+# gap invisible, which is why the count is PINNED: if the file stops matching
+# the pinned number the tool SHOUTS a contradiction rather than passing. An
+# entry is written only after the page has been read; the note says where.
+KNOWN_DIVERGENCE = {
+    ("Mark", 3): (36, "chapter genuinely carries 36 printed numerals; "
+                      "unaffected by the v34 restoration "
+                      "— mark_verse_count_divergences_2026-09-07.md"),
+    ("Mark", 5): (42, "v42 runs to the end of its sentence, then the centred "
+                      "«VI» heading and Mark 6:1 — no numeral 43, nothing cut "
+                      "off at the page or column boundary. The print stops at "
+                      "42 (mark_kit/p37 lines 00-06) "
+                      "— mark_verse_count_divergences_2026-09-07.md"),
+    ("Mark", 8): (39, "KJV 9:1 is set INSIDE chapter VIII: v38 ends «j Dyrd "
+                      "sijns Fodurs.», then a clearly printed 39 opens the "
+                      "KJV 9:1 material and only then comes the centred «IX» "
+                      "heading. Same run-on shape as Mark 2:23-28 "
+                      "(mark_kit/p40 lines 22-26) "
+                      "— mark_verse_count_divergences_2026-09-07.md"),
+}
+
 
 def _norm(s):
     return re.sub(r"[^a-z0-9]", "", s.lower())
@@ -170,6 +204,7 @@ def check(path, book):
     txt = path.read_text(encoding="utf-8")
     lines = txt.split("\n")
     problems = []
+    pinned = []
 
     books = heading_books(lines) or ([book] if book else [])
     if not books:
@@ -266,7 +301,22 @@ def check(path, book):
         first, last = min(same), max(same)
         partial = (c == first and lo > 1) or (c == last and exp and hi < exp)
         edge = partial
-        if exp and len(vs) != exp and not partial:
+        # A divergence read off the page and recorded is not a gap. ⚠ The
+        # pinned count must still MATCH: if it does not, the record and the
+        # file disagree and that contradiction is louder than the original
+        # mismatch — one of the two is wrong and neither may be assumed.
+        pin = KNOWN_DIVERGENCE.get((bk, c))
+        if exp and len(vs) != exp and not partial and pin:
+            if len(vs) == pin[0]:
+                pinned.append(f"{bk} {c}: {len(vs)} printed vs {exp} in the "
+                              f"KJV grid — {pin[1]}")
+            else:
+                note.append(
+                    f"COUNT {len(vs)}/{exp}  ⛔ CONTRADICTS THE RECORDED "
+                    f"EDITION DIFFERENCE, which pins {pin[0]} printed verse(s). "
+                    f"Either the file changed or the record is wrong — read "
+                    f"the page, do not edit either to match the other")
+        elif exp and len(vs) != exp and not partial:
             note.append(f"COUNT {len(vs)}/{exp}"
                         + ("  <-- interior chapter, so this is a REAL gap"
                            if not edge else ""))
@@ -360,6 +410,13 @@ def check(path, book):
     rate = 100 * oe / (o + oe) if (o + oe) else 0
     flag = "  ⚠ FAR below the expected 19-31 % — read at sheet resolution?" if rate < 10 else ""
     print(f"  ø rate: {oe}/{o + oe} o-positions = {rate:.1f} %{flag}")
+    # ⚠ REPORTED, never silenced — a reader must be able to tell "verified
+    # against the page and recorded" from "nobody looked".
+    if pinned:
+        print("  RECORDED EDITION DIFFERENCES (pinned with page evidence, "
+              "not gaps):")
+        for n in pinned:
+            print(f"    · {n}")
     return problems
 
 

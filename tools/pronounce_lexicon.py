@@ -192,6 +192,54 @@ LEXICON = {
     #   an unexamined "-eth is broken" would have condemned.
     # ⛔ `teeth` and `jaw-teeth` match the same spelling shape and are CORRECTLY
     #   one syllable. They must never enter this lexicon.
+    #
+    # ✅ THE REMEDY, FOUND 2026-09-07 — and it is NOT the hyphen.
+    # The owner re-reported the defect on II Chronicles 23:13 («seeth still
+    # like seethe, not see-eth»), picked three hyphen-free candidates, and
+    # chose by ear from whole-verse renders of that same verse:
+    #     **seeith** ✅ · seeyeth · siyeth
+    # ⚠⚠ HE CORRECTED HIMSELF, AND THE CORRECTION IS THE RULING. His first
+    # message named `seeyeth`; he then re-listened and said «on the short, it
+    # is seeith that's correct». The candidates had been sent as ONE clip with
+    # the takes 1 s apart, so choosing meant COUNTING POSITIONS — take 2 is
+    # `seeith`, take 3 is `seeyeth`. ▶ Never ask for a pick off a positional
+    # montage again: send one file per candidate, named for the candidate.
+    # ⛔ `seeyeth` is NOT recorded as heard-wrong — it is NOT CHOSEN, which is
+    #   weaker evidence, exactly as `naaman__nayamen` distinguishes the two.
+    # ▶ Why this family works at all: both winners keep `-eth` out of the bare
+    #   double-e environment. The hyphen form fixed the syllable count and
+    #   still failed, because the hyphen is read as a PAUSE — see REJECTED.
+    # ⛔⛔ THIS SAYS NOTHING ABOUT `fleeth` AND `freeth`. Same defect class, but
+    #   one shape passing says nothing about another — the exact lesson the
+    #   hyphen rejection recorded. Each needs ITS OWN ear test on a real verse.
+    # ▶ research/_evidence/ylt_ear_review_2026-09-07.md
+    "seeth":    ("seeith",  "double-e stem collapsed to ONE syllable, heard "
+                            "«seethe»; want «SEE-eth». Chosen by ear on the "
+                            "whole printed II Chronicles 23:13",
+                 "owner ear 2026-09-07"),
+    # ── the other two double-e stems, ear-tested 2026-09-07 on real verses ──
+    # Each got its OWN test rather than inheriting `seeith` by analogy, and
+    # the results justify that: the family does NOT take one uniform shape.
+    #   fleeth (Genesis 31:21): `fleeith` AND `fleeyeth` BOTH passed his ear.
+    #     `fleeith` is wired for consistency with `seeith`; `fleeyeth` is
+    #     recorded as ALSO ACCEPTABLE (not rejected) — a real fallback if
+    #     `fleeith` ever fails a spot-check.
+    #   freeth (I Samuel 19:10): he chose `friyeth` — a DIFFERENT shape from
+    #     the other two. Analogy would have got this wrong.
+    # ⛔⛔ `fliyeth` WAS DISQUALIFIED ON MEANING, NOT RHYTHM: it renders as
+    #   «flyeth» — FLY, not FLEE — which would have changed the sense of 44
+    #   verses. Caught by ASR before the owner ruled. ▶ A respelling can change
+    #   the WORD, not just its sound; check the transcript, not only the ear.
+    #   ⚠ The same shape is FINE for `freeth` (`friyeth` transcribes as
+    #   «freeth»), which is why the check is per word and never per pattern.
+    "fleeth":   ("fleeith", "same double-e collapse as `seeth`; heard «fleethe»."
+                            " `fleeyeth` also passed the ear — see REJECTED "
+                            "for that record, it is a fallback not a failure",
+                 "owner ear 2026-09-07"),
+    "freeth":   ("friyeth", "same double-e collapse; ONE occurrence in ylt "
+                            "(I Samuel 19:10). ⚠ owner picked a different "
+                            "shape here than for seeth/fleeth",
+                 "owner ear 2026-09-07"),
 
     # ── a VOWEL error, not a syllable error ────────────────────────────────
     # «calleth» heard with the a of APPLE; it is the aw of CALL. Whether
@@ -374,9 +422,38 @@ REJECTED = {
     # ▶ So the defect diagnosis stands; the REMEDY does not. Any retry must
     #   avoid the hyphen (e.g. a doubled vowel or an inserted consonant), and
     #   it needs its own ear test — one shape failing says nothing about another.
-    "fleeth":   ("flee-eth", "REJECTED: hyphen read as a pause, «flee-eeth»"),
-    "seeth":    ("see-eth",  "REJECTED: hyphen read as a pause, «see-eeth»"),
-    "freeth":   ("free-eth", "REJECTED: hyphen read as a pause, «free-eeth»"),
+    "fleeth__flee_eth": ("flee-eth", "REJECTED: hyphen read as a pause, "
+                                     "«flee-eeth». ✅ SUPERSEDED by `fleeith`, "
+                                     "owner ear 2026-09-07"),
+    # ⚠ NOT A REJECTION — the owner said `fleeith` and `fleeyeth` BOTH sound
+    # good. `fleeith` was wired only for consistency with `seeith`. This is the
+    # strongest kind of fallback: ear-PASSED but not chosen.
+    "fleeth__fleeyeth": ("fleeyeth", "ALSO PASSED the ear 2026-09-07; not "
+                                     "wired only because `fleeith` matches "
+                                     "`seeith`. A tested fallback, NOT a "
+                                     "dead end"),
+    # ⛔⛔ DISQUALIFIED ON MEANING: renders as «flyeth» (FLY, not FLEE). It
+    # would have changed the sense of 44 verses. Never retry this shape for
+    # `fleeth` — but note it is harmless for `freeth`, where `friyeth` won.
+    "fleeth__fliyeth": ("fliyeth", "⛔ REJECTED 2026-09-07 — renders as "
+                                   "«flyeth», a DIFFERENT WORD. Caught by ASR "
+                                   "before it reached an ear"),
+    # ⚠ KEY SUFFIXED 2026-09-07: `seeth` now has a LIVE row (`seeyeth`), and a
+    # bare "seeth" key in both tables would read as the word itself being
+    # rejected. The attempt is what was rejected, not the word.
+    "seeth__see_eth": ("see-eth", "REJECTED: hyphen read as a pause, "
+                                  "«see-eeth». ✅ SUPERSEDED by `seeith`, "
+                                  "owner ear 2026-09-07"),
+    # ⚠ NOT CHOSEN is weaker evidence than HEARD WRONG. The owner's first
+    # message named this one and he then corrected to `seeith` off the same
+    # clip; no verdict on how `seeyeth` actually sounded was ever recorded.
+    # If `seeith` fails a later check, this is a legitimate next test rather
+    # than a known dead end.
+    "seeth__seeyeth": ("seeyeth", "NOT CHOSEN 2026-09-07 (owner corrected to "
+                                  "`seeith`); no verdict recorded on this one"),
+    "freeth__free_eth": ("free-eth", "REJECTED: hyphen read as a pause, "
+                                     "«free-eeth». ✅ SUPERSEDED by `friyeth`, "
+                                     "owner ear 2026-09-07"),
     # ⚠ The root and the two shorter derived forms PASSED («Kaynanite»,
     # «Kaynanites»), so this is not the Kayn- spelling failing — the long tail
     # «-itess» is what breaks, heard as «cane an eetus». Length, not stem.
@@ -417,9 +494,42 @@ def _match_case(src, repl):
     return repl
 
 
-def apply(text):
-    """-> (synthesis_text, [words replaced]). NEVER use on displayed text."""
+DEFAULT_SETS = ("ylt",)
+
+
+def row_sets(entry):
+    """Which sets a row is CLEARED for. Rows carry an optional 4th element.
+
+    ⚠⚠ A ROW IS CLEARED FOR THE SET ITS EAR TEST WAS RUN ON, AND NO OTHER.
+    Every row here was validated on ylt's voice, so ylt is the default and a
+    row reaches another set only by naming it — never by being in the table.
+    """
+    return tuple(entry[3]) if len(entry) > 3 else DEFAULT_SETS
+
+
+def rows_for(set_key):
+    """-> {word: entry} cleared for this set."""
+    return {w: e for w, e in LEXICON.items() if set_key in row_sets(e)}
+
+
+def apply(text, set_key="ylt"):
+    """-> (synthesis_text, [words replaced]). NEVER use on displayed text.
+
+    ⛔⛔ `set_key` DEFAULTS TO ylt ON PURPOSE — never to «every row». Until
+    2026-09-07 the whole table was gated by one `lang == "ylt"` test inside
+    narrate.py, so widening it to another set was all-or-nothing: turning it on
+    for tyn would have applied ALL rows, including `Aebraham`, `Kaynen`,
+    `Eelighsha` and `Naymen`, none of which has ever been heard on tyn's voice.
+    ▶ This table has already proved VOICE-SENSITIVE — `Aybraham` was judged
+      right in one context and wrong in another, and `Aybraham`-right vs
+      `Aybram`-wrong was one spelling with opposite verdicts. So «same engine»
+      is not clearance; only an ear on THAT set is.
+    ⚠ A caller that passes nothing gets ylt's rows, which is the conservative
+      direction: a missing argument under-applies rather than silently
+      respelling a set nobody tested.
+    """
     hits = []
+    live = rows_for(set_key)
 
     def sub(m):
         w = m.group(0)
@@ -429,7 +539,7 @@ def apply(text):
             if base.lower().endswith(suf):
                 base, tail = base[: -len(suf)], suf
                 break
-        e = LEXICON.get(base.lower())
+        e = live.get(base.lower())
         if not e:
             return w
         hits.append(base)

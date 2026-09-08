@@ -470,9 +470,37 @@ def main():
         for b, c in keys:
             targets = queue[(b, c)]
             qa_path = NARRATION / SETS[a.set]["dir"] / str(b) / f"{c}.qa.json"
+            # ⛔⛔ «ALREADY REPAIRED» IS NOT «REPAIRED FROM THE CURRENT INPUT».
+            # This guard used to ask only «has this verse ever been repaired
+            # successfully?». A verse repaired last week with the OLD lexicon
+            # satisfied it, so a re-render driven by a NEW respelling was
+            # skipped silently — measured 2026-09-07: a 70-chapter lexicon
+            # re-render skipped 60 of them, printing a benign «already done 1»
+            # per chapter while the audio kept the old pronunciation.
+            # ▶ So the skip now ALSO requires the recorded `synth_sha` to match
+            #   the synthesis input we would use today. Records written before
+            #   2026-09-07 carry no sha and therefore never satisfy it — the
+            #   conservative direction, since re-repairing a sound verse costs
+            #   a GPU minute and skipping a stale one ships the wrong audio.
             if a.apply and not a.force and qa_path.exists():
-                did = {r["verse"] for r in json.loads(qa_path.read_text(encoding="utf-8"))
-                       .get("repairs", []) if not r.get("still_failing")}
+                try:
+                    recs = json.loads(qa_path.read_text(encoding="utf-8")).get("repairs", [])
+                except (OSError, ValueError):
+                    recs = []
+                want = spoken_verses(lang, books, b, c)
+                newest = {}
+                for r in recs:
+                    v, ts = r.get("verse"), r.get("ts") or ""
+                    if v and ts >= (newest.get(v, {}).get("ts") or ""):
+                        newest[v] = r
+                did = set()
+                for v in targets:
+                    r = newest.get(v)
+                    if not r or r.get("still_failing"):
+                        continue
+                    sha = hashlib.sha1(want[v - 1].encode("utf-8")).hexdigest()[:12]
+                    if r.get("synth_sha") == sha:
+                        did.add(v)
                 if set(targets) <= did:
                     done += 1
                     continue

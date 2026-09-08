@@ -2048,10 +2048,16 @@ def apply_overrides(lang, book_idx, chapter_idx, verses):
         t, used = synthesis_overrides.apply(lang, book_idx, chapter_idx, i + 1, v)
         if used:
             print(f"    synthesis override applied to v{i+1}", flush=True)
-        # ⚠ ylt ONLY. Every validated row was ear-tested on this voice and this
-        #   reading; another set needs its own ear before this widens.
-        if pronounce_lexicon is not None and lang == "ylt" and t:
-            t2, hits = pronounce_lexicon.apply(t)
+        # ⚠ PER-ROW, NOT PER-SET. Until 2026-09-07 this read `lang == "ylt"`,
+        #   which made widening all-or-nothing: enabling another set would have
+        #   applied EVERY row to it, including ones never heard on that voice.
+        #   Now each row names the sets its ear test cleared it for, and
+        #   `apply()` filters. A set with no cleared rows is unchanged, which
+        #   is exactly the old behaviour for everything except ylt.
+        # ⛔ Adding a set to a row still requires an ear ON THAT SET. Same
+        #   engine is not clearance — this table is voice-sensitive.
+        if pronounce_lexicon is not None and t:
+            t2, hits = pronounce_lexicon.apply(t, set_key=lang)
             if hits:
                 print(f"    lexicon v{i+1}: {', '.join(sorted(set(hits)))}", flush=True)
                 t = t2

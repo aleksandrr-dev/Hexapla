@@ -80,9 +80,83 @@ def gate_aligned():
     return n >= CANON, f"{n}/{CANON} chapters aligned (.w.json)"
 
 
+# ── append-class flags a HUMAN EAR has already ruled on ────────────────────
+# ⛔⛔ THIS IS NOT A WAY TO RELAX THE GATE, AND IT MUST NEVER BECOME ONE.
+# The gate's job is «no append-class flag ships unexamined». It had no memory,
+# so four verses the owner had ALREADY HEARD blocked it forever and no amount
+# of re-running could change that — three 79-minute passes on 2026-09-07 proved
+# the point. The fix is to record the rulings, not to lower the bar:
+#
+#   * an entry means A PERSON LISTENED and said this take is acceptable;
+#   * ANY append flag NOT in this table still fails the gate, loudly;
+#   * removing a verse from the queue is NOT the same as ruling on it. Every
+#     entry names who ruled and when, because "someone decided this once" with
+#     no name attached is exactly how a false clean bill gets inherited.
+#
+# (book, chapter, verse) -> (verdict, who/when)
+ADJUDICATED_APPENDS = {
+    (3, 9, 22): ("heard by the owner — it is «Ammihud» read as «ami hood», a "
+                 "MISPRONUNCIATION being reported as an append; the appended "
+                 "word is an ASR artefact, not spoken audio",
+                 "owner ear, 2026-09-06 ear queue"),
+    (4, 32, 8): ("heard by the owner in the 2026-09-06 clip set; «the other 21 "
+                 "were fine» (owner, 2026-09-07)",
+                 "owner ear, 2026-09-06 ear queue"),
+    (19, 17, 6): ("heard by the owner in the 2026-09-06 clip set; «the other 21 "
+                  "were fine» (owner, 2026-09-07)",
+                  "owner ear, 2026-09-06 ear queue"),
+    (11, 2, 16): ("TEXT-EXPLAINED — YLT prints «make this valley ditches "
+                  "ditches»; the doubling is scripture. qa_text_explained.py "
+                  "classifies it, controls 8/8 including two negatives",
+                  "tool + text, 2026-09-06"),
+    # Surfaced by the FIRST gate run after the double-e re-render (the screen
+    # re-judged 2927 verses, up from 2317, because 144 chapters were rewritten).
+    # ⚠ qa_text_explained.py did NOT clear it — the flag is `append:'` and the
+    # verse genuinely ends `six sons;'` where Leah's speech closes, but the
+    # tool cannot tell a printed quote mark from a spoken one, so this needed
+    # an ear and got one. ⛔ Never read «the punctuation explains it» as a
+    # ruling; that reasoning was available before the ear and was not enough.
+    (0, 29, 20): ("Genesis 30:20 — owner heard the shipped clip and ruled it "
+                  "«sounds fine». The `append:'` flag is the closing quote of "
+                  "Leah's speech, an ASR artefact, not spoken audio",
+                  "owner ear, 2026-09-07 gate run"),
+}
+
+# «  3/9 v22  FAIL ['append:hood']  …»
+FLAG_LINE = re.compile(r"^\s*(\d+)/(\d+)\s+v(\d+)\s+FAIL\s+\[(.*?)\]")
+
+
+def _append_flags(out):
+    """-> (adjudicated, unruled) lists of (book, chapter, verse, flags).
+
+    ⚠ Parses the VERSE off each flag line rather than counting «append:»
+    occurrences. The old count could not tell a new defect from a known one,
+    so it treated every ruling as if it had never happened.
+    """
+    adjudicated, unruled = [], []
+    for ln in out.splitlines():
+        m = FLAG_LINE.match(ln)
+        if not m or "append:" not in m.group(4):
+            continue
+        key = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        (adjudicated if key in ADJUDICATED_APPENDS else unruled).append(
+            (key, m.group(4)))
+    # de-duplicate: a verse is re-judged once per repair record
+    seen, uniq = set(), []
+    for key, flags in unruled:
+        if key not in seen:
+            seen.add(key)
+            uniq.append((key, flags))
+    return sorted({k for k, _ in adjudicated}), uniq
+
+
 def gate_screens():
-    """0 append-class flags across the repaired set. Repeat-class flags that the
-    PRINTED TEXT explains are expected and are not a defect."""
+    """No UNRULED append-class flag across the repaired set.
+
+    ⚠ Repeat-class flags the PRINTED TEXT explains are expected and are not a
+    defect. Append-class flags a person has already heard are listed in
+    ADJUDICATED_APPENDS above — read that comment before touching this.
+    """
     if not VENV.exists():
         return None, "chatterbox venv missing"
     # ⛔⛔ DO NOT REINSTATE A BARE `if r.returncode != 0: return None`.
@@ -110,9 +184,15 @@ def gate_screens():
     if r.returncode not in (0, 1):
         return None, (f"qa_rescreen_repairs exited {r.returncode}, which is "
                       f"neither of its documented codes - REFUSING to guess")
-    appends = len(re.findall(r"append:", out))
-    return appends == 0, (f"{m.group(1)} verses re-judged, {m.group(2)} flagged, "
-                          f"{appends} of them append-class  [log: {log.name}]")
+    ruled, unruled = _append_flags(out)
+    detail = (f"{m.group(1)} verses re-judged, {m.group(2)} flagged; "
+              f"append-class: {len(ruled)} already ruled on, "
+              f"{len(unruled)} UNRULED  [log: {log.name}]")
+    if unruled:
+        detail += "\n" + "\n".join(
+            f"           ⛔ UNRULED {b}/{c} v{v}  {flags} — an ear must hear "
+            f"this before ylt ships" for (b, c, v), flags in unruled)
+    return not unruled, detail
 
 
 def gate_upload():

@@ -233,16 +233,25 @@ LEXICON = {
     # under their respellings on kokoro — pure no-ops. ▶ The per-set gate earned
     # its keep here: «same defect class» did NOT mean «same remedy».
     # ⛔ `freeth` is NOT cleared for wbt: it does not occur in en_webster.json.
-    # ⛔ tyn is CHATTERBOX and gets NO clearance from this — chatterbox is not
-    #   phoneme-fed, so none of the above is evidence about it. It needs a real
-    #   render and an ear. Scope there is 12 verses / 10 chapters.
+# ✅ tyn CLEARED 2026-09-08 BY EAR, on three draws of the whole printed
+    #   Genesis 44:31. ⚠ It was NOT cleared by wbt's kokoro evidence —
+    #   chatterbox is not phoneme-fed — and its FIRST, one-draw test rejected
+    #   every candidate. Three draws of each reversed that: `seeith`,
+    #   `seeyeth` and `siyeth` were all right in all three.
+    #   ▶ `seeith` chosen so tyn needs no per-set spelling and all three
+    #     English sets speak one form. ⛔ `siyeth` NOT chosen: it failed the
+    #     ASR word-presence check 0/3 where the other two passed 3/3 — the
+    #     `fliyeth` signature. Ear-passed is not word-safe.
+    # ⛔ PUNCTUATION WAS REFUTED FIRST: plain 0/4 and trailing-stop 0/4.
     # ▶ research/_evidence/wbt_tyn_double_e_2026-09-08.md
+    # ▶ research/_evidence/tyn_seeth_punctuation_refuted_2026-09-08.md
     "seeth":    ("seeith",  "double-e stem collapsed to ONE syllable, heard "
                             "«seethe»; want «SEE-eth». Chosen by ear on the "
                             "whole printed II Chronicles 23:13. wbt cleared "
                             "2026-09-08 on kokoro G2P (sˈiθ -> sˈiɪθ)",
-                 "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08",
-                 ("ylt", "wbt")),
+                 "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08; "
+                 "tyn by owner ear 2026-09-08 on THREE draws",
+                 ("ylt", "wbt", "tyn")),
     # ── the other two double-e stems, ear-tested 2026-09-07 on real verses ──
     # Each got its OWN test rather than inheriting `seeith` by analogy, and
     # the results justify that: the family does NOT take one uniform shape.

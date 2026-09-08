@@ -174,6 +174,62 @@ def main():
               "result, it means the matcher or the asset is wrong")
         return 2
 
+    # ── EXACT EVIDENCE: the recorded synthesis input ───────────────────────
+    # ⚠⚠ A DATE IS A PROXY; THE `synth_sha` IS THE THING ITSELF. repair_verses
+    # records sha1 of the exact string it handed the synthesiser. If that
+    # equals the string today's lexicon produces, the verse WAS rendered with
+    # today's respelling — no date reasoning can improve on that, and none can
+    # overrule it.
+    # ⛔⛔ WITHOUT THIS THE TOOL DEADLOCKS ON ITS OWN WORKFLOW. Row dates come
+    # from the GIT COMMIT, and the real sequence is wire in -> render ->
+    # commit, so a freshly committed row is always NEWER than the render that
+    # already paid it. On 2026-09-07 that reported 229 verses as owing a
+    # re-render they had just had; obeying it would have cost 2+ hours of GPU
+    # to produce byte-identical audio.
+    # ⚠ Falls back to dates when the synthesis path cannot be imported (it
+    #   needs the engine venv). The fallback OVER-reports and says so — it is
+    #   never silently trusted as a clean result.
+    sha_ok, spoken = set(), None
+    try:
+        sys.path.insert(0, str(HERE))
+        import repair_verses as _rv
+        import narrate as _nar
+        spoken = (_rv.spoken_verses, _nar.load_bible(a.set_key))
+    except Exception as e:                       # noqa: BLE001
+        print(f"⚠ synthesis path unavailable ({type(e).__name__}) — falling "
+              f"back to ROW DATES, which OVER-report a row committed after "
+              f"the render that paid it. Re-run with the engine venv python "
+              f"for an exact answer.")
+
+    if spoken:
+        import hashlib
+        fn, sbooks = spoken
+        by_chapter = defaultdict(list)
+        for (bi, ci, vi) in need:
+            by_chapter[(bi, ci)].append(vi)
+        for (bi, ci), vlist in by_chapter.items():
+            qa = nar / str(bi) / f"{ci}.qa.json"
+            if not qa.exists():
+                continue
+            try:
+                recs = json.loads(qa.read_text(encoding="utf-8"))
+                vs = fn(a.set_key, sbooks, bi, ci)
+            except Exception:                    # noqa: BLE001
+                continue
+            latest = {}
+            for r in recs.get("repairs") or []:
+                v = r.get("verse")
+                if v is None or not r.get("synth_sha"):
+                    continue
+                latest[int(v)] = r["synth_sha"]
+            for vi in vlist:
+                if vi > len(vs):
+                    continue
+                want_sha = hashlib.sha1(
+                    vs[vi - 1].encode("utf-8")).hexdigest()[:12]
+                if latest.get(vi) == want_sha:
+                    sha_ok.add((bi, ci, vi))
+
     # verse -> latest synthesis we can PROVE, from per-verse repair records
     proved = {}
     for f in glob.glob(str(nar / "*" / "*.qa.json")):
@@ -201,9 +257,12 @@ def main():
     # ▶ Intra-day ordering is unknowable from the row, so a same-day repair is
     #   UNPROVEN and counts as debt. Re-rendering a verse that was already fine
     #   costs a minute; shipping one that is not costs a wrong reading.
-    stale, current = [], 0
+    stale, current, by_sha = [], 0, 0
     for k, (d, hits) in sorted(need.items()):
-        if proved.get(k, "") > d:          # strictly later than the row's commit
+        if k in sha_ok:                    # ★ proof, not a proxy — see above
+            current += 1
+            by_sha += 1
+        elif proved.get(k, "") > d:        # strictly later than the row's commit
             current += 1
         else:
             stale.append((k, d, hits))
@@ -216,7 +275,9 @@ def main():
 
     print(f"{a.set_key} ({asset}): {len(need)} verse(s) carry a "
           "lexicon respelling")
-    print(f"   {current} verified re-synthesised after their row landed")
+    print(f"   {current} verified re-synthesised after their row landed"
+          + (f"  ({by_sha} of them proved by synth_sha, the rest by date)"
+             if by_sha else ""))
     print(f"   {len(stale)} STILL SPEAK THE OLD PRONUNCIATION "
           f"across {len(chapters)} chapter(s)\n")
     for w in sorted(per_word, key=lambda x: -per_word[x]):

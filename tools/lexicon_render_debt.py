@@ -50,6 +50,44 @@ ASSETS = HERE.parent / "app" / "src" / "main" / "assets" / "bibles"
 DATE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
 
+
+# ── engine -> venv, derived; a launcher must never hardcode one ────────────
+ENGINE_VENV = {
+    "kokoro":     "/c/Projects/Hexapla/tools/.kokoro_venv/Scripts/python.exe",
+    "chatterbox": "/c/Projects/Hexapla/tools/.chatterbox_venv/Scripts/python.exe",
+    "cosyvoice3": "/c/Projects/Hexapla/tools/.cosyvoice_venv/Scripts/python.exe",
+}
+
+
+def engine_of(set_key):
+    """The set's engine, read from narrate.py's LANG_CONFIG by AST.
+
+    Parsed rather than imported for the same reason the rest of this module
+    parses it: importing narrate.py pulls in soundfile and an engine venv.
+    ⛔ Raises rather than defaulting - a wrong engine silently renders a set in
+    the wrong voice, which is unrecoverable without a re-render.
+    """
+    import ast
+    src = (Path(__file__).parent / "narrate.py").read_text(encoding="utf-8")
+    for node in ast.parse(src).body:
+        if not isinstance(node, ast.Assign):
+            continue
+        for t in node.targets:
+            if not (isinstance(t, ast.Name) and t.id == "LANG_CONFIG"):
+                continue
+            for k, v in zip(node.value.keys, node.value.values):
+                if getattr(k, "value", None) != set_key or not isinstance(v, ast.Dict):
+                    continue
+                for kk, vv in zip(v.keys, v.values):
+                    if getattr(kk, "value", None) == "engine":
+                        eng = getattr(vv, "value", None)
+                        if eng not in ENGINE_VENV:
+                            raise SystemExit(
+                                f"unknown engine {eng!r} for set {set_key!r} - "
+                                f"add it to ENGINE_VENV before generating a launcher")
+                        return eng
+    raise SystemExit(f"no engine found for set {set_key!r} in narrate.py LANG_CONFIG")
+
 def row_dates(lex):
     """word -> ISO timestamp the row became live, best evidence available.
 
@@ -367,8 +405,14 @@ def main():
                 "DERIVED, never hand-listed.",
                 "#   sh <this> apply    # writes (GPU)",
                 "cd /c/Projects/Hexapla-releases",
-                "PY=/c/Projects/Hexapla/tools/.chatterbox_venv/Scripts/"
-                "python.exe",
+                # ⛔⛔ THE VENV IS DERIVED FROM THE SET'S ENGINE, NEVER
+                # HARDCODED. This literal used to read `.chatterbox_venv`
+                # because ylt was the only set that had ever used this tool.
+                # The first launcher generated for `wbt` — a KOKORO set —
+                # therefore named the chatterbox venv, which would have driven
+                # a kokoro set's repair through the wrong engine. Same
+                # set-blindness class as the scoring bug fixed 2026-09-08.
+                f"PY={ENGINE_VENV[engine_of(a.set_key)]}",
                 "TOOL=/c/Projects/Hexapla/tools/repair_verses.py",
                 'if [ "$1" = "apply" ]; then A="--apply"; else A=""; fi',
                 "",

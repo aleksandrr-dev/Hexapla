@@ -129,7 +129,8 @@ def main():
         print(f"⛔ no files matched {a.glob} in {WORK} — nothing to merge")
         return 1
 
-    recs = defaultdict(list)          # (page,line,half) -> [(method, word, prev, src)]
+    recs = defaultdict(list)
+    declared_non_sites = []          # (page,line,half) -> [(method, word, prev, src)]
     hdr_sheets = defaultdict(set)     # page -> {sheet numbers a HEADER claims}
     crop_lines = defaultdict(set)     # page -> {line numbers actually adjudicated}
     per_file = []
@@ -137,8 +138,17 @@ def main():
     for f in files:
         m = method_of(f)
         n = 0
+        # ⚠ SCOPE THE SECTION GUARD TO FILES THAT ACTUALLY USE SECTIONS.
+        # The pre-2026-09 record files carry no «## CONFIRMED ø» heading at
+        # all; treating their records as non-sites discarded every one of
+        # them (SHEET-ONLY went 47 -> 0 on the first run of this guard).
+        # A file with no such heading is old-format: read it as before.
+        sectioned = "## CONFIRMED ø" in f.read_text(encoding="utf-8")
+        section = ""
         for raw in f.read_text(encoding="utf-8").splitlines():
             line = raw.rstrip()
+            if line.startswith("##"):
+                section = line
             hs = SHEET_HDR.match(line)
             if hs and m == "CROP":
                 hdr_sheets[int(hs.group(1))].add(int(hs.group(2)))
@@ -151,6 +161,16 @@ def main():
                 continue
             r = REC.match(line)
             if not r:
+                continue
+            # ⛔⛔ A RECORD LINE UNDER A NON-«CONFIRMED ø» HEADING IS NOT A SITE.
+            # Adjudicators legitimately write site-shaped lines under PLAIN,
+            # APPARATUS, UNCERTAIN and NOT-A-SITE headings. Before 2026-09-08
+            # this parser had no notion of sections and counted every one of
+            # them as a confirmed ø — including `p36 line04 L … PLAIN`, which
+            # `thorlaks_o_patch.py` would have stroked to «giørt». The patcher
+            # skips a line whose TAIL says UNCERTAIN; nothing caught the rest.
+            if sectioned and "CONFIRMED ø" not in section:
+                declared_non_sites.append((f.name, section.lstrip('# ').strip()[:40], line[:70]))
                 continue
             page, ln, half = int(r.group(1)), int(r.group(2)), r.group(3)
             word = r.group(4).split("  ")[0].strip()
@@ -173,11 +193,26 @@ def main():
         crop = [e for e in entries if e[0] == "CROP"]
         sheet = [e for e in entries if e[0] == "SHEET"]
         if crop:
-            usable.append((key, crop[0]))
+            # ⚠ EVERY crop record on this line-half is its own site. Keying by
+            # (page, line, half) and keeping crop[0] silently DROPPED 44 of the
+            # Mark corpus's confirmed ø — p36 line03 L alone carries seven.
+            # Under-reporting, the direction that licenses calling a page done.
+            for c in crop:
+                usable.append((key, c))
             if sheet and sheet[0][1] != crop[0][1]:
                 conflicts.append((key, crop[0], sheet[0]))
         else:
-            unconfirmed.append((key, sheet[0]))
+            # same multi-site rule as the crop branch above
+            for sh in sheet:
+                unconfirmed.append((key, sh))
+
+    if declared_non_sites:
+        print("")
+        print(f"#  {len(declared_non_sites)} record-shaped line(s) sit under a heading that is NOT CONFIRMED-o -- they are EVIDENCE, not sites:")
+        for _name, sec, txt in declared_non_sites:
+            print(f"   [{sec}] {txt}")
+        print("   ▶ If one of these IS a confirmed ø, move it under a «## CONFIRMED ø»")
+        print("     heading in its record file. It will NOT be patched from where it is.")
 
     print(f"\n✅ USABLE (crop-method, validated): {len(usable)} site(s)")
     for (p, ln, h), (_, w, prev, src) in usable:

@@ -112,9 +112,19 @@ def main():
         return 1
 
     sites, coverage = [], defaultdict(set)
+    non_sites = []
     for f in files:
+        # ⚠ SCOPE THE SECTION GUARD TO FILES THAT ACTUALLY USE SECTIONS.
+        # The pre-2026-09 record files carry no «## CONFIRMED ø» heading at
+        # all; treating their records as non-sites discarded every one of
+        # them (SHEET-ONLY went 47 -> 0 on the first run of this guard).
+        # A file with no such heading is old-format: read it as before.
+        sectioned = "## CONFIRMED ø" in f.read_text(encoding="utf-8")
+        section = ""
         for raw in f.read_text(encoding="utf-8").splitlines():
             line = raw.rstrip()
+            if line.startswith("##"):
+                section = line
             h = SHEET_HDR.match(line)
             if h:
                 coverage[int(h.group(1))].add(int(h.group(2)))
@@ -125,6 +135,18 @@ def main():
             if not m:
                 continue
             tail = m.group(4)
+            # ⛔⛔ ONLY A LINE UNDER A «## CONFIRMED ø» HEADING IS A SITE.
+            # Record files legitimately carry site-shaped lines under PLAIN,
+            # APPARATUS and NOT-A-SITE headings. The tail-level UNCERTAIN test
+            # below catches only the ones that happen to repeat that word:
+            # `p36 line04 L  Mark 5:20  giort  | prev: hm  -- PLAIN` says PLAIN,
+            # has exactly one o, and would have been STROKED to «giørt» —
+            # corrupting a word an adjudicator deliberately recorded as the
+            # plain half of a minimal pair. Found 2026-09-08, before any run of
+            # this tool had a part file to write to.
+            if sectioned and "CONFIRMED ø" not in section:
+                non_sites.append((f.name, section.lstrip('# ').strip()[:40], line[:70]))
+                continue
             if "UNCERTAIN" in tail.upper():
                 continue
             w = clean_word(tail)
@@ -161,6 +183,11 @@ def main():
     print("PAGE COVERAGE (crop method): " +
           ", ".join(f"p{p}({len(coverage[p])})" for p in sorted(coverage)))
     print("⚠ Pages absent above have NO trustworthy ø data in either direction.\n")
+
+    if non_sites:
+        print(f"#  {len(non_sites)} record-shaped line(s) skipped: not under a CONFIRMED-o heading")
+        for _n, sec, txt in non_sites:
+            print(f"     [{sec}] {txt}")
 
     cache, plan = {}, defaultdict(list)
     unique = ambiguous = missing = skipped = 0

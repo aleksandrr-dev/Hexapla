@@ -84,12 +84,97 @@ WANTED = (".ogg", ".json", ".w.json")
 SKIP = (".eos.json", ".qa.json")
 
 
+def already_running():
+    """-> the PID of another live copy of this tool, or None.
+
+    ⛔⛔ TWO WRITERS ON ONE ITEM IS THE FAILURE THIS WHOLE TOOL EXISTS TO
+    AVOID, AND THE PAUSE FILE DOES NOT PREVENT IT. Happened 2026-09-09: a
+    running copy was asleep in its 600 s poll when the PAUSE file was placed;
+    the PAUSE was then cleared and a second copy started BEFORE the first woke
+    up, so the first never saw it. Both then uploaded into the same bucket,
+    doubling the task rate and re-engaging the ration within two minutes.
+    ⚠ The launcher's PAUSE check is not enough on its own: it tests a file,
+    and the thing that matters is whether a PROCESS is alive.
+    ▶ So: after placing the PAUSE file, WAIT for the process to exit (up to a
+    full poll interval) before starting anything.
+    """
+    import os
+    me = os.getpid()
+    try:
+        import subprocess
+        out = subprocess.run(
+            ["powershell", "-NoProfile", "-Command",
+             "Get-CimInstance Win32_Process | "
+             "Where-Object { $_.CommandLine -match "
+             "'upload_narration_batched' -and $_.CommandLine -notmatch "
+             "'CimInstance' } | Select-Object -ExpandProperty ProcessId"],
+            capture_output=True, text=True, timeout=60)
+        pids = [int(x) for x in out.stdout.split() if x.strip().isdigit()]
+    except Exception:                                          # noqa: BLE001
+        # ⚠ A check that cannot run is not a check that passed — but refusing
+        # to start on an unreadable process table would make the tool
+        # unrunnable on a machine that hides it. Say so loudly and continue.
+        print("  ⚠ could not read the process table — CANNOT confirm this is "
+              "the only copy. Check by hand before trusting a long run.")
+        return None
+    others = [x for x in pids if x != me]
+    return others[0] if others else None
+
+
 def _ts():
     return datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
 def log(msg):
     print(f"[{_ts()}] {msg}", flush=True)
+
+
+def s3_ration(identifier):
+    """-> (over_limit, detail dict) from S3's own check_limit, or (-1, {}).
+
+    \u26d4\u26d4 THIS, NOT A QUEUE COUNT, IS WHAT DECIDES WHETHER AN UPLOAD IS
+    ACCEPTED. The tool spent 2026-09-08/09 waiting for the catalog queue to
+    fall below 100 while S3 was answering a different question entirely.
+    Measured on this item, 2026-09-09:
+
+        bucket_tasks_queued 264      bucket_ration 149
+        bucket_limit        999      over_limit      1
+        rationing_engaged     1      rationing_level 9999
+        total_tasks_queued 10018     total_global_limit 11999
+
+    \u26a0\u26a0 **THE RATION IS DYNAMIC AND THE LIMIT IS NOT.** The bucket is over
+    its RATION of 149 while sitting far under its hard LIMIT of 999, because
+    rationing engages when ARCHIVE.ORG AS A WHOLE is congested \u2014 10,018 tasks
+    queued globally against a 11,999 limit. So the item is not broken and its
+    tasks are not necessarily wedged: they are queued behind everyone else's.
+    \u25b6 The gate can therefore open in TWO ways \u2014 our 264 tasks drain, OR the
+    global congestion eases and `bucket_ration` rises back toward 999. Waiting
+    on the queue count alone can only ever see the first.
+
+    \u26d4 RETURNS -1 ON ANY FAILURE, NEVER 0. 0 is `over_limit: 0`, i.e. "go
+    ahead", which is the single most damaging wrong answer here. A network
+    error is NO INFORMATION and must BLOCK.
+    """
+    try:
+        import internetarchive as ia
+        s = ia.get_session()
+        r = s.get("https://s3.us.archive.org",
+                  params={"check_limit": 1, "bucket": identifier,
+                          "accesskey": s.access_key}, timeout=30)
+        if r.status_code != 200:
+            log(f"  \u26a0 check_limit returned HTTP {r.status_code} -> "
+                f"UNKNOWN, not clear. Blocking.")
+            return -1, {}
+        d = r.json()
+        if "over_limit" not in d:
+            log("  \u26a0 check_limit had no over_limit field -> UNKNOWN. "
+                "Blocking.")
+            return -1, {}
+        return int(d["over_limit"]), d.get("detail", {})
+    except Exception as e:                                     # noqa: BLE001
+        log(f"  \u26a0 check_limit failed ({type(e).__name__}: {e}) -> "
+            f"UNKNOWN, not clear. Blocking.")
+        return -1, {}
 
 
 def queued_tasks(identifier):
@@ -209,8 +294,19 @@ def main():
               f"started at the threshold would blow it. Lower one of them.")
         return 2
 
+    other = already_running()
+    if other is not None:
+        log(f"⛔⛔ ANOTHER COPY IS ALREADY RUNNING (pid {other}). Refusing to "
+            f"start.")
+        log("   Two writers on one item's task queue is how the ration gets "
+            "blown while each believes it is being careful.")
+        log(f"   ▶ Stop it with:  touch {PAUSE}")
+        log("   ▶ Then WAIT for the process to actually exit — it is asleep "
+            "in a poll and will not see the file until it wakes.")
+        return 2
+
     log(f"set {a.set_key} -> {identifier}")
-    log(f"  batch {a.batch} \u00b7 send when queue < {a.resume_at} "
+    log(f"  batch {a.batch} \u00b7 send when S3 accepts "
         f"\u00b7 ration {RATION} \u00b7 poll {a.poll}s \u00b7 max {a.max_cycles} waits")
     log(f"  PAUSE file: {PAUSE}")
     if not a.commit:
@@ -246,8 +342,13 @@ def main():
     n_batches = (len(missing) + a.batch - 1) // a.batch
     log(f"  plan: {n_batches} batch(es) of up to {a.batch}")
 
-    q = queued_tasks(identifier)
-    log(f"  item queue right now: {'UNREADABLE' if q < 0 else q}")
+    over, detail = s3_ration(identifier)
+    log(f"  S3 right now: over_limit={over} "
+        f"queued={detail.get('bucket_tasks_queued')} "
+        f"ration={detail.get('bucket_ration')} "
+        f"limit={detail.get('bucket_limit')} "
+        f"global={detail.get('total_tasks_queued')}/"
+        f"{detail.get('total_global_limit')}")
 
     if a.check_only or not a.commit:
         log("   first 5 files that would go in batch 1:")
@@ -261,6 +362,10 @@ def main():
     from internetarchive import upload
 
     sent = 0
+    # Names S3 has accepted this run but which have not yet appeared on the
+    # item. ⛔ NOT a success set — the completion claim below still reads the
+    # LIVE item, never this.
+    in_flight = set()
     waits = 0
     prev_q = None
     stalled = 0
@@ -272,49 +377,83 @@ def main():
                 f"{len(missing)} file(s) still missing.")
             return 1
 
-        q = queued_tasks(identifier)
-        if q < 0 or q >= a.resume_at:
+        over, detail = s3_ration(identifier)
+        q = detail.get("bucket_tasks_queued")
+        ration = detail.get("bucket_ration")
+        if over != 0:
             waits += 1
             if waits > a.max_cycles:
-                log(f"\u26d4 hit the {a.max_cycles}-wait bound with the queue "
-                    f"still at {'UNREADABLE' if q < 0 else q}. That is THIS "
-                    f"LOOP'S limit, not an upload failure — re-run it.")
+                log(f"\u26d4 hit the {a.max_cycles}-wait bound still over the "
+                    f"ration. That is THIS LOOP'S limit, not an upload "
+                    f"failure — re-run it.")
                 return 1
-            # ⚠ Say plainly when the queue is not moving. A silent wait on a
-            # stuck queue is how thirteen hours went by on 2026-09-08.
-            if prev_q is not None and q == prev_q and q >= 0:
+            # ⚠ Report BOTH numbers. Either can move, and which one moved is
+            # the difference between «our tasks are draining» and «archive.org
+            # is less busy». A count alone cannot tell them apart.
+            if prev_q is not None and (q, ration) == prev_q:
                 stalled += 1
             else:
                 stalled = 0
-            prev_q = q
-            trend = ""
-            if stalled:
-                trend = (f"  \u26a0 UNCHANGED for {stalled} poll(s) "
-                         f"\u2014 the queue may be stuck, not draining")
-            log(f"  wait {waits}/{a.max_cycles}: queue "
-                f"{'UNREADABLE' if q < 0 else q} \u2265 {a.resume_at}{trend}")
+            prev_q = (q, ration)
+            trend = (f"  \u26a0 NEITHER MOVED for {stalled} poll(s)"
+                     if stalled else "")
+            log(f"  wait {waits}/{a.max_cycles}: "
+                + ("check_limit UNREADABLE — blocking"
+                   if over < 0 else
+                   f"queued {q} > ration {ration} "
+                   f"(hard limit {detail.get('bucket_limit')}; "
+                   f"global {detail.get('total_tasks_queued')}/"
+                   f"{detail.get('total_global_limit')})")
+                + trend)
             time.sleep(a.poll)
             continue
+        log(f"  \u2705 S3 ACCEPTS: queued {q}, ration {ration} "
+            f"(global {detail.get('total_tasks_queued')}/"
+            f"{detail.get('total_global_limit')})")
 
         batch_no += 1
         chunk = missing[:a.batch]
-        log(f"\u25b6 batch {batch_no}: queue {q} < {a.resume_at}, "
+        log(f"\u25b6 batch {batch_no}: S3 accepting (queued {q}), "
             f"sending {len(chunk)} file(s) ({len(missing)} still missing)")
         files = {n: p for n, p in chunk}
+        accepted = []
         try:
             # checksum=True makes a re-run cheap: anything already present with
             # a matching MD5 is skipped rather than re-sent.
             # queue_derive=False suppresses derive.php per file; the single
             # derive is queued later by upload_narration.py. ⚠ It does NOT
             # suppress archive.php — see the module docstring.
-            upload(identifier, files=files, retries=4, retries_sleep=20,
-                   verbose=True, checksum=True, queue_derive=False)
+            # ⛔⛔ ONE FILE PER CALL, ON PURPOSE.
+            # A batch call raises on the FIRST refusal and takes the responses
+            # for everything already sent with it. Those files ARE queued at
+            # archive.org, so forgetting them means re-sending them next cycle
+            # and queueing the same archive.php task TWICE — which is exactly
+            # how the backlog this tool waits out was built. Measured
+            # 2026-09-09: a batch died on 0/2.w.json having already had several
+            # accepted, and the run reported «0 accepted by S3».
+            for name, path_ in files.items():
+                rs = upload(identifier, files={name: path_}, retries=4,
+                            retries_sleep=20, verbose=True, checksum=True,
+                            queue_derive=False)
+                if rs and all(getattr(r, "status_code", None) in (200, 201)
+                              for r in rs):
+                    accepted.append(name)
+            # ⛔⛔ A 200 HERE MEANS «S3 TOOK IT», NOT «IT IS ON THE ITEM».
+            # Each accepted PUT queues an archive.php task, and the file only
+            # appears once that task RUNS. Treating an accepted file as still
+            # missing is what makes this tool re-send it next cycle — which
+            # queues the task AGAIN. That is precisely how the 264-task backlog
+            # this tool exists to wait out was built, so the fix is not
+            # optional. Measured 2026-09-09: batch 1 was accepted in full and
+            # confirmed 0/40 on the item.
+            # (attribution happens per file, above)
         except Exception as e:                                 # noqa: BLE001
             # ⚠ A refusal is NOT a reason to retry harder. Fall back to waiting.
-            log(f"  \u26a0 batch {batch_no} raised "
+            log(f"  \u26a0 batch {batch_no} stopped after "
+                f"{len(accepted)} accepted file(s) "
                 f"({type(e).__name__}: {e})")
-            log("    -> not retrying; re-reading the item to see what landed, "
-                "then back to waiting.")
+            log("    -> not retrying. The accepted files are QUEUED, "
+                "not lost, and are NOT re-sent. Re-reading the item.")
 
         # ⛔ The upload's own result is not evidence. Re-read the live item.
         names = live_names(identifier)
@@ -324,17 +463,36 @@ def main():
             time.sleep(a.poll)
             continue
         landed = [n for n, _ in chunk if n in names]
+        in_flight.update(n for n in accepted if n not in names)
+        in_flight.difference_update(names)
         log(f"  batch {batch_no}: {len(landed)}/{len(chunk)} confirmed on the "
-            f"live item")
+            f"live item; {len(accepted)} accepted by S3; "
+            f"{len(in_flight)} in flight overall")
         sent += len(landed)
-        missing = [(n, p) for n, p in missing if n not in names]
+        # ⚠ «missing» now means NEITHER on the item NOR already accepted.
+        # Anything in flight is left alone: it is queued, not lost.
+        missing = [(n, p) for n, p in missing
+                   if n not in names and n not in in_flight]
+        if not missing:
+            break
         if not landed:
-            # Nothing landed: sending another batch now would just collect more
-            # refusals and lengthen the queue being waited on.
-            log("  \u26a0 nothing from that batch landed — waiting before "
-                "trying again.")
+            # ⚠ Nothing MATERIALISED. That is expected while the catalog is
+            # backed up and is not a failure — but it does mean the next batch
+            # adds to a queue that is not draining, so slow down rather than
+            # press on.
+            log("  \u26a0 nothing from that batch has materialised on the item "
+                "yet (the catalog is behind). Waiting before sending more.")
             time.sleep(a.poll)
 
+    if in_flight:
+        log(f"\u26a0 {len(in_flight)} file(s) were ACCEPTED BY S3 but have not "
+            f"appeared on the item yet. They are queued as archive.php tasks "
+            f"behind the item's backlog.")
+        log(f"   \u26d4 THIS IS NOT COMPLETION. Do not re-send them \u2014 that "
+            f"queues the same task twice. Re-run this tool later; it re-reads "
+            f"the live item and will report what actually materialised.")
+        log(f"   {sent} file(s) confirmed on the live item this run.")
+        return 1
     log(f"\u2705 every file landed. {sent} confirmed on the live item this run.")
     log(f"   \u25b6 NOW FINISH: python tools/upload_narration.py {a.set_key}")
     log("     (that writes the metadata and queues the ONE derive; this tool "

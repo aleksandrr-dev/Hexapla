@@ -57,15 +57,42 @@ those seven verses ARE present in the merged `research/thorlaks_romans.md`, so
 the defect is local to the part file and nothing was lost.
 
 ⛔ **VALIDATE ANY CHANGE TO THIS FILE AGAINST BOTH A KNOWN-GOOD AND A
-KNOWN-BAD CASE.** Known-good: `matthew_p13-21.md` = 0 problems. Known-bad:
-`matthew_p4-12.md` = Matthew 1 at 24/25 (1:25 merged into v24). A refactor on
-2026-09-06 made `## Chapter 1` unresolvable and Matthew 1 silently VANISHED
-from the report — the tool would have reported fewer problems and looked like
-an improvement. A check that hides a known defect is worse than no check.
+KNOWN-BAD CASE.** A refactor on 2026-09-06 made `## Chapter 1` unresolvable and
+Matthew 1 silently VANISHED from the report — the tool would have reported
+FEWER problems and looked like an improvement. A check that hides a known
+defect is worse than no check.
 
-⚠ A LOW ø RATE IS NOT A FAILURE OF THIS SCRIPT'S SUBJECT — it means the read was
-done at sheet resolution (6.3x), where the stroke is not resolvable. The fix is
-`tools/thorlaks_o_sheets.py`, not a re-read at the same magnification.
+  known-good: `matthew_p13-21.md` = 0 problems (still true, verified 2026-09-09)
+  known-bad:  `1corinthians_p158-163.md` = 1 problem, «18 `PROGRESS:` line(s)
+              written INTO the transcription»
+
+⚠⚠ **THE OLD KNOWN-BAD WENT STALE AND NOBODY NOTICED.** It was
+`matthew_p4-12.md` = Matthew 1 at 24/25. That defect has since been REPAIRED,
+so the file now reports 0 problems and the negative control had been silently
+passing-by-vacancy — any change to this script could have broken its defect
+detection completely and both «controls» would still have looked green. Found
+2026-09-09 by running the documented control and noticing it did not fire.
+▶ **When a known-bad case is fixed, replace it in this docstring in the same
+commit.** A negative control that cannot fail is not a control.
+
+⛔⛔ A LOW ø RATE HAS THREE CAUSES AND THIS SCRIPT CANNOT TELL THEM APART.
+Until 2026-09-09 the warning here said a low rate «means the read was done at
+sheet resolution», which is one cause of three and the least likely now:
+
+  1. **the retrofit is only partly PLACED.** This script counts ø IN THE FILE.
+     Mark's adjudicators confirmed 302 ø across 18 pages — 13.2 % of
+     o-positions — but 84 could not be located in the transcription, so the
+     file holds 219 and reads ~9.6 %. Nothing was misread.
+  2. **VOCABULARY.** p47 read 26.1 % on the same instrument, in the same
+     session, that read 8.0 % on p46 one page away. The 19-31 % band is a
+     per-BOOK claim, never a per-page one.
+  3. sheet-resolution reading, the original hypothesis.
+
+▶ Separate them before acting: `thorlaks_o_rate.py --book <B>` gives what was
+read on the PAGE, `thorlaks_o_patch.py --book <B>` gives what could not be
+placed. Only when those two agree is resolution a candidate at all — and the
+fix for THAT is `tools/thorlaks_o_sheets.py`, not a re-read at the same
+magnification.
 
 ⛔ EXIT CODE: non-zero if any chapter has a problem, so this can gate a merge.
 A check that cannot run must never look like a check that passed: an unreadable
@@ -408,7 +435,23 @@ def check(path, book):
     o = vtext.count("o") + vtext.count("O")
     oe = vtext.count("ø") + vtext.count("Ø")
     rate = 100 * oe / (o + oe) if (o + oe) else 0
-    flag = "  ⚠ FAR below the expected 19-31 % — read at sheet resolution?" if rate < 10 else ""
+    # ⛔⛔ THIS RATE IS WHAT IS IN THE FILE, NOT WHAT WAS READ ON THE PAGE.
+    # Those are different numbers whenever a retrofit is only partly placed.
+    # Mark, 2026-09-09: the adjudicators confirmed 302 ø across 18 pages
+    # (13.2 % of o-positions, `thorlaks_o_rate.py --book Mark`), but 84 of
+    # them could not be located in the transcription, so the FILE holds 219
+    # and reads ~9.6 %. A reader told «read at sheet resolution?» would go and
+    # re-read eighteen correctly-read pages.
+    # ⚠ And a low rate is not a defect signal on its own even when the
+    # retrofit IS complete: p47 read 26.1 % on the same instrument, in the same
+    # session, that read 8.0 % on p46 one page away. The rate tracks VOCABULARY
+    # and the 19-31 % band is a per-BOOK claim.
+    flag = ("  ⚠ below the 19-31 % per-BOOK band. ⛔ CHECK THE RETROFIT FIRST: "
+            "this counts ø IN THE FILE, and an unplaced site is missing from it. "
+            "▶ thorlaks_o_rate.py --book <B> for what was read on the PAGE, and "
+            "thorlaks_o_patch.py --book <B> for what could not be placed. "
+            "Only if those agree is resolution a candidate."
+            if rate < 10 else "")
     print(f"  ø rate: {oe}/{o + oe} o-positions = {rate:.1f} %{flag}")
     # ⚠ REPORTED, never silenced — a reader must be able to tell "verified
     # against the page and recorded" from "nobody looked".

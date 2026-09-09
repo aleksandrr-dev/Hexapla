@@ -83,6 +83,7 @@ current one**, exactly as the handoff skill says of figures.
 | why a render carried a tail defect, how repairs work now | the newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases` (`ls -t … | head -1`) |
 | what is actually running (live checks, not logs) | run **`/status`** (`.claude/skills/status/`) |
 | adjudicating many diacritics/uncertain glyphs at once | `tools/contact_sheet.py` — tile the crops into ONE image; separate zoom reads cost ~8x more |
+| the ø rate of a BOOK (never hand-count it) | `tools/thorlaks_o_rate.py --book <B>` — per page AND whole-book, each shared boundary verse counted once, and it CONTROLS itself against the hand counts recorded in the page records. **0 model tokens.** ⚠ A page whose control disagrees is a finding about that page; do not tune the rule until it fits |
 | verifying a finished transcription chunk | `tools/kxii_diff.py` — diffs against **kxii.se**, an independent witness. **0 model tokens.** ⚠ WITNESS ONLY, never a correction source: transcribe from the image first, diff after — that order is the legal position |
 | finding where a word sits on a strip | `tools/kxii_locate.py` — Tesseract geometry over the cached TSV. **0 tokens, 0.28 s.** ⚠ never run Tesseract inline over many strips, it times out the session |
 
@@ -320,6 +321,8 @@ verbatim into every kit — **so a rule put THERE reaches every future chunk.**
   REFUSES to repair. ▶ Substitution is by the letter's **PHONETIC** value
   (`р`=r never p, `с`=s never c) — a visual map turned `Vppriса` into a
   non-word. ⚠ β is NOT this defect (it is the `ꝑ` sort) — do not sweep it up.
+- ⛔⛔ **BELOW THE CONVENTION'S ø BAND IS A QUESTION, NOT A VERDICT.** Mark derives at **13.2 %** over all 18 pages against a 19–31 % per-BOOK band — and that is NOT evidence of under-detection: p47 read 26.1 % on the same instrument, same session, that read 8.0 % on p46 one page away. The rate tracks VOCABULARY. ⚠ Never quote a per-PAGE rate against the band; the band is per-book, exactly as written.
+- ⚠⚠ **A RECORD'S WORD NEED NOT MATCH THE TRANSCRIPTION'S SPELLING, AND THAT IS NOT A FAULT IN EITHER** — the adjudicator writes the page as it PRINTS. `thorlaks_o_patch.py` folds the print's nasal bars («mørgū»/«morgum») and the adjudicator's [bracketed] completions («søg[du]»), accepting only a token with exactly ONE letter-o. ⛔ It does NOT fold long-s read as `p` for `f`, and it does NOT move a ø across a verse boundary: **those are TEXT findings and a ø pass must not make silent text edits.**
 - ⚠ **RUN `thorlaks_crop_widths.py` ON A KIT BEFORE READING A PAGE OF IT.**
   Truncated preps slice glyphs mid-stroke and every judgement on them is void.
   ⚠ It has a ~73 % false-positive rate and says SUSPECT, never TRUNCATED — an

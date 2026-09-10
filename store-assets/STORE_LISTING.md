@@ -1866,3 +1866,52 @@ here.
   IARC done (purchases answered NO — tip products deliberately not created so
   Brazil rates Livre; tips exist only in code). Target audience 13+, no
   ads/ad-ID/health. Third-party syndication: publish-all. Play App Signing.
+
+
+── MOVED OUT OF CLAUDE.md, 2026-09-09 ──
+(verbatim; CLAUDE.md now carries a pointer to this block)
+
+## Store status
+
+⚠ Live status only. Release history → `docs/RELEASE_HISTORY.md`; translation
+research → `docs/TRANSLATIONS.md`; listing texts, screenshot order and the
+per-upload procedure for both stores → `store-assets/STORE_LISTING.md`.
+
+- **RuStore**: LIVE, at the current versionCode (see Build). Store title
+  «Гексапла — параллельная Библия».
+- **Google Play**: closed testing (Alpha), same versionCode. Personal account,
+  so production needs **12 testers × 14 CONTINUOUS days** — one day below 12
+  opted-in testers restarts the count.
+  ⚠ **Read the real figure off the Play Console; never compute the date here.**
+  Play counts opted-in testers in its own timezone and has its own idea of when
+  day 1 was. The prepared application is the `PLAY_PRODUCTION_*.md` file.
+- **Landing page**: https://aleksandrr-dev.github.io/Hexapla/ (repo root
+  `index.html`) — what the in-app QR encodes AND what the archive.org narration
+  items link to. English first, Russian second on the same lines.
+  ⚠ **PENDING — owner, 2026-07-21: "once it's on Play Store officially, and
+  F-Droid, we'll update it again."** (1) Play production approved → drop the
+  `soon` class from the Play button (`.soon` = `opacity:.45;
+  pointer-events:none`) and retitle it; (2) F-Droid/IzzyOnDroid live → ADD a
+  fourth button (IzzyOnDroid takes a released APK; F-Droid proper needs an
+  fdroiddata MR with `gradle:[foss]`); (3) whenever the count changes, bump the
+  page AND `store-assets/STORE_LISTING.md` together — they must agree.
+  ⚠ The direct-APK button points at `releases/latest`, and the upload is always
+  the **RuStore APK**, never the Play AAB.
+  ⚠ **`gh release upload` run from a non-git directory prints "failed to run
+  git" AND STILL EXITS 0.** Run it from the repo; verify by re-reading the
+  asset size, never by the exit code.
+- ✅ **COUNTS: DERIVE, NEVER HAND-COUNT — `python tools/count_translations.py`.**
+  Translations = distinct TEXTS (two scripts of one translation count once — zh;
+  original-language grc/wlc DO count). Languages = what a READER would name
+  (Middle English folds into English; ancient languages count as their own).
+  The in-app `welcome_tagline`, the landing page and the current release-notes
+  block must agree; last verified together 2026-08-25.
+- Privacy policy: https://aleksandrr-dev.github.io/Hexapla/PRIVACY.html
+- ★ RELEASE-NOTES STANDARD (owner, 2026-07-23): "What's new" lives in
+  `store-assets/STORE_LISTING.md` as a full Play-Console copy-paste block —
+  EVERY listing locale in its own `<locale>…</locale>` tag, so the owner pastes
+  the whole set at once.
+  ▶ **Validate before pasting: `python tools/check_release_notes.py`** (locale
+  set and ORDER match Play, every entry within the 500-char cap, exactly one
+  release block above the descriptions). be/hy/iw/ta = best-effort, native
+  review pending.

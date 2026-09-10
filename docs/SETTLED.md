@@ -86,6 +86,39 @@ audit script, every time.
   transcription errors — the print diverges from the KJV and is recorded with
   page evidence. ⛔ Never supply the missing verses from a parallel.
   ▶ `research/_evidence/mark_verse_count_divergences_2026-09-07.md`.
+- **The Turkish edition to ship FIRST is the 1827 Kieffer OT+NT**, not the
+  1665 Ali Bey manuscript. Owner + Osmanlıca Kelâm (Bruce) both agreed,
+  2026-09-09/10. 1827 scores 7/7 on the deity litmus and 19/19 on the extended
+  TR-presence screen; 1665 scores 6/7 — **John 3:13 omits «ki gökdedir»**, its
+  only divergence across 26 screened points. 1665 remains wanted SECOND.
+  ⚠ Neither is licensed yet; the transcription licence is still the gate.
+  ▶ `research/_evidence/turkish_1665_litmus_2026-09-09.md`.
+- **Ali Bey's Apocrypha is LOCATED and BLOCKED.** 2026-09-09. Kadir Akın's
+  transliteration is at `https://www.hakikat.net/indir/apokrafi.pdf` (the link
+  Osmanlıca Kelâm publishes is dead). Page 2 reserves all rights to Akın by
+  name, requires written permission, and caps quotation at 100 sentences.
+  ⛔ Do not ship it without his written yes; it is HIS decision, not Bruce's.
+  ▶ `research/_evidence/turkish_alibey_apocrypha_2026-09-09.md`.
+- **Editions' orthographic legibility does NOT separate 1665 from 1827** —
+  measured, not assumed: 101.2 vs 100.3 non-modern-Turkish characters per 1,000
+  letters over the same 2,564 verses. The transliteration scheme is the
+  TRANSCRIBER's, so it is identical across their editions. ⛔ Do not re-open
+  "which is easier to read" on orthography; the real difference is VOCABULARY
+  (1665 uses «Bârî/Hakk Teʿâlâ» where 1827 uses «Allah»/«Rab»).
+  ⚠ Corollary: the diacritic/font check against the app's fonts is ONE check
+  covering both editions, not two. ▶ same evidence file.
+- **Mark and Luke are in the corpus audit.** 2026-09-09. They were invisible
+  because no `research/thorlaks_<book>.md` existed — the audit globs that path
+  and both books lived only under `_parts/`. Merged with
+  `thorlaks_merge_parts.py`. ⚠ Any future book is invisible the same way until
+  it is merged; the merge is not optional bookkeeping.
+- **Mark 9 (49 verses) joins Mark 3/5/8 as a PRINT FACT** — printed chapter IX
+  opens at KJV 9:2, so it runs 1-49. All four are now registered in
+  `thorlaks_corpus_audit.py`'s `KNOWN_DIVERGENCE`, and the audit prints a
+  `RECORDED EDITION DIFFERENCES` block naming every row that fired, so a
+  registered chapter can never go silently quiet.
+  ⛔ Never add a row to that table without page evidence, or to make a count
+  line up. ▶ `research/_evidence/mark_verse_count_divergences_2026-09-07.md`.
 - **Volunteer overlap on Icelandic Bibles is intended** — owner, 2026-08-10:
   two Icelandic Bibles is the wanted outcome. ▶ `CLAUDE.md`.
 - **The Þorláksbiblía apocrypha IS in scope** — owner, 2026-09-08. Sirach and

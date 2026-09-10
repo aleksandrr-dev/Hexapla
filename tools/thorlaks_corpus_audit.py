@@ -79,6 +79,20 @@ KNOWN_DIVERGENCE = {
     # "## Philippians 2", which this parser cannot see BY DESIGN.
     # Do not "fix" the chunk by inventing a 30 the print does not have.
     (49, 2): (29, "KJV 2:30 printed unnumbered, running on from v29"),
+    # -- Mark, settled 2026-09-07 against the page images; registered here
+    # 2026-09-09, when thorlaks_mark.md was first merged and this audit
+    # could finally see the book at all. Full evidence, naming the crop
+    # line read for each:
+    #   research/_evidence/mark_verse_count_divergences_2026-09-07.md
+    # ⛔ Do not re-open these, and never supply a verse from the KJV to
+    # make a count line up. Two OTHER Mark divergences in that file WERE
+    # transcription defects (9:36 mis-numbered, 3:34's opening words
+    # dropped) and were fixed in the part files, NOT registered here --
+    # this table is only for facts about the print.
+    (40, 3): (36, "the chapter genuinely carries 36 printed numerals"),
+    (40, 5): (42, "the print stops at 42 - the VI heading follows, nothing lost"),
+    (40, 8): (39, "KJV 9:1 is printed as v39 inside chapter VIII"),
+    (40, 9): (49, "printed IX opens at KJV 9:2, so it runs 1-49"),
 }
 
 
@@ -157,6 +171,7 @@ def main():
 
     books = [args.book] if args.book is not None else range(66)
     problems = []
+    applied_divergences = []
     grand = grand_exp = 0
 
     print(f"{'book':<18}{'chapters':>10}{'verses':>16}   status")
@@ -175,6 +190,8 @@ def main():
         for c in have:
             verses = best[(b, c)]
             target, note = expected_pair(counts, (b, c))
+            if (b, c) in KNOWN_DIVERGENCE:
+                applied_divergences.append((b, c, target, note, len(verses)))
             dupes = sorted({v for v in verses if verses.count(v) > 1})
             gaps = [v for v in range(1, target + 1) if v not in verses]
             extra = [v for v in verses if v > target]
@@ -207,6 +224,7 @@ def main():
 
     print("-" * 62)
     print(f"{'TOTAL':<18}{'':>10}{grand:>8}/{grand_exp:<7}")
+    _recorded_divergences(applied_divergences, booknames)
     if problems:
         print(f"\n{len(problems)} PROBLEM(S):")
         for p in problems:
@@ -301,6 +319,37 @@ def _apocrypha_report():
     print("⛔ And the book list itself is open: see the unidentified running "
           "head above.")
     return got, exp
+
+
+def _recorded_divergences(applied, booknames):
+    """Print every KNOWN_DIVERGENCE entry that actually changed an expectation.
+
+    WARNING -- THIS BLOCK IS THE PRICE OF THE TABLE AT THE TOP OF THIS FILE.
+    A KNOWN_DIVERGENCE entry REPLACES the KJV expectation, so a chapter it
+    covers stops appearing under PROBLEM(S) altogether: it goes QUIET.
+    research/_evidence/mark_verse_count_divergences_2026-09-07.md asked for
+    this mechanism and warned in the same breath that it "must not become a
+    way to silence real gaps".
+
+    So every entry that fired is printed here on EVERY run, with the count it
+    imposed and the count the corpus actually holds. A reader can then tell
+    that a chapter is quiet BECAUSE a human pinned it to page evidence, not
+    because nothing is wrong. Same shape as the RECORDED EDITION DIFFERENCES
+    block in karlxii_apoc_corpus_audit.py.
+
+    Never add a row to KNOWN_DIVERGENCE without page evidence recorded under
+    research/_evidence/, and never to make a count line up.
+    """
+    if not applied:
+        return
+    print()
+    print("RECORDED EDITION DIFFERENCES (pinned to page evidence, not gaps):")
+    for b, c, target, note, got in applied:
+        flag = "" if got == target else "   <-- FILE HOLDS %d, NOT %d" % (got, target)
+        print("  \u00b7 %s %d: expectation pinned to %d, KJV differs - %s%s"
+              % (booknames[b], c, target, note, flag))
+    print("  > evidence: research/_evidence/ - these are print facts; do not")
+    print("    'fix' them from a parallel, and do not add one to quiet a gap.")
 
 
 def _apocrypha_scope_banner():

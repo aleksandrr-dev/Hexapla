@@ -68,6 +68,13 @@ run(pre("Write", {"file_path": r"C:\Projects\Hexapla-releases\SESSION_HANDOFF_20
 run(pre("Write", {"file_path": r"C:\Projects\Hexapla-releases\NEXT_SESSION_PROMPT.md"}, BIG), 0, "next-session prompt write allowed")
 run(pre("Edit", {"file_path": r"C:\Projects\Hexapla-releases\NEXT_SESSION_PROMPT.md"}, BIG), 0, "next-session prompt edit allowed")
 run(pre("Write", {"file_path": r"C:\Projects\Hexapla-releases\research\_parts\next_session_notes.md"}, BIG), 2, "a look-alike under research/ is still blocked")
+# A Write/Edit is judged on its file_path, but a Bash call is judged on its
+# COMMAND. The two exceptions above therefore covered only one of the routes a
+# session might take, and auto mode steers a session toward the OTHER one --
+# so the wrap-up worked or not depending on which tool it happened to reach
+# for. Found 2026-09-10 by firing the guard at the real path, not a stand-in.
+run(pre("Bash", {"command": "cat > C:/Projects/Hexapla-releases/NEXT_SESSION_PROMPT.md <<'EOF'\nx\nEOF"}, BIG), 0, "bash heredoc write of the prompt file allowed")
+run(pre("Bash", {"command": "python tools/narrate.py --lang sv"}, BIG), 2, "known-bad: an ordinary bash command is still blocked")
 run(pre("Skill", {"skill": "handoff"}, BIG), 0, "skill allowed")
 run(pre("Read", {"file_path": "C:/x/p.png"}, BIG), 0, "read allowed")
 print("== below limits (this session)")

@@ -19,7 +19,10 @@ Everything in that hunt is deterministic. This tool does it once, up front:
 
   · finds the TEXT BLOCK and excludes the marginal apparatus column, so no
     tokens are spent on pixels that are not scripture — and so nobody
-    transcribes a cross-reference as a verse (a mistake the brief warns about);
+    transcribes a cross-reference as a verse (a mistake the brief warns about).
+    ⚠ That exclusion is a COVERAGE rule and it CUTS SPARSE SCRIPTURE: a
+    second text column of short lines (a genealogy) reads as apparatus and is
+    sliced off. Use --full-width on such a page; see text_block's docstring;
   · finds the text LINES by ink profile and emits each one pre-cropped at
     transcription zoom;
   · emits a per-page orientation image at navigation zoom;
@@ -108,8 +111,33 @@ def _runs(vals, frac, min_len):
     return out
 
 
-def text_block(page, robust=False):
+def text_block(page, robust=False, full_width=False):
     """(rect, note) — the main text column, marginal apparatus excluded.
+
+    ⛔⛔ THE EXCLUSION IS A COVERAGE RULE, AND SPARSE SCRIPTURE LOOKS
+    EXACTLY LIKE APPARATUS TO IT. The block is the span of columns carrying
+    >=45 % of peak ink coverage, on the reasoning that the text block has ink
+    on most rows while the margin has ink on only a few. A SECOND TEXT COLUMN
+    OF SHORT LINES BREAKS THAT ASSUMPTION. Measured 2026-09-09 on v3 idx 54,
+    Luke 3:24-38: the genealogy is set in two columns of «Sa ed var sonur X»,
+    the right column is mostly white space, its coverage falls under the
+    threshold, and it is excluded AS IF IT WERE APPARATUS — every line crop
+    came out 1797 px against a kit median of 2005 and the right column read
+    «Mathat» where the page prints «Mathathan».
+    ⚠ `--robust-block` IS NOT THE CURE FOR THIS and reaching for it wastes a
+    session: it lowers `peak` to the 90th percentile, which widens the block
+    only incidentally — measured on that same page it went 1797 -> 1840 px and
+    the column still read «Mathath», still cut.
+    ⚠⚠ AND THE WIDTH CHECK DOES NOT CATCH IT. thorlaks_crop_widths.py passes
+    idx 54 («narrow, but margin is intact»), because it measures the right
+    margin of the crop it is handed and cannot see that the crop's edge is in
+    the wrong place. ▶ research/_evidence/luke_p54_apparatus_exclusion_cuts_text_2026-09-09.md
+
+    `full_width=True` bypasses detection completely and returns the whole
+    page. The apparatus then lands in the crops too — which is the correct
+    trade: a cross-reference in view is a nuisance the conventions already
+    cover («margin apparatus — not scripture, not transcribed»), while a
+    sliced verse is unrecoverable and invisible to every verse-count audit.
 
     ⚠ MEAN DARKNESS DOES NOT SEPARATE THE MARGIN. Tried first and it failed:
     the marginal apparatus is dark enough that no threshold on a grey column
@@ -123,6 +151,8 @@ def text_block(page, robust=False):
     between the first and last column carrying at least 45% of peak coverage.
     Measured on v3: text runs to ~0.85 of page width, apparatus sits beyond it.
     """
+    if full_width:
+        return page.rect, "FULL WIDTH — block detection bypassed"
     im = _gray(page, PROFILE_ZOOM)
     hist, tot, acc, ink = im.histogram(), 0, 0, 128
     tot = sum(hist)
@@ -354,6 +384,116 @@ def gap_report(lines):
     return [(i, p, p / med) for i, p in enumerate(pitch) if p > med * 1.6]
 
 
+MAN_HEADER = "# Prep manifest"
+
+
+def _flag_tokens(a):
+    """The per-page `flags` cell: which opt-in geometry flags built these crops.
+
+    `--full-width` and `--robust-block` are per-page opt-ins whose own help text
+    tells the operator to «record which pages used it». Until 2026-09-10 the
+    tool then overwrote the record. The flags now live in the manifest table,
+    per page, so a later reader can see which pages were prepped how.
+    """
+    t = []
+    if getattr(a, "full_width", False):
+        t.append("`--full-width`")
+    if getattr(a, "robust_block", False):
+        t.append("`--robust-block`")
+    if getattr(a, "split", False):
+        t.append("`--split`")
+    return " ".join(t) if t else "\u2014"
+
+
+def _read_existing_manifest(path):
+    """(preamble, {idx: row_cells}) of an existing manifest.
+
+    preamble is everything BEFORE the `# Prep manifest` heading, preserved
+    verbatim: a hand-written scope banner or warning must survive a merge, or
+    the merge becomes the next version of the bug it is fixing.
+
+    A pre-2026-09-10 row has four cells and no flags; it is carried forward
+    with the flags cell saying so, never with a guess.
+    """
+    if not path.exists():
+        return [], {}
+    try:
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return [], {}
+    lines = text.split("\n")
+    pre = []
+    for i, ln in enumerate(lines):
+        if ln.startswith(MAN_HEADER):
+            pre = lines[:i]
+            break
+    rows = {}
+    for ln in lines:
+        s = ln.strip()
+        if not (s.startswith("|") and s.endswith("|")):
+            continue
+        cells = [x.strip() for x in s.strip("|").split("|")]
+        if len(cells) < 4 or not cells[0].isdigit():
+            continue
+        if len(cells) == 4:
+            cells = cells + ["(unrecorded \u2014 prepped before flags were tracked)"]
+        rows[int(cells[0])] = cells[:5]
+    return pre, rows
+
+
+def _idx_span(keys):
+    """'50-58' when contiguous, else an explicit list. Never a lying range."""
+    if not keys:
+        return "(none)"
+    if keys == list(range(keys[0], keys[-1] + 1)):
+        return "%d-%d" % (keys[0], keys[-1]) if len(keys) > 1 else str(keys[0])
+    return ",".join(str(k) for k in keys)
+
+
+def _claim_for(uniform_flags, zoom):
+    """The headline sentence about what the crops contain.
+
+    \u26a0 IT MUST NOT ASSERT THE APPARATUS WAS CUT WHEN --full-width LEFT IT IN,
+    and \u2014 the 2026-09-10 lesson \u2014 it must not speak for the whole kit when
+    the pages were prepped differently. A manifest that misdescribes its own
+    crops is the same defect class as a part-file note asserting «no numeral
+    appears» on a line that prints one (Mark 3:34).
+    """
+    head = ("Pre-cut by `tools/prep_chunk.py`. **Pixels only \u2014 nothing here was "
+            "read by a machine.** Transcribe from these crops; they are already "
+            "at %.1fx (the scan's native ceiling), " % zoom)
+    if uniform_flags is None:
+        return head + ("and **what each page's crops contain is recorded PER PAGE "
+                       "in the `flags` column below** \u2014 the pages in this kit "
+                       "were NOT all prepped the same way, so a single sentence "
+                       "here would misdescribe some of them.")
+    if "--full-width" in uniform_flags:
+        return head + ("with the FULL PAGE WIDTH kept: the marginal apparatus is "
+                       "PRESENT in these crops and was not cut away.")
+    return head + "with the marginal apparatus column cut away."
+
+
+def _note_for(uniform_flags):
+    if uniform_flags is None:
+        return ("\u26a0\u26a0 **THE PAGES IN THIS KIT WERE PREPPED WITH DIFFERENT FLAGS "
+                "\u2014 READ THE `flags` COLUMN BEFORE TRUSTING ANY PAGE.** A page "
+                "marked `--full-width` has the marginal apparatus IN its crops "
+                "(cross-references and gloss text sit beside the scripture and "
+                "are NOT scripture). A page with no flag had that column cut "
+                "away. Assuming either one for the whole kit is how idx 54's "
+                "manifest came to misdescribe eight pages.")
+    if "--full-width" in uniform_flags:
+        return ("\u26a0\u26a0 **THESE PAGES WERE PREPPED `--full-width`, SO THE MARGINAL "
+                "APPARATUS IS IN THE CROPS.** Cross-references and gloss text sit "
+                "beside the scripture on these lines and are NOT scripture \u2014 do "
+                "not transcribe them as verses. The flag was used because block "
+                "detection cut real text; see text_block's docstring in "
+                "tools/prep_chunk.py.")
+    return ("\u26a0 The excluded side column holds cross-references and gloss text \u2014 "
+            "not scripture. If you need to check a gloss key, re-render that "
+            "page yourself; it is deliberately not here.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--vol", type=int, required=True, choices=(1, 2, 3))
@@ -373,6 +513,25 @@ def main():
                          "come out cut off mid-word because a dark scan edge "
                          "beat the text (v3 idx 12). OPT-IN: not validated as "
                          "a default, it moves 28 healthy v3 pages too.")
+    ap.add_argument("--full-width", action="store_true",
+                    help="skip text-block detection and crop the FULL page "
+                         "width. For a page whose own scripture is sparse "
+                         "enough to be mistaken for the marginal apparatus "
+                         "and cut off — a two-column genealogy (v3 idx 54). "
+                         "The apparatus lands in the crops too; that is the "
+                         "intended trade. NOT --robust-block, which does not "
+                         "fix this. OPT-IN, per page, and record which pages "
+                         "used it.")
+    ap.add_argument("--clean-stale", action="store_true",
+                    help="delete crops already in a page directory that THIS "
+                         "run will not rewrite. Without it, such crops make "
+                         "the run REFUSE. A re-prep that emits fewer lines "
+                         "than the last one strands the extra crops at the OLD "
+                         "geometry, where nothing distinguishes them (v3 idx "
+                         "54: a 1797px line55.png beside 55 new 2739px crops).")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print what would be written, deleted and merged, and "
+                         "write nothing.")
     a = ap.parse_args()
 
     lo, _, hi = a.pages.partition("-")
@@ -381,26 +540,18 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     doc = fitz.open(RESEARCH / f"thorlaks_v{a.vol}.pdf")
     c = FOLIO_C[a.vol]
+    flags_cell = _flag_tokens(a)
+    man_path = out / "MANIFEST.md"
 
-    man = ["# Prep manifest — Þorláksbiblía v%d, idx %s" % (a.vol, a.pages), "",
-           "Pre-cut by `tools/prep_chunk.py`. **Pixels only — nothing here was "
-           "read by a machine.** Transcribe from these crops; they are already "
-           "at %.1fx (the scan's native ceiling), with the marginal apparatus "
-           "column cut away." % a.zoom, "",
-           "⚠ Line segmentation is a heuristic: it can merge touching lines, "
-           "split a line carrying a tall initial, and it treats a decorated "
-           "drop-cap as its own run. **Line N is not verse N.** Confirm "
-           "against `page.png` before trusting any sequence.", "",
-           "⚠ The excluded side column holds cross-references and gloss text — "
-           "not scripture. If you need to check a gloss key, re-render that "
-           "page yourself; it is deliberately not here.", "",
-           "| idx | folio | lines | columns |", "|---|---|---|---|"]
-
-    total = 0
-    n_recovered = {}
+    # ---- pass 1: detect every page, and see what is already on disk -------
+    # Detection runs for ALL pages before ANY pixel is written, so a stale-crop
+    # refusal cannot leave a half-rewritten page directory behind.
+    plan = []
+    stale = []
     for idx in idxs:
         page = doc[idx]
-        block, note = text_block(page, robust=a.robust_block)
+        block, note = text_block(page, robust=a.robust_block,
+                                 full_width=a.full_width)
         lines = line_rects(page, block)
         # Recover one-word lines the mean-threshold detector drops, and merge
         # them into reading order. See short_line_rects: on v3:208 this is the
@@ -409,12 +560,79 @@ def main():
         recovered = short_line_rects(page, block, lines)
         if recovered:
             lines = sorted(lines + recovered, key=lambda r: r.y0)
-            n_recovered[idx] = len(recovered)
+        d = out / f"p{idx}"
+        will_write = set()
+        for i, rect in enumerate(lines):
+            will_write.add(f"line{i:02d}.png")
+            if a.split and rect.width > 120:
+                will_write.add(f"line{i:02d}a.png")
+                will_write.add(f"line{i:02d}b.png")
+        found = sorted(p.name for p in d.glob("line*.png")) if d.is_dir() else []
+        orphans = [n for n in found if n not in will_write]
+        if orphans:
+            stale.append((idx, d, orphans))
+        plan.append((idx, page, lines, note))
+
+    if stale and not (a.clean_stale or a.dry_run):
+        doc.close()
+        sys.stderr.write(
+            "\n\u26d4 REFUSING: %d page director%s already hold%s crop(s) that "
+            "THIS run will not rewrite.\n" %
+            (len(stale), "y" if len(stale) == 1 else "ies",
+             "s" if len(stale) == 1 else ""))
+        sys.stderr.write(
+            "A re-prep emitting FEWER lines than the previous one strands the "
+            "extra crops at the OLD geometry. Nothing downstream can tell them "
+            "apart: on Luke v3 idx 54 a 1797px line55.png survived beside 55 "
+            "new 2739px crops and would have gone into the packed sheets as one "
+            "line of cut-off text.\n\n")
+        for idx, d, orphans in stale:
+            sys.stderr.write("  p%d  (%s)\n" % (idx, d))
+            for n in orphans:
+                sys.stderr.write("        %s\n" % n)
+        sys.stderr.write(
+            "\n\u25b6 Look at them before deleting anything. If they are the "
+            "previous prep's leftovers, re-run with --clean-stale to remove "
+            "exactly the files listed above. --dry-run shows the whole plan and "
+            "writes nothing.\n")
+        return 2
+
+    if a.dry_run:
+        doc.close()
+        pre, rows = _read_existing_manifest(man_path)
+        print("DRY RUN \u2014 nothing written, nothing deleted.")
+        for idx, _pg, lines, note in plan:
+            print("  p%d: would write page.png + %d line crop(s)  [flags %s]  %s"
+                  % (idx, len(lines), flags_cell, note))
+        for idx, d, orphans in stale:
+            print("  p%d: would DELETE %d stale crop(s) (only with --clean-stale): %s"
+                  % (idx, len(orphans), ", ".join(orphans)))
+        if rows:
+            keep = [k for k in sorted(rows) if k not in idxs]
+            print("  manifest: would MERGE %d row(s) into %d existing row(s); "
+                  "rows kept untouched: %s"
+                  % (len(plan), len(rows),
+                     ",".join(str(k) for k in keep) if keep else "(none)"))
+        else:
+            print("  manifest: would CREATE %s" % man_path)
+        return 0
+
+    if stale and a.clean_stale:
+        for idx, d, orphans in stale:
+            for n in orphans:
+                (d / n).unlink()
+            print("p%d: removed %d stale crop(s) left by an earlier prep: %s"
+                  % (idx, len(orphans), ", ".join(orphans)), flush=True)
+
+    # ---- pass 2: write ---------------------------------------------------
+    new_rows = {}
+    total = 0
+    for idx, page, lines, note in plan:
         if a.gaps:
-            flags = gap_report(lines)
-            print(f"  idx {idx}: {len(lines)} lines, {len(flags)} pitch "
-                  f"anomal{'y' if len(flags) == 1 else 'ies'}")
-            for i, p, mult in flags:
+            anomalies = gap_report(lines)
+            print(f"  idx {idx}: {len(lines)} lines, {len(anomalies)} pitch "
+                  f"anomal{'y' if len(anomalies) == 1 else 'ies'}")
+            for i, p, mult in anomalies:
                 print(f"    after line{i:02d}.png: {p:.1f}pt = {mult:.2f}x "
                       f"pitch — check page.png for a dropped short line")
         d = out / f"p{idx}"
@@ -435,14 +653,48 @@ def main():
                                 ).save(d / f"line{i:02d}b.png")
         folio = (idx - c) // 2
         side = "recto" if (idx - c) % 2 == 0 else "verso"
-        man.append(f"| {idx} | {folio} {side} | {len(lines)} | {note} |")
+        new_rows[idx] = [str(idx), f"{folio} {side}", str(len(lines)), note,
+                         flags_cell]
         total += len(lines)
         print(f"idx {idx}: folio {folio} {side}, {len(lines)} lines, {note}",
               flush=True)
 
     doc.close()
-    man += ["", f"**{total} line crops** across {len(idxs)} pages.", "",
-            "## Suggested order of work", "",
+
+    # ---- manifest: MERGE, never replace ----------------------------------
+    # Until 2026-09-10 this rebuilt the file from this invocation alone, so a
+    # single-page re-prep into a live kit destroyed the other pages' rows AND
+    # asserted this run's flags over all of them.
+    pre, rows = _read_existing_manifest(man_path)
+    merged = dict(rows)
+    merged.update(new_rows)
+    keys = sorted(merged)
+    kept = [k for k in rows if k not in new_rows]
+    uniform = set(r[4] for r in merged.values())
+    uniform_flags = uniform.pop() if len(uniform) == 1 else None
+
+    man = list(pre)
+    man += ["# Prep manifest — Þorláksbiblía v%d, idx %s"
+            % (a.vol, _idx_span(keys)), "",
+            _claim_for(uniform_flags, a.zoom), "",
+            "⚠ Line segmentation is a heuristic: it can merge touching lines, "
+            "split a line carrying a tall initial, and it treats a decorated "
+            "drop-cap as its own run. **Line N is not verse N.** Confirm "
+            "against `page.png` before trusting any sequence.", "",
+            _note_for(uniform_flags), "",
+            "| idx | folio | lines | columns | flags |",
+            "|---|---|---|---|---|"]
+    man += ["| " + " | ".join(merged[k]) + " |" for k in keys]
+    grand = sum(int(merged[k][2]) for k in keys if merged[k][2].isdigit())
+    man += ["", "**%d line crops** across %d page(s) in this kit."
+            % (grand, len(keys)), ""]
+    if kept:
+        man += ["⚠ This run prepped idx %s. The row(s) for idx %s were already "
+                "here and were carried forward unchanged — their crops were "
+                "NOT re-rendered and their `flags` are the flags they were "
+                "built with." % (_idx_span(sorted(new_rows)),
+                                 _idx_span(sorted(kept))), ""]
+    man += ["## Suggested order of work", "",
             "1. Read `page.png` for each page first — orientation, chapter "
             "headings, where the text block starts and ends.",
             "2. Transcribe from `lineNN.png` in order.",
@@ -466,9 +718,14 @@ def main():
             "⚠ The failure this guards against is not misreading — it is "
             "supplying the letter the WORD wants. «fyrer» entered two books "
             "that way, each with genuine same-page corroboration."]
-    (out / "MANIFEST.md").write_text("\n".join(man), encoding="utf-8")
-    print(f"\n{total} line crops -> {out}\nmanifest: {out / 'MANIFEST.md'}")
+    man_path.write_text("\n".join(man), encoding="utf-8")
+    print(f"\n{total} line crops written -> {out}")
+    if kept:
+        print(f"manifest MERGED (kept idx {_idx_span(sorted(kept))}): {man_path}")
+    else:
+        print(f"manifest: {man_path}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

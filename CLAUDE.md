@@ -47,7 +47,7 @@ finds the current one.
 
 | you need | read |
 |---|---|
-| what is happening right now | the ONE `SESSION_HANDOFF_*.md` in `C:\Projects\Hexapla-releases\`. Two = a bug; the later date is current, archive the other first |
+| what is happening right now | `python tools/handoff_state.py` (the ONE `SESSION_HANDOFF_*.md` in `C:\Projects\Hexapla-releases\`, overrides, prompt head, git; exit 3 = not exactly one). Two = a bug: `--archive` (dry run) then `--archive --apply`, never a hand-typed `mv` |
 | the Play production application | `PLAY_PRODUCTION_*.md` in `Hexapla-releases` |
 | adding/researching a translation, licence gates, dead ends | `docs/TRANSLATIONS.md` |
 | touching a Bible asset | `docs/ASSET_DEFECTS.md` |
@@ -62,8 +62,9 @@ finds the current one.
 | transcribing a Karl XII strip | `research/KXII_AGENT_BRIEF.md` first |
 | starting an Icelandic book | `python tools/thorlaks_chunk_kit.py --book <Name> --vol N --pages a-b` (0 tokens; refuses while a convention is OPEN) |
 | why a render carried a tail defect | newest `RENDER_GATE_BRIEF_*.md` in `Hexapla-releases` |
-| what is actually running | `/status` skill — live checks, not logs |
+| what is actually running | `python tools/live_status.py` (procs + GPU + newest log tails in ONE call; `-p REGEX`, `-l SUBSTR`) — never a hand-typed Get-CimInstance block or a `tail` per log; `/status` skill for the reasoning |
 | many glyph adjudications at once | `tools/contact_sheet.py` — one composite, not N zooms |
+| checking a part file, merging it, verifying the book | `python tools/thorlaks_chain.py --book <B> --file research/_parts/<part>.md` (part_check → merge dry run → audit, each gated on rc; `--apply` to merge) — one call, not three |
 | a book's ø rate | `tools/thorlaks_o_rate.py --book <B>` (self-controlling; a page whose control disagrees is a finding, do not tune the rule) |
 | verifying a Karl XII chunk | `tools/kxii_diff.py` against kxii.se — witness only, never a correction source; transcribe first, diff after |
 | where a word sits on a strip | `tools/kxii_locate.py` (0.28 s; never Tesseract inline over many strips) |

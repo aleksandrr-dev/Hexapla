@@ -29,8 +29,16 @@ Everything else (page tables, findings, PROGRESS lines) is carried into an
 appendix so no agent's evidence is lost.
 """
 import argparse
+import os
 import re
 import sys
+
+# The marker an adjudicated part file carries when the PRINT breaks a verse at
+# the page foot and the next page owns its tail. ⚠ It must be an explicit
+# report by the read - never inferred from punctuation.
+SEAM_RE = re.compile(
+    r"\[[^\]]*\b(?:breaks off|broke off|continues on|continued on|"
+    r"continuation of the verse)\b[^\]]*\]", re.I)
 from datetime import datetime
 from pathlib import Path
 
@@ -230,7 +238,7 @@ def main():
               f"book-blind heading. FIX THE SOURCE PART FILE's heading to read "
               f"'## <Book> <N>', then re-run. Do not --apply through this.")
 
-    merged, prose, conflicts = {}, [], []
+    merged, prose, conflicts, joins = {}, [], [], []
     for p in parts:
         chs, pr = parse_part(p, a.book)
         prose.append((p.name, pr))
@@ -239,10 +247,36 @@ def main():
                 if v in merged.setdefault(ch, {}):
                     old = "\n".join(merged[ch][v]).strip()
                     new = "\n".join(lines).strip()
+                    # ⛔ A verse the print BREAKS at a page foot is not an
+                    # overlap: page N owns its head, page N+1 its tail, and
+                    # «first writer wins» DELETES the tail silently. Luke 9:40
+                    # is the first (idx 61 head + idx 62 tail). Join them, and
+                    # drop the seam marker - it is apparatus, not scripture.
+                    # Known-bad control: HEXAPLA_NO_SEAMJOIN=1 restores the
+                    # first-wins drop, and the tail disappears again.
+                    if (SEAM_RE.search(old)
+                            and os.environ.get("HEXAPLA_NO_SEAMJOIN") != "1"):
+                        head = SEAM_RE.sub("", old).strip()
+                        # ⚠ both halves carry the verse NUMBER at their head -
+                        # the tail's is a repeat, and row 46 would then read it
+                        # as scripture opening with a digit.
+                        tail = re.sub(r"^%d\s+" % v, "", new).strip()
+                        head = re.sub(r"\s{2,}", " ", head)
+                        merged[ch][v] = [(head + " " + tail).strip()]
+                        joins.append((ch, v, p.name, head, tail))
+                        continue
                     if old != new:
                         conflicts.append((ch, v, p.name))
                     continue                       # first writer wins; conflict reported
                 merged[ch][v] = lines
+
+    if joins:
+        print(f"\n★ {len(joins)} verse(s) JOINED across a page break (the earlier "
+              f"part marked the verse as breaking off; its tail would otherwise "
+              f"have been dropped):")
+        for ch, v, name, head, new in joins:
+            print(f"    ch {ch} v{v}  head …{head[-40:]!r} + tail {new[:40]!r}… "
+                  f"(from {name})")
 
     total = sum(len(v) for v in merged.values())
     print(f"\nchapters: {len(merged)}   verses: {total}")

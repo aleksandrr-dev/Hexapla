@@ -268,3 +268,135 @@ must include them; owner should spot-check on-device before submitting.
   the real number was 23,508 — an undercount of ~1,175x, because 13,781 verses
   differ only by stripped umlauts with no markup to match. Silent damage needs
   a REFERENCE TEXT, not a pattern.
+- **zh_cuv_s / zh_cuv_t John 7:53 was an EMPTY SLOT — FIXED 2026-09-14**
+  (`tools/fix_zh_john753.py`, dry-run by default, assertion-gated, idempotent).
+  Found while answering an owner-relayed rumour that the Chinese text had
+  been altered at the pericope adulterae (John 8:1-11). **It has not been:**
+  8:7 «你们中间谁是没有罪的，谁就可以先拿石头打她」 and 8:11 «我也不定你的罪。
+  去吧，从此不要再犯罪了！» both track the KJV verse for verse in BOTH scripts.
+  The rumour is the 2020 Chinese vocational ETHICS TEXTBOOK (《职业道德与法律》)
+  that printed a fabricated retelling in which Jesus stones her — a textbook's
+  paraphrase, withdrawn after the outcry, never a Bible edition. The CUV has
+  never carried it. ⚠ Keep this record: the question will be asked again.
+  The real defect: the CUV joins 7:53 to 8:1 with a semicolon, so 7:53's slot
+  shipped blank while its text («于是各人都回家去了») rode at the head of 8:1 —
+  a reader tapping 7:53 got an empty line. Split back to its own address, the
+  joining ；becoming 。 as the printed CUV has it. No text added or removed;
+  879 John verses before and after; **31,104 verses per file, empty count
+  1 -> 0 in both**. It was the ONLY empty verse in either asset.
+  ⚠ An empty-slot census is a cheap whole-corpus screen and was never run on
+  these two: `python tools/fix_zh_john753.py` only checks John. Assets are
+  rewritten in tree and NOT yet shipped — next build carries them.
+- **EMPTY-SLOT CENSUS, whole corpus, first run 2026-09-14**
+  (`tools/audit_empty_verses.py`; 0 tokens, so it runs the FULL 38 assets /
+  1,105,179 verses, never a sample). **14 assets carry empty slots, 439 in
+  total.** ⚠ THIS IS A FINDING, NOT A DEFECT LIST - nothing here was corrected.
+  The tool classifies each empty as TAIL (last populated verse of its chapter)
+  or MID. **A versification merge can only produce a TAIL**, so TAIL is the
+  benign de_luther class; a MID means the edition either genuinely lacks the
+  verse or the scrape dropped it, and ⛔ only a REFERENCE TEXT separates those.
+  ✅ POSITIVE CONTROL, free and decisive: `grc_byz`'s MIDs are Luke 17:36,
+  Acts 8:37, 15:34, 24:7 - EXACTLY the verses the Byzantine text omits and the
+  TR carries. The instrument is measuring versification, and **MID does not
+  mean broken.** Wholly TAIL (benign, no action): cu_elizabeth 44, en_geneva
+  40, es_rv 18, fr_martin 4, ru_synodal 1.
+  ▶ MID counts needing a reference text, worst first: **hy_zohrab 135/135,
+  ka_bakar 68/69, enm_wycliffe 33/76, be_dzekuc 24/24, en_tyndale 8/12,
+  sv_karlxii 7/7, grc_byz 4/4 (explained), ja_meiji 2/3, pt_almeida 1/2.**
+  ★ The two SHAPES worth his eye first, because neither is versification:
+  (1) **be_dzekuc Psalm 119** is empty at 1,9,17,...,169 - every eighth verse,
+  which is the 22 ACROSTIC LETTER HEADINGS. That is the same missing-title
+  class already recorded for the cu psalter, in a second asset, and it was
+  never noticed. Its other two (Matthew 6:22, Acts 27:3) fit no pattern.
+  (2) **hy_zohrab Nehemiah 11-12 and ka_bakar** are LXX-based, where a long
+  run of missing names is expected - plausible, but 135 is the largest count
+  in the corpus and is unverified either way.
+  ⛔⛔ **THAT EXPLANATION WAS MEASURED 2026-09-16 AND IT COVERS AT MOST 32 OF
+  THE 135.** Derived, never quoted: `PYTHONIOENCODING=utf-8 python
+  tools/hy_zohrab_empty_shape.py`. The empties run over 39 chapters in 11
+  books, and the MASS IS NOT IN THE NAME LISTS: Nehemiah 38 (11-12 = 32),
+  **Judith 36, Tobit 32**, 1 Maccabees 12, Esther 6 - i.e. **81 of 135 are in
+  DEUTEROCANONICAL NARRATIVE, which carries no genealogies at all.** They fall
+  in contiguous mid-chapter blocks (Tobit 2:11-17, 1 Macc 4:1-9, Neh 12:10-21,
+  Judith 4:11-15, Esther 5:1-3; 11 chapters are one run of >1), in exactly the
+  books where the Greek recensions disagree about verse division. ⇒ The
+  hypothesis worth testing is a **VERSIFICATION MISMATCH IN THE DEUTEROCANON**,
+  not «the Zohrab edition lacks 135 verses». ▶ **The master must therefore
+  cover TOBIT AND JUDITH** - an Armenian master carrying only the protocanon
+  answers 54 of 135 and leaves the majority open. ⚠ Also turned up:
+  **Proverbs 1:1 is empty**, the superscription - possibly the missing-title
+  class already recorded for the cu psalter and be_dzekuc, now in a third
+  asset, unverified. ⛔ None of this rules; only the master does.
+  ▶ `research/_evidence/hy_zohrab_empty_shape_2026-09-16.md`
+  ⛔ Do not bulk-fill any of these. ⛔ Do not infer from the KJV: that is the
+  closed-dictionary argument. Each family needs its own upstream master, the
+  way de_luther did. **Owner's call on which family is worth chasing.**
+
+### ✅ RULED 2026-09-15 — hy_zohrab gets the reference text first
+
+The owner's call on the empty-slot census: **hy_zohrab**, 135 MID of 135.
+
+Why it is the right first target, recorded so the choice is not re-argued:
+its empties are **wholly mid-chapter and wholly one asset's shape**, so a
+single upstream master answers all 135 at once — the best yield per unit of
+work in the census. The competing shapes stay open and are NOT abandoned:
+be_dzekuc's Psalm 119 acrostic headings (24/24) and ka_bakar (68/69) remain on
+the list behind it.
+
+⛔ **NOTHING IS CORRECTED UNTIL THAT MASTER IS IN HAND.** The rules already
+recorded above still govern and none of them is relaxed by this ruling:
+⛔ do not bulk-fill · ⛔ do not infer from the KJV (the closed-dictionary
+argument) · ⛔ do not treat MID as "broken" — `grc_byz`'s four MIDs are exactly
+the Byzantine omissions (Luke 17:36, Acts 8:37, 15:34, 24:7) and are the free
+positive control that MID is a legitimate reading.
+
+▶ The task is **provenance work, not editing**: find the Zohrab edition's own
+upstream master the way de_luther was sourced, then compare. If the master
+shows the verses present, the scrape dropped them and they are recoverable; if
+absent, the edition lacks them and the asset is CORRECT as shipped. Either
+outcome closes 135 slots.
+⚠ Read `~/.claude/skills/pd-provenance` before sourcing the master — the
+aggregator trap and the layer-separation rules apply directly here.
+▶ still owed?
+`PYTHONIOENCODING=utf-8 python C:/Projects/Hexapla/tools/audit_empty_verses.py`
+
+### ★★ WITNESSED 2026-09-17 — the print DOES carry Tobit 2:11-17. TITUS dropped them.
+
+The master was found and the decisive page was read. ⛔ This CHANGES the
+answer at one address and at one address only.
+
+- **Master:** `archive.org/details/OldTestamentInClassicalArmenian-2` —
+  Zohrab OT vol. 2, Venice 1805, Google scan re-hosted by Bedrosian;
+  `ZohrabOT2.pdf`, 34,308,042 B. ⚠ `licenseurl` / `rights` / `creator` all
+  ABSENT: no explicit licence statement, exactly like the NT item.
+- **Witness:** printed Tobit ch. 2 (PDF idx 329-331, printed pp. 482-484,
+  running head ԹՈՒՏԻԹ, heading ԳԼ. Բ.) numbers its verses **1-18 with no gap**.
+  Verses 11-17 are printed, clear and legible, re-verified on a magnified crop
+  of the margin-numeral column. Confidence HIGH.
+  ▶ `_work/zohrab_tobit2_witness_2026-09-17.md` (Hexapla-releases) and
+  `research/_evidence/hy_zohrab_empties_are_the_editions_own_numbering_2026-09-17.md`
+  — ⚠ that filename is now the name of a REFUTED hypothesis; the note carries
+  the refutation at its head.
+
+⇒ For **Tobit 2 only**, the seven empties are REAL MISSING TEXT, not the
+edition's versification. The TITUS harvest — which is our raw — silently
+dropped them, and the build was faithful to a source that was not.
+
+⛔ **What this does NOT license:**
+- ⛔ Do NOT generalise to the other 128. Tob. 1, Tob. 3, Jud. 4, Jud. 9 and
+  Neh. 12 have **no witness of their own**; one refuted example refutes one
+  address. Each needs its own printed page read before any claim. And
+  Ezra/Nehemiah/Esther were never located in this scan (a printed-page jump
+  320 → 481 across one PDF page), so **Neh. 12 cannot be witnessed from it**.
+- ⛔ Do NOT fill anything yet. A SECOND discrepancy is open at the same
+  address: the print's ch. 2 ends at **18**, the TITUS harvest keys it to
+  **22**. The two versifications differ by more than an omission, so a
+  positional fill would be wrong twice over.
+- ⛔ **The licence gate now bites.** Witness-only reading is what made the
+  absent licence statement harmless. COPYING text out of this scan into a
+  shipped asset is redistribution and needs `docs/TRANSLATIONS.md`'s gate
+  settled FIRST — the underlying 1805 text is PD by age, but the digitisation
+  layer carries no statement at all.
+
+▶ Next, in order: a per-address page witness for each remaining block;
+then the ch.2 19-22 question; then the licence layer; only then an edit.

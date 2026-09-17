@@ -69,6 +69,21 @@ audit script, every time.
 
 ## archive.org uploads
 
+- **The sv (kxii) apocrypha is SHIPPED AND INDEXED.** 2026-09-10. All 147
+  deuterocanon chapters are live on `hexapla-audio-karlxii-1703`, the item's
+  public title no longer reads «(pågår / in progress)», and the kxii entry in
+  `build_audio_index_gen.py` carries `"apocrypha": True` — kxii builds
+  1336/1336 across 78/83 books. ⛔ Do not re-run the QA and do not re-render.
+  ▶ still true? `python tools/sv_apoc_status.py` — its last block must read
+  `78 book(s), 12 apocrypha book(s) indexed`.
+- **A 404 on `78/5.ogg` is CORRECT, not a hole.** Additions to Esther's LIVE
+  chapters are slots 9,10,12,13,14,15; index 5 is one of the verse-less
+  placeholder slots `bible_live_chapters()` exists to skip. ⚠ A probe list
+  built by counting `0..n-1` invents a phantom gap here. 2026-09-10.
+- **A non-zero MISSING right after an uploader exits is DERIVE-LAG, not loss.**
+  ⛔ RE-READ the item; do NOT re-send. Measured twice on 2026-09-10: 10 → 0,
+  then 15 → 0, both with nothing sent in between. The item's task queue has to
+  drain before its files.xml MD5s settle.
 - **A long-running derive on an item does NOT block uploads to it** — the
   blocker is the ACCOUNT-WIDE task ration. Proved by probe 2026-09-07 against
   the 116-hour `derive.php` (task 5601127710, `wait_admin=1`). ⛔ Do not mail
@@ -76,6 +91,24 @@ audit script, every time.
   ▶ `docs/NARRATION.md`, the archive.org upload section.
 
 ## Transcription — completeness and print facts
+
+- **Luke idx 57 and 58 are MERGED; Luke 6 is COMPLETE 49/49.** 2026-09-10. The
+  «ei helldur» page-foot was adjudicated a CATCHWORD — idx 58 opens by
+  repeating it verbatim — so merged 6:44 carries `ei helldr` ONCE. ⛔ Do not
+  re-read or re-merge either page. ▶ still true?
+  `python tools/thorlaks_part_check.py --file research/_parts/luke_p50-58.md`
+- **Luke idx 59 is NOT truncated — its SUSPECT right edge is a STAIN.**
+  2026-09-10. `thorlaks_crop_widths.py` measures DARK PIXELS and cannot tell
+  foxing from ink, so a stained leaf edge flags a perfectly intact page. The
+  proof is that the identical streak sits on `line49`, which has NO TEXT AT
+  ALL — that one observation rules out truncation AND apparatus at once.
+  ⛔ Do not re-prep p59 and do not discard judgements made on it.
+  ▶ `research/_evidence/luke_p59_edge_adjudication_2026-09-10.md`.
+- **`thorlaks_crop_widths.py` takes BARE POSITIONAL kit names** (`kits =
+  sys.argv[1:]`); there is **no `--kit` flag**. `--kit luke_kit` makes it treat
+  `--kit` as a kit name, print `⛔ no kit at …\_prep\--kit`, and measure the
+  real kit anyway — a correct result behind a line that looks like a failure.
+  ▶ RIGHT: `python tools/thorlaks_crop_widths.py luke_kit luke_kit2`
 
 - **Matthew (Þorláksbiblía) is merged and complete, 1071/1071.** 2026-09-07.
   ▶ `docs/TRANSCRIPTION.md`.
@@ -126,6 +159,79 @@ audit script, every time.
   31,102-verse protestant canon and does NOT enumerate them, so ENUMERATING
   those books remains OPEN work — the scope question is what is closed here.
   ▶ `research/_evidence/thorlaks_ot_apocrypha_scope_2026-09-07.md`.
+- **The v2 apocrypha's LAST open book boundary is closed: 2 Maccabees begins on
+  idx 359** — 2026-09-12, by a BODY read after a verso-head sweep had narrowed
+  35 pages to 2 and could go no further (idx 358 is a recto, and every recto in
+  that span prints only «Maccabeorum»). idx 358 carries no book rubric, only the
+  chapter numeral «XVI»; idx 359 carries 1 Macc 16:21-24, the colophon «Endiŋ
+  þeirrar Fyrstu Bookar Maccabeorum», Luther's formále, and chapter I. Both
+  controls fired, and idx 360/361/362 run 2 Macc 1→2→3 monotonically.
+  ⛔ Do not re-sweep the heads. ⚠ This closes BOUNDARIES only — every apocrypha
+  chapter COUNT is still tradition-derived, not read off this print.
+  ▶ `research/_evidence/thorlaks_v2_maccabees_boundary_CLOSED_2026-09-12.md`.
+
+- **Luke gets NO `ø` rate — option B, the owner, 2026-09-15.** The 2026-09-12
+  method finding left three options open (A main session one page at a time,
+  B no rate, C a non-vision instrument) and the owner has now taken **B**.
+  ⛔⛔ **THIS IS NOT A 0 % RATE.** The text needs no repair: every `o` already
+  stands plain by the documented default, and a page with no crop data has no
+  rate — that is the correct outcome, not a gap to be filled later. ⛔ Do not
+  commission a subagent `ø` read for Luke, do not "top up" a page from its
+  candidates, and do not report Luke under the 19-31 % band — the band is per
+  BOOK and Luke is not in it. ▶ `research/_evidence/thorlaks_o_pass_method_2026-09-12.md`.
+
+- **Luke p66's verse numerals are PRINTED, and 13:3/13:4 is settled against the
+  print** — 2026-09-15. 13:3 ends at `aller eins`; the Siloam tower clause and
+  `er byggia til Jerufalem?` are both inside 13:4. ⛔ Do not re-adjudicate it
+  from sense. ★ The 2026-09-14 sheets-only read also **dropped a whole clause**
+  — a contiguous, plausible verse range can be missing content in the middle,
+  and the corpus audit cannot see that.
+  ⚠ p66 is still NOT mergeable: `line43` is 3.80x the median height and holds
+  four scripture rows, so its line addresses are void.
+  ▶ `research/_evidence/thorlaks_luke_p66_secondpass_2026-09-15.md`.
+
+- ★★ **THE PAGE METHOD IS RULED — owner, 2026-09-17 16:40, «Yes to both».**
+  ⛔ Do not re-propose hand-orchestration and do not re-ask for this. Measured
+  that day: ONE Luke page cost ~10 Sonnet agents (~0.7M tokens) **plus ~25
+  main-session turns at 150-200k of re-billed context (~4M)** — the main
+  session was 85 % of the bill and 100 % of the wall-clock, and Luke alone had
+  ~45 pages left. The method from now on:
+  1. **One `Workflow` per page batch**, never a hand-run pipeline: the main
+     session launches one workflow and reads one result. Every agent is a fresh
+     context, so the 25-image guard and the 220k stop stop binding.
+     ▶ `.claude/workflows/thorlaks_page.js` in the repo.
+  2. **Two CROP reads (A and B), no sheets read** — the sheets read is the
+     weaker instrument (6.3x vs 8.3x) and needs a hand-built kit. The two reads
+     take **different chunk boundaries** (offset ~7 crops) so a chunk-edge error
+     cannot land on the same site twice.
+  3. **Majority vote BEFORE adjudication**: a third blind crop read resolves
+     every 2-of-3 site in plain code; only three-way splits and empty sides go
+     to a forced-choice adjudicator.
+  4. **Scripts run in `effort:'low'` agents, never in the main session.** The
+     main session never `cat`s a read.
+  5. Kept from the old method: brief files as the cached prompt prefix;
+     `(nothing)` for an empty side; the merge tool's `[X] N site(s) with NO
+     verdict` line as the ONLY coverage authority; a control that must fire.
+  ⚠ The lever is never «more agents» — it is moving checks into scripts,
+  batching images, and not re-reading what was already read.
+
+- ★★ **THE NEXT CAMPAIGN'S PILOT ITEMS ARE RULED** — same ruling, 2026-09-17
+  16:40. These are conditions on starting the print AFTER Þorláksbiblía, not
+  suggestions:
+  (a) choose the next print **partly on whether a digital WITNESS text exists**;
+  (b) one session tests a public **blackletter OCR model** (Kraken /
+      Transkribus family) on three ALREADY-MERGED Luke pages, diffed against
+      the merged text, 0 vision tokens — if it reads acceptably it replaces one
+      of the two reads as a witness; ⛔ not assumed to work until that diff
+      exists;
+  (c) **freeze the sort conventions on a three-page pilot with him BEFORE any
+      reading starts** — no mid-campaign convention change;
+  (d) **validate prep on the whole kit before the first read** — crop widths
+      AND heights with their controls, plus the line-cliff test;
+  (e) **log tokens per page per stage from day one.**
+  ⚠ A witness text is a WITNESS, never a source: the `kxii_diff.py` rule holds
+  — transcribe first, diff after, and readers never see the witness. Its licence
+  is gated by `docs/TRANSLATIONS.md` like any other text.
 
 ## Product
 
@@ -135,3 +241,38 @@ audit script, every time.
 - **The 29 books without cover art are done being hunted** — the gap is
   structural, not a search failure. 2026-08-10.
   ▶ `research/bookart_gap_sources_2026-08-10.md`.
+- **Playback does not follow a page turn, and that is INTENDED** — owner,
+  2026-09-16. `navigateChapter` never touches `Playback`, so turning the page
+  while audio plays leaves the audio where it was. ⛔ Do not "fix" it, and ⛔ do
+  not add a UI cue for it — he was offered that option and took plain
+  «intended». Reading ahead of the narration is a use, not a bug.
+  ▶ mechanism in `docs/ARCHITECTURE.md`.
+
+## Narration
+
+- **`Aebraham` is FIXED and the fix reached the RUNNING render** — owner's ear,
+  2026-09-13, on a two-way control: Genesis 17:5 (rendered before the lexicon
+  recycle) wrong, 1 Chronicles 29:18 (rendered after) correct. ⛔ Do not re-ask
+  whether the lexicon is live. ⚠ Chapters rendered BEFORE the recycle still
+  carry it and the affected count was never derived — that part is OPEN.
+  ▶ `research/_evidence/en_lexicon_abraham_confirmed_2026-09-13.md`.
+- **The gate-append side of books 8, 9 and 10 is CLOSED with ZERO real
+  appends** — 2026-09-13. 16 distinct flags: 4 cleared mechanically by the
+  printed-word route, 9 by the owner's ear over kits 13c/13d/13e, 3 earlier.
+  ⛔ Do not rebuild an ear kit for books 8-10 appends.
+  ★ And the gate has a known FALSE NEGATIVE: Leviticus 22:17's ear-confirmed
+  doubling is NOT among book 2's flags. The gate and the ASR sweep are disjoint
+  in BOTH directions — a book screened by one is not screened.
+  ▶ `research/_evidence/en_gate_append_coverage_2026-09-13.md`.
+
+## Translations
+
+- **Every question put to the AMB translator is ANSWERED** — Bro. Edmund,
+  2026-09-13. Final text + release tag `2026`; litmus **7/7 re-run on the final
+  text** with the exact KJV NT grid (7,957 verses) verified; attribution wording
+  given ("my AMB Github website", REQUIRED under CC BY-SA so it goes in
+  `sources_text`); Luke 19:13 DECLINED with reasons. ⛔ Nothing is pending from
+  him and the "wait for a traditional edition" branch stays closed.
+  ⚠ Only the owner's ship / don't-ship call remains, and it is about a
+  **29-verse** peso policy, not one verse.
+  ▶ `research/_evidence/amb_final_litmus_2026-09-13.md`.

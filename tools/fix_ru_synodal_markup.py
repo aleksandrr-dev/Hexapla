@@ -95,7 +95,10 @@ def main():
         # What the reader will actually see, per Bible.kt's regex.
         display = re.sub(r"\s*\{[^{}]*:[^{}]*\}", "", after)
         display = re.sub(r"[{}]", "", display)
-        print(f"    SHOWN : {re.sub(r'\\s+', ' ', display).strip()[:110]}")
+        # PEP 701 is 3.12+; a backslash inside an f-string {…} is a SyntaxError
+        # here (3.11), so collapse first and interpolate the plain name.
+        shown = re.sub(r"\s+", " ", display).strip()[:110]
+        print(f"    SHOWN : {shown}")
 
     if leftovers:
         print(f"\n⚠ {len(leftovers)} verse(s) NOT converted — left untouched:")

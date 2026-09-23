@@ -194,11 +194,17 @@ def manifest_vol(chunk):
 
 
 def run_chunk(chunk, dump_root=None):
+    """Report one chunk. Returns True only if it was actually checked.
+
+    ⚠ A chunk with no readable MANIFEST.md is NOT a chunk with no gaps - its
+    ink was never looked at at all. Callers must not read that as a pass
+    (`thorlaks_chunk_kit.py` already aborts on a non-zero rc).
+    """
     d = PREP / chunk
     vol = manifest_vol(chunk)
     if vol is None:
         print(f"\n=== {chunk} ===\n  no readable MANIFEST.md - SKIPPED")
-        return
+        return False
     pdf = fitz.open(str(RESEARCH / f"thorlaks_v{vol}.pdf"))
     pages = sorted((p for p in d.iterdir()
                     if p.is_dir() and re.fullmatch(r"p\d+", p.name)),
@@ -240,6 +246,7 @@ def run_chunk(chunk, dump_root=None):
         print(f"  WARNING pages whose derivation does not match the crops on "
               f"disk: {bad_repro} - re-prep them before trusting this report")
     pdf.close()
+    return True
 
 
 def main():
@@ -249,14 +256,20 @@ def main():
     ap.add_argument("--dump", default=None,
                     help="render every flagged run here, for ONE adjudicating read")
     a = ap.parse_args()
+    skipped = []
     if a.all:
         for d in sorted(PREP.iterdir()):
-            if d.is_dir():
-                run_chunk(d.name, a.dump)
+            if d.is_dir() and not run_chunk(d.name, a.dump):
+                skipped.append(d.name)
     elif a.chunk:
-        run_chunk(a.chunk, a.dump)
+        if not run_chunk(a.chunk, a.dump):
+            skipped.append(a.chunk)
     else:
         sys.exit("pass --chunk <name> or --all")
+    if skipped:
+        print("\n⚠ SKIPPED, NOT CHECKED (no readable MANIFEST.md): "
+              + ", ".join(skipped))
+        sys.exit(1)
 
 
 if __name__ == "__main__":

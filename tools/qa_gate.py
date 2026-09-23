@@ -340,7 +340,9 @@ def main():
     if a.validate_splice:
         return validate_splice(a.validate_splice, a.asr_lang)
     ap.print_help()
-    return 0
+    # No flag means no check ran - that is not a pass. rc 2 = usage error, so a
+    # caller that shells out cannot read this as "gate clean".
+    return 2
 
 
 if __name__ == "__main__":

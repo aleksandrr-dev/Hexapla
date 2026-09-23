@@ -64,6 +64,13 @@ jobs:
       - name: Assert the privacy policy was rendered
         run: test -f _site/PRIVACY.html
 
+      # jekyll-build-pages runs in a Docker container as root, so _site comes
+      # back root-owned and the overlay steps below cannot write into it
+      # (first run, 2026-09-23: `mkdir: cannot create directory '_site/data':
+      # Permission denied`). Hand it back to the runner user.
+      - name: Take ownership of the rendered site
+        run: sudo chown -R "$(id -u):$(id -g)" _site
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

@@ -1,0 +1,1194 @@
+package com.aleks.hexapla
+
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.os.Build
+import android.os.PowerManager
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.NotificationCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
+/** Cross-screen playback state, written by [ReadingService], observed by the UI. */
+object Playback {
+    val active = mutableStateOf(false)      // service alive (playing or paused)
+    val playing = mutableStateOf(false)     // actually speaking right now
+    val book = mutableIntStateOf(-1)
+    val chapter = mutableIntStateOf(-1)
+    val verse = mutableIntStateOf(-1)
+    val sleepMinutes = mutableIntStateOf(0) // 0 = off, -1 = end of chapter
+    // Character range of the word currently being spoken within the verse text
+    // (engine-dependent; Google's local voices report it, some engines don't).
+    val wordStart = mutableIntStateOf(-1)
+    val wordEnd = mutableIntStateOf(-1)
+}
+
+/**
+ * Foreground media service that reads chapters aloud with the device TTS engine.
+ * Keeps playing with the screen off or the app minimized; exposes controls via a
+ * media-style notification and MediaSession (headset buttons, lockscreen).
+ * TTS cannot pause mid-utterance, so pause stops speech and resume restarts
+ * from the verse that was being read.
+ */
+class ReadingService : Service() {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var tts: TextToSpeech? = null
+    private var ttsReady = false
+
+    private var books: List<Book> = emptyList()
+    private var bookIdx = 0
+    private var chapterIdx = 0
+    private var verseIdx = 0
+    private var translationId = ""
+    private var settings = AppSettings()
+    private var voicePrefs: Map<String, String> = emptyMap()
+
+    private var sleepJob: Job? = null
+    private var rateJob: Job? = null
+    private var prefetchJob: Job? = null   // caches upcoming generated chapters
+    private var followJob: Job? = null      // publishes current verse during recorded audio
+    private var session: MediaSessionCompat? = null
+    private var focusRequest: AudioFocusRequest? = null
+    private var wakeLock: PowerManager.WakeLock? = null
+
+    // Optional instrumental bed under the reading (opt-in in Settings).
+    private var musicPlayer: MediaPlayer? = null
+
+    // Narrated audio (LibriVox) mode; when null/false, TTS is used.
+    private var player: MediaPlayer? = null
+    private var narrating = false
+    private var currentSection: AudioRepo.Section? = null
+    private var audioSections: Map<Int, List<AudioRepo.Section>> = emptyMap()
+    private var downloadPercent = -1
+
+    override fun onBind(intent: Intent?) = null
+
+    override fun onCreate() {
+        super.onCreate()
+        // Settings changes apply to live playback: music volume/toggle
+        // immediately, speech rate from the next verse (TTS) or instantly
+        // (narrated player).
+        scope.launch {
+            Store.settings(this@ReadingService).collect { s ->
+                val old = settings
+                settings = s
+                if (s.musicEnabled != old.musicEnabled) {
+                    if (!s.musicEnabled) releaseMusic()
+                    else if (Playback.playing.value) startMusic()
+                } else if (s.bedKind != old.bedKind) {
+                    // Switching music <-> fireside mid-listen swaps the bed
+                    // rather than waiting for the next mood change, which in
+                    // fireside mode may never come.
+                    releaseMusic()
+                    if (Playback.playing.value) startMusic()
+                } else if (s.musicVolume != old.musicVolume) {
+                    val v = musicVol()
+                    try { musicPlayer?.setVolume(v, v) } catch (_: Exception) { }
+                }
+                if (s.speechRate != old.speechRate) {
+                    try { tts?.setSpeechRate(s.speechRate) } catch (_: Exception) { }
+                    if (narrating) {
+                        try {
+                            player?.let {
+                                if (it.isPlaying) it.playbackParams =
+                                    it.playbackParams.setSpeed(s.speechRate)
+                            }
+                        } catch (_: Exception) { }
+                    } else if (Playback.playing.value) {
+                        // TTS can't change rate mid-utterance: once the slider
+                        // settles, restart the current verse at the new speed.
+                        rateJob?.cancel()
+                        rateJob = scope.launch {
+                            delay(700)
+                            if (!narrating && Playback.playing.value) speakVerse(verseIdx)
+                        }
+                    }
+                }
+            }
+        }
+        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager)
+            .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "hexapla:reading")
+            .apply { setReferenceCounted(false) }
+        session = MediaSessionCompat(this, "hexapla-reading").apply {
+            setCallback(object : MediaSessionCompat.Callback() {
+                override fun onPlay() = resume()
+                override fun onPause() = pause()
+                override fun onStop() = stopEverything()
+                override fun onSkipToNext() = skipChapter(+1)
+                override fun onSkipToPrevious() = skipChapter(-1)
+                override fun onSeekTo(pos: Long) {
+                    if (narrating) {
+                        try { player?.seekTo(pos.toInt()) } catch (_: Exception) { }
+                    } else {
+                        // TTS timeline is virtual: one verse per VERSE_MS slot.
+                        val v = (pos / VERSE_MS).toInt()
+                            .coerceIn(0, (chapterVerses.size - 1).coerceAtLeast(0))
+                        verseIdx = v
+                        Playback.verse.intValue = v
+                        updateMusicForPassage()
+                        if (Playback.playing.value) speakVerse(v)
+                    }
+                    updateSessionState(Playback.playing.value)
+                    updateNotification()
+                }
+            })
+        }
+        tts = TextToSpeech(this) { status ->
+            ttsReady = status == TextToSpeech.SUCCESS
+            if (ttsReady) {
+                // Engine callbacks arrive on a binder thread; hop to main where
+                // the session, notifications and our state live.
+                tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                        val v = utteranceId?.substringAfter(':')?.toIntOrNull() ?: return
+                        scope.launch {
+                            verseIdx = v
+                            Playback.verse.intValue = v
+                            Playback.wordStart.intValue = -1
+                            Playback.wordEnd.intValue = -1
+                            // Anchors can turn mid-chapter (Ps 22 at v22,
+                            // Lk 23 at the crucifixion), so the bed is checked
+                            // per verse; updateMusicForPassage() is a no-op
+                            // unless the mood actually changed.
+                            updateMusicForPassage()
+                            updateSessionState(Playback.playing.value)
+                            updateNotification()
+                        }
+                    }
+
+                    override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
+                        Playback.wordStart.intValue = start
+                        Playback.wordEnd.intValue = end
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                        // Verses are fed one at a time: pre-queueing a whole
+                        // chapter loses utterances while the engine is still
+                        // loading a newly-selected language's voice data.
+                        val v = utteranceId?.substringAfter(':')?.toIntOrNull() ?: return
+                        scope.launch {
+                            if (!narrating && Playback.playing.value) speakVerse(v + 1)
+                        }
+                    }
+
+                    @Deprecated("Deprecated in Java")
+                    override fun onError(utteranceId: String?) {
+                        scope.launch { stopEverything() }
+                    }
+                })
+                pendingStart?.invoke()
+                pendingStart = null
+            }
+        }
+    }
+
+    private var pendingStart: (() -> Unit)? = null
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_PLAY -> {
+                val b = intent.getIntExtra(EXTRA_BOOK, 0)
+                val c = intent.getIntExtra(EXTRA_CHAPTER, 0)
+                val v = intent.getIntExtra(EXTRA_VERSE, 0)
+                startForeground(NOTIF_ID, buildNotification())
+                scope.launch {
+                    settings = Store.currentSettings(this@ReadingService)
+                    voicePrefs = Store.voicePrefs(this@ReadingService).first()
+                    translationId = settings.primaryId
+                    books = BibleRepo.load(this@ReadingService, translationId)
+                    // The mood map is keyed to canonical KJV coordinates, so it
+                    // is useless without VerseMap to pivot through. Load both,
+                    // and never let either failure stop playback — the bed
+                    // falls back to the uniform rotation.
+                    try {
+                        VerseMap.load(this@ReadingService)
+                        MoodMap.load(this@ReadingService)
+                        Pronounce.load(this@ReadingService, translationId)
+                        MusicRepo.load(this@ReadingService)
+                    } catch (_: Exception) { }
+                    // kjv is the only translation served from BOTH indexes, and
+                    // it has to be: 50 of its books are LibriVox human readings
+                    // (no per-verse offsets, and 223 of their sections span
+                    // several chapters, which the generated format cannot
+                    // express), while the 30 books LibriVox never recorded are
+                    // ours — 245 chapters that DO carry exact offsets.
+                    // Merging gives verse-accurate following on our own audio
+                    // without giving up the human readings.
+                    // ⚠ The two book sets are DISJOINT (verified 2026-08-16), so
+                    // the merge cannot drop anything; generated wins on the key
+                    // if that ever stops being true, because only it has offsets.
+                    // Every other translation is generated-only, as before.
+                    audioSections = if (settings.audioNarration)
+                        try {
+                            if (translationId == "kjv") {
+                                // Written out rather than `a + b` on purpose:
+                                // the ORDER is load-bearing and must not depend
+                                // on the reader recalling which side of the plus
+                                // operator wins. Generated goes in LAST, so it
+                                // takes precedence for any book in both.
+                                val librivox = AudioRepo.index(this@ReadingService)
+                                val generated =
+                                    AudioRepo.generated(this@ReadingService, "kjv")
+                                buildMap {
+                                    putAll(librivox)
+                                    putAll(generated)
+                                }
+                            } else AudioRepo.generated(this@ReadingService, translationId)
+                        } catch (_: Exception) { emptyMap() }
+                    else emptyMap()
+                    bookIdx = b; chapterIdx = c; verseIdx = v
+                    if (ttsReady || sectionForCurrent() != null) startChapter(fromVerse = v)
+                    else pendingStart = { startChapter(fromVerse = v) }
+                }
+            }
+            ACTION_PAUSE -> pause()
+            ACTION_RESUME -> resume()
+            ACTION_STOP -> stopEverything()
+            ACTION_NEXT -> skipChapter(+1)
+            ACTION_PREV -> skipChapter(-1)
+            ACTION_TIMER -> setSleepTimer(intent.getIntExtra(EXTRA_MINUTES, 0))
+        }
+        return START_NOT_STICKY
+    }
+
+    private fun sectionForCurrent(): AudioRepo.Section? =
+        AudioRepo.sectionFor(audioSections[bookIdx], chapterIdx)
+
+    /** Entry point for playing the current chapter in whichever mode applies. */
+    private fun startChapter(fromVerse: Int = 0) {
+        val sec = sectionForCurrent()
+        if (sec != null) playSection(sec, sectionFraction(sec, chapterIdx, fromVerse), fromVerse)
+        else speakCurrentChapter(fromVerse)
+    }
+
+    /**
+     * Approximate position of (chapter, verse) inside a multi-chapter section,
+     * as a fraction of its verse count — recordings have no verse timestamps,
+     * so verse count is the best proxy for elapsed time.
+     */
+    private fun sectionFraction(sec: AudioRepo.Section, chapter: Int, verse: Int): Float {
+        val chapters = books.getOrNull(bookIdx)?.chapters ?: return 0f
+        var before = 0
+        var total = 0
+        for (c in (sec.first - 1) until sec.last) {
+            val n = chapters.getOrNull(c)?.size ?: 0
+            when {
+                c < chapter -> before += n
+                c == chapter -> before += verse.coerceIn(0, n)
+            }
+            total += n
+        }
+        return if (total > 0) before.toFloat() / total else 0f
+    }
+
+    private fun playSection(sec: AudioRepo.Section, fraction: Float = 0f, startVerse: Int = 0) {
+        tts?.stop()
+        releasePlayer()
+        if (!requestFocus()) { stopEverything(); return }
+        acquireWakeLock()
+        narrating = true
+        currentSection = sec
+        downloadPercent = 0
+        startMusic()
+        Playback.active.value = true
+        Playback.playing.value = true
+        Playback.book.intValue = bookIdx
+        Playback.chapter.intValue = chapterIdx
+        Playback.verse.intValue = -1
+        Playback.wordStart.intValue = -1
+        updateMusicForPassage()
+        Playback.wordEnd.intValue = -1
+        updateSessionState(playing = true)
+        updateNotification()
+        scope.launch { Store.setLastPosition(this@ReadingService, bookIdx, chapterIdx) }
+        prefetchAhead(sec)
+        scope.launch {
+            // Source priority: an already-cached file (offline, instant) > a
+            // live stream when the user opted out of saving (Settings) >
+            // download-and-cache (default; plays offline next time). Generated
+            // audio caches under a collision-free key — its URL tail `<ch>.ogg`
+            // repeats across books.
+            val cacheFile = if (sec.generated)
+                AudioRepo.generatedFile(this@ReadingService, sec.url)
+            else
+                AudioRepo.localFile(this@ReadingService, sec.url)
+            val haveCache = cacheFile.exists() && cacheFile.length() > 0
+            val streaming = settings.audioStream && !haveCache
+
+            val dataSource: String
+            if (haveCache) {
+                downloadPercent = -1
+                dataSource = cacheFile.path
+            } else if (streaming) {
+                downloadPercent = -1
+                updateNotification()
+                dataSource = sec.url
+            } else {
+                var lastShown = -10
+                val onPct: (Int) -> Unit = { pct ->
+                    if (pct >= lastShown + 10) {
+                        lastShown = pct
+                        downloadPercent = pct
+                        scope.launch { updateNotification() }
+                    }
+                }
+                val file = if (sec.generated)
+                    AudioRepo.ensureDownloadedGen(this@ReadingService, sec.url, onPct)
+                else
+                    AudioRepo.ensureDownloaded(this@ReadingService, sec.url, onPct)
+                downloadPercent = -1
+                if (currentSection != sec) return@launch  // user moved on meanwhile
+                if (file == null) {
+                    // Download failed (offline, not cached) — TTS for now.
+                    narrating = false
+                    speakCurrentChapter(fromVerse = 0)
+                    return@launch
+                }
+                dataSource = file.path
+            }
+            if (currentSection != sec) return@launch  // user moved on meanwhile
+            player = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build()
+                )
+                setDataSource(dataSource)
+                setOnPreparedListener { mp ->
+                    // Generated audio carries exact per-verse offsets → seek right
+                    // to the verse (small lead-in so its first word isn't clipped).
+                    // Otherwise fall back to the verse-count estimate, landing a
+                    // few seconds early so the target isn't overshot. Verse 0 seeks
+                    // nowhere → the chapter announcement plays.
+                    val offsets = sec.offsets
+                    val skipMs = if (offsets != null && startVerse in 1 until offsets.size)
+                        (offsets[startVerse] - 250).coerceAtLeast(0)
+                    else
+                        (mp.duration * fraction).toInt() - 4000
+                    if (skipMs > 1000) mp.seekTo(skipMs)
+                    try {
+                        mp.playbackParams = mp.playbackParams.setSpeed(settings.speechRate)
+                    } catch (_: Exception) { mp.start() }
+                    updateSessionState(playing = true)
+                    updateNotification()
+                    if (sec.generated) startVerseFollow(sec)
+                }
+                setOnCompletionListener { onSectionFinished(sec) }
+                setOnErrorListener { _, _, _ ->
+                    // A dropped stream falls back to TTS; a local-file error stops.
+                    if (streaming && currentSection == sec) {
+                        narrating = false
+                        speakCurrentChapter(fromVerse = 0)
+                    } else stopEverything()
+                    true
+                }
+                prepareAsync()
+            }
+        }
+    }
+
+    private fun onSectionFinished(sec: AudioRepo.Section) {
+        val endOfChapterTimer = Playback.sleepMinutes.intValue == -1
+        if (!settings.autoContinue || endOfChapterTimer) { stopEverything(); return }
+        // Next chapter after the section (sec.last is 1-based inclusive).
+        var b = bookIdx
+        var c = sec.last  // 0-based index of the chapter after the section
+        while (b < books.size && c >= books[b].chapters.size) { b++; c = 0 }
+        if (b >= books.size) { stopEverything(); return }
+        bookIdx = b; chapterIdx = c
+        startChapter(fromVerse = 0)
+    }
+
+    private fun releasePlayer() {
+        followJob?.cancel(); followJob = null
+        prefetchJob?.cancel(); prefetchJob = null
+        player?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
+        player = null
+        narrating = false
+        currentSection = null
+        downloadPercent = -1
+    }
+
+    /**
+     * Verse-following for recorded (generated) narration: poll the player's
+     * position and publish the current verse, so the reader highlights and
+     * auto-scrolls exactly as it does for per-verse TTS. Driven by the
+     * per-verse ms offsets carried on the section (audio_index_gen "o").
+     */
+    private fun startVerseFollow(sec: AudioRepo.Section) {
+        followJob?.cancel()
+        val offsets = sec.offsets
+        if (offsets.isNullOrEmpty()) return
+        followJob = scope.launch {
+            // Word timings are fetched in the background: verse-following must
+            // start on the first poll rather than wait on a network round trip,
+            // so `words` stays null until (and unless) the sidecar arrives.
+            var words: List<List<IntArray>?>? = null
+            launch {
+                words = try { AudioRepo.words(this@ReadingService, sec) } catch (_: Exception) { null }
+            }
+            var lastV = -1
+            var lastW = -1
+            while (isActive) {
+                val pos = try { player?.currentPosition ?: break } catch (_: Exception) { break }
+                var v = 0
+                for (i in offsets.indices) { if (offsets[i] <= pos) v = i else break }
+                if (v != lastV) {
+                    lastV = v
+                    lastW = -1
+                    verseIdx = v
+                    Playback.verse.intValue = v
+                    Playback.wordStart.intValue = -1
+                    Playback.wordEnd.intValue = -1
+                    updateMusicForPassage()   // mid-chapter turns, as for TTS
+                }
+                // Word-level highlighting, matching what TTS publishes from
+                // onRangeStart: character ranges into the displayed verse text.
+                val vw = words?.getOrNull(v)
+                if (vw != null) {
+                    // Linear from the last hit, not a fresh scan: playback moves
+                    // forward, so this is O(1) per poll in the common case and
+                    // still correct after a seek, which resets lastW via lastV.
+                    var w = -1
+                    for (i in vw.indices) { if (vw[i][0] <= pos) w = i else break }
+                    if (w != lastW) {
+                        lastW = w
+                        if (w >= 0 && pos <= vw[w][1]) {
+                            Playback.wordStart.intValue = vw[w][2]
+                            Playback.wordEnd.intValue = vw[w][3]
+                        } else {
+                            // In a gap between words (a pause, or past the last
+                            // word): drop the highlight rather than leave it
+                            // stuck on a word that has finished.
+                            Playback.wordStart.intValue = -1
+                            Playback.wordEnd.intValue = -1
+                        }
+                    }
+                }
+                // A word lasts ~300ms, so the 250ms verse cadence would visibly
+                // lag or skip words entirely. Poll faster only when there is
+                // word data to justify the extra wakeups.
+                delay(if (vw != null) 60 else 250)
+            }
+        }
+    }
+
+    /**
+     * While a generated chapter plays, quietly cache the next few chapters so
+     * auto-advance never waits on — or fails on — an on-demand download (the
+     * cause of recorded audio dropping to TTS mid-listen). Skipped in
+     * stream-don't-save mode and for LibriVox (multi-chapter) sections.
+     */
+    private fun prefetchAhead(sec: AudioRepo.Section, count: Int = 2) {
+        if (!sec.generated || settings.audioStream) return
+        val startBook = bookIdx
+        prefetchJob?.cancel()
+        prefetchJob = scope.launch {
+            delay(2000)  // let the current chapter's own download win first
+            var b = startBook
+            var c = sec.last  // 0-based chapter after this section
+            var got = 0
+            while (got < count && b < books.size) {
+                while (b < books.size && c >= books[b].chapters.size) { b++; c = 0 }
+                if (b >= books.size) break
+                val next = AudioRepo.sectionFor(audioSections[b], c)
+                if (next != null && next.generated) {
+                    try { AudioRepo.ensureDownloadedGen(this@ReadingService, next.url) }
+                    catch (_: Exception) {}
+                    got++
+                    c = next.last
+                } else {
+                    c += 1
+                }
+            }
+        }
+    }
+
+    /* ---- Background music bed: rotates softly through the bundled tracks
+       (piano, orchestral, strings, ambient) while the reading plays. ---- */
+
+    /** Perceptual volume: squaring the slider position spreads loudness evenly. */
+    private fun musicVol(): Float = settings.musicVolume.coerceIn(0f, 1f).let { it * it }
+
+    private val musicTracks: List<String> by lazy {
+        try {
+            (assets.list("music") ?: emptyArray()).map { "music/$it" }.shuffled()
+        } catch (_: Exception) { emptyList() }
+    }
+    private var musicIndex = 0
+
+    /* ---- Scene-matched beds -------------------------------------------
+       The bundled four are the offline fallback for EVERY mood, so nobody
+       loses music by being offline. Until the downloadable pack lands, a mood
+       simply picks deterministically among them: the same mood always draws
+       the same track, so a chapter's bed is stable and a mood CHANGE is
+       audible, which is the whole point of the feature.
+       ⚠ `silence` is a real value, not a failure. It must be distinguishable
+       from "the track could not be loaded", which falls back to a bundled
+       track instead. ---- */
+
+    private var currentMood: String? = null
+    private var firesidePlaying = false
+
+    /** The short fire loop bundled in the APK, so Fireside works offline. */
+    private val FIRESIDE_ASSET = "ambience/fire_loop.ogg"
+    private var musicFading: MediaPlayer? = null
+    private var fadeJob: Job? = null
+
+    /** Which bundled track stands in for a mood. Stable per mood, not random. */
+    private fun bundledFor(mood: String): String? {
+        if (musicTracks.isEmpty()) return null
+        // Hash the mood name rather than using an index, so adding a mood later
+        // does not reshuffle every other mood's track.
+        val h = mood.fold(7) { acc, c -> acc * 31 + c.code }
+        return musicTracks[((h % musicTracks.size) + musicTracks.size) % musicTracks.size]
+    }
+
+    /** Resolve the bed for what is playing now, honouring the uniform-bed setting. */
+    private fun bedNow(): MoodMap.Bed? {
+        if (settings.uniformBed || !MoodMap.isLoaded) return null
+        return MoodMap.moodFor(translationId, bookIdx, chapterIdx, Playback.verse.intValue)
+    }
+
+    /**
+     * Called when the passage moves. Swaps the bed only when the MOOD changes —
+     * a bed that changes constantly is worse than one that is slightly generic.
+     */
+    private fun updateMusicForPassage() {
+        if (!settings.musicEnabled) return
+        val bed = bedNow() ?: return
+
+        // ⚠ FIRESIDE IS ONE CONTINUOUS BED, so mood changes must NOT restart
+        // it — only the silence boundary matters. Restarting a fire recording
+        // at every mood change would be audible as a seam and would defeat the
+        // point of choosing ambience over music.
+        if (settings.bedKind == BED_FIRESIDE) {
+            val wantSilence = bed.mood == MoodMap.SILENCE
+            currentMood = bed.mood
+            if (wantSilence) {
+                if (firesidePlaying) { firesidePlaying = false; crossfadeTo(null) }
+            } else if (!firesidePlaying) {
+                startFireside()
+            }
+            return
+        }
+
+        if (bed.mood == currentMood) return
+        currentMood = bed.mood
+        if (bed.mood == MoodMap.SILENCE) {
+            crossfadeTo(null)
+            return
+        }
+        // A pinned track wins, then a downloaded track for the mood, then the
+        // bundled stand-in. ⚠ Only `silence` may produce no bed: a missing
+        // download must never be mistaken for a deliberate silence.
+        val pinned = bed.track?.let { MusicRepo.cachedPinned(this, it) }
+        val downloaded = pinned
+            ?: MusicRepo.cachedFor(this, bed.mood, bookIdx * 1000 + chapterIdx)
+        if (downloaded != null) crossfadeToFile(downloaded)
+        else crossfadeTo(bundledFor(bed.mood))
+    }
+
+    /**
+     * Fade the current bed out while the new one fades in.
+     * ⚠ MediaPlayer cannot crossfade, so this runs two players and ramps their
+     * volumes. Hard-swapping at a mood change is jarring, which is why the
+     * pre-existing behaviour only ever swapped on track COMPLETION.
+     * Both ramps respect the perceptual musicVol() curve.
+     */
+    /** Crossfade to a downloaded file rather than a bundled asset. */
+    private fun crossfadeToFile(file: java.io.File, ms: Long = 2500) {
+        fadeJob?.cancel()
+        val outgoing = musicPlayer
+        musicPlayer = null
+        musicFading = outgoing
+        try {
+            musicPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                setDataSource(file.path)
+                setVolume(0f, 0f)
+                isLooping = true
+                setOnPreparedListener { if (Playback.playing.value) it.start() }
+                prepareAsync()
+            }
+        } catch (_: Exception) {
+            musicPlayer = null
+        }
+        rampFade(ms)
+    }
+
+    private fun crossfadeTo(asset: String?, ms: Long = 2500) {
+        fadeJob?.cancel()
+        val outgoing = musicPlayer
+        musicPlayer = null
+        musicFading = outgoing
+
+        if (asset != null) playMusicAsset(asset, startVolume = 0f)
+        rampFade(ms)
+    }
+
+    /** Ramp the outgoing bed down and the incoming one up over [ms]. */
+    private fun rampFade(ms: Long) {
+        fadeJob = scope.launch {
+            val target = musicVol()
+            val steps = 25
+            for (i in 1..steps) {
+                val t = i / steps.toFloat()
+                val out = target * (1f - t)
+                val inn = target * t
+                try { musicFading?.setVolume(out, out) } catch (_: Exception) { }
+                try { musicPlayer?.setVolume(inn, inn) } catch (_: Exception) { }
+                delay(ms / steps)
+            }
+            musicFading?.let { p ->
+                try { p.stop() } catch (_: Exception) { }
+                p.release()
+            }
+            musicFading = null
+        }
+    }
+
+    private fun startMusic() {
+        if (!settings.musicEnabled || musicTracks.isEmpty()) return
+        val vol = musicVol()
+        musicPlayer?.let {
+            try { it.setVolume(vol, vol); if (!it.isPlaying) it.start() } catch (_: Exception) { }
+            return
+        }
+        if (settings.bedKind == BED_FIRESIDE) {
+            val bed = bedNow()
+            currentMood = bed?.mood
+            // A null bed means uniform-bed or an unloaded map, not silence.
+            if (bed?.mood == MoodMap.SILENCE) return
+            startFireside()
+            return
+        }
+        val bed = bedNow()
+        if (bed != null) {
+            currentMood = bed.mood
+            if (bed.mood == MoodMap.SILENCE) return
+            val asset = bed.track?.let { "music/$it.mp3" } ?: bundledFor(bed.mood)
+            if (asset != null) { playMusicAsset(asset, vol); return }
+        }
+        playMusicTrack(musicIndex)
+    }
+
+    /**
+     * Start the fireside bed, best source first.
+     *
+     * ⚠ THE FALLBACK CHAIN MUST NEVER END IN SILENCE. Downloaded 10-minute
+     * recording, else the short loop bundled in the APK, else — if neither is
+     * present — the music bed, because a listener who picked Fireside and got
+     * nothing cannot tell that from a bug. Only MoodMap.SILENCE is allowed to
+     * produce no sound.
+     */
+    private fun startFireside() {
+        val downloaded = MusicRepo.cachedAmbience(this)
+        if (downloaded != null) {
+            firesidePlaying = true
+            crossfadeToFile(downloaded)
+            return
+        }
+        if (assetExists(FIRESIDE_ASSET)) {
+            firesidePlaying = true
+            crossfadeTo(FIRESIDE_ASSET)
+            return
+        }
+        firesidePlaying = false
+        crossfadeTo(bundledFor(currentMood ?: "narrative"))
+    }
+
+    private fun assetExists(path: String): Boolean = try {
+        assets.openFd(path).close(); true
+    } catch (_: Exception) { false }
+
+    /** Start one specific asset as the bed. Falls back to the rotation on error. */
+    private fun playMusicAsset(asset: String, startVolume: Float) {
+        try {
+            val afd = assets.openFd(asset)
+            musicPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                afd.close()
+                setVolume(startVolume, startVolume)
+                isLooping = true          // a mood lasts as long as the passage does
+                setOnPreparedListener { if (Playback.playing.value) it.start() }
+                prepareAsync()
+            }
+        } catch (_: Exception) {
+            // A missing track is NOT silence — fall back to the bundled rotation
+            // so the reader still gets a bed.
+            musicPlayer = null
+            playMusicTrack(musicIndex)
+        }
+    }
+
+    private fun playMusicTrack(index: Int) {
+        val vol = musicVol()
+        try {
+            val afd = assets.openFd(musicTracks[index % musicTracks.size])
+            musicPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                afd.close()
+                setVolume(vol, vol)
+                setOnPreparedListener { if (Playback.playing.value) it.start() }
+                setOnCompletionListener {
+                    // Rotate to the next track so long sessions don't go stale.
+                    musicIndex = (index + 1) % musicTracks.size
+                    releaseMusic()
+                    if (Playback.playing.value && settings.musicEnabled) {
+                        playMusicTrack(musicIndex)
+                    }
+                }
+                prepareAsync()
+            }
+        } catch (_: Exception) {
+            musicPlayer = null
+        }
+    }
+
+    private fun pauseMusic() {
+        try { musicPlayer?.pause() } catch (_: Exception) { }
+    }
+
+    private fun releaseMusic() {
+        firesidePlaying = false
+        currentMood = null
+        // ⚠ A crossfade leaves a SECOND player alive. Releasing only musicPlayer
+        // would leak it and keep the outgoing bed audible after the reader
+        // stopped — the fade job holds the reference, not the field.
+        fadeJob?.cancel()
+        fadeJob = null
+        musicFading?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
+        musicFading = null
+        musicPlayer?.let { try { it.stop() } catch (_: Exception) {}; it.release() }
+        musicPlayer = null
+        currentMood = null
+    }
+
+    private var chapterVerses: List<String> = emptyList()
+
+    private fun speakVerse(i: Int) {
+        val engine = tts ?: return
+        if (i >= chapterVerses.size) { onChapterFinished(); return }
+        verseIdx = i
+        // ⚠ SPEAK the normalized form, DISPLAY the original. Without this the
+        // device voice reads Tyndale/Geneva/Wycliffe spelling literally —
+        // "yow", "lickness", and "heauen" as "hoenn".
+        engine.speak(
+            Pronounce.forSpeech(translationId, chapterVerses[i]),
+            TextToSpeech.QUEUE_FLUSH, null, "v:$i"
+        )
+    }
+
+    private fun speakCurrentChapter(fromVerse: Int = 0) {
+        releasePlayer()
+        val engine = tts ?: return
+        val verses = books.getOrNull(bookIdx)?.chapters?.getOrNull(chapterIdx) ?: return
+        chapterVerses = verses
+        val locale = BibleRepo.translation(translationId).locale
+        val result = engine.setLanguage(locale)
+        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            stopEverything(); return
+        }
+        voicePrefs[locale.language]?.let { name ->
+            try {
+                engine.voices?.firstOrNull { it.name == name }?.let { engine.voice = it }
+            } catch (_: Exception) { }
+        }
+        engine.setSpeechRate(settings.speechRate)
+        if (!requestFocus()) { stopEverything(); return }
+        acquireWakeLock()
+
+        engine.stop()
+        startMusic()
+        val start = fromVerse.coerceIn(0, verses.size - 1)
+        Playback.active.value = true
+        Playback.playing.value = true
+        Playback.book.intValue = bookIdx
+        Playback.chapter.intValue = chapterIdx
+        Playback.verse.intValue = start
+        updateSessionState(playing = true)
+        updateNotification()
+        scope.launch { Store.setLastPosition(this@ReadingService, bookIdx, chapterIdx) }
+        speakVerse(start)
+    }
+
+    private fun onChapterFinished() {
+        val endOfChapterTimer = Playback.sleepMinutes.intValue == -1
+        if (!settings.autoContinue || endOfChapterTimer) {
+            stopEverything(); return
+        }
+        // Advance to the next non-empty chapter, or stop at the end of the Bible.
+        var b = bookIdx
+        var c = chapterIdx + 1
+        while (b < books.size && c >= books[b].chapters.size) { b++; c = 0 }
+        if (b >= books.size) { stopEverything(); return }
+        bookIdx = b; chapterIdx = c
+        startChapter(fromVerse = 0)
+    }
+
+    private fun skipChapter(delta: Int) {
+        if (books.isEmpty()) return
+        var b = bookIdx
+        // In narrated mode skip whole sections, else single chapters.
+        val sec = if (narrating) currentSection else null
+        var c = when {
+            sec != null && delta > 0 -> sec.last
+            sec != null && delta < 0 -> sec.first - 2
+            else -> chapterIdx + delta
+        }
+        if (delta > 0) {
+            while (b < books.size && c >= books[b].chapters.size) { b++; c = 0 }
+            if (b >= books.size) return
+        } else if (c < 0) {
+            var nb = b - 1
+            while (nb >= 0 && books[nb].chapters.isEmpty()) nb--
+            if (nb < 0) return
+            b = nb; c = books[b].chapters.size - 1
+        }
+        bookIdx = b; chapterIdx = c
+        startChapter(fromVerse = 0)
+    }
+
+    private fun pause() {
+        if (narrating) {
+            try { player?.pause() } catch (_: Exception) {}
+        } else {
+            tts?.stop()
+        }
+        pauseMusic()
+        releaseWakeLock()
+        Playback.playing.value = false
+        updateSessionState(playing = false)
+        updateNotification()
+    }
+
+    private fun resume() {
+        if (books.isEmpty()) return
+        if (narrating && player != null) {
+            try { player?.start() } catch (_: Exception) { startChapter(fromVerse = 0); return }
+            acquireWakeLock()
+            startMusic()
+            Playback.playing.value = true
+            updateSessionState(playing = true)
+            updateNotification()
+        } else {
+            startChapter(fromVerse = verseIdx)
+        }
+    }
+
+    private fun setSleepTimer(minutes: Int) {
+        sleepJob?.cancel()
+        Playback.sleepMinutes.intValue = minutes
+        if (minutes > 0) {
+            sleepJob = scope.launch {
+                delay(minutes * 60_000L)
+                stopEverything()
+            }
+        }
+    }
+
+    private fun stopEverything() {
+        // Persist the spot so pressing play later resumes here instead of
+        // restarting the chapter. Independent scope: ours dies with the service.
+        if (books.isNotEmpty()) {
+            val b = bookIdx; val c = chapterIdx; val v = verseIdx
+            CoroutineScope(Dispatchers.IO).launch {
+                Store.setLastPosition(this@ReadingService, b, c)
+                Store.setLastVerse(this@ReadingService, v)
+            }
+        }
+        sleepJob?.cancel()
+        tts?.stop()
+        releasePlayer()
+        releaseMusic()
+        Playback.active.value = false
+        Playback.playing.value = false
+        Playback.verse.intValue = -1
+        Playback.wordStart.intValue = -1
+        Playback.wordEnd.intValue = -1
+        Playback.sleepMinutes.intValue = 0
+        updateSessionState(playing = false)
+        releaseWakeLock()
+        abandonFocus()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    /* ---- CPU wakelock: OEM battery managers (e.g. Samsung Freecess) freeze
+       processes whose CPU goes quiet with the screen off; holding a partial
+       lock only while actually speaking/playing keeps TTS callbacks arriving.
+       Not reference counted — acquire refreshes the timeout, release is
+       idempotent. Re-acquired at every chapter start, so the generous
+       timeout is only a lint-friendly safety net against leaks. ---- */
+
+    private fun acquireWakeLock() {
+        try { wakeLock?.acquire(WAKELOCK_TIMEOUT_MS) } catch (_: Exception) { }
+    }
+
+    private fun releaseWakeLock() {
+        try { wakeLock?.let { if (it.isHeld) it.release() } } catch (_: Exception) { }
+    }
+
+    /* ---- Audio focus: behave like a music app around calls and other media. ---- */
+
+    private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
+        when (change) {
+            AudioManager.AUDIOFOCUS_LOSS,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> pause()
+        }
+    }
+
+    private fun requestFocus(): Boolean {
+        val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val req = focusRequest ?: AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build()
+            )
+            .setOnAudioFocusChangeListener(focusListener)
+            .build()
+            .also { focusRequest = it }
+        return am.requestAudioFocus(req) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
+
+    private fun abandonFocus() {
+        focusRequest?.let {
+            (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocusRequest(it)
+        }
+    }
+
+    /* ---- Notification ---- */
+
+    private fun ensureChannel() {
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (nm.getNotificationChannel(CHANNEL_ID) == null) {
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID,
+                    getString(R.string.playback_channel),
+                    NotificationManager.IMPORTANCE_LOW
+                )
+            )
+        }
+    }
+
+    private fun action(icon: Int, title: Int, act: String): NotificationCompat.Action {
+        val pi = PendingIntent.getService(
+            this, act.hashCode(),
+            Intent(this, ReadingService::class.java).setAction(act),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        return NotificationCompat.Action(icon, getString(title), pi)
+    }
+
+    private fun buildNotification(): Notification {
+        ensureChannel()
+        val sec = currentSection
+        val title = books.getOrNull(bookIdx)?.let { b ->
+            if (narrating && sec != null && sec.last > sec.first)
+                "${b.name} ${sec.first}–${sec.last}"
+            else "${b.name} ${chapterIdx + 1}"
+        } ?: getString(R.string.app_name)
+        val contentText = when {
+            narrating && downloadPercent >= 0 ->
+                getString(R.string.audio_downloading, downloadPercent)
+            narrating -> getString(R.string.audio_narrated)
+            else -> getString(R.string.playback_verse, verseIdx + 1)
+        }
+        val playing = Playback.playing.value
+        val art = books.getOrNull(bookIdx)?.let { BookArt.forBook(this, bookIdx, it.name) }
+        val durationMs = if (narrating) {
+            try { player?.duration?.toLong() ?: -1L } catch (_: Exception) { -1L }
+        } else chapterVerses.size * VERSE_MS
+        session?.setMetadata(
+            MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_ARTIST,
+                    BibleRepo.translation(translationId).label
+                )
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
+                .apply { if (durationMs > 0) putLong(MediaMetadataCompat.METADATA_KEY_DURATION, durationMs) }
+                .build()
+        )
+        // requestCode 2 — distinct from the widget (1) and the daily reminder
+        // (3). Sharing code 0 made the reminder's FLAG_UPDATE_CURRENT rewrite
+        // this notification's extras, so tapping the player opened the
+        // reminder's verse rather than what was playing (fixed 2026-07-31).
+        val contentPi = PendingIntent.getActivity(
+            this, 2, Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_book)
+            .setLargeIcon(art)
+            .setContentTitle(title)
+            .setContentText(contentText)
+            .setContentIntent(contentPi)
+            .setOngoing(playing)
+            .setOnlyAlertOnce(true)
+            .addAction(action(android.R.drawable.ic_media_previous, R.string.prev_chapter, ACTION_PREV))
+            .addAction(
+                if (playing) action(android.R.drawable.ic_media_pause, R.string.pause_audio, ACTION_PAUSE)
+                else action(android.R.drawable.ic_media_play, R.string.play_audio, ACTION_RESUME)
+            )
+            .addAction(action(android.R.drawable.ic_media_next, R.string.next_chapter, ACTION_NEXT))
+            // ⚠ STOP, added 2026-08-06. Playback deliberately survives the app
+            // being swiped out of Recents (see the note by onDestroy), so there
+            // MUST be an obvious way to end it: the notification is
+            // setOngoing(playing) and therefore cannot be dismissed while
+            // playing, and prev/play-pause/next give no way out — a tester hit
+            // exactly this and reported it as "the app won't close". Unlike
+            // pause, this releases the service, the wakelock and audio focus.
+            .addAction(action(android.R.drawable.ic_menu_close_clear_cancel,
+                              R.string.stop_audio, ACTION_STOP))
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(session?.sessionToken)
+                    .setShowActionsInCompactView(0, 1, 2)
+            )
+            .build()
+    }
+
+    private fun updateNotification() {
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        nm.notify(NOTIF_ID, buildNotification())
+    }
+
+    private fun updateSessionState(playing: Boolean) {
+        // Real position for narrated audio; a virtual verse timeline for TTS
+        // (VERSE_MS per verse) so the system seek bar works in both modes.
+        val position = if (narrating) {
+            try { player?.currentPosition?.toLong() ?: 0L } catch (_: Exception) { 0L }
+        } else verseIdx * VERSE_MS
+        session?.isActive = playing || Playback.active.value
+        session?.setPlaybackState(
+            PlaybackStateCompat.Builder()
+                .setActions(
+                    PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or
+                        PlaybackStateCompat.ACTION_STOP or
+                        PlaybackStateCompat.ACTION_SEEK_TO or
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                )
+                .setState(
+                    if (playing) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED,
+                    position,
+                    if (playing) settings.speechRate else 0f
+                )
+                .build()
+        )
+    }
+
+    /* ⚠ DELIBERATELY NO onTaskRemoved OVERRIDE (owner, 2026-08-06).
+       A tester reported that audio keeps playing after the app is swiped out
+       of Recents, and the first fix here was to stop playback on task removal.
+       Reverted: this app is meant to behave like a music app, which is also
+       what Spotify, YouTube Music, Audible and podcast apps do — someone
+       listening to a chapter while driving should not lose it because they
+       cleared Recents, which people do habitually and not as a "close". (The
+       YouTube counter-example is a VIDEO app; YouTube Music keeps playing.)
+       The tester's real problem was that there was NO WAY TO STOP: the
+       notification offered prev/play-pause/next only, and setOngoing(playing)
+       makes it non-dismissible while playing, so the sole route was
+       pause-then-dismiss. The Stop action added below is the actual fix. */
+
+    override fun onDestroy() {
+        sleepJob?.cancel()
+        releasePlayer()
+        releaseMusic()
+        tts?.stop(); tts?.shutdown(); tts = null
+        session?.release(); session = null
+        releaseWakeLock()
+        wakeLock = null
+        abandonFocus()
+        Playback.active.value = false
+        Playback.playing.value = false
+        Playback.verse.intValue = -1
+        scope.cancel()
+        super.onDestroy()
+    }
+
+    companion object {
+        private const val CHANNEL_ID = "reading_playback"
+        private const val NOTIF_ID = 42
+        // Virtual milliseconds per verse for the TTS seek bar timeline.
+        private const val VERSE_MS = 15_000L
+        // Wakelock leak guard; refreshed on every chapter start (10 h).
+        private const val WAKELOCK_TIMEOUT_MS = 10 * 60 * 60 * 1000L
+
+        const val ACTION_PLAY = "com.aleks.hexapla.PLAY"
+        const val ACTION_PAUSE = "com.aleks.hexapla.PAUSE"
+        const val ACTION_RESUME = "com.aleks.hexapla.RESUME"
+        const val ACTION_STOP = "com.aleks.hexapla.STOP"
+        const val ACTION_NEXT = "com.aleks.hexapla.NEXT"
+        const val ACTION_PREV = "com.aleks.hexapla.PREV"
+        const val ACTION_TIMER = "com.aleks.hexapla.TIMER"
+
+        const val EXTRA_BOOK = "book"
+        const val EXTRA_CHAPTER = "chapter"
+        const val EXTRA_VERSE = "verse"
+        const val EXTRA_MINUTES = "minutes"
+
+        fun play(context: Context, book: Int, chapter: Int, verse: Int = 0) {
+            val i = Intent(context, ReadingService::class.java)
+                .setAction(ACTION_PLAY)
+                .putExtra(EXTRA_BOOK, book)
+                .putExtra(EXTRA_CHAPTER, chapter)
+                .putExtra(EXTRA_VERSE, verse)
+            context.startForegroundService(i)
+        }
+
+        fun send(context: Context, action: String, minutes: Int = 0) {
+            context.startService(
+                Intent(context, ReadingService::class.java)
+                    .setAction(action)
+                    .putExtra(EXTRA_MINUTES, minutes)
+            )
+        }
+    }
+}

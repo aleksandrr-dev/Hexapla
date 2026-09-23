@@ -45,6 +45,13 @@ PAD = 0.25         # seconds kept either side so the tail is audible
 ASSETS = {
     "ylt": "C:/Projects/Hexapla/app/src/main/assets/bibles/en_ylt.json",
     "kjv": "C:/Projects/Hexapla/app/src/main/assets/bibles/en_kjv.json",
+    # ⚠ `--lang` names the NARRATION DIRECTORY, and the generated KJV set
+    # lives in `narration/en`, not `narration/kjv`. Without this row the loader
+    # fell through to "(no text asset for this set)" and the index printed a
+    # clip list with NO verse text - which is the one thing an ear cannot work
+    # without, since the whole question is «does the audio match the print?».
+    # Measured 2026-09-12 building the books 1-3 APPEND ear kit.
+    "en": "C:/Projects/Hexapla/app/src/main/assets/bibles/en_kjv.json",
 }
 
 
@@ -187,10 +194,17 @@ def main():
         print("  #   verse        what the text PRINTS (the audio should match it)")
         for n, ref, txt, dur in index:
             print(f"  {n:<3} {ref:<12} {txt}")
-        print("\n\u26a0 These verses FAIL the gate after repair and the printed "
-              "text does not\n  explain the flag. Listen for a re-spoken tail, a "
-              "wrong word, or a\n  mispronounced name. If the audio matches the "
-              "text above, the flag is\n  the ASR's and the render is fine.")
+        # \u26a0 A QUEUE CARRIES NO PROVENANCE. This trailer used to assert the
+        # verses "FAIL the gate after repair" \u2014 true of the queue it was first
+        # written for, false of any other, and an ear told the wrong thing about
+        # where a clip came from is an ear pointed at the wrong question. Say
+        # only what is true of EVERY queue, and let the kit's own brief say what
+        # this particular list is and which clips are controls.
+        print("\n\u26a0 Listen for a re-spoken tail, a wrong word, or a "
+              "mispronounced name.\n  If the audio matches the printed text "
+              "above, the verse is fine \u2014 whatever\n  named it. What this "
+              "particular list is, and which clips are CONTROLS,\n  belongs in "
+              "the kit's brief, not here.")
     else:
         print("  #   verse        the ASR claims these words were APPENDED")
         for n, ref, added, dur in index:

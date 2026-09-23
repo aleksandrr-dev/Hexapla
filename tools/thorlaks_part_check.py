@@ -33,7 +33,11 @@ cannot see a verse whose text was silently joined to its neighbour.
   5. one verse per line at column 0 (a chunk written line-per-printed-line
      makes every count above meaningless — it is reported first and loudly)
   6. long-s left un-normalised
-  7. the ø rate, against the campaign's expected 19-31 % of o-positions
+  7. the ø COUNT in the file, as a bare fact. ⛔ The ø RATE and its 19-31 %
+     band are RETIRED (owner, 2026-09-20: ø option B corpus-wide — no ø pass
+     and no ø rate, for any book). Under that ruling every new part file reads
+     0 %, and 0 % is precisely NOT what option B means, so the old flag could
+     only cry wolf. Do not restore it.
   8. unnumbered long lines INSIDE a chapter body, split into two named classes:
      page-boundary verse TAILS (join them to the verse above) and editorial
      NOTES (move them to a notes section). Both are defects and the fixes
@@ -75,6 +79,11 @@ detection completely and both «controls» would still have looked green. Found
 ▶ **When a known-bad case is fixed, replace it in this docstring in the same
 commit.** A negative control that cannot fail is not a control.
 
+⛔ HISTORICAL, AND NO LONGER ACTED ON HERE — the ø rate warning was retired
+from this script on 2026-09-20 (owner: ø option B corpus-wide). Kept because it
+still governs the books transcribed BEFORE the ruling, where a partly-placed
+retrofit is a live defect, and because it records WHY a rate must not come back.
+
 ⛔⛔ A LOW ø RATE HAS THREE CAUSES AND THIS SCRIPT CANNOT TELL THEM APART.
 Until 2026-09-09 the warning here said a low rate «means the read was done at
 sheet resolution», which is one cause of three and the least likely now:
@@ -100,6 +109,7 @@ or heading-less file EXITS NON-ZERO rather than reporting zero problems.
 """
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -108,6 +118,35 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 REPO = Path(__file__).resolve().parent.parent
 DATA = Path("C:/Projects/Hexapla-releases")
 KJV = REPO / "app/src/main/assets/bibles/en_kjv.json"
+
+# ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL. True only while selftest() is running, so
+# it can never blind a real run. See no_grid().
+_IN_SELFTEST = False
+
+
+def no_grid():
+    """Known-bad control: blind the per-chapter verse-count comparison.
+
+    Reinstates exactly the blind-file defect fixed 2026-09-06, in which a part
+    file was checked against NO grid while every other check still ran — so a
+    dropped verse (Matthew 25:46) could not be seen and the file looked checked.
+
+    ⛔ Gated on _IN_SELFTEST so a real run's grid is never disabled.
+    """
+    return _IN_SELFTEST and os.environ.get("HEXAPLA_NO_GRID") == "1"
+
+
+def _grid_for(bk):
+    """The per-chapter grid used for the verse-count comparison.
+
+    ⚠ SEPARATE FROM kjv_all() ON PURPOSE. canonical()/heading resolution MUST
+    keep the real grid even under HEXAPLA_NO_GRID, else `1cor` would stop
+    resolving and assertion 8 would fail for the wrong reason — the control has
+    to blind the COUNT, not the whole asset.
+    """
+    if no_grid():
+        return {}
+    return kjv_all().get(bk) or {}
 
 # ── RECORDED EDITION DIFFERENCES ───────────────────────────────────────────
 # (canonical book, chapter) -> (printed verse count, note with its evidence)
@@ -224,7 +263,7 @@ def heading_books(lines):
 
 
 def kjv_grid(book):
-    return kjv_all().get(canonical(book) or "")
+    return _grid_for(canonical(book) or "")
 
 
 def check(path, book):
@@ -299,7 +338,7 @@ def check(path, book):
         vs = verses[key]
         if not vs:
             print(f"  {bk} {c:>2}: EMPTY"); problems.append(f"{bk} {c} empty"); continue
-        grid = kjv_all().get(bk) or {}
+        grid = _grid_for(bk)
         exp = grid.get(c)
         dup = sorted({x for x in vs if vs.count(x) > 1})
         lo, hi = min(vs), max(vs)
@@ -432,27 +471,27 @@ def check(path, book):
               f"design; not counted as a problem (see the comment in this tool).")
 
     vtext = "\n".join(body)
-    o = vtext.count("o") + vtext.count("O")
     oe = vtext.count("ø") + vtext.count("Ø")
-    rate = 100 * oe / (o + oe) if (o + oe) else 0
-    # ⛔⛔ THIS RATE IS WHAT IS IN THE FILE, NOT WHAT WAS READ ON THE PAGE.
-    # Those are different numbers whenever a retrofit is only partly placed.
-    # Mark, 2026-09-09: the adjudicators confirmed 302 ø across 18 pages
-    # (13.2 % of o-positions, `thorlaks_o_rate.py --book Mark`), but 84 of
-    # them could not be located in the transcription, so the FILE holds 219
-    # and reads ~9.6 %. A reader told «read at sheet resolution?» would go and
-    # re-read eighteen correctly-read pages.
-    # ⚠ And a low rate is not a defect signal on its own even when the
-    # retrofit IS complete: p47 read 26.1 % on the same instrument, in the same
-    # session, that read 8.0 % on p46 one page away. The rate tracks VOCABULARY
-    # and the 19-31 % band is a per-BOOK claim.
-    flag = ("  ⚠ below the 19-31 % per-BOOK band. ⛔ CHECK THE RETROFIT FIRST: "
-            "this counts ø IN THE FILE, and an unplaced site is missing from it. "
-            "▶ thorlaks_o_rate.py --book <B> for what was read on the PAGE, and "
-            "thorlaks_o_patch.py --book <B> for what could not be placed. "
-            "Only if those agree is resolution a candidate."
-            if rate < 10 else "")
-    print(f"  ø rate: {oe}/{o + oe} o-positions = {rate:.1f} %{flag}")
+    # ⛔⛔ THE ø RATE IS RETIRED FROM THIS TOOL (owner, 2026-09-20).
+    # ø option B was ruled CORPUS-WIDE: no ø pass, no ø rate, for any book.
+    # A rate this tool cannot act on is a flag that can only cry wolf, and it
+    # did — every part file under option B necessarily reads 0 %, and «0 %» is
+    # precisely NOT what option B means. ⛔ Do not restore the 19-31 % band or
+    # any percentage here: under the ruling there is no denominator to compare
+    # against, so a printed rate would be a failed measurement wearing a
+    # plausible number — the shape the standing rule bans.
+    #
+    # ⚠ The COUNT is kept, and only as a fact about the file. It still matters
+    # for the books transcribed BEFORE the ruling (Mark, Matthew), where a
+    # partly-placed retrofit is a real defect: Mark, 2026-09-09 — adjudicators
+    # confirmed 302 ø across 18 pages but 84 could not be located, so the file
+    # holds 219. ▶ For those books only: `thorlaks_o_rate.py --book <B>` for
+    # what was read on the PAGE and `thorlaks_o_patch.py --book <B>` for what
+    # could not be placed. Nothing downstream reads the number below.
+    if oe:
+        print(f"  ø present: {oe} in the VERSES section (count only — the ø "
+              f"rate and its 19-31 % band are RETIRED, owner 2026-09-20, "
+              f"option B corpus-wide). ⛔ A count is not a rate and not a gate.")
     # ⚠ REPORTED, never silenced — a reader must be able to tell "verified
     # against the page and recorded" from "nobody looked".
     if pinned:
@@ -463,13 +502,250 @@ def check(path, book):
     return problems
 
 
+def selftest():
+    """Structural control on check() using synthetic part files.
+
+    ⚠ MAY READ THE REAL KJV ASSET (`app/src/main/assets/bibles/en_kjv.json`) via
+    kjv_all() — that file is in the repo and IS the grid under test. If it is
+    absent this FAILS loudly rather than substituting a fake grid and calling
+    the run a pass. ⛔ It never reads research/_parts.
+    """
+    global _IN_SELFTEST
+    _IN_SELFTEST = True
+    fails = []
+
+    def check_ok(ok, what):
+        print(("ok   - " if ok else "FAIL - ") + what, flush=True)
+        if not ok:
+            fails.append(what)
+
+    if not KJV.exists():
+        print("FAIL - KJV asset missing — cannot run the structural selftest; "
+              "⛔ a fake grid is not a pass.", flush=True)
+        return 1
+    if not kjv_all():
+        print("FAIL - KJV asset present but yielded no books.", flush=True)
+        return 1
+
+    import contextlib
+    import io
+    import tempfile
+
+    grid = kjv_all()
+    mt = grid.get("Matthew") or {}
+    # A chapter wholly inside the file, so a short count is INTERIOR (a real
+    # gap), never waved through as a chunk boundary. Matthew 12 (=our fixture).
+    CH = 12
+    n = mt.get(CH)
+    if not n:
+        print(f"FAIL - KJV grid has no Matthew {CH}; cannot build the count "
+              "fixture.", flush=True)
+        return 1
+
+    def run(path, fallback=None, capture=False):
+        """Call check() capturing stdout; -> (problems, stdout)."""
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            got = check(path, fallback)
+        return got, buf.getvalue()
+
+    td = tempfile.mkdtemp(prefix="part_check_selftest_")
+    root = Path(td)
+
+    def part(name, text):
+        p = root / name
+        p.write_text(text, encoding="utf-8")
+        return p
+
+    def body(ch, count, book="Matthew", dup=None, gap_after=None, start=1,
+             extra_chapter=False):
+        """One verse per line; dup = numeral to emit twice; gap_after = skip.
+
+        ⚠ `extra_chapter` appends a SECOND chapter after the first. A chapter is
+        only reported for a short count when it is INTERIOR — the tool grants a
+        "chunk boundary" pass to a file's LAST chapter whose top verse is under
+        the grid (see the `partial` rule). So the short-count fixture (2) and the
+        Matthew 25:46 signature must NOT be the file's final chapter.
+        """
+        out = [f"## {book} {ch}", ""]
+        vs = list(range(start, start + count))
+        for i, v in enumerate(vs):
+            out.append(f"{v} Verse text for {book} {ch} verse {v}, one line.")
+            if dup is not None and v == dup:
+                out.append(f"{v} A page-boundary split repeats this numeral.")
+        if extra_chapter:
+            out.append("")
+            out.append(f"## {book} {ch + 1}")
+            out.append("")
+            for v in range(1, (grid.get(book) or {}).get(ch + 1, 1) + 1):
+                out.append(f"{v} Verse text for {book} {ch + 1} verse {v}, "
+                           f"one line.")
+        return "\n".join(out) + "\n"
+
+    # ── 1. the false-positive control ─────────────────────────────────────
+    p = part("matthew_p99-99.md", body(CH, n))
+    got, _ = run(p, "Matthew")
+    check_ok(got == [], f"1. well-formed file ({n} verses for Matthew {CH}, no "
+                        f"long-s, no Cyrillic) returns NO problems (got {got})")
+
+    # ── 2. one verse SHORT, contiguous, INTERIOR (the 25:46 signature) ────
+    # ⚠ Needs a chapter AFTER it, or the tool's chunk-boundary rule passes it.
+    p = part("matthew_p99-99.md", body(CH, n - 1, extra_chapter=True))
+    got, _ = run(p, "Matthew")
+    check_ok(any(f"Matthew {CH}" in x and "COUNT" in x for x in got),
+             f"2. one verse short / contiguous / interior reports a COUNT "
+             f"problem naming Matthew {CH} (got {got})")
+
+    # ── 3. duplicate numeral ──────────────────────────────────────────────
+    p = part("matthew_p99-99.md", body(CH, n, dup=5, extra_chapter=True))
+    got, _ = run(p, "Matthew")
+    check_ok(any("DUPES" in x for x in got),
+             f"3. a numeral appearing twice reports DUPES (got {got})")
+
+    # ── 4. a GAP in the numeral sequence ──────────────────────────────────
+    txt = body(CH, n, extra_chapter=True)
+    txt = txt.replace(f"{n - 1} Verse text", f"{n} Verse text")
+    p = part("matthew_p99-99.md", txt)
+    got, _ = run(p, "Matthew")
+    check_ok(any("GAPS" in x for x in got),
+             f"4. a gap in the numeral sequence reports GAPS (got {got})")
+
+    # ── 5. `## Chapter 8` (old skeleton form) ─────────────────────────────
+    p = part("matthew_p99-99.md", body(CH, n, book="Chapter"))
+    got, sout = run(p, "Matthew")
+    check_ok(any("old `## Chapter N`" in x for x in got),
+             f"5. `## Chapter {CH}` heading is reported as the old skeleton form "
+             f"(got {got})")
+
+    # ── 6. heading with trailing text ─────────────────────────────────────
+    txt = body(CH, n).replace(f"## Matthew {CH}",
+                             f"## Matthew {CH} - verses 14-39")
+    p = part("matthew_p99-99.md", txt)
+    got, _ = run(p, "Matthew")
+    check_ok(any("trailing text" in x for x in got),
+             f"6. a heading with trailing text is reported (got {got})")
+
+    # ── 7. line-per-printed-line, reported FIRST ──────────────────────────
+    lppl = f"## Matthew {CH}\n\n" + " ".join(
+        f"{v} verse text {v}." for v in range(1, n + 1)) + "\n"
+    p = part("matthew_p99-99.md", lppl)
+    got, sout = run(p, "Matthew")
+    first = sout.strip().splitlines()[0] if sout.strip() else ""
+    check_ok("LINE-PER-PRINTED-LINE" in got and "LINE-PER-PRINTED-LINE" in first,
+             "7. a line-per-printed-line file reports LINE-PER-PRINTED-LINE and "
+             f"reports it FIRST (first stdout line: {first[:60]!r})")
+
+    # ── 8. `1cor` filename + `## 1 Corinthians 3` headings must RESOLVE ────
+    c3 = (grid.get("1 Corinthians") or {}).get(3)
+    if c3:
+        txt = "\n".join([f"## 1 Corinthians 3", ""]
+                        + [f"{v} Text for 1 Corinthians 3 verse {v}."
+                           for v in range(1, c3 + 1)]) + "\n"
+        p = part("1cor_p99-99.md", txt)
+        got, _ = run(p, canonical("1cor"))
+        blind = any(("unresolvable" in x or "no headings" in x
+                     or "not found" in x) for x in got)
+        check_ok(not blind and got == [],
+                 f"8. `1cor` filename + `## 1 Corinthians 3` headings RESOLVE and "
+                 f"are verse-counted (c3={c3} verses; got {got})")
+    else:
+        check_ok(False, "8. KJV grid has no 1 Corinthians 3 to test resolution")
+
+    # ── 9. no resolvable heading at all → non-empty, never clean ──────────
+    p = part("mystery_p99-99.md", "just some body text with no heading\n")
+    got, _ = run(p, None)
+    check_ok(got == ["unresolvable book"],
+             "9. a file with no resolvable heading returns `unresolvable book` "
+             f"(never empty; got {got})")
+
+    # ── 10. long-s left un-normalised ─────────────────────────────────────
+    p = part("matthew_p99-99.md", body(CH, n) + "ſome long-s text\n")
+    got, _ = run(p, "Matthew")
+    check_ok(any("long-s" in x for x in got),
+             f"10. a long-s (ſ) left un-normalised is reported (got {got})")
+
+    # ── 11. Cyrillic homoglyph ────────────────────────────────────────────
+    p = part("matthew_p99-99.md", body(CH, n) + "Kuoллa byggеr\n")
+    got, _ = run(p, "Matthew")
+    check_ok(any("Cyrillic homoglyph" in x for x in got),
+             f"11. a Cyrillic homoglyph is reported (got {got})")
+
+    # ── 12. the could-not-run contract for a missing --file ───────────────
+    # ⛔ A missing --file must read as COULD NOT RUN (rc 2, one honest line),
+    # never as a FileNotFoundError traceback, and NEVER as rc 0.
+    import subprocess
+    missing = tempfile.mkdtemp(prefix="part_check_missing_")
+    try:
+        rm = subprocess.run(
+            [sys.executable, str(Path(__file__).resolve()), "--file",
+             os.path.join(missing, "_nope_.md")],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            cwd=str(DATA), timeout=120)
+        sout = (rm.stdout or "") + (rm.stderr or "")
+        check_ok(rm.returncode == 2 and "COULD NOT RUN" in sout
+                 and "Traceback" not in sout,
+                 f"12. a missing --file is COULD NOT RUN: rc={rm.returncode} "
+                 f"(want 2), honest phrase={'COULD NOT RUN' in sout}, "
+                 f"no-traceback={'Traceback' not in sout}")
+    finally:
+        import shutil as _sh
+        _sh.rmtree(missing, ignore_errors=True)
+
+    try:
+        import shutil
+        shutil.rmtree(td, ignore_errors=True)
+    except Exception:
+        pass
+
+    print("", flush=True)
+    if no_grid():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_NO_GRID=1 — the per-chapter "
+              "verse-count comparison is BLINDED", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--book")
     ap.add_argument("--file")
+    ap.add_argument("--selftest", action="store_true",
+                    help="structural control on check() with synthetic part "
+                         "files; no research/ read")
+    # ⚠ Added 2026-09-10. Until then this tool had NO all-files mode, so it had
+    # only ever run on the file being merged — nobody had measured the corpus.
+    # The first hand-written sweep reported a headline (11 clean / 36) that a
+    # re-run the same day could not reproduce (6 / 41), and the disagreement
+    # could not be localised because only the TOTAL had been written down.
+    # ★ So this mode prints a PER-FILE table, not just a total: a sweep that
+    # persists only a headline is not auditable.
+    ap.add_argument("--all", action="store_true",
+                    help="check every non-backup file in research/_parts and "
+                         "print a per-file table")
     a = ap.parse_args()
-    if a.file:
-        files = [Path(a.file)]
+    if a.selftest:
+        sys.exit(selftest())
+    if a.all:
+        if a.book or a.file:
+            print("⛔ --all takes neither --book nor --file."); sys.exit(2)
+        files = sorted(p for p in (DATA / "research/_parts").glob("*.md")
+                       if ".bak" not in p.name)
+    elif a.file:
+        # ⛔ VALIDATE THE INPUT UP FRONT: a missing --file must read as the
+        # documented could-not-run (rc 2, one honest line), not as a
+        # FileNotFoundError traceback. The hook guard_research_writes.py passes
+        # a path it has already tested, but a hand-typed or stale path must not
+        # die in `open()`. Resolution is tried under the data root AND as given,
+        # so both `research/_parts/x.md` and an absolute path work.
+        cand = Path(a.file)
+        if not cand.is_file():
+            cand = DATA / a.file
+        if not cand.is_file():
+            print("⛔ COULD NOT RUN — --file %s does not exist (tried as "
+                  "given and under %s). NOTHING WAS CHECKED; an unreadable file "
+                  "is not a clean file." % (a.file, DATA))
+            sys.exit(2)
+        files = [cand]
     else:
         if not a.book:
             print("give --book or --file"); sys.exit(2)
@@ -485,9 +761,24 @@ def main():
     # its filename second. A single --book applied to every file is what made a
     # multi-book part file (the Johannine epistles) uncheckable.
     allp = []
+    per_file = []
     for f in files:
         fallback = canonical(a.book) if a.book else canonical(f.stem.split("_p")[0])
-        allp += check(f, fallback)
+        got = check(f, fallback)
+        per_file.append((len(got), f.name))
+        allp += got
+    if a.all:
+        print("\n=== PER FILE (the record a headline cannot give you) ===")
+        for n, name in sorted(per_file):
+            print(f"  {n:>3}  {name}")
+        clean = [name for n, name in per_file if n == 0]
+        print(f"\n  clean: {len(clean)} of {len(per_file)}")
+        for name in sorted(clean):
+            print(f"    ✅ {name}")
+        # ⛔ Not a completeness claim. A file returning 0 has passed THESE
+        # checks; it says nothing about whether its pages were read correctly.
+        print("  ⛔ 0 problems is «passed these checks», NOT «verified against "
+              "the print».")
     print(f"\n{len(files)} file(s) checked, {len(allp)} problem(s).")
     sys.exit(1 if allp else 0)
 

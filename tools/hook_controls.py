@@ -47,16 +47,69 @@ print("== guard_research_writes.py")
 wr = lambda fp: {"tool_name": "Write", "tool_input": {"file_path": fp}}
 good = r"C:\Projects\Hexapla-releases\research\_parts\luke_p50-58.md"
 bad = r"C:\Projects\Hexapla-releases\research\_parts\_hooktest_luke.md"
+# ⚠ The FAIL-OPEN controls below are the point of this group. A guard hook that
+# cannot reach its check must BLOCK, not allow: "a failed read must never be
+# indistinguishable from a real «nothing wrong»". Rows 3 and 4 FAIL against the
+# pre-2026-09-22 hook (which returned 0 when the tool was missing or the
+# subprocess raised) and PASS against the fixed one.
+MISSING_TOOL = r"C:\Projects\Hexapla\tools\_no_such_part_check_control_.py"
+# A DIRECTORY: os.path.isfile() is False, so this exercises the missing-tool
+# branch. For the subprocess-RAISES branch we need a path that IS a file but
+# cannot be run as a program — a `.md` passed to `[sys.executable, <md>]` is
+# still runnable by python, so the real seam is a file whose read raises. Use
+# the harness's own directory: isfile False -> missing branch. So instead the
+# raiser shim is a python file that itself blows up BEFORE printing anything,
+# which lands on the could-not-run (no «N problem(s)») branch; and for a true
+# subprocess RAISE we point at a path whose parent makes CreateProcess fail is
+# not portable. Both could-not-run branches are therefore covered by rows 3
+# (missing) and 4 (ran-but-unusable). ⚠ If a genuine OSError/TimeoutExpired
+# branch is ever wanted, add a seam that monkeypatches subprocess.run in a
+# wrapper; do NOT fake it with a shim, which would test something else.
+raise_shim = os.path.join(H, "_control_raising_part_check.py")
 with open(good, encoding="utf-8") as f, open(bad, "w", encoding="utf-8") as g:
     for line in f:
         if not line.startswith("40 "): g.write(line)
+# Fixture for the «subprocess raises» control: a part-check stand-in that dies.
+# It is pointed at by the hook's own seam (PART_CHECK), which the hook reads at
+# call time — the same seam row 3 uses.
+with open(raise_shim, "w", encoding="utf-8") as f:
+    f.write("raise RuntimeError('control: part_check could not start')\n")
 try:
-    run("guard_research_writes.py", wr(good), 0, "clean part file")
-    run("guard_research_writes.py", wr(bad), 2, "part file with v40 dropped")
+    run("guard_research_writes.py", wr(good), 0, "1. FALSE-POSITIVE ctl: clean part file ALLOWED")
+    run("guard_research_writes.py", wr(bad), 2, "2. part file with v40 dropped BLOCKED")
+    # 3. tool unreachable -> must BLOCK (fail-open defect: returned 0 before)
+    _pc = os.environ.get("HEXAPLA_PART_CHECK_PATH")
+    os.environ["HEXAPLA_PART_CHECK_PATH"] = MISSING_TOOL
+    try:
+        run("guard_research_writes.py", wr(good), 2, "3. part_check tool MISSING -> BLOCK (missing path named)")
+    finally:
+        if _pc is None: os.environ.pop("HEXAPLA_PART_CHECK_PATH", None)
+        else: os.environ["HEXAPLA_PART_CHECK_PATH"] = _pc
+    # 4. subprocess RAISES -> must BLOCK. Seam: a bogus interpreter, so
+    #    subprocess.run raises FileNotFoundError inside part_check.
+    #    The pre-fix hook swallowed that with `except Exception: return 0`.
+    _py = os.environ.get("HEXAPLA_PYTHON_EXE")
+    os.environ["HEXAPLA_PYTHON_EXE"] = r"C:\no\such\python-control.exe"
+    try:
+        run("guard_research_writes.py", wr(good), 2, "4. subprocess RAISES -> BLOCK (exception class+msg named)")
+    finally:
+        if _py is None: os.environ.pop("HEXAPLA_PYTHON_EXE", None)
+        else: os.environ["HEXAPLA_PYTHON_EXE"] = _py
+    # 4b. tool RAN but produced no parsable «N problem(s)» line -> must BLOCK
+    #     (an unparsable report is not a clean report)
+    _pc = os.environ.get("HEXAPLA_PART_CHECK_PATH")
+    os.environ["HEXAPLA_PART_CHECK_PATH"] = raise_shim
+    try:
+        run("guard_research_writes.py", wr(good), 2, "4b. part_check ran, no «N problem(s)» line -> BLOCK")
+    finally:
+        if _pc is None: os.environ.pop("HEXAPLA_PART_CHECK_PATH", None)
+        else: os.environ["HEXAPLA_PART_CHECK_PATH"] = _pc
 finally:
     os.remove(bad)
+    os.remove(raise_shim)
 run("guard_research_writes.py", wr(r"C:\Projects\Hexapla-releases\SESSION_HANDOFF_2026-09-10_0015.md"), 0, "one handoff")
 run("guard_research_writes.py", wr(r"C:\Projects\Hexapla\docs\SETTLED.md"), 0, "unrelated md")
+run("guard_research_writes.py", wr(r"C:\Projects\Hexapla-releases\research\notes.md"), 0, "5. uncovered research/notes.md ALLOWED (scope not widened)")
 
 print("\nFAILURES:", fails)
 sys.exit(1 if fails else 0)

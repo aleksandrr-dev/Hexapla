@@ -43,6 +43,31 @@ library. `v0` in a queue is refused.
 ⚠ ONE GPU. Refuses to `--apply` while another `narrate.py` / `repair_verses.py`
 process is running, unless `--allow-gpu-contention` (owner's decision).
 
+⚠⚠ **A DEAD RUN LEAVES A MARKER, FROM 2026-09-22.** Until today a run wrote one
+log and nothing else, and its LAST LOG LINE looked identical whether the process
+had finished, died, or was still working — so "dead at 86 chapters" and "running
+at 86 chapters" were distinguishable only by reading the process list, and three
+sessions in a row did not. Measured over every `pron_requeue_*.log`: FOUR of
+seven runs ended with no completion line, one of them at 105 chapters.
+
+A **marker file** fixes it where a log line cannot, because its presence, its
+content and its mtime are all independent of HOW the process ended:
+
+    narration/logs/_jobs/<job>.json    <job> = the --queue basename, else
+                                       <set>_<pid>
+
+Three writes: `state:"running"` BEFORE the first chapter (this is the one that
+makes death detectable — a marker written only on success cannot tell a dead run
+from one that never started); the running counts after each chapter (atomic, via
+`os.replace`, so a kill mid-write cannot truncate the JSON); and `state:
+"finished"` (or `"crashed"`, from the exception handler) at exit.
+
+▶ Read it with `python tools/repair_job_status.py` — its headline verdict is
+**DIED** (marker says `running`, the pid is gone), which is the state that cost
+those four runs and which no other instrument reports.
+⛔ A SIGKILL or a power loss stamps nothing; that is the common case here, and it
+is exactly what the status tool's marker-vs-process-list comparison detects.
+
 ⚠ ⚠ "IT WAS RE-ENCODED" IS NOT EVIDENCE. Every result is decoded back and
 length-checked before it replaces anything; every new verse's gate verdict,
 attempts and ASR tail are written to `<chapter>.qa.json` under "repairs"; the
@@ -50,15 +75,18 @@ alignment's `verses ok N` line is REQUIRED and its absence is a reported
 failure. Re-run the screen that condemned the verse afterwards regardless.
 """
 import argparse
+import atexit
 import hashlib
 import json
 import os
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
 import time
+import traceback
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -69,6 +97,7 @@ import numpy as np
 import soundfile as sf
 
 import narrate
+import qa_text_explained
 from align_words import SETS
 
 NARRATION = Path("C:/Projects/Hexapla-releases/narration")
@@ -77,8 +106,91 @@ GAP_MS = 600
 BITRATE = "48k"
 NO_WINDOW = getattr(narrate, "_NO_WINDOW", 0)
 
+def text_explained_repeats(verse_text):
+    """Does the PRINTED verse itself end in a repetition? -> bool.
+
+    ⚠⚠ A `repeat:kN` flag on a verse whose PRINT repeats is the gate firing on
+    scripture. Such a draw is CLEAN, and counting it as a failure is what made
+    the tie-rule below protect a defective take — see the note there.
+
+    ⛔ NARROW ON PURPOSE. This explains `repeat:*` reasons ONLY. An `append:*`
+    flag is an EXTRA word the print does not contain; no amount of printed
+    repetition explains it, and treating one as explained would discard a real
+    defect. The same asymmetry qa_text_explained.py's docstring records: text
+    evidence can prove redrawing is FUTILE, it can never prove a take is clean.
+    """
+    return bool(qa_text_explained.analyse(verse_text or "")[0])
+
+
+def effective_reasons(reasons, explained):
+    """Reasons that still stand once the PRINT has explained what it can."""
+    if not explained:
+        return list(reasons or [])
+    return [r for r in (reasons or []) if not r.startswith("repeat:")]
+
+
 Q_CMD = re.compile(r"--book\s+(\d+)\s+--chapter\s+(\d+).*?#\s*v([\d,]+)")
 Q_TRIPLE = re.compile(r"^\s*(\d+)[\s/]+(\d+)\s+v?([\d,]+)\s*$")
+
+
+def refresh_gate_record(qa, repairs):
+    """Point `gate`/`failing` at the audio that is ACTUALLY on disk now.
+
+    ⛔⛔ WHY THIS EXISTS — 2026-09-20. Until today this function did not, and
+    a repair wrote only `repairs` and `realigned`. `gate` and `failing` kept
+    the ORIGINAL render's verdict forever, so `qa_gate_appends.py` re-reported
+    a repaired verse on every pass: a stale answer indistinguishable from a
+    fresh one, which is the one shape this project forbids a status function.
+    ▶ Measured on the 2026-09-20 KJV repair: 10 of 45 repaired verses were
+      still on the gate list, with the ASR screen finding no append on any of
+      them; and the run's benign-looking «already done 31» was 31 chapters the
+      queue had condemned AGAIN off the stale record.
+    ▶ `research/_evidence/en_kjv_repair_rescreen_2026-09-20.md`
+
+    ⚠ `kept_existing_take` REPAIRS ARE SKIPPED, and that is the whole safety
+    of this. When the gate could not discriminate, the shipped take was kept —
+    the audio did not change, so its verdict must not either.
+
+    ⚠ `failing` and `gate[v]["reasons"]` carry the gate's RAW reasons at render
+    time, so they keep carrying raw reasons here. The print-explained filter is
+    `qa_text_explained.py`'s job downstream, not this record's.
+
+    The pre-repair verdict is preserved once under `gate_pre_repair` so the
+    original is never destroyed by a repair (or by a second one).
+
+    ⛔⛔ A REPAIR RECORD WITH NO `raw_reasons` KEY IS NOT A CLEAN ONE. Five
+    entries on disk predate that field (2026-09-20 count). `.get(...) or []`
+    read them as «the kept draw had no reasons» and would have written a
+    FABRICATED clean verdict over a real one — a failed read made
+    indistinguishable from a real «nothing to report», which is exactly what
+    this project forbids. Such a verse is HELD and NAMED instead.
+
+    Returns (refreshed verses, [(verse, why-it-was-held)]).
+    """
+    touched, held = [], []
+    for r in repairs:
+        if r.get("kept_existing_take"):
+            held.append((r["verse"], "kept_existing_take — audio unchanged"))
+            continue                      # audio unchanged -> verdict unchanged
+        if "raw_reasons" not in r or "attempts" not in r:
+            held.append((r["verse"],
+                         "repair record predates raw_reasons/attempts — the "
+                         "kept draw's verdict is UNKNOWN, not clean"))
+            continue
+        v = str(r["verse"])
+        gate = qa.setdefault("gate", {})
+        if v in gate:
+            qa.setdefault("gate_pre_repair", {}).setdefault(v, gate[v])
+        raw = list(r["raw_reasons"])
+        gate[v] = {"attempts": r["attempts"], "kept": r.get("kept"),
+                   "reasons": raw, "from_repair": r.get("ts")}
+        failing = qa.setdefault("failing", {})
+        if raw:
+            failing[v] = raw
+        else:
+            failing.pop(v, None)
+        touched.append(r["verse"])
+    return touched, held
 
 
 def read_queue(path):
@@ -167,6 +279,185 @@ def gpu_busy():
         if "python" in l.lower():
             out.append(l)
     return out
+
+
+def proc_cmdline(pid):
+    """-> the command line of `pid` as one string, or None if it cannot be read.
+
+    ⛔⛔ None IS «COULD NOT DETERMINE», NOT «NOT THIS JOB». The caller must not
+    treat an unreadable command line as evidence in either direction: read as
+    «not this job» it reports a live render as DIED, and read as «this job» it
+    reports a dead pid that has been recycled as alive.
+
+    ⚠ ONE PowerShell trip. `repair_job_status.py` answers this same question and
+    imports THIS function rather than re-inventing the process-table walk — a
+    second implementation would answer a subtly different question (the repo
+    makes the same argument for `qa_gate`'s parser).
+    """
+    if os.name != "nt":
+        return None
+    r = subprocess.run(
+        ["powershell", "-NoProfile", "-Command",
+         "Get-CimInstance Win32_Process -Filter \"ProcessId = %d\" | "
+         "Select-Object -ExpandProperty CommandLine" % int(pid)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        creationflags=NO_WINDOW)
+    if r.returncode != 0:
+        return None
+    line = (r.stdout or "").strip()
+    return line or None
+
+
+def proc_alive(pid):
+    """-> True / False / None (could not determine) for one pid.
+
+    ⚠ A pid OUTSIDE the platform's range cannot exist, and `os.kill` raises
+    `OverflowError` for it rather than `ProcessLookupError`. Treated as NOT
+    ALIVE, which is the honest answer — it is the one exception that is a real
+    determination rather than a failed read.
+    """
+    if pid is None:
+        return None
+    try:
+        os.kill(int(pid), 0)
+    except ProcessLookupError:
+        return False
+    except OverflowError:
+        return False         # cannot be a real pid -> cannot be alive
+    except PermissionError:
+        return True          # exists, owned by someone else
+    except OSError:
+        return None
+    except (TypeError, ValueError):
+        return None
+    return True
+
+
+# ------------------------------------------------------------ the job marker
+#
+# ⛔⛔ ADDITIVE. Nothing in this section may change what is printed to stdout,
+# any exit code, the synth_sha resume guard, the GPU guard, the per-chapter
+# scratch cleanup, or a single byte of the repair logic. It only writes a
+# sidecar; every failure path here is swallowed so that a marker problem can
+# never abort a render.
+_JOBS_DIR = NARRATION / "logs" / "_jobs"
+_IN_SELFTEST = False
+_MARKER = {"path": None, "data": None, "finished": True}
+
+
+def job_name(set_key, queue_path):
+    """-> the marker's basename. Queue basename, else `<set>_<pid>`.
+
+    ⚠ The queue name is preferred because it is what a human types and what the
+    launcher is named after; a set+pid marker would be unaddressable from the
+    next session, which is the session that has to read it.
+    """
+    if queue_path:
+        stem = Path(queue_path).stem
+        if stem:
+            return stem
+    return "%s_%d" % (set_key, os.getpid())
+
+
+def marker_path(job):
+    return _JOBS_DIR / ("%s.json" % job)
+
+
+def _write_marker(data):
+    """Write the marker ATOMICALLY: `<name>.tmp` then os.replace.
+
+    ⛔ A kill mid-write must not leave a truncated JSON. A corrupt marker is
+    worse than no marker: the status tool would have to say COULD NOT DETERMINE
+    about a job whose state is otherwise perfectly knowable, and this repo has
+    already been burned by one count function returning a believable value on a
+    failed read.
+    """
+    path = _MARKER["path"]
+    if path is None:
+        return
+    tmp = path.with_suffix(".json.tmp")
+    try:
+        _JOBS_DIR.mkdir(parents=True, exist_ok=True)
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1),
+                       encoding="utf-8")
+        os.replace(str(tmp), str(path))
+    except OSError:
+        # ⚠ A marker that cannot be written must not fail the render — but say
+        # so, so the absence of a marker is never mistaken for a live job.
+        print("    \u26a0 job marker NOT writable at %s" % path, flush=True)
+
+
+def marker_start(set_key, queue_path, total, argv):
+    """Stamp `state:"running"` BEFORE the first chapter.
+
+    ⛔⛔ THIS IS THE WRITE THAT MATTERS. A marker written only at exit cannot
+    distinguish a run that died at chapter 86 from one that never started, which
+    is the whole defect: absence of a completion line means both «died» and «not
+    yet». `pid` is recorded so the status tool can ask whether it is still alive.
+    """
+    job = os.environ.get("HEXAPLA_REPAIR_JOB") or job_name(set_key, queue_path)
+    _MARKER["path"] = marker_path(job)
+    _MARKER["finished"] = False
+    _MARKER["data"] = {
+        "job": job,
+        "set": set_key,
+        "state": "running",
+        "pid": os.getpid(),
+        "host": socket.gethostname(),
+        "started": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "updated": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "queue": str(Path(queue_path).resolve()) if queue_path else None,
+        "total": total,
+        "done": 0,
+        "ok": 0,
+        "fail": 0,
+        "last_chapter": None,
+        "argv": list(argv),
+    }
+    _write_marker(_MARKER["data"])
+    atexit.register(marker_exit)
+
+
+def marker_progress(done, ok, fail, b, c):
+    """Update the running counts after each chapter (atomic)."""
+    if _MARKER["data"] is None:
+        return
+    _MARKER["data"].update({
+        "done": done, "ok": ok, "fail": fail,
+        "last_chapter": [b, c],
+        "updated": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    })
+    _write_marker(_MARKER["data"])
+
+
+def marker_exit():
+    """Stamp the terminal state once, from atexit.
+
+    ⚠ atexit runs on a normal return AND on an uncaught exception (after the
+    traceback is printed), so this covers both. It does NOT run on SIGKILL or a
+    power loss — the marker then keeps `state:"running"` forever, and the pid it
+    names is gone, which is precisely the pair the status tool reads as DIED.
+    ⛔ Guarded so a second call (finally + atexit) writes only one verdict.
+    """
+    if _MARKER["finished"] or _MARKER["data"] is None:
+        return
+    _MARKER["finished"] = True
+    exc = sys.exc_info()[1]
+    if exc is not None:
+        _MARKER["data"].update({
+            "state": "crashed",
+            "crash": "%s: %s" % (type(exc).__name__, exc),
+            "traceback": "".join(traceback.format_exception(
+                type(exc), exc, exc.__traceback__))[-2000:],
+            "updated": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        })
+    else:
+        _MARKER["data"].update({
+            "state": "finished",
+            "rc": _MARKER["data"].get("rc"),
+            "updated": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        })
+    _write_marker(_MARKER["data"])
 
 
 def decode(ogg, dst):
@@ -316,7 +607,20 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
         # ⚠ This is NARROW on purpose. If the draws differ in their reason sets
         #   the gate DID discriminate and the best take is a justified choice,
         #   so it is installed as before. Only a genuine tie is refused.
-        sigs = {tuple(sorted(x.get("reasons") or [])) for x in atts
+        # ⚠⚠ THE PRINT IS CONSULTED BEFORE THE TIE IS CALLED (2026-09-15).
+        # ▶ MEASURED: kjv Numbers 5:22 (3/4 v22). The verse ENDS «Amen, amen.»,
+        #   so every draw was gated `repeat:k1` — three identical reason sets,
+        #   which read as a tie, so the existing take was kept. But the existing
+        #   take's own gate record said `append:a` and its tail was «…amen amen
+        #   a». The tie was computed AMONG THE DRAWS ONLY; the incumbent was
+        #   never scored, and the three "failures" were the gate firing on
+        #   scripture. The owner confirmed the stray «a» BY EAR 2026-09-15.
+        # ⇒ A draw whose only reasons are explained by the print is CLEAN, and a
+        #   clean draw is not tied with anything.
+        explained = text_explained_repeats(verses[v - 1])
+        reasons = effective_reasons(reasons, explained)
+        sigs = {tuple(sorted(effective_reasons(x.get("reasons"), explained)))
+                for x in atts
                 if "synthesis-failed" not in (x.get("reasons") or [])}
         tails = {(x.get("tail") or "").strip() for x in atts if x.get("tail")}
         gate_blind = (len(atts) >= 2 and len(sigs) == 1
@@ -357,6 +661,11 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
                         "synth_sha": synth_sha,
                         "gate_could_not_discriminate": bool(gate_blind),
                         "distinct_tails": sorted(tails) if gate_blind else None,
+                        # ⚠ Raw vs effective, both kept: a later reader must be
+                        # able to see WHAT the gate said as well as what stood
+                        # after the print explained it.
+                        "text_explained_repeats": bool(explained),
+                        "raw_reasons": list((info or {}).get("reasons") or []),
                         "still_failing": reasons, "secs": round(time.time() - t0)})
         if not kept_old:
             print(f"    v{v:<4} {len(old)/SR*1000:6.0f} -> {len(new)/SR*1000:6.0f} ms  "
@@ -396,6 +705,11 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
     qa_path = live / f"{c}.qa.json"
     qa = json.loads(qa_path.read_text(encoding="utf-8")) if qa_path.exists() else {}
     qa.setdefault("repairs", []).extend(repairs)
+    _, _held_gate = refresh_gate_record(qa, repairs)
+    for _v, _why in _held_gate:
+        if "kept_existing_take" not in _why:
+            print(f"    v{_v:<4} ⚠ gate record NOT refreshed — {_why}",
+                  flush=True)
     qa["realigned"] = {"ok": ok, "msg": msg, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
     qa_path.write_text(json.dumps(qa, separators=(",", ":"), ensure_ascii=False),
                        encoding="utf-8")
@@ -466,70 +780,92 @@ def main():
                      + "\n  one card — wait, or --allow-gpu-contention on the owner's say-so")
 
     done = ok = fail = 0
-    with tempfile.TemporaryDirectory() as tmp_root:
-        for b, c in keys:
-            targets = queue[(b, c)]
-            qa_path = NARRATION / SETS[a.set]["dir"] / str(b) / f"{c}.qa.json"
-            # ⛔⛔ «ALREADY REPAIRED» IS NOT «REPAIRED FROM THE CURRENT INPUT».
-            # This guard used to ask only «has this verse ever been repaired
-            # successfully?». A verse repaired last week with the OLD lexicon
-            # satisfied it, so a re-render driven by a NEW respelling was
-            # skipped silently — measured 2026-09-07: a 70-chapter lexicon
-            # re-render skipped 60 of them, printing a benign «already done 1»
-            # per chapter while the audio kept the old pronunciation.
-            # ▶ So the skip now ALSO requires the recorded `synth_sha` to match
-            #   the synthesis input we would use today. Records written before
-            #   2026-09-07 carry no sha and therefore never satisfy it — the
-            #   conservative direction, since re-repairing a sound verse costs
-            #   a GPU minute and skipping a stale one ships the wrong audio.
-            if a.apply and not a.force and qa_path.exists():
-                try:
-                    recs = json.loads(qa_path.read_text(encoding="utf-8")).get("repairs", [])
-                except (OSError, ValueError):
-                    recs = []
-                want = spoken_verses(lang, books, b, c)
-                newest = {}
-                for r in recs:
-                    v, ts = r.get("verse"), r.get("ts") or ""
-                    if v and ts >= (newest.get(v, {}).get("ts") or ""):
-                        newest[v] = r
-                did = set()
-                for v in targets:
-                    r = newest.get(v)
-                    if not r or r.get("still_failing"):
+    # ⛔⛔ THE MARKER IS STAMPED BEFORE THE FIRST CHAPTER, NOT AFTER THE LAST.
+    # This is the write that makes a death detectable: a marker that appears
+    # only on success cannot tell a run that died at chapter 86 from one that
+    # never started. ⚠ Additive — `total` is the number of chapters THIS run
+    # will attempt (post-`--limit`), so `done/total` is readable on its own.
+    marker_start(a.set, a.queue, len(keys), sys.argv)
+    try:
+        with tempfile.TemporaryDirectory() as tmp_root:
+            for b, c in keys:
+                targets = queue[(b, c)]
+                qa_path = NARRATION / SETS[a.set]["dir"] / str(b) / f"{c}.qa.json"
+                # ⛔⛔ «ALREADY REPAIRED» IS NOT «REPAIRED FROM THE CURRENT INPUT».
+                # This guard used to ask only «has this verse ever been repaired
+                # successfully?». A verse repaired last week with the OLD lexicon
+                # satisfied it, so a re-render driven by a NEW respelling was
+                # skipped silently — measured 2026-09-07: a 70-chapter lexicon
+                # re-render skipped 60 of them, printing a benign «already done 1»
+                # per chapter while the audio kept the old pronunciation.
+                # ▶ So the skip now ALSO requires the recorded `synth_sha` to match
+                #   the synthesis input we would use today. Records written before
+                #   2026-09-07 carry no sha and therefore never satisfy it — the
+                #   conservative direction, since re-repairing a sound verse costs
+                #   a GPU minute and skipping a stale one ships the wrong audio.
+                if a.apply and not a.force and qa_path.exists():
+                    try:
+                        recs = json.loads(qa_path.read_text(encoding="utf-8")).get("repairs", [])
+                    except (OSError, ValueError):
+                        recs = []
+                    want = spoken_verses(lang, books, b, c)
+                    newest = {}
+                    for r in recs:
+                        v, ts = r.get("verse"), r.get("ts") or ""
+                        if v and ts >= (newest.get(v, {}).get("ts") or ""):
+                            newest[v] = r
+                    did = set()
+                    for v in targets:
+                        r = newest.get(v)
+                        if not r or r.get("still_failing"):
+                            continue
+                        sha = hashlib.sha1(want[v - 1].encode("utf-8")).hexdigest()[:12]
+                        if r.get("synth_sha") == sha:
+                            did.add(v)
+                    if set(targets) <= did:
+                        done += 1
+                        marker_progress(done, ok, fail, b, c)
                         continue
-                    sha = hashlib.sha1(want[v - 1].encode("utf-8")).hexdigest()[:12]
-                    if r.get("synth_sha") == sha:
-                        did.add(v)
-                if set(targets) <= did:
-                    done += 1
-                    continue
-            print(f"{b}/{c}: v{targets}", flush=True)
-            try:
-                good, msg = repair_chapter(a.set, lang, books, b, c, targets, a.apply,
-                                           tmp_root, install_tied=tied_verses)
-            except Exception as e:
-                good, msg = False, f"{type(e).__name__}: {e}"
-            print(f"    -> {'OK' if good else 'FAIL'}: {msg}", flush=True)
-            ok += good
-            fail += not good
-            # ⛔⛔ FREE THIS CHAPTER'S SCRATCH BEFORE THE NEXT ONE.
-            # `tmp_root` is ONE TemporaryDirectory for the whole run, and
-            # repair_chapter writes three decoded WAVs into `<b>_<c>/`
-            # (src, chk, chapter) — MEASURED 2026-09-04 at ~92 MB per chapter.
-            # Nothing removed them until the process exited, so a 233-chapter
-            # run accumulates ~21 GB of scratch it never reads again. That run
-            # took the disk from 51 GB free to 23 GB in 90 minutes and would
-            # have ended with ~5 GB of margin.
-            # ▶ Why that matters more than housekeeping: a disk that fills
-            #   mid-render produces the 1 Samuel 28 truncation class — offsets
-            #   piled at EOF, verses silent — and it does so SILENTLY. The
-            #   render-gate brief already records `render_preflight check`
-            #   failing below 10 GB for exactly this reason.
-            # Each chapter's scratch is dead the moment its chapter is done.
-            scratch = Path(tmp_root) / f"{b}_{c}"
-            if scratch.exists():
-                shutil.rmtree(scratch, ignore_errors=True)
+                print(f"{b}/{c}: v{targets}", flush=True)
+                try:
+                    good, msg = repair_chapter(a.set, lang, books, b, c, targets, a.apply,
+                                               tmp_root, install_tied=tied_verses)
+                except Exception as e:
+                    good, msg = False, f"{type(e).__name__}: {e}"
+                print(f"    -> {'OK' if good else 'FAIL'}: {msg}", flush=True)
+                ok += good
+                fail += not good
+                # ⛔⛔ FREE THIS CHAPTER'S SCRATCH BEFORE THE NEXT ONE.
+                # `tmp_root` is ONE TemporaryDirectory for the whole run, and
+                # repair_chapter writes three decoded WAVs into `<b>_<c>/`
+                # (src, chk, chapter) — MEASURED 2026-09-04 at ~92 MB per chapter.
+                # Nothing removed them until the process exited, so a 233-chapter
+                # run accumulates ~21 GB of scratch it never reads again. That run
+                # took the disk from 51 GB free to 23 GB in 90 minutes and would
+                # have ended with ~5 GB of margin.
+                # ▶ Why that matters more than housekeeping: a disk that fills
+                #   mid-render produces the 1 Samuel 28 truncation class — offsets
+                #   piled at EOF, verses silent — and it does so SILENTLY. The
+                #   render-gate brief already records `render_preflight check`
+                #   failing below 10 GB for exactly this reason.
+                # Each chapter's scratch is dead the moment its chapter is done.
+                scratch = Path(tmp_root) / f"{b}_{c}"
+                if scratch.exists():
+                    shutil.rmtree(scratch, ignore_errors=True)
+                marker_progress(done, ok, fail, b, c)
+
+            # ⚠ A `finally` here rather than relying on atexit alone: atexit covers
+            # an uncaught exception, but this is where the counts at the moment of
+            # exit are known, and `marker_exit` is guarded so only one verdict lands.
+            final = 0 if not fail else 1
+            if _MARKER["data"] is not None:
+                _MARKER["data"]["rc"] = final
+            marker_exit()
+    except BaseException:
+        # ⛔ Terminal state from the EXCEPTION path — a run that dies
+        # inside the loop must stamp `crashed`, not be left as `running`.
+        marker_exit()
+        raise
     print(f"\n{'repaired' if a.apply else 'planned'} {ok}, failed {fail}, "
           f"already done {done}")
     if a.apply:

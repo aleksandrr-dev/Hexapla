@@ -70,9 +70,33 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 # word (lowercased key) -> (respelling, why, validated_by)
 # Case is restored from the original token, so "abraham" covers "Abraham".
 # ⚠ Keep the respelling ORTHOGRAPHIC, not IPA: the model reads letters.
+#
+# ★★ EVERY ROW WAS WIDENED FROM `ylt` TO `("ylt", "en")` ON 2026-09-13, and the
+#    reason is NOT that the rows were re-heard — it is that `en` IS ylt's voice.
+#    The KJV set was switched to the owner's cloned voice on 2026-09-10 and
+#    narrate.py points BOTH sets at the SAME reference file:
+#
+#        en  : engine chatterbox · voice narration/_en_ref_ylt.wav · cfg 0.5 · exag 1.0
+#        ylt : engine chatterbox · voice narration/_en_ref_ylt.wav · cfg 0.5 · exag 1.0
+#
+#    They differ only in `asset` and in ylt's punctuation `normalizer`, and the
+#    lexicon runs AFTER both at the synthesis boundary. So every ear test ever
+#    run for ylt was run on this voice, and the clearances carry.
+#    ▶ Found because the owner heard `Abraham` with the apple-/æ/ in the live
+#      KJV render (Genesis 22:11, ear kit 2026-09-13) — the row had existed and
+#      been validated since 2026-09-06 and was simply never reaching `en`.
+#      His instruction: «Yes apply the same fixes. I thought that was a given».
+#
+# ⛔⛔ THIS IS NOT A PRECEDENT FOR ANY OTHER SET, and the rule above stands
+#    unchanged: a row is cleared for the set its ear test ran on. `en` is the
+#    ONLY set that shares ylt's reference recording byte for byte. `wyc` and
+#    the old `kjv` carry their OWN recordings (`_en_ref_wyc.wav`,
+#    `_en_ref_kjv.wav`); `tyn` and `wbt` are cleared per row, by ear or by G2P.
+#    ⚠ If `en`'s `voice` in narrate.py ever stops being `_en_ref_ylt.wav`, this
+#      whole widening is void — that file path is the entire warrant.
 LEXICON = {
-    "levite":   ("Leevite",   "heard an extra syllable, «Levitite»",      "owner ear 2026-09-05"),
-    "levites":  ("Leevites",  "heard «Levitites»",                        "owner ear 2026-09-05"),
+    "levite":   ("Leevite",   "heard an extra syllable, «Levitite»",      "owner ear 2026-09-05", ("ylt", "en")),
+    "levites":  ("Leevites",  "heard «Levitites»",                        "owner ear 2026-09-05", ("ylt", "en")),
     # ✅ RE-CONFIRMED 2026-09-05 in a SHORT CARRIER, not just the long verse it
     # was first validated on. The re-test was run because `Abram` proved that
     # word-initial `Ay` can read /aɪ/ («eye»), which would have made THIS row
@@ -105,8 +129,34 @@ LEXICON = {
     # where word-initial `Ay` failed on both. That is the first time two rows
     # in this table have agreed on a shape — it is a lead for the next name,
     # NOT a licence to apply it unheard.
+    # ✅ CLEARED FOR `en` TOO — owner, 2026-09-13, on the KJV ear kit
+    # (`_work/en_append_ear_VERDICTS_2026-09-13.md`). He heard Genesis 22:11 in
+    # the live KJV render and reported «Abraham sounds off, A as in Apple»,
+    # then: «KJV is using same voice as YLT, so it would be the same
+    # render/fix for Abraham».
+    # ▶ VERIFIED against narrate.py's config rather than taken on trust —
+    #   `en` and `ylt` are the SAME synthesis path in every field that decides
+    #   how a word is spoken:
+    #       engine chatterbox · voice narration/_en_ref_ylt.wav (ONE file, not
+    #       a copy) · language_id en · cfg_weight 0.5 · exaggeration 1.0
+    #   They differ only in `asset` and in ylt's punctuation `normalizer`,
+    #   neither of which touches a respelling — the lexicon runs AFTER the
+    #   override/normalizer at the synthesis boundary (narrate.py ~2176).
+    # ⚠ THIS IS NOT A WEAKENING OF THE VOICE RULE. The standing caveat «same
+    #   engine is not clearance» was written against sets that share the engine
+    #   but carry their OWN reference recording (`_en_ref_wyc.wav`,
+    #   `_en_ref_kjv.wav`). `en` is the only set that shares ylt's reference
+    #   BYTE FOR BYTE, so «same voice» is literally true here and nowhere else.
+    # ⛔ It licenses nothing for tyn/wyc/wbt.
+    # ✅ THE OTHER 17 ROWS WERE WIDENED TO `en` THE SAME DAY, on the same
+    #   argument and the owner's explicit instruction — «Yes apply the same
+    #   fixes. I thought that was a given» (2026-09-13). See the table header.
+    # ⚠ Debt at the moment of the ruling: 245 KJV verses / 90 chapters contain
+    #   the name; 145 verses were already rendered (repair BY THE VERSE), 100
+    #   were still ahead of the render head at 354/1371.
     "abraham":  ("Aebraham",  "`Aybraham` read /aɪ/ like `Aybram`; ae gives the acorn a",
-                 "owner ear 2026-09-06"),
+                 "owner ear 2026-09-06; en cleared 2026-09-13",
+                 ("ylt", "en")),
     # ✅ `Abram` SOLVED 2026-09-05 — and it took FOUR rounds because the first
     # diagnosis was wrong. Rounds 1-3 assumed `Ay` had fixed syllable one and
     # varied syllable TWO (`Aybram`, `Aybramm`, `Aybrahm`, `Ay bram`, `AyBram`,
@@ -122,8 +172,85 @@ LEXICON = {
     # ⚠ A long verse was the wrong instrument: the vowel was audible only once
     #   the name sat in a short carrier phrase. Prefer short carriers for vowels.
     "abram":    ("Aebram",    "heard «EYE-bram» with Ay-; ae digraph gives the acorn a",
-                 "owner ear 2026-09-05"),
-    "ephraim":  ("Eefraim",   "heard «EFF-raym»; want «EEF-raym»",        "owner ear 2026-09-05"),
+                 "owner ear 2026-09-05", ("ylt", "en")),
+    # ⛔⛔ THE THREE ROWS BELOW ARE PROPOSALS - `validated: None`, so they are
+    # INERT (rows_for skips them; tools/test_lexicon_inert.py controls it both
+    # ways). They exist to be rendered by `lexicon_test_render.py` and ruled on
+    # by the owner's ear. ⛔ Do not widen, do not ship, do not mark validated
+    # without a dated ear verdict.
+    # Scope is `en` ONLY: the defects were heard on the KJV ear kit 2026-09-21,
+    # and a row is cleared for the set its ear test ran on and no other. ylt
+    # carries all three words too and has NOT been judged.
+    #
+    # Owner's ear, 2026-09-21, on the KJV render:
+    #   Baal   -> heard «Ball»        his candidate: `Bale`   (offered as "maybe")
+    #   Mizpeh -> heard «mice pee»    his candidate: `Mizzpeh`
+    #   Esau   -> heard «ay saw»      his candidate: `Esaw`
+    #
+    # ⚠ THE OPEN QUESTION ON `Baal`, put to him and still unanswered: `Bale`
+    # is MONOSYLLABIC ("BAYL") and the defect he describes, "Ball", is also one
+    # beat. If the fault is the MISSING SECOND SYLLABLE rather than the vowel,
+    # `Bale` cannot fix it and `Bayal` is the shape that can. `Bayal` is wired
+    # here so he hears BOTH; whichever he picks, the other row is deleted.
+    # ▶ Precedent for why the vowel guess is not enough: `Abram` took FOUR
+    #   rounds because rounds 1-3 varied syllable TWO while syllable ONE was
+    #   the broken one.
+    # ★ RULED 2026-09-21: BOTH spellings were rendered on the same verse
+    # (2 Kings 10:28) and put to his ear side by side. He cleared **`Bale`**,
+    # not `Bayal` - asked which file he had heard, he named the separate
+    # single-clip `Bale` one. ⛔ `Bayal` is NOT the cleared form; do not
+    # restore it because "two beats" was the stated goal - the goal was his ear.
+    # ⚠ The clip that carried it also doubled the word «Israel». That is the
+    # DRAW, not the spelling (`lexicon_test_render.py` never writes into
+    # narration/), and it is why the kit manifest says judge the WORD only.
+    "baal":     ("Bale",      "heard «Ball»; owner cleared `Bale` at the ear over "
+                              "`Bayal`, both rendered on 2 Kings 10:28",
+                 "owner ear 2026-09-21", ("en",)),
+    # ⛔ ROUND 1 `Mizzpeh` REJECTED 2026-09-21 - he heard «mizz bee».
+    # The z DID its job (no more «mice»); it broke two other things: the **p**
+    # voiced to **b**, and the final vowel read **«ee»** instead of a short
+    # «eh». Target, told to him so the next ruling has one: **«MIZ-peh»** -
+    # MIZ as in "fizz", peh as in "pet" without the t.
+    # ✅ ROUND 2 `Mizzppeh` VALIDATED - owner ear 2026-09-21, on the en kit
+    # `_work/EAR_en_round2.ogg` (rendered as a --respell RIVAL; the table still
+    # said `Mizzpeh` when he heard it). Verse: Joshua 15:38.
+    # ★ ONLY THE P WAS CHANGED, and it fixed the tail too. The round-2 plan
+    # above said to vary "the P AND THE TAIL"; doubling the p alone was tried
+    # first to keep the variables separate, and the «ee» tail went away with it.
+    # ▶ SO THE TWO FAULTS HAD ONE CAUSE: the tail was not a vowel problem at
+    #   all. A voiced `b` carries its syllable differently from a clean `p`;
+    #   fix the consonant and the vowel it governs comes right on its own.
+    #   ⚠ Had both been varied at once, this would read as "the tail respelling
+    #   worked" and the next name would inherit a rule that is not real.
+    "mizpeh":   ("Mizzppeh",  "round 1 `Mizzpeh` -> «mizz bee»; doubling ONLY the "
+                              "p unvoiced it and the «ee» tail resolved with it",
+                 "owner ear 2026-09-21", ("en",)),
+    # ★ ROUND 1 `Eesaw` got the VOWEL RIGHT and moved the fault: he heard
+    # «Ee zaw» - "closer than before, but it should be Ee saw". The single
+    # intervocalic `s` voiced to /z/.
+    # ⛔ ROUND 2 `Eessaw` REJECTED 2026-09-21 - he heard «Ess saw». The doubled
+    # `ss` DID unvoice the s, and in doing so it took the vowel: a double
+    # consonant CLOSES the preceding syllable, so the long `Ee` /iː/ collapsed
+    # to a short /ɛ/. Round 1 and round 2 each fixed one half and broke the
+    # other, because both faults were being fought with the same lever.
+    # ⛔⛔ DOUBLING CANNOT WIN HERE, and that is the transferable finding:
+    #   single `s` between vowels voices; doubling it to unvoice shortens the
+    #   vowel before it. The two are the same knob turned opposite ways.
+    # ✅ SOLVED BY A SYLLABLE BREAK INSTEAD - `Ee-saw`, owner ear 2026-09-21,
+    # Genesis 36:8, chosen at the ear over `Ee saw` (space) and `EeSaw`.
+    # A syllable-initial s does not voice, and an OPEN `Ee` stays long, so one
+    # break fixes both faults without touching either syllable's letters.
+    # ⚠ THE HYPHEN REACHES THE SYNTHESISER ONLY - never the displayed text.
+    #   The space rival was deliberately not chosen even if equal at the ear:
+    #   a space would split the token in the per-verse `.w.json` alignment
+    #   sidecars that drive word-following. ▶ Re-check that sidecar for a verse
+    #   carrying this name if the separator is ever changed.
+    # ▶ `Ee` was never touched across all three rounds, per his 09-21 ruling.
+    "esau":     ("Ee-saw",    "rounds 1-2: `Eesaw` -> «Ee zaw» (s voiced), "
+                              "`Eessaw` -> «Ess saw» (doubling shortened the "
+                              "vowel); a syllable break fixes both at once",
+                 "owner ear 2026-09-21", ("en",)),
+    "ephraim":  ("Eefraim",   "heard «EFF-raym»; want «EEF-raym»",        "owner ear 2026-09-05", ("ylt", "en")),
     # ⚠ DERIVED FORMS — the ROOT was ear-confirmed, these were NOT. A word can
     # inherit the root's spelling and not its defect, so each needs its own
     # verdict; they are listed separately rather than folded into a prefix rule.
@@ -142,10 +269,10 @@ LEXICON = {
     #   verdicts — that rule is what produced four different answers here, and
     #   it is why this row was tested on its own rather than inferred.
     "canaan":       ("Kaynen",       "bare name heard «can-a-yin»; «Kaynan» gave «can i an»",
-                     "owner ear 2026-09-05"),
-    "canaanite":    ("Kaynanite",    "derived from canaan",     "owner ear 2026-09-05"),
-    "canaanites":   ("Kaynanites",   "derived from canaan",     "owner ear 2026-09-05"),
-    "levitical":    ("Leevitical",   "derived from levite",     "owner ear 2026-09-05"),
+                     "owner ear 2026-09-05", ("ylt", "en")),
+    "canaanite":    ("Kaynanite",    "derived from canaan",     "owner ear 2026-09-05", ("ylt", "en")),
+    "canaanites":   ("Kaynanites",   "derived from canaan",     "owner ear 2026-09-05", ("ylt", "en")),
+    "levitical":    ("Leevitical",   "derived from levite",     "owner ear 2026-09-05", ("ylt", "en")),
 
     # ── `Naaman`, 2026-09-07. Owner: "try it the same way we fixed Canaan" ──
     # Heard «Nah min» (broad a) where the name is «Na min»; A/B on II Kings 5:1
@@ -180,7 +307,7 @@ LEXICON = {
     "naaman":       ("Naymen",       "heard «Nah min» (broad a); the Kaynen "
                                      "shape. ⚠ SPORADIC class — one draw, "
                                      "un-primed spot-check still owed",
-                     "owner ear 2026-09-07"),
+                     "owner ear 2026-09-07", ("ylt", "en")),
 
     # ── the -eth question, SETTLED SMALL by ear 2026-09-04 ──────────────────
     # The owner heard 13 forms. Wrong: `fleeth`, `seeth`. FINE: `goeth`,
@@ -251,7 +378,7 @@ LEXICON = {
                             "2026-09-08 on kokoro G2P (sˈiθ -> sˈiɪθ)",
                  "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08; "
                  "tyn by owner ear 2026-09-08 on THREE draws",
-                 ("ylt", "wbt", "tyn")),
+                 ("ylt", "wbt", "tyn", "en")),
     # ── the other two double-e stems, ear-tested 2026-09-07 on real verses ──
     # Each got its OWN test rather than inheriting `seeith` by analogy, and
     # the results justify that: the family does NOT take one uniform shape.
@@ -275,7 +402,7 @@ LEXICON = {
                  "owner ear 2026-09-07; wbt by kokoro G2P 2026-09-08; tyn by "
                  "owner ear 2026-09-08 on the CHATTERBOX voice, which chose "
                  "`fleeyeth` over `fleeith` - see the 5th element",
-                 ("ylt", "wbt", "tyn"),
+                 ("ylt", "wbt", "tyn", "en"),
                  # ⚠ tyn is chatterbox on a cloned ref and is fed TEXT, not
                  # phonemes, so none of wbt's kokoro G2P evidence carries.
                  # The owner heard both shapes on THIS voice and chose
@@ -285,16 +412,16 @@ LEXICON = {
     "freeth":   ("friyeth", "same double-e collapse; ONE occurrence in ylt "
                             "(I Samuel 19:10). ⚠ owner picked a different "
                             "shape here than for seeth/fleeth",
-                 "owner ear 2026-09-07"),
+                 "owner ear 2026-09-07", ("ylt", "en")),
 
     # ── a VOWEL error, not a syllable error ────────────────────────────────
     # «calleth» heard with the a of APPLE; it is the aw of CALL. Whether
     # `called`/`call`/`calling` share it is OUT FOR AN EAR CHECK — do not
     # assume they do, and do not assume they don't.
     "calleth":  ("cawleth",  "heard «cal-eth» (a as in apple); want «CAWL-eth»",
-                 "owner ear 2026-09-05"),
+                 "owner ear 2026-09-05", ("ylt", "en")),
     "falleth":  ("fawleth",  "same defect as calleth, confirmed by ear 2026-09-04",
-                 "owner ear 2026-09-05"),
+                 "owner ear 2026-09-05", ("ylt", "en")),
     # ⛔ AND NOTHING ELSE IN THE a+ll FAMILY. The owner heard `called`, `call`,
     # `calling`, `fall`, `wall`, `small` and `all` and reported every one FINE.
     # So this is NOT a general «aw» vowel problem — `all` alone is in 5,482
@@ -308,7 +435,7 @@ LEXICON = {
     #    careless prefix rule away, exactly like `Canaanite` vs `canaan`.
     # ⚠ There is no lowercase «job» anywhere in the ylt text, so this entry
     #    cannot collide with the ordinary noun.
-    "job":       ("Jobe",      "heard «Jahb»; wanted to rhyme with «robe»",  "owner ear 2026-09-05"),
+    "job":       ("Jobe",      "heard «Jahb»; wanted to rhyme with «robe»",  "owner ear 2026-09-05", ("ylt", "en")),
     # ★ EAR-CONFIRMED 2026-09-04 by the owner on the repair clip set
     # (John 11:35, «Jesus wept» -> heard «jasus wept»).
     # ⚠ THE RESPELLING BELOW IS STILL A GUESS, like every other row here.
@@ -373,7 +500,7 @@ LEXICON = {
                               "`Leevite`/`Eefraim`. ⚠ good in II Kings 5:9, WRONG in "
                               "II Kings 2:1 and Luke 4:27 — owner directed the "
                               "wire-in over that objection",
-                 "owner direction 2026-09-07 (NOT the prophesy standard)"),
+                 "owner direction 2026-09-07 (NOT the prophesy standard)", ("ylt", "en")),
 
     # ★ `prophesy` — Acts 2:17 (clip 20): heard «prophes-EE». The voice read the
     #   VERB as its own NOUN: `prophesy` is /ˈprɒfɪsaɪ/, `prophecy` is /-si/.
@@ -393,7 +520,7 @@ LEXICON = {
     #   enter this table. A careless rule on «prophes» would also be wrong for
     #   it, since the noun is spelled with a c.
     "prophesy": ("prophesigh", "verb read as the noun «prophecy»; want «-sigh»",
-                 "owner ear 2026-09-06"),
+                 "owner ear 2026-09-06", ("ylt", "en")),
 }
 
 
@@ -553,9 +680,28 @@ def row_sets(entry):
     return tuple(entry[3]) if len(entry) > 3 else DEFAULT_SETS
 
 
-def rows_for(set_key):
-    """-> {word: entry} cleared for this set."""
-    return {w: e for w, e in LEXICON.items() if set_key in row_sets(e)}
+def rows_for(set_key, include_unvalidated=False):
+    """-> {word: entry} cleared for this set.
+
+    ⛔⛔ AN UNVALIDATED ROW IS INERT. `narrate.py` (~2151) has always
+    documented this - "Both tables are INERT while a row is unvalidated" - and
+    `synthesis_overrides.py` (~117) has always implemented it. THIS table did
+    not: until 2026-09-21 `rows_for` filtered on scope alone, so a proposal
+    written down for an ear test would have been spoken into real audio by the
+    next render or repair that touched a verse carrying the word.
+
+    It had never bitten only because `unvalidated()` happened to be empty. The
+    moment a candidate row is added - which is the entire workflow this table
+    exists to serve - it would have. `Aebraham` alone rides 243 en verses.
+
+    ▶ `include_unvalidated=True` is for ONE caller: `lexicon_test_render.py`,
+    whose whole job is to synthesise a proposal so an ear can rule on it.
+    Nothing that writes into `narration/` may pass it.
+    """
+    return {
+        w: e for w, e in LEXICON.items()
+        if set_key in row_sets(e) and (include_unvalidated or e[2])
+    }
 
 
 def spelling_for(entry, set_key):
@@ -585,8 +731,11 @@ def spelling_for(entry, set_key):
     return per.get(set_key, entry[0])
 
 
-def apply(text, set_key="ylt"):
+def apply(text, set_key="ylt", include_unvalidated=False):
     """-> (synthesis_text, [words replaced]). NEVER use on displayed text.
+
+    ⚠ `include_unvalidated` defaults to False: a row nobody has heard is
+    INERT. See `rows_for`. Only `lexicon_test_render.py` may pass True.
 
     ⛔⛔ `set_key` DEFAULTS TO ylt ON PURPOSE — never to «every row». Until
     2026-09-07 the whole table was gated by one `lang == "ylt"` test inside
@@ -602,7 +751,7 @@ def apply(text, set_key="ylt"):
       respelling a set nobody tested.
     """
     hits = []
-    live = rows_for(set_key)
+    live = rows_for(set_key, include_unvalidated)
 
     def sub(m):
         w = m.group(0)
@@ -654,7 +803,18 @@ def main():
             for v in ch:
                 if not isinstance(v, str):
                     continue
-                _, hits = apply(v)
+                # ⛔ NOT a bare `apply(v)`. `apply`'s set_key DEFAULTS TO ylt
+                # (deliberately - see its docstring), so until 2026-09-21 this
+                # loop counted the YLT scope no matter what `--lang` said:
+                # `--lang` was parsed and then never reached the count. Every
+                # en-ONLY row was therefore invisible, and the total was a ylt
+                # figure wearing an en label - it reported 1239 verses for en
+                # while omitting esau (94), mizpeh (21) and baal (54).
+                # ⚠ It under-reported SILENTLY, printing a plausible number
+                # rather than failing, which is the one thing a count must
+                # never do. Control: `--lang en` must list esau/mizpeh/baal;
+                # `--lang ylt` must not.
+                _, hits = apply(v, set_key=a.lang)
                 if hits:
                     total += 1
                     chapters.add((bi, ci))

@@ -210,12 +210,45 @@ del _b
 RU_DEFAULT_STYLE = "normal"
 
 LANG_CONFIG = {
+    # ★ SWITCHED TO THE OWNER'S CLONED VOICE 2026-09-10, on his explicit
+    # instruction ("We will replace Librevox in KJV with the same voice that
+    # did YLT"). This is the KJV_VOICE_RUNBOOK step 1 and it retires the
+    # LibriVox human narration for the 50 books it covers — ReadingService
+    # builds the KJV index as putAll(librivox); putAll(generated), so a full
+    # generated set wins every key. That is the owner's decision, not a
+    # technical side effect; the runbook §3 gate is satisfied.
+    #   PREVIOUS (kept for a quick revert): engine "kokoro", voice "am_adam",
+    #   no language_id/cfg_weight/exaggeration, default_books LIBRIVOX_GAP_BOOKS.
+    # ⚠ `_en_ref_ylt.wav` — the SAME reference that rendered ylt, so the two
+    #   English sets speak in one voice and ylt's 215 announcement components
+    #   can be reused outright (runbook §5).
+    # ⚠⚠ `default_books` MOVED TO None. It was LIBRIVOX_GAP_BOOKS, which renders
+    #   only the 22 books LibriVox never recorded; this render is the WHOLE
+    #   KJV, 1,371 chapters (1,189 canonical + 182 apocrypha, DERIVED from
+    #   en_kjv.json 2026-09-10 — 83 books, 3 of them empty). Leaving the gap
+    #   list would have rendered 245 chapters and looked finished.
+    # ⚠⚠ THE 492 am_adam CHAPTERS WERE QUARANTINED to
+    #   narration/en_quarantine_am_adam_2026-09-10 BEFORE this switch.
+    #   narrate.py skips existing output, so leaving them in place would have
+    #   left 492 chapters in the OLD voice inside a set rendered in the new
+    #   one — the mixing defect that quarantined 72 Wycliffe chapters. They are
+    #   also the correctly-pronounced DONORS for the 15 new announcement
+    #   components (runbook §5, voice conversion not respelling) — do not
+    #   delete them.
+    # ⚠⚠ THIS MAKES en A **GPU** RENDER (chatterbox, ~4 GB, in-process model):
+    #   · it must NOT share the 8 GB card with a live CosyVoice render;
+    #   · the supervisor needs the 75-minute RECYCLE, not revive-only;
+    #   · it moves from .kokoro_venv to .chatterbox_venv in the supervisor,
+    #     and its $CanonFor entry from the cumulative 492 to 1371.
     "en": {
         "asset": "en_kjv.json",
-        "engine": "kokoro",
-        "voice": "am_adam",
+        "engine": "chatterbox",
+        "voice": str(OUTPUT / "_en_ref_ylt.wav"),
+        "language_id": "en",
+        "cfg_weight": 0.5,
+        "exaggeration": 1.0,
         "strip_notes": True,
-        "default_books": LIBRIVOX_GAP_BOOKS,
+        "default_books": None,
         "normalizer": None,
     },
     "wbt": {
@@ -1865,7 +1898,28 @@ def _speaker_similarity(wav_path, cfg):
     return worst
 
 
-def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
+def _judge_take(wav_path, text, lang, verse_idx):
+    """Judge ONE take with the gate's own screens. -> list of reasons, or None
+    when the ASR is unavailable and no judgement is possible.
+
+    ⚠ None is NOT "clean". A take that cannot be judged must never be allowed
+    to replace one that was — that is the whole defect this exists to stop.
+    ⚠ The caller must _cut_info.clear() before synthesizing, or tail_peak
+    belongs to the previous take.
+    """
+    from qa_gate import gate_reasons
+    asr = asr_transcribe(wav_path, ASR_LANG.get(lang, "en"))
+    if asr is None:
+        return None
+    reasons = gate_reasons(asr.get("text"), asr.get("tokens"), text, lang,
+                           tail_peak=_cut_info.get("tail_peak"),
+                           tail_peak_limit=_GATE_TAIL_PEAK)
+    if _RETRY_ON_TOKEN_FLAG and _repetition_flagged(verse_idx):
+        reasons.append("token-flag")
+    return reasons
+
+
+def repace_outliers(verses, pairs, lang, temp_dir, book_idx, gate_log=None):
     """Re-synthesize verses whose speaking rate is an outlier for the chapter.
 
     Only meaningful for stochastic engines — kokoro/piper are deterministic, so
@@ -1897,16 +1951,44 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
     # dramatisations the owner likes. Leaks are fixed at the root instead (see
     # RU_STYLES) and audited post-hoc by tools/scan_narration_leaks.py.
     # Duration cannot detect a leak that REPLACES an utterance.
+    # ★★ EVERY RE-ROLL IS JUDGED (2026-09-12, owner: "make it correct").
+    # Until this date repace picked a take by PACE ALONE and overwrote the one
+    # the gate had judged, so a screened take was replaced by an unscreened
+    # one and the record still described the screened one. Owner ear-verdict
+    # on Genesis 19:18 and 30:21: "yes the word repeats" on verses the gate
+    # recorded as re-drawn and CLEAN.
+    # ▶ research/_evidence/kjv_repace_bypasses_gate_2026-09-12.md
+    # The ranking is the gate's own: fewest judged reasons first, pace only as
+    # the tie-break, and a tie keeps the incumbent (the 2026-09-07 rule).
+    # ⚠ Pace is cosmetic. An appended word is not. A verse that cannot be
+    # re-rolled cleanly KEEPS ITS PACE OUTLIER — that is the correct outcome.
+    judging = not _GATE_OFF
+    _printed = False
     for i, (wav, dur) in enumerate(pairs):
         if not wav or len(verses[i]) < PACE_MIN_CHARS:
             continue
         rate = _verse_rate(verses[i], dur - pad)
         if rate is None or lo <= rate <= hi:
             continue
-        best = (abs(math.log(rate / median)), wav, dur, rate)
+        # The incumbent's standing comes from the gate's own record. No record
+        # (gate off, or a verse it did not run on) => assume clean, which is the
+        # conservative direction: only a CLEAN alt can then displace it.
+        g = gate_log.get(i + 1) if gate_log else None
+        n_base = 0
+        if judging and g:
+            n_base = len([r for r in g.get("reasons", []) if r != "asr-unavailable"])
+        best = (n_base, abs(math.log(rate / median)), wav, dur, rate, None)
+        rejected = 0
         for attempt in range(PACE_MAX_RETRIES):
             alt = Path(temp_dir) / f"verse_{i:04d}_r{attempt}.wav"
-            if not _resynth(verses[i], str(alt)):
+            _cut_info.clear()
+            if judging:
+                _eos_watcher.hits.pop(i, None)
+                _eos_watcher.current = i
+            ok = _resynth(verses[i], str(alt))
+            if judging:
+                _eos_watcher.current = None
+            if not ok:
                 break
             try:
                 alt_dur = get_wav_duration_ms(alt)
@@ -1916,19 +1998,53 @@ def repace_outliers(verses, pairs, lang, temp_dir, book_idx):
             if alt_rate is None:
                 break
             score = abs(math.log(alt_rate / median))
-            if score < best[0]:
-                best = (score, str(alt), alt_dur, alt_rate)
-            if lo <= alt_rate <= hi:
+            if judging:
+                alt_reasons = _judge_take(str(alt), verses[i], lang, i)
+                if alt_reasons is None:
+                    # ⚠ The ASR could not judge this take, so it CANNOT be
+                    # accepted over one that was judged. Stop re-rolling: with
+                    # the ASR down every further draw is equally unusable.
+                    rejected += 1
+                    break
+                n_alt = len([r for r in alt_reasons if r != "asr-unavailable"])
+            else:
+                alt_reasons, n_alt = None, 0
+            if (n_alt, score) < (best[0], best[1]):
+                best = (n_alt, score, str(alt), alt_dur, alt_rate, alt_reasons)
+            elif judging and n_alt > n_base:
+                rejected += 1
+            if n_alt == 0 and lo <= alt_rate <= hi:
                 break
-        if best[1] != wav:
-            print(f"\n    verse {i+1}: {rate:.1f} -> {best[3]:.1f} ch/s "
+        if best[2] != wav:
+            print(f"\n    verse {i+1}: {rate:.1f} -> {best[4]:.1f} ch/s "
                   f"(median {median:.1f})", end="")
-            pairs[i] = (best[1], best[2])
+            _printed = True
+            pairs[i] = (best[2], best[3])
+            if g is not None:
+                # ★ THE RECORD FOLLOWS THE FILE. The take on disk is this one,
+                # so its reasons are the chapter's reasons for this verse.
+                g["repaced"] = {"from_rate": round(rate, 2),
+                                "to_rate": round(best[4], 2),
+                                "median": round(median, 2),
+                                "judged": bool(judging)}
+                if judging and best[5] is not None:
+                    g["reasons"] = best[5]
+        elif judging and rejected:
+            print(f"\n    verse {i+1}: {rate:.1f} ch/s off median {median:.1f}"
+                  f" — {rejected} re-roll(s) REJECTED by the gate, keeping the"
+                  f" judged take", end="")
+            _printed = True
+            if g is not None:
+                g["repace_declined"] = rejected
 
     # NOTE reroll_speaker_drift() exists below but is DELIBERATELY NOT CALLED.
     # See its docstring: the detector could not be made to separate "him
     # performing" (wanted) from "a different person" (bug), and shipping it
     # would destroy dramatisations the owner explicitly likes.
+    # ⚠ Close the block: these lines print with end="" so the gate line, which
+    # now follows them, would otherwise be appended to the last one.
+    if _printed:
+        print(flush=True)
     return pairs
 
 
@@ -2286,12 +2402,22 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
                     gate_log[i + 1] = ginfo
                 pairs.append((wav_path, dur))
             _eos_watcher.current = None
+            # ★★ REPACE RUNS BEFORE THE RECORD IS READ, NOT AFTER (2026-09-12).
+            # It is the last thing that can change which take is on disk, so a
+            # record written before it describes an intermediate state, not the
+            # artifact. It now judges its own re-rolls and folds the outcome
+            # back into gate_log, which is also what <c>.qa.json is built from
+            # further down — so the line below and the persisted record both
+            # describe the audio that was actually encoded.
+            pairs = repace_outliers(verses, pairs, lang, tmp, book_idx, gate_log)
             if gate_log:
                 redrawn = [v for v, g in gate_log.items() if len(g["attempts"]) > 1]
                 failing = {v: g["reasons"] for v, g in gate_log.items()
                            if g["reasons"] and g["reasons"] != ["asr-unavailable"]}
                 unjudged = [v for v, g in gate_log.items()
                             if any("asr-unavailable" in a["reasons"] for a in g["attempts"])]
+                repaced = [v for v, g in gate_log.items() if "repaced" in g]
+                declined = [v for v, g in gate_log.items() if "repace_declined" in g]
                 line = (f"    gate: {len(gate_log)} judged, {len(redrawn)} re-drawn, "
                         f"{len(failing)} still failing")
                 if failing:
@@ -2299,8 +2425,11 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
                                             for v, r in sorted(failing.items()))
                 if unjudged:
                     line += f"; ⚠ {len(unjudged)} UNJUDGED (ASR unavailable)"
+                if repaced:
+                    line += f"; {len(repaced)} re-paced (judged)"
+                if declined:
+                    line += f"; {len(declined)} re-paced DECLINED by the gate"
                 print(line, flush=True)
-            pairs = repace_outliers(verses, pairs, lang, tmp, book_idx)
         except Exception as e:
             print(f" FAILED (duration: {e})")
             return False
@@ -2369,8 +2498,15 @@ def narrate_chapter(lang, book_idx, chapter_idx, books, force=False, dry_run=Fal
     # re-sweeping, and "unjudged" is written down instead of vanishing.
     # ⚠ upload_narration.py excludes *.qa.json; keep it that way.
     if gate_log:
-        qa = {"gate_version": 1,
+        # ⚠ gate_version 2 (2026-09-12) = repace_outliers judges its re-rolls
+        # and folds the outcome in here. A version-1 record CANNOT say whether
+        # an unjudged re-roll replaced the take it describes — that is UNKNOWN,
+        # not zero, and render_preflight.py reports it as unknown.
+        qa = {"gate_version": 2,
               "judged": len(gate_log),
+              "repaced": sorted(v for v, g in gate_log.items() if "repaced" in g),
+              "repace_declined": sorted(v for v, g in gate_log.items()
+                                        if "repace_declined" in g),
               "redrawn": sorted(v for v, g in gate_log.items() if len(g["attempts"]) > 1),
               "failing": {str(v): g["reasons"] for v, g in gate_log.items()
                           if g["reasons"] and g["reasons"] != ["asr-unavailable"]},

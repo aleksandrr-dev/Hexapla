@@ -22,8 +22,14 @@ comparison the method wants.
 
 USAGE
 -----
-    python tools/contact_sheet.py <image> <out.png> [--scale N] [--cols N] \\
-        --box x0,y0,x1,y1,LABEL  [--box ... ]
+    python tools/contact_sheet.py <image> <out.png> [--tile-h N] [--max-width N] \\
+        [--pad N] [--label-h N] --box x0,y0,x1,y1,LABEL  [--box ... ]
+
+    ⚠ There is no --scale and no --cols. Tiles are normalised to a common
+    HEIGHT (--tile-h) and row-packed to --max-width; effective magnification is
+    --tile-h divided by the crop's own height, so for 65px line crops
+    --tile-h 520 gives 8.0x. This USAGE block claimed --scale/--cols until
+    2026-09-13 and both were rejected by argparse.
 
     # or pass a JSON file of boxes: [[x0,y0,x1,y1,"label"], ...]
     python tools/contact_sheet.py <image> <out.png> --boxes sites.json
@@ -89,22 +95,46 @@ def build(image_path, boxes, tile_h, max_width, pad, label_h):
         raise SystemExit("no boxes given")
 
     # row-pack
-    rows, cur, cur_w = [], [], 0
+    # ⚠ The budget must count the LEADING pad, because drawing starts at
+    # x = pad, not x = 0. Counting only `tile.width + pad` per tile made a row
+    # exactly `pad` wider than the loop believed - which, with the `min()` that
+    # used to clamp `sheet_w` to `max_width`, sliced the last tile off the
+    # sheet edge instead of wrapping it. (Found 2026-09-21; the sheet is an
+    # adjudication instrument, so a silently cropped tile is a wrong verdict.)
+    # Known-bad control (tools/test_contact_sheet_wrap.py asserts BOTH ways):
+    # HEXAPLA_NO_SHEETWRAP=1 restores the pre-2026-09-21 arithmetic exactly.
+    _broken = os.environ.get("HEXAPLA_NO_SHEETWRAP") == "1"
+    lead = 0 if _broken else pad
+
+    rows, cur, cur_w = [], [], lead
     for tile, label in tiles:
         need = tile.width + pad
         if cur and cur_w + need > max_width:
             rows.append(cur)
-            cur, cur_w = [], 0
+            cur, cur_w = [], lead
         cur.append((tile, label))
         cur_w += need
     if cur:
         rows.append(cur)
 
     row_h = tile_h + label_h + pad
-    sheet_w = min(
-        max_width,
-        max(sum(t.width + pad for t, _ in r) for r in rows) + pad,
-    )
+    # ⛔ NEVER clamp to max_width: a row is already packed to fit, and the one
+    # case that cannot fit - a SINGLE tile wider than max_width, which the
+    # `if cur` guard deliberately lets through rather than dropping - must make
+    # the sheet wider, never lose pixels. max_width is a packing target, not a
+    # crop. Widening is visible; slicing is not.
+    if _broken:
+        sheet_w = min(
+            max_width,
+            max(sum(t.width + pad for t, _ in r) for r in rows) + pad,
+        )
+    else:
+        sheet_w = max(pad + sum(t.width + pad for t, _ in r) for r in rows)
+    if not _broken and sheet_w > max_width:
+        sys.stderr.write(
+            "⚠ contact_sheet: a tile is wider than --max-width %d; sheet widened "
+            "to %d rather than slicing it\n" % (max_width, sheet_w)
+        )
     sheet = Image.new("RGB", (sheet_w, len(rows) * row_h + pad), (255, 255, 255))
     draw = ImageDraw.Draw(sheet)
 

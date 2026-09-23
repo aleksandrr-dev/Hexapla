@@ -37,8 +37,29 @@ SETS = [
     # That makes the coverage assertion active: it hard-fails on any missing
     # .ogg or sidecar, which is exactly the check we want now that the set
     # claims completeness in the app and in its archive.org title.
+    # ── APOCRYPHA: ✅ ACTIVATED 2026-09-10 ──
+    # The 147 deuterocanon chapters (slots 68-81) are rendered, aligned
+    # (147/147 .w.json) and screened locally. kxii goes 1189/1189 across 66
+    # books → 1336/1336 across 78/83 books.
+    # ▶ The gate was "ACTIVATE ONLY AFTER the upload has landed AND the live
+    #   item has been RE-READ (not after the uploader printed success)". Both
+    #   are now satisfied, by evidence rather than by a success line:
+    #   • all 4009 local files compared by MD5 against the live item —
+    #     0 ABSENT (the 15 that differ are 5 REPAIRED CANON chapters, sent
+    #     2026-09-10, and are a separate matter from apocrypha coverage);
+    #   • HEAD probes over one chapter per apocryphal book slot, both first
+    #     and last of the long books, plus a .json and a .w.json sidecar, all
+    #     serve 200 with a non-zero Content-Length.
+    # ⚠ A 404 on 78/5.ogg is CORRECT and is not a hole. Additions to Esther's
+    #   LIVE chapters are slots 9,10,12,13,14,15 — index 5 is one of the
+    #   verse-less placeholder slots bible_live_chapters() exists to skip.
+    #   A probe list built by counting 0..n-1 will "find" a phantom gap here.
+    # ⚠ Activation is this one flag. The chapter-slot fix it depends on is
+    #   already in bible_live_chapters(); without that, this flag fails the
+    #   guard on Additions to Esther's ten verse-less placeholder slots.
     {"tid": "kxii", "dir": "sv", "asset": "sv_karlxii.json",
-     "item": "hexapla-audio-karlxii-1703", "partial": False},
+     "item": "hexapla-audio-karlxii-1703", "partial": False,
+     "apocrypha": True},
     # ── GENEVA 1599 — PREPARED 2026-07-31, ACTIVATE WHEN THE RENDER FINISHES ──
     # ⚠ tid is "gen1599" (the app id in Bible.kt), NOT "gnv" (the narration
     #   folder). Same tid/dir split as kxii — getting this wrong yields an
@@ -47,16 +68,28 @@ SETS = [
     #   (2379/2379 requests, 0 failed) and verified public — chapter URLs
     #   0/0.ogg, 42/0.ogg and 65/21.ogg all fetch HTTP 200.
     # Activation checklist lives in tools/GENEVA_AUDIO_RUNBOOK.md.
-    # ⚠ dir points at the QUARANTINE, deliberately (2026-08-04). The archaic-
-    #   spelling re-render moved narration/gnv aside to gnv_quarantine_archaic_
-    #   spelling so the render could restart from zero under skip-existing. But
-    #   archive.org still SERVES the old audio, and this index embeds the verse
-    #   offsets users actually stream — so it must be built from the audio that
-    #   is live, which is the quarantined set (byte-identical to the item).
-    # ⚠ WHEN THE RE-RENDER FINISHES AND IS UPLOADED: point this back at "gnv"
-    #   and REBUILD. The new audio has different offsets; leaving it here would
-    #   ship verse highlighting that drifts against the audio being played.
-    {"tid": "gen1599", "dir": "gnv_quarantine_archaic_spelling",
+    # ⚠ dir pointed at the QUARANTINE from 2026-08-04, deliberately: the
+    #   archaic-spelling re-render moved narration/gnv aside so the render
+    #   could restart from zero under skip-existing, while archive.org still
+    #   SERVED the old audio. This index embeds the verse offsets users
+    #   actually stream, so it had to be built from the audio that was live.
+    # ⛔⛔ THAT PREMISE EXPIRED ON 2026-08-11 AND NOBODY MOVED THE POINTER.
+    #   The re-render WAS uploaded that day (narration/logs/upload_gnv_
+    #   2026-08-11.log), so the item has been serving the NEW audio ever since
+    #   while this entry kept building offsets from the OLD — precisely the
+    #   drift the previous note warned about, and it SHIPPED in 1.6.4, because
+    #   gen1599 is in the released APK's index.
+    # ✅ FIXED 2026-09-20 by re-reading the LIVE item, not the logs. Three
+    #   chapters fetched whole and MD5'd against both local renders:
+    #       0/0.ogg    live 9799197e… == gnv, != quarantine af40830e…
+    #       42/0.ogg   live c88ff607… == gnv, != quarantine e8f71174…
+    #       65/21.ogg  live 92730013… == gnv, != quarantine d3c1f23a…
+    #   All three agree: the item IS narration/gnv, byte for byte.
+    # ⚠ A size or a count would NOT have caught this — the two renders differ
+    #   by ~2 KB a chapter and both hold exactly 1189. Only the bytes said so.
+    #   ▶ tools/audit_narration_shipped.py flags a `dir` pointing at a
+    #   quarantine while a re-render exists, so this cannot go quiet again.
+    {"tid": "gen1599", "dir": "gnv",
      "asset": "en_geneva.json",
      "item": "hexapla-audio-geneva-1599", "partial": False},
 
@@ -155,10 +188,44 @@ SETS = [
     # ⚠ The .eos.json files in narration/ylt are narrate.py QA diagnostics,
     #   NOT app data. upload_narration.py already excludes them; nothing here
     #   should ever index them.
-    # {"tid": "ylt", "dir": "ylt", "asset": "en_ylt.json",
-    #  "item": "hexapla-audio-ylt-1898", "partial": False},
+    # ✅ ACTIVATED 2026-09-20 (owner). The blocking condition above was
+    #   "the upload has landed AND the live item has been re-read" — both met,
+    #   and re-read is what cleared it, not the uploader's say-so:
+    #   • https://archive.org/metadata/hexapla-audio-ylt-1898 lists 1189
+    #     DISTINCT .ogg under the standard <book>/<chapter>.ogg layout;
+    #   • a real chapter was fetched, not just HEADed — 40/1.ogg returns 200
+    #     at 945,823 bytes, and its offsets sidecar 40/1.json returns 200.
+    #   ⚠ The app was shipping NO ylt at all: the 1.6.4 RuStore APK's
+    #   audio_index_gen.json carries only wbt/kxii/syn/csl, so English fell
+    #   back to LibriVox/TTS silently — the exact failure this comment block
+    #   was written to prevent. Reported by the owner, listening, 2026-09-20.
+    {"tid": "ylt", "dir": "ylt", "asset": "en_ylt.json",
+     "item": "hexapla-audio-ylt-1898", "partial": False},
+
+    # ★★ WYCLIFFE c.1395 — WIRED 2026-09-20 (owner: "make sure everything we
+    #   rendered ... is all uploaded and wired into the app").
+    # ⛔ It had NO entry here at all — not even a commented one — while 1345
+    #   chapters sat rendered on disk AND uploaded to a live item. That is the
+    #   worst of the three states, because there is nothing to notice: the app
+    #   simply falls back to TTS and no build ever fails.
+    #   ▶ tools/audit_narration_shipped.py now derives exactly this.
+    # ⚠ tid is "wyc" and it MUST match Bible.kt:29
+    #   Translation("wyc", "bibles/enm_wycliffe.json", ...) — a tid that does
+    #   not match yields an index the app silently never looks up.
+    # ⚠ "apocrypha": True is REQUIRED, not optional: narrate.py gives wyc
+    #   `default_books: None`, so it rendered every non-empty slot. Canon is
+    #   1189 and the render is 1345, so 156 deuterocanon chapters exist and
+    #   without the opt-in they upload and are UNREACHABLE.
+    # ✅ Live item re-read before wiring, and a real chapter FETCHED, not
+    #   HEADed: hexapla-audio-wycliffe-1395 lists 1345 distinct .ogg under the
+    #   standard <book>/<chapter>.ogg layout; 40/1.ogg returns 200 at 887,829
+    #   bytes and its sidecar 40/1.json returns 200.
+    # ⚠ NO "flat": this item uses the standard layout.
+    {"tid": "wyc", "dir": "wyc", "asset": "enm_wycliffe.json",
+     "item": "hexapla-audio-wycliffe-1395", "partial": False,
+     "apocrypha": True},
     {"tid": "kjv", "dir": "en", "asset": "en_kjv.json",
-     "item": "hexapla-audio-en", "partial": True,
+     "item": "hexapla-audio-en", "partial": False,
      "apocrypha": True, "flat": "kjv_{b}_{c}.ogg"},
 ]
 ARCHIVE_BASE = "https://archive.org/download"
@@ -179,6 +246,30 @@ def bible_chapter_counts(asset_name):
         chapters = b["chapters"] if isinstance(b, dict) else b
         counts.append(len(chapters))
     return counts
+
+
+def bible_live_chapters(asset_name):
+    """Per book, the chapter indices that actually HOLD VERSES.
+
+    ⚠ THE 83-SLOT TRAP, ONE LEVEL DOWN. `grid_books` below already knows a
+    BOOK slot can be legitimately empty and can therefore never have audio.
+    A CHAPTER slot can be empty in exactly the same way, and until 2026-09-10
+    nothing here knew that: sv_karlxii's Additions to Esther carries 16 chapter
+    slots of which only 6 hold verses (live chapters are 9, 10, 12-15), because
+    the KJV numbering it is aligned to leaves 0-8 and 11 as placeholders. The
+    render correctly produced 6 .ogg; a guard counting raw slots demands 16,
+    reports ten missing files, and fails a complete set.
+    ⚠ Do NOT "fix" that by setting partial: True — that softens the guard for
+    the whole set and would silently permit a genuinely holed render later.
+    """
+    data = json.loads((ASSETS / "bibles" / asset_name).read_text(encoding="utf-8"))
+    books = data if isinstance(data, list) else data["books"]
+    live = []
+    for b in books:
+        chapters = b["chapters"] if isinstance(b, dict) else b
+        live.append([ci for ci, ch in enumerate(chapters)
+                     if any((v or "").strip() for v in ch)])
+    return live
 
 
 def build_set(s, errors):
@@ -213,12 +304,16 @@ def build_set(s, errors):
     # that same guard would demand audio for 78 books, get 66, and fail a
     # perfectly complete canon — the 83-slot trap wearing a different hat.
     counts = bible_chapter_counts(asset_name)[:last]
+    # Verse-holding chapters only — see bible_live_chapters(). For every set
+    # that built before 2026-09-10 this is identical to range(n_ch); it differs
+    # only where an asset carries placeholder chapter slots.
+    live = bible_live_chapters(asset_name)[:last]
     base = f"{ARCHIVE_BASE}/{item_id}"
     entry = {}
     total = 0
-    for bi, n_ch in enumerate(counts):
+    for bi, live_ch in enumerate(live):
         chapters = {}
-        for ci in range(n_ch):
+        for ci in live_ch:
             ogg = src / str(bi) / f"{ci}.ogg"   # local layout is always <book>/<ch>
             sidecar = src / str(bi) / f"{ci}.json"
             if not ogg.exists():
@@ -242,7 +337,7 @@ def build_set(s, errors):
             total += 1
         if chapters:
             entry[str(bi)] = {"base": base, "chapters": chapters}
-    expected = sum(counts)
+    expected = sum(len(c) for c in live)
     if not partial:
         # Complete sets must cover the whole grid — catches a broken upload.
         if total != expected:
@@ -251,7 +346,7 @@ def build_set(s, errors):
         # empty apocrypha slots (en_geneva has 83 slots, 66 of them non-empty),
         # and those can never have audio. Counting raw slots false-fails them
         # while still catching a genuinely missing book.
-        grid_books = sum(1 for c in counts if c)
+        grid_books = sum(1 for c in live if c)
         if len(entry) != grid_books:
             errors.append(f"{tid}: {len(entry)} books built, grid has {grid_books} non-empty")
     tag = " (partial)" if partial else ""

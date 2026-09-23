@@ -40,6 +40,7 @@ Long-s is normalised (ſ -> s) before matching, because the part files already a
 """
 import argparse
 import difflib
+import os
 import re
 import sys
 from collections import defaultdict
@@ -50,6 +51,25 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 DATA = Path(r"C:\Projects\Hexapla-releases")
 WORK = DATA / "_work"
 PARTS = DATA / "research" / "_parts"
+
+# ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL. True only while selftest() runs, so it can
+# never change a real run's writes. This tool mutates transcription files, so the
+# gate is mandatory. See patch_first_occurrence().
+_IN_SELFTEST = False
+
+
+def patch_first_occurrence():
+    """Known-bad control: resolve an AMBIGUOUS site to its FIRST occurrence.
+
+    That is verbatim the thing the docstring forbids («Never patch the first
+    occurrence and hope»). On Mark this would have stroked 99 sites the
+    evidence did not single out — corrupting the text wherever the first
+    occurrence was the plain half of a minimal pair.
+
+    ⛔ Gated on _IN_SELFTEST so it can never affect a real run's writes.
+    """
+    return _IN_SELFTEST and os.environ.get(
+        "HEXAPLA_PATCH_FIRST_OCCURRENCE") == "1"
 
 REC = re.compile(r'^p(\d+)\s+line(\d+)\s+([LR])\s+(.*)$')
 SHEET_HDR = re.compile(r'^#\s*p(\d+)\s+sheet(\d+)')
@@ -65,6 +85,10 @@ BOOK_PARTS = {
     "matthew": [(4, 12, "matthew_p4-12"), (13, 21, "matthew_p13-21"),
                 (22, 31, "matthew_p22-31")],
     "mark":    [(32, 40, "mark_p32-40"), (41, 49, "mark_p41-49")],
+    # ⚠ idx 59+ are not merged yet. When a `luke_p59-…` part file lands, add
+    # its row HERE — `pages_for` derives the book's page range from this table,
+    # and a page outside it is silently skipped, not reported.
+    "luke":    [(50, 58, "luke_p50-58")],
 }
 
 # Back-compat: some callers/tests import MATTHEW_PARTS by name.
@@ -279,13 +303,18 @@ def prev_word(raw):
     return p.strip().replace("ſ", "s").split("(")[0].strip()
 
 
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--book", default="Matthew")
     ap.add_argument("--glob", default="o_retrofit_*READJUDICATED*.txt")
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--i-know-the-retrofit-is-partial", action="store_true")
-    a = ap.parse_args()
+    ap.add_argument("--selftest", action="store_true",
+                    help="control on the locator with synthetic records and part "
+                         "files in a temp dir; never touches Hexapla-releases/")
+    a = ap.parse_args(argv)
+    if a.selftest:
+        return selftest()
 
     files = sorted(WORK.glob(a.glob))
     if not files:
@@ -591,6 +620,19 @@ def main():
                   f"{confirmed[(pf, ref, plain)]}; prev «{prev}» did not single "
                   f"one out — SKIPPED")
             ambiguous += 1
+            # ⚠⚠ KNOWN-BAD CONTROL (selftest only): resolve to the FIRST hit and
+            # count it as unique, instead of reporting and skipping. This is the
+            # exact behaviour the docstring forbids. Gated on _IN_SELFTEST.
+            if patch_first_occurrence():
+                plan[pf].append((hits[0], plain, word))
+                unique += 1
+                if span:
+                    by_verse += 1
+                by_disc["first-occurrence-control"] += 1
+                print(f"  ⛔ FIRST-OCCURRENCE CONTROL: «{plain}» stroked at the "
+                      f"FIRST of {len(hits)} hits in {scope} — the docstring "
+                      f"forbids this")
+                ambiguous -= 1
             continue
         unique += 1
         if span:
@@ -635,6 +677,207 @@ def main():
         pf.write_text(text, encoding="utf-8")
         print(f"  wrote {pf.name}: {len(items)} site(s)")
     return 0
+
+
+def selftest():
+    """Control on the ø locator using synthetic records and part files.
+
+    ⛔ Never reads or writes C:/Projects/Hexapla-releases/. Repoints DATA, WORK,
+    PARTS and BOOK_PARTS at a temp dir for the duration, then restores them.
+    Drives the real path (main() with sys.argv) and asserts on the PRINTED PLAN
+    — the artifact, not a re-derivation.
+    """
+    global _IN_SELFTEST, DATA, WORK, PARTS, BOOK_PARTS
+    _IN_SELFTEST = True
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    import contextlib
+    import hashlib
+    import io
+    import shutil
+    import tempfile
+
+    saved = (DATA, WORK, PARTS, dict(BOOK_PARTS))
+    td = Path(tempfile.mkdtemp(prefix="o_patch_selftest_"))
+    root = Path(td)
+    work = root / "_work"
+    parts = root / "research" / "_parts"
+    work.mkdir(parents=True)
+    parts.mkdir(parents=True)
+
+    # Fake book on a single page (p10), so the record glob scopes cleanly.
+    BOOK_PARTS = {"faux": [(10, 10, "faux_p10-10")]}
+
+    def digest(p):
+        return hashlib.md5(p.read_bytes()).hexdigest()
+
+    def run(argv):
+        buf = io.StringIO()
+        rc = 0
+        try:
+            with contextlib.redirect_stdout(buf):
+                rc = main(argv)
+        except SystemExit as e:
+            rc = e.code if isinstance(e.code, int) else 1
+        except Exception as e:  # noqa: BLE001 - surfaced as a FAIL
+            rc = f"EXC {type(e).__name__}: {e}"
+        return rc, buf.getvalue()
+
+    def write_parts(text):
+        p = parts / "faux_p10-10.md"
+        p.write_text(text, encoding="utf-8", newline="\n")
+        return p
+
+    def write_records(lines):
+        p = work / "o_retrofit_TEST_READJUDICATED.txt"
+        p.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+        return p
+
+    try:
+        DATA, WORK, PARTS = root, work, parts
+
+        # ── 1. UNIQUE — the true-positive control ──────────────────────────
+        # «sogdu» occurs once in Faux 1:1; its plain-o form is «sogdu».
+        pf = write_parts("## Faux 1\n\n1 ok sogdu kom.\n2 annar texti.\n")
+        before = digest(pf)
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  søgdu  | prev: ok",
+        ])
+        rc, sout = run(["--book", "faux"])
+        ok(rc == 0 and "unique 1" in sout and "⚠ AMBIGUOUS" not in sout
+           and "✅ ABBREV" not in sout,
+           "1. UNIQUE: a plain-o form occurring exactly once is counted unique "
+           f"and NOT ambiguous (rc={rc}; summary has «unique 1»: "
+           f"{'unique 1' in sout})")
+
+        # ── 2. AMBIGUOUS, no discriminator — the control that matters ──────
+        write_parts("## Faux 1\n\n1 sogdu here sogdu again the same word.\n")
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  søgdu  | prev: zzz",
+        ])
+        rc, sout = run(["--book", "faux"])
+        ok(rc == 0 and "⚠ AMBIGUOUS" in sout and "ambiguous 1" in sout
+           and "unique 0" in sout,
+           "2. AMBIGUOUS (no discriminator): the word occurs twice, `prev: zzz` "
+           "matches neither → reported AMBIGUOUS, counted ambiguous, and the "
+           "summary's unique does NOT include it "
+           f"(ambiguous={'ambiguous 1' in sout}, unique0={'unique 0' in sout})")
+
+        # ── 3. AMBIGUOUS resolved by prev: ─────────────────────────────────
+        write_parts("## Faux 1\n\n1 alpha sogdu here beta sogdu again.\n")
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  søgdu  | prev: beta",
+        ])
+        rc, sout = run(["--book", "faux"])
+        ok(rc == 0 and "unique 1" in sout and "ambiguous 0" in sout,
+           "3. AMBIGUOUS resolved by `prev:`: same word twice, `prev: beta` "
+           "matches exactly one → resolved to unique "
+           f"(unique1={'unique 1' in sout}, ambiguous0={'ambiguous 0' in sout})")
+
+        # ── 4. MISSING ─────────────────────────────────────────────────────
+        write_parts("## Faux 1\n\n1 nothing like it here at all.\n")
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  søgdu  | prev: ok",
+        ])
+        rc, sout = run(["--book", "faux"])
+        ok(rc == 0 and "⛔ MISSING" in sout and "missing 1" in sout,
+           "4. MISSING: a record word occurring nowhere → ⛔ MISSING, never "
+           f"patched, site reported (missing1={'missing 1' in sout})")
+
+        # ── 5. the verse boundary — the plan must not span two verses ──────
+        # Faux 1:1 contains «sogdu»; Faux 1:2 contains «sogdu» too. The record
+        # names 1:1, so the whole-file search would see two hits but the verse
+        # scoping must confine the search to 1:1 (one hit → unique inside it).
+        write_parts("## Faux 1\n\n1 sogdu in verse one.\n2 sogdu in verse two.\n")
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  søgdu  | prev: zzz",
+        ])
+        rc, sout = run(["--book", "faux"])
+        ok(rc == 0 and "unique 1" in sout and "INSIDE the verse" in sout
+           and "ambiguous" not in sout.split("SUMMARY")[-1].split("·")[0],
+           "5. the verse boundary: a word occurring in 1:1 AND 1:2, with the "
+           "record naming 1:1, is located INSIDE 1:1 only — the search does NOT "
+           f"span the boundary or claim two verses (revised-since-«whole file»: "
+           f"{'INSIDE the verse' in sout})")
+
+        # ── 6. long-s / ꝑ are not silently folded ──────────────────────────
+        # A record word whose only near-match differs by long-s beyond the
+        # documented normalisation must surface as a finding class, not a patch.
+        write_parts("## Faux 1\n\n1 fome other word entirely.\n")
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  sømdu  | prev: zzz",
+        ])
+        rc, sout = run(["--book", "faux"])
+        ok(rc == 0 and "⛔ MISSING" in sout
+           and ("nearest in the verse" in sout or "not in" in sout),
+           "6. a word whose only near-match differs by a NON-normalised sort "
+           "surfaces as ⛔ MISSING with a diagnosis, not a silent fold "
+           f"(MISSING={'⛔ MISSING' in sout})")
+
+        # ── 7. nothing is written without --apply (MANDATORY) ──────────────
+        write_parts("## Faux 1\n\n1 ok sogdu kom.\n")
+        pf = parts / "faux_p10-10.md"
+        b7 = digest(pf)
+        write_records([
+            "# p10 sheet1",
+            "## CONFIRMED ø",
+            "p10 line05 L  Faux 1:1  søgdu  | prev: ok",
+        ])
+        rc, sout = run(["--book", "faux"])
+        a7 = digest(pf)
+        ok(b7 == a7 and "REPORT ONLY" in sout,
+           f"7. MANDATORY: a plain (no --apply) run leaves the part file "
+           f"BYTE-IDENTICAL (md5 {b7[:8]}→{a7[:8]})")
+
+        # ── 8. the partiality gate holds ───────────────────────────────────
+        write_parts("## Faux 1\n\n1 ok sogdu kom.\n")
+        pf = parts / "faux_p10-10.md"
+        b8 = digest(pf)
+        rc, sout = run(["--book", "faux", "--apply"])
+        a8 = digest(pf)
+        ok(rc == 1 and "REFUSING to write" in sout and b8 == a8,
+           f"8. the partiality gate: --apply WITHOUT "
+           f"--i-know-the-retrofit-is-partial REFUSES to write (⛔ REFUSING) and "
+           f"the file is still byte-identical (rc={rc}, "
+           f"identical={b8 == a8})")
+
+        # ── 9. page coverage is ALWAYS printed ─────────────────────────────
+        rc, sout9a = run(["--book", "faux"])
+        rc, sout9b = run(["--book", "faux", "--apply"])
+        ok("PAGE COVERAGE (crop method):" in sout9a
+           and "PAGE COVERAGE (crop method):" in sout9b,
+           "9. the `PAGE COVERAGE (crop method):` line is present in BOTH a "
+           "normal run and the refusing run — a low ø rate can never be mistaken "
+           "for a genuinely-low page")
+
+    finally:
+        DATA, WORK, PARTS = saved[0], saved[1], saved[2]
+        BOOK_PARTS = saved[3]
+        shutil.rmtree(td, ignore_errors=True)
+
+    print("", flush=True)
+    if patch_first_occurrence():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_PATCH_FIRST_OCCURRENCE=1 — an "
+              "AMBIGUOUS site is stroked at its FIRST occurrence", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
 
 
 if __name__ == "__main__":

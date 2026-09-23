@@ -53,6 +53,82 @@ qav = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(qav)
 
 
+def parse_only(text):
+    """`book chapter [verses]` -> {(b, ch): set(verses) or None}, + bad lines.
+
+    Accepts the exact shape `qa_verse_queue.py` emits and `repair_verses.py`
+    consumes, so a re-screen is driven by the SAME file the repair was:
+    `#` comments and blank lines ignored; verses are `3` or `15,16` or absent
+    (absent = the whole chapter).
+
+    ⛔ A line it cannot parse is RETURNED, never dropped. A queue row silently
+    skipped is a verse the screen cannot speak for, and this project treats
+    that as unscreened rather than as passed.
+    """
+    want, bad = {}, []
+    for ln in text.splitlines():
+        ln = ln.split("#")[0].strip()
+        if not ln:
+            continue
+        f = ln.split()
+        if len(f) not in (2, 3) or not (f[0].isdigit() and f[1].isdigit()):
+            bad.append(ln)
+            continue
+        key = (int(f[0]), int(f[1]))
+        if len(f) == 2:
+            want[key] = None          # whole chapter
+            continue
+        try:
+            vs = {int(v) for v in f[2].split(",") if v != ""}
+        except ValueError:
+            bad.append(ln)
+            continue
+        if not vs:
+            bad.append(ln)
+            continue
+        if key in want and want[key] is not None:
+            want[key] |= vs
+        elif key not in want:
+            want[key] = vs
+    return want, bad
+
+
+def _selftest():
+    ok = True
+
+    def chk(name, got, exp):
+        nonlocal ok
+        good = got == exp
+        ok = ok and good
+        print(f"  {'PASS' if good else 'FAIL'}  {name}: {got!r}")
+
+    print("parse_only — known-GOOD input:")
+    want, bad = parse_only("# header\n1 7 3\n16 8 4\n1 16 15,16\n22 32\n\n")
+    chk("rows", want, {(1, 7): {3}, (16, 8): {4}, (1, 16): {15, 16},
+                       (22, 32): None})
+    chk("no bad lines", bad, [])
+    print("parse_only — known-BAD input (must be REPORTED, not dropped):")
+    want2, bad2 = parse_only("1 7 3\nnonsense\n2\n3 x 4\n7 8 a,b\n1 9 \n")
+    # ⚠ `1 9 ` (trailing space) is NOT bad — it is two fields, i.e. the whole
+    #   chapter, exactly as the documented rule says. Asserted here so nobody
+    #   "fixes" it into a refusal later.
+    chk("good rows still parsed", want2, {(1, 7): {3}, (1, 9): None})
+    chk("four bad lines reported", len(bad2), 4)
+    chk("bad lines named verbatim", sorted(bad2),
+        sorted(["nonsense", "2", "3 x 4", "7 8 a,b"]))
+    print("parse_only — whole-chapter row wins in EITHER order:")
+    want5, _ = parse_only("1 7 3\n1 7\n")
+    chk("verse row then whole chapter", want5, {(1, 7): None})
+    print("parse_only — two rows for one chapter UNION, never replace:")
+    want3, _ = parse_only("1 7 3\n1 7 9\n")
+    chk("union", want3, {(1, 7): {3, 9}})
+    print("parse_only — whole-chapter row WINS over a verse row:")
+    want4, _ = parse_only("1 7\n1 7 3\n")
+    chk("whole chapter kept", want4, {(1, 7): None})
+    print("SELFTEST " + ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", required=True)
@@ -66,7 +142,48 @@ def main():
     ap.add_argument("--compute", default="int8")
     ap.add_argument("--every", type=int, default=1,
                     help="sample every Nth chapter (1 = all)")
+    # ⚠⚠ RE-SCREEN MODE. `repair_verses.py` rewrites ONE verse inside a
+    # chapter and its own last line says its OK is not evidence about the
+    # audio. The screen that condemned the verse therefore has to run again on
+    # the NEW audio — but sweeping the whole book to re-check one verse is
+    # hours of Whisper for a question about 42 of them.
+    # ⛔ This is NOT a sample: for the question «did the repair hold?» the 42
+    #    repaired verses ARE the whole denominator. --every is a sample and
+    #    prints as one; --only is a restriction and prints its COVERAGE.
+    ap.add_argument("--only",
+                    help="file of `book chapter [verses]` lines (the "
+                         "repair queue's own format): screen ONLY these. "
+                         "Reports coverage — a requested verse the screen "
+                         "could not reach is NAMED, never counted as passed")
+    ap.add_argument("--selftest", action="store_true",
+                    help="parse controls for --only, both ways; no model load")
     a = ap.parse_args()
+
+    if a.selftest:
+        sys.exit(_selftest())
+
+    # ⚠ Parsed BEFORE the model load on purpose: a queue this tool cannot read
+    #   is a refusal, and a refusal should not cost a Whisper load first.
+    only, only_bad = (None, [])
+    if a.only:
+        only, only_bad = parse_only(Path(a.only).read_text(encoding="utf-8"))
+        if only_bad:
+            # ⛔ Refuse. An unparseable row in a re-screen queue means the run
+            #    would report on fewer verses than it was asked about while
+            #    printing a clean total — the exact shape this project bans.
+            print(f"⛔ {len(only_bad)} unparseable line(s) in {a.only}:")
+            for r in only_bad[:20]:
+                print("  " + r)
+            sys.exit(2)
+        if not only:
+            sys.exit(f"⛔ {a.only} names no chapters — nothing to screen")
+        if a.every != 1:
+            sys.exit("⛔ --only is a restriction and --every is a sample; "
+                     "combining them screens some of the verses you asked "
+                     "about and reports a total for all of them")
+        print(f"--only {a.only}: {len(only)} chapter(s), "
+              f"{sum(1 if v is None else len(v) for v in only.values())} "
+              f"requested target(s)", flush=True)
 
     sys.path.insert(0, str(HERE))
     import narrate
@@ -100,16 +217,30 @@ def main():
           flush=True)
 
     root = qav.OUTPUT / a.lang
-    books = a.books or sorted(int(p.name) for p in root.iterdir()
-                              if p.is_dir() and p.name.isdigit())
+    books = a.books or (sorted({b for b, _ in only}) if only else
+                        sorted(int(p.name) for p in root.iterdir()
+                               if p.is_dir() and p.name.isdigit()))
+    screened = set()   # (b, ch, verse) actually put through the model
 
     tot_v = tot_flag = tot_tail = tot_endsub = 0
     refused = []
     skipped_empty = []
     t0 = time.time()
     for b in books:
+        # ⚠⚠ THE PER-BOOK LINE BELOW USED TO PRINT THE RUNNING TOTAL UNDER A
+        # SINGLE BOOK'S NAME. tot_* are cumulative and are never reset, so
+        # «[book 3 done] verses 3360, APPEND 5» was books 1+2+3, not book 3 —
+        # a status line stating a plausible, wrong number, which is the one
+        # thing this project forbids a status function to do. The 2026-09-12
+        # handoff duly added the three lines together and reported «7 APPEND in
+        # 6645 verses»; the run had screened 3360 verses and found 5.
+        # ▶ Snapshot before the book, print the DELTA after it, and label the
+        #   cumulative figure as cumulative.
+        b_v0, b_flag0, b_tail0, b_endsub0 = tot_v, tot_flag, tot_tail, tot_endsub
         bdir = root / str(b)
         chapters = sorted(int(p.stem) for p in bdir.glob("*.ogg"))[::a.every]
+        if only is not None:
+            chapters = [c for c in chapters if (b, c) in only]
         for ch in chapters:
             ogg, side = bdir / f"{ch}.ogg", bdir / f"{ch}.json"
             if not ogg.exists() or not side.exists():
@@ -136,6 +267,10 @@ def main():
                     #   dropped from a screen is a verse the screen cannot speak
                     #   for, and this project treats that as unscreened, never
                     #   as passed.
+                    if only is not None:
+                        vs = only[(b, ch)]
+                        if vs is not None and (i + 1) not in vs:
+                            continue
                     if not texts[i].strip() or (end is not None and end <= start):
                         skipped_empty.append(f"{b}/{ch} v{i + 1}")
                         continue
@@ -157,6 +292,7 @@ def main():
                     if not ww:
                         continue
                     tot_v += 1
+                    screened.add((b, ch, i + 1))
                     sm = difflib.SequenceMatcher(None, ww, hw)
                     r = sm.ratio()
                     # ⚠⚠ IDENTICAL to qa_asr_verify - do not "improve" it here.
@@ -193,13 +329,20 @@ def main():
                         print(f"        want : {' '.join(ww[-12:])}", flush=True)
                         print(f"        heard: {' '.join(hw[-12:])}", flush=True)
         el = time.time() - t0
-        print(f"[book {b} done] verses {tot_v}, flagged {tot_flag}, "
+        print(f"[book {b} done] THIS BOOK: verses {tot_v - b_v0}, "
+              f"flagged {tot_flag - b_flag0}, APPEND {tot_tail - b_tail0}, "
+              f"end-sub {tot_endsub - b_endsub0}"
+              f"  |  RUN SO FAR: verses {tot_v}, flagged {tot_flag}, "
               f"APPEND {tot_tail}, end-sub {tot_endsub}, {el/60:.1f} min",
               flush=True)
 
-    print(f"\n{tot_v} verses checked | {tot_flag} flagged "
+    print(f"\nRUN TOTAL over books {', '.join(str(x) for x in books)}: "
+          f"{tot_v} verses checked | {tot_flag} flagged "
           f"({100*tot_flag/max(tot_v,1):.1f}%) | {tot_tail} APPEND "
           f"| {tot_endsub} end-substitutions (ASR noise)")
+    # ⛔ The books screened are named above on purpose: this total speaks for
+    #    those books and nothing else. «ASR-screened» is never a property of
+    #    the render, only of the books listed here.
     if refused:
         print(f"{len(refused)} chapter(s) REFUSED (offsets/verses mismatch):")
         for r in refused[:20]:
@@ -214,11 +357,40 @@ def main():
             print("  " + r)
         if len(skipped_empty) > 20:
             print(f"  ... {len(skipped_empty) - 20} more")
+    if only is not None:
+        # ★ THE COVERAGE LINE IS THE POINT OF --only. «0 APPEND» over a
+        #   restricted queue means nothing until the run says it actually
+        #   reached every verse it was asked about. A missing verse is named.
+        missed = []
+        for (b, ch), vs in sorted(only.items()):
+            if vs is None:
+                if not any(k[0] == b and k[1] == ch for k in screened):
+                    missed.append(f"{b}/{ch} (whole chapter — nothing screened)")
+                continue
+            for v in sorted(vs):
+                if (b, ch, v) not in screened:
+                    missed.append(f"{b}/{ch} v{v}")
+        asked = sum(1 if v is None else len(v) for v in only.values())
+        print(f"\nCOVERAGE: {asked - len(missed)} of {asked} requested "
+              f"target(s) reached ({len(missed)} NOT screened)")
+        if missed:
+            print("⛔ NOT SCREENED — these were asked about and not reached. "
+                  "They did not pass; they were not checked:")
+            for m in missed[:40]:
+                print("  " + m)
+            if len(missed) > 40:
+                print(f"  ... {len(missed) - 40} more")
     print("\n⚠ APPEND is the real defect class and every one needs an ear. "
           "end-substitutions\n  and mid-verse flags are mostly ASR "
           "mis-hearings of archaic English - on ylt\n  Genesis they ran ~3 per "
           "chapter with essentially no true positives.")
 
+    if only is not None and missed:
+        # rc 1 = the run is INCOMPLETE against what it was asked. A caller
+        # must not read a clean flag count off a screen that did not finish.
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

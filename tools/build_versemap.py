@@ -272,10 +272,41 @@ EXTRA = {
              (19, 40, 41, 19, 40, 40)],                             # Acts 19:40+41 merged
         46: [(13, 12, 13, 13, 12, 12), (13, 14, 14, 13, 13, 13)],   # 2 Cor 13 continental merge
     },
+    # Meiji. Two kinds of entry, and they are NOT the same defect:
+    #   · the documented committee OMISSIONS (Luke 17:36, Acts 15:34) and the
+    #     Acts 20:37+38 merge, which renumber the chapter natively;
+    #   · the 31 RANGE HEADINGS (added 2026-09-20). Wikisource prints these
+    #     verse groups under one heading («43-44 イエス…») because the committee
+    #     translated them as one unit. `fix_meiji_ranges.py` now puts that one
+    #     block in the FIRST slot of the range and leaves the tail slot EMPTY,
+    #     so the chapter keeps KJV slot numbering and only the map pairs them.
+    #     ⛔ These runs are DERIVED from that tool's printed VERSEMAP RUNS, never
+    #     hand-listed — re-run it if the asset is ever rebuilt.
     ("mei",): {
-        41: [(17, 36, 36, 17, 1, 0), (17, 37, 37, 17, 36, 36)],    # Luke 17:36 omitted
-        43: [(15, 34, 34, 15, 1, 0), (15, 35, 41, 15, 34, 40),     # Acts 15:34 omitted
+        40: [(1, 43, 44, 1, 43, 43), (5, 3, 4, 5, 3, 3)],
+        41: [(8, 41, 42, 8, 41, 41), (11, 5, 6, 11, 5, 5),
+             (17, 36, 36, 17, 1, 0), (17, 37, 37, 17, 36, 36),      # Luke 17:36 omitted
+             (20, 42, 43, 20, 42, 42), (24, 6, 7, 24, 6, 6)],
+        42: [(12, 39, 40, 12, 39, 39)],
+        43: [(2, 34, 35, 2, 34, 34), (4, 29, 30, 4, 29, 29),
+             (15, 25, 26, 15, 25, 25),
+             (15, 34, 34, 15, 1, 0), (15, 35, 41, 15, 34, 40),      # Acts 15:34 omitted
+             (21, 35, 36, 21, 35, 35), (24, 20, 21, 24, 20, 20),
+             (25, 2, 3, 25, 2, 2),
              (20, 37, 38, 20, 37, 37)],                             # Acts 20:37+38 merged
+        44: [(2, 8, 9, 2, 8, 8), (3, 25, 26, 3, 25, 25),
+             (15, 18, 19, 15, 18, 18), (16, 25, 26, 16, 25, 25)],
+        45: [(5, 4, 5, 5, 4, 4), (15, 51, 52, 15, 51, 51)],
+        46: [(8, 3, 4, 8, 3, 3)],
+        48: [(1, 20, 21, 1, 20, 20), (2, 14, 15, 2, 14, 14),
+             (3, 14, 15, 3, 14, 14)],
+        49: [(1, 10, 11, 1, 10, 10)],
+        50: [(1, 3, 4, 1, 3, 3), (1, 19, 20, 1, 19, 19),
+             (2, 20, 22, 2, 20, 20)],
+        51: [(2, 11, 12, 2, 11, 11)],
+        57: [(7, 20, 22, 7, 20, 20)],
+        64: [(1, 24, 25, 1, 24, 24)],
+        65: [(18, 17, 18, 18, 17, 17)],
     },
     ("gen1599", "alm", "cus", "cuv"): {b: runs for b, runs in STD_TAIL},
     # Sanskrit 1851 NT: continental 3 John split only. The source's

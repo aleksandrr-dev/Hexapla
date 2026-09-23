@@ -111,27 +111,77 @@ def clean_line(s):
     return s.strip()
 
 
-def parse_chapter(wikitext):
+# A range heading — «43-44 イエス…» — is how these pages print a verse group
+# the committee translated as ONE unit. Wikisource writes the numbers joined by
+# a hyphen; both ASCII and the CJK dashes occur, so accept them all.
+RANGE_SEP = "[-－–—ー]"
+VERSE_NUM_RE = re.compile(r"(?<![0-9])(\d{1,3}(?:%s\d{1,3})*)[  \t]?" % RANGE_SEP)
+
+# Filled by parse_chapter, read by the caller: (first, [covered tail verses]).
+# ▶ These become the versemap runs that pair a KJV verse range with the one
+#   Japanese block, so the builder EMITS them rather than anyone hand-listing.
+RANGES = []
+
+
+def parse_chapter(wikitext, ranges_out=None):
+    """-> [verse text, ...] for one Wikisource chapter page.
+
+    ⛔⛔ TWO DEFECTS WERE FIXED HERE ON 2026-09-20. Both shipped in
+    `ja_meiji.json` from 2026-07-11 until then. Do not undo either without
+    reading `docs/ASSET_DEFECTS.md`.
+
+    1. **Range headings.** «43-44 text» was split on EVERY Arabic numeral, so
+       43 got the bare hyphen left between the numbers and 44 got the text of
+       both. That is where the asset's 32 `-` verses came from — the text was
+       never missing, only mis-addressed. ⛔ NONE of the 32 is a verse the
+       Textus Receptus omits, so this was never an editorial absence.
+       The text now goes in the FIRST slot of the range and the rest stay
+       empty, which is the shape the reader already skips and the shape the
+       corpus already uses for Meiji's Acts 20:37+38.
+
+    2. **Footnote blocks.** A `※N 明治14(1881)年版では以下のとおり` heading is
+       followed by NUMBERED lines quoting the 1881 edition's variant of that
+       verse. The old code skipped the heading only, so the splitter read those
+       numbered lines as scripture and spliced the 1881 variant onto the 1904
+       verse — Rom 3:25-26 and Rom 6:10 shipped printed TWICE, in two
+       spellings. Everything from the first `※` to the end of the page is now
+       dropped. ✅ Verified over the FULL denominator, not a sample: all 260
+       chapter pages were scanned, and every line following a `※` heading is a
+       note, an 1881 variant line (exactly 3, all in Romans) or a DEFAULTSORT —
+       never scripture.
+    """
     kept = []
+    in_footnote = False
     for raw in wikitext.split("\n"):
         raw = raw.strip()
-        if raw.startswith("※") or raw.startswith("=") or raw.startswith("[[カテゴリ"):
+        if raw.startswith("※"):
+            in_footnote = True      # ⛔ and so is everything after it
+            continue
+        if in_footnote or raw.startswith("=") or raw.startswith("[[カテゴリ"):
             continue
         kept.append(raw)
     text = clean_line(" ".join(kept))
     # Verse numbers are the only Arabic digits on these pages (the scripture
     # body uses kanji numerals), so split the whole chapter on them — this
     # also catches verses that share a physical line.
-    parts = re.split(r"(?<![0-9])(\d{1,3})[  \t]?", text)
-    verses = {}
+    parts = VERSE_NUM_RE.split(text)
+    verses, covered = {}, set()
     for i in range(1, len(parts) - 1, 2):
-        n = int(parts[i])
+        nums = [int(x) for x in re.split(RANGE_SEP, parts[i])]
         t = parts[i + 1].strip()
-        if t and 1 <= n <= 200:
-            verses[n] = (verses[n] + " " + t) if n in verses else t
+        if not t or not all(1 <= n <= 200 for n in nums):
+            continue
+        n = nums[0]
+        verses[n] = (verses[n] + " " + t) if n in verses else t
+        if len(nums) > 1:
+            covered.update(nums[1:])
+            rec = (n, nums[1:])
+            RANGES.append(rec)
+            if ranges_out is not None:
+                ranges_out.append(rec)
     if not verses:
         return []
-    out = [""] * max(verses)
+    out = [""] * max(list(verses) + list(covered))
     for n, t in verses.items():
         out[n - 1] = t
     return out

@@ -57,7 +57,10 @@ NARRATION = DATA / "narration"
 # One rate for every clip in the output. See slice_shipped().
 SR = 24000
 
-ASSETS = {"ylt": REPO / "app/src/main/assets/bibles/en_ylt.json"}
+# The asset is the TEXT the verse is picked from; the same key names the
+# narration set dir the BEFORE clip is sliced out of. Both must exist.
+ASSETS = {"ylt": REPO / "app/src/main/assets/bibles/en_ylt.json",
+          "en":  REPO / "app/src/main/assets/bibles/en_kjv.json"}
 
 
 def load_books(lang):
@@ -127,20 +130,64 @@ def main():
     ap.add_argument("--apply", action="store_true",
                     help="actually synthesize (uses the GPU). Default is a dry run.")
     ap.add_argument("--only", help="comma-separated lexicon keys to test")
+    ap.add_argument("--respell", metavar="WORD=SPELLING",
+                    help="comma-separated overrides, e.g. baal=Bale. "
+                         "IN-PROCESS ONLY - the table on disk is never "
+                         "touched. For putting a rival spelling next to "
+                         "the wired one in the same ear kit.")
     a = ap.parse_args()
 
     import pronounce_lexicon as pl
-    lex = pl.LEXICON
+    # ⛔ NOT `pl.LEXICON`. A raw row is a 3-, 4- or 5-tuple and unpacking it as
+    # three names raises the moment any row carries a scope - which every row
+    # widened past ylt does. `rows_for` also applies the SCOPE filter, so
+    # --lang en tests the rows en actually reaches and nothing else.
+    # ⚠ An override is a RIVAL SPELLING FOR THIS KIT, never a table edit. It
+    # is applied to the imported module in memory so `apply()` - the one code
+    # path that actually respells - produces it, and it is stamped into the
+    # manifest so an ear ruling names the spelling it heard, not the row's.
+    overridden = {}
+    if a.respell:
+        for kv in a.respell.split(","):
+            if "=" not in kv:
+                sys.exit("--respell wants WORD=SPELLING, got \u00ab%s\u00bb"
+                         % kv.strip())
+            w, sp = kv.split("=", 1)
+            w, sp = w.strip().lower(), sp.strip()
+            if w not in pl.LEXICON:
+                sys.exit("--respell %s: not in the lexicon" % w)
+            if not sp:
+                sys.exit("--respell %s: empty spelling" % w)
+            e = list(pl.LEXICON[w])
+            overridden[w] = (e[0], sp)
+            e[0] = sp
+            # A per-set spelling outranks element 0, so it must go too, or the
+            # override would be silently ignored for the very set under test.
+            if len(e) > 4:
+                e[4] = None
+            pl.LEXICON[w] = tuple(e)
+
+    lex = pl.rows_for(a.lang, include_unvalidated=True)
     if a.only:
         want = {w.strip().lower() for w in a.only.split(",") if w.strip()}
         missing = want - set(lex)
         if missing:
+            in_table = missing & set(pl.LEXICON)
+            if in_table:
+                sys.exit("in the lexicon but NOT in scope for --lang %s: %s "
+                         "(scopes: %s). A row is cleared for the set its ear "
+                         "test ran on - widen it deliberately or test the set "
+                         "it names." % (a.lang, ", ".join(sorted(in_table)),
+                         "; ".join("%s=%s" % (w, pl.row_sets(pl.LEXICON[w]))
+                                   for w in sorted(in_table))))
             sys.exit(f"not in the lexicon: {', '.join(sorted(missing))}")
         lex = {k: v for k, v in lex.items() if k in want}
 
     books = load_books(a.lang)
     plan, used, skipped = [], set(), []
-    for word, (respell, why, validated) in lex.items():
+    for word, entry in lex.items():
+        respell = pl.spelling_for(entry, a.lang)
+        why, validated = entry[1], entry[2]
         got = pick_verse(books, word, used)
         if got is None:
             skipped.append((word, "no verse contains it"))
@@ -150,7 +197,10 @@ def main():
         # apply() -> (synthesis_text, [words replaced]); unpack it. A bare
         # assignment silently yields a TUPLE that stringifies plausibly and
         # would have been fed to the synthesiser verbatim.
-        new_text, changed = pl.apply(text)
+        # ▶ The ONLY caller allowed to pass include_unvalidated: this tool
+        # exists to synthesise an unheard proposal so an ear can rule on it.
+        new_text, changed = pl.apply(
+            text, set_key=a.lang, include_unvalidated=True)
         if new_text == text or not changed:
             skipped.append((word, "apply() changed nothing — entry is inert here"))
             continue
@@ -158,6 +208,8 @@ def main():
                          b=b, c=c, v=v, text=text, new_text=new_text,
                          ref=f"{books[b]['name']} {c+1}:{v}"))
 
+    for w, (was, now) in sorted(overridden.items()):
+        print("  \u26a0 OVERRIDE %s: table says \u00ab%s\u00bb, this kit renders \u00ab%s\u00bb" % (w, was, now))
     print(f"{len(plan)} entry/entries to test"
           + (f", {len(skipped)} skipped" if skipped else ""))
     for w, why in skipped:
@@ -246,6 +298,15 @@ def main():
                   f"   why:  {p['why']}",
                   f"   text: {p['text'][:150]}",
                   ""]
+        if p['word'] in overridden:
+            was, now = overridden[p['word']]
+            # ⚠ Stamped so a ruling on this file names the spelling that was
+            # actually spoken. The table still says `was`; a verdict recorded
+            # against the row without this line would attach the ear's answer
+            # to the wrong spelling.
+            lines.insert(len(lines) - 1,
+                         "   ⚠ RIVAL SPELLING, not the table's. The lexicon row "
+                         "says «%s»; this clip was rendered as «%s»." % (was, now))
     if failed:
         lines += ["", "⛔ NOT IN THIS FILE (no clip was produced):"]
         lines += [f"   {w}: {why}" for w, why in failed]

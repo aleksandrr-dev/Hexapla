@@ -46,7 +46,21 @@ def norm(s):
     """Fold both sides to comparable word tokens."""
     s = s.lower().replace("\u2014", " ").replace("\u2019", "'").replace("`", "")
     s = re.sub(r"[^a-z' ]+", " ", s)
-    return [w for w in s.split() if w]
+    # ⛔ DROP APOSTROPHE-ONLY TOKENS. Whisper emits quote marks around reported
+    # speech; `[^a-z' ]` keeps the apostrophe, so a stray closing quote became a
+    # WORD of its own and the tail comparison saw it as an appended token.
+    # Measured 2026-09-12: Deuteronomy 33:18 was reported
+    #     APPEND [4/32] v18 +"'"  ratio 0.82
+    # on audio that is correct — a FALSE APPEND, and an APPEND costs the owner's
+    # ear, which is the scarcest input in this project.
+    # ⚠ This is the SAME bug `qa_text_explained.py` fixed in its own words() on
+    # 2026-09-06 (it captured the closing quote of «…the God.'»). The two
+    # tokenisers now agree.
+    # ▶ Direction of the change: it can only REMOVE a non-speech token, so it can
+    #   only remove false flags — it can never hide a real append, which has
+    #   words in it. Screens run before this fix therefore OVER-report, never
+    #   under-report; they do not need re-running.
+    return [w for w in s.split() if w.strip("'")]
 
 
 def verse_text(asset, book, chapter):

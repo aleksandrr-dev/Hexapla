@@ -94,8 +94,14 @@ ASSETS = Path(__file__).parent.parent / "app" / "src" / "main" / "assets" / "bib
 NOTE = re.compile(r"\s*\{[^{}]*:[^{}]*\}")
 HEAD = re.compile(r"^\s*APPEND \[(\d+)/(\d+)\] v(\d+) \+(.*)  ratio ([0-9.]+)\s*$")
 
+# ⚠ "en" is the KJV re-render in the owner's voice (narration/en/...), whose
+# TEXT is en_kjv.json — the same asset as the "kjv" set, a different audio set.
+# It was missing here until 2026-09-12 and the tool died with KeyError: 'en'
+# on the first en sweep, i.e. the cross-check silently did not exist for the
+# set actually being rendered.
 ASSET = {"ylt": "en_ylt.json", "kjv": "en_kjv.json", "wbt": "en_webster.json",
-         "gnv": "en_geneva.json", "tyn": "en_tyndale.json"}
+         "gnv": "en_geneva.json", "tyn": "en_tyndale.json",
+         "en": "en_kjv.json"}
 
 
 def durations(lang, b, ch):

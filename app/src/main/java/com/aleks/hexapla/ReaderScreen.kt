@@ -545,13 +545,26 @@ fun ReaderScreen(settings: AppSettings) {
                     }
             ) {
                 itemsIndexed(verses) { i, verse ->
-                    // Verses an edition genuinely lacks (135 of them in the
-                    // Zohrab Armenian OT, e.g. Ezra 2:26-27) are honest holes
-                    // in the data — but on the owner's device pass a bare
-                    // verse number with nothing after it read as a rendering
-                    // failure. In SINGLE view the row is skipped entirely; in
-                    // SPLIT view it must stay, or the other translation stops
-                    // pairing, so the gap shows an em-dash instead (below).
+                    // Names the translation(s) above verse 1, then scrolls
+                    // away with the text. Drawn INSIDE this item and never as
+                    // an item of its own — see ChapterTranslationHead.
+                    if (i == 0) ChapterTranslationHead(settings, secondaryAligned != null)
+                    // Empty verses (135 of them in the Zohrab Armenian OT,
+                    // e.g. Ezra 2:26-27) are holes in the data — but on the
+                    // owner's device pass a bare verse number with nothing
+                    // after it read as a rendering failure. In SINGLE view the
+                    // row is skipped entirely; in SPLIT view it must stay, or
+                    // the other translation stops pairing, so the gap shows an
+                    // em-dash instead (below).
+                    // ⚠ Do NOT restate this as "verses the edition genuinely
+                    // lacks" — WHY they are empty is open, and the display is
+                    // correct either way. Only an upstream master separates a
+                    // genuine omission from a dropped scrape or a versification
+                    // mismatch, and for hy_zohrab the measured shape points at
+                    // the last of the three: 81 of the 135 are in Tobit,
+                    // Judith, Maccabees and Esther — deuterocanonical NARRATIVE
+                    // with no genealogies in it. See docs/ASSET_DEFECTS.md and
+                    // tools/hy_zohrab_empty_shape.py.
                     val secondHere = if (settings.splitEnabled && secondaryAligned != null)
                         secondaryAligned.getOrNull(i)?.first ?: "" else ""
                     // Nothing to show on ANY pane -> no row at all. Without
@@ -1040,6 +1053,85 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendWords(
         pos = m.range.last + 1
     }
     append(text.substring(pos))
+}
+
+/**
+ * The chapter head: names the active translation(s) above verse 1, then
+ * scrolls away with the text.
+ *
+ * Chosen over a permanent line under the book/chapter title (owner, 2026-09-14,
+ * on Bro. Edmund's report that the reader never says which translation is
+ * active) because a chapter turn always returns the list to the top, so the
+ * head re-announces itself for free and a single-translation reader pays no
+ * permanent vertical space at all.
+ *
+ * ⚠ It is drawn INSIDE verse 1's LazyColumn item, NOT as an item of its own.
+ * Three separate scroll paths in this screen treat the item index AS the verse
+ * index — the lastVerse `snapshotFlow`, `scrollToItem` for explicit jumps and
+ * chapter changes, and the audio follow-scroll. An extra item at index 0 puts
+ * every one of them off by one. It is emitted before the blank-verse skip so a
+ * chapter whose first verse is a genuine hole still gets its head.
+ *
+ * ⛔ The text is the translation's OWN label — the same string Settings shows —
+ * never an abbreviation derived from it. `TranslationGroups.shortTag()` looks
+ * like the right source and is not: these labels end in the LANGUAGE, so it
+ * returns "EN" for both the King James and Young's Literal.
+ *
+ * ✅ SIDE-BY-SIDE ALIGNMENT VERIFIED BY READING, 2026-09-16 (the owner runs
+ * STACKED, so the split case had never been on a device). It lines up, and the
+ * reason is worth keeping because it looks wrong at a glance: this Composable
+ * is called as a SIBLING of the verse `Column`, not nested inside it, so its
+ * own `start/end = 16.dp` is the ONLY horizontal inset it gets and it equals
+ * the verse Column's `padding(horizontal = 16.dp)`. ⛔ Do NOT "fix" it by
+ * removing that padding on the assumption it is nested — that would inset the
+ * heads 16.dp less than the text they name. The weights (`1f`/`1f`) and the
+ * 12.dp gutter already match the verse `Row` exactly; if either side changes,
+ * change BOTH.
+ */
+@Composable
+private fun ChapterTranslationHead(settings: AppSettings, hasSecondary: Boolean) {
+    val primary = BibleRepo.translation(settings.primaryId).label
+    val secondary = if (settings.splitEnabled && hasSecondary)
+        BibleRepo.translation(settings.secondaryId).label else null
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 8.dp)
+    ) {
+        if (secondary != null && settings.splitHorizontal) {
+            // Side by side the two columns are styled identically, so the
+            // label has to sit over ITS OWN column: mirror the verse Row's
+            // weights and 12.dp gutter exactly, or the heads won't line up
+            // with the text they name.
+            Row(Modifier.fillMaxWidth()) {
+                ChapterHeadLabel(primary, Modifier.weight(1f))
+                Spacer(Modifier.width(12.dp))
+                ChapterHeadLabel(secondary, Modifier.weight(1f))
+            }
+        } else {
+            // Stacked: primary then secondary, the same order the verses
+            // themselves use — position is the cue, so no extra marker.
+            ChapterHeadLabel(primary, Modifier.fillMaxWidth())
+            if (secondary != null) ChapterHeadLabel(secondary, Modifier.fillMaxWidth())
+        }
+        Spacer(Modifier.height(6.dp))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f))
+    }
+}
+
+@Composable
+private fun ChapterHeadLabel(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text,
+        modifier = modifier,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        // Two lines: the labels carry an edition and a date ("Sveto pismo —
+        // Karadžić/Daničić, 1847/1865"), and in a split column that wraps.
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
 }
 
 @Composable

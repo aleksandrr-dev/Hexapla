@@ -59,6 +59,24 @@ NARRATION = DATA / "narration"
 WORK = DATA / "_work"
 NO_WINDOW = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 
+# ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL. True only while selftest() runs, so it can
+# never blind a real report. See ignore_unjudged().
+_IN_SELFTEST = False
+
+
+def ignore_unjudged():
+    """Known-bad control: treat an unjudged chapter as judged-and-clean.
+
+    Reinstates precisely the pre-2026-09-03 condition in which a render was
+    believed on the strength of nothing. Under it a corpus that was never
+    screened reports UNJUDGED 0 and rc 0.
+
+    ⛔ Gated on _IN_SELFTEST so it can never change a real run's verdict.
+    ⚠ Distinct from the tool's own HEXAPLA_NO_GATE, which is a check within
+    cmd_check; this control touches only cmd_report.
+    """
+    return _IN_SELFTEST and os.environ.get("HEXAPLA_IGNORE_UNJUDGED") == "1"
+
 _results = []
 
 
@@ -280,15 +298,42 @@ def _read_qa(q):
 
 def cmd_report(a):
     root = NARRATION / a.lang
+    # ⛔ VALIDATE THE INPUT UP FRONT: an unknown --lang has no narration
+    # directory, and `root.iterdir()` raised FileNotFoundError — a traceback,
+    # not the documented could-not-run. rc 2 so the caller reading «zero vs
+    # non-zero» is unaffected. ⛔ Only the directory's existence is checked: a
+    # directory that exists but holds no records is a DIFFERENT result (rc 1,
+    # «the gate never ran here»), handled below.
+    if not root.is_dir():
+        print("⛔ COULD NOT RUN — narration/%s does not exist, so nothing can be "
+              "screened. Known rendered sets live under %s; lang must name one "
+              "of them (e.g. sv, ru, cu)." % (a.lang, NARRATION))
+        return 2
     rows = []
     no_qa = 0
+    unjudged_unscreened = 0
     unreadable = []
     for bdir in sorted((p for p in root.iterdir() if p.is_dir() and p.name.isdigit()),
                        key=lambda p: int(p.name)):
         for ogg in sorted(bdir.glob("*.ogg"), key=lambda p: int(p.stem)):
             qa = ogg.with_suffix(".qa.json")
             if not qa.exists():
+                # ⛔⛔ A CHAPTER WITH AUDIO AND NO GATE RECORD IS **UNJUDGED**,
+                # not absent. It used to be counted in `no_qa` and EXCLUDED from
+                # `rows`, so it raised no UNJUDGED and forced no rc 1: the run
+                # printed `1 without`, `UNJUDGED 0`, and exited 0 with a ✅
+                # VERDICT. A chapter that was never screened was therefore
+                # indistinguishable from a screened clean one, inside the tool
+                # whose whole purpose is that distinction — the
+                # «a check that cannot run did not pass» rule broken in the tool
+                # that enforces it. Measured 2026-09-22: sv has 1265 such
+                # chapters against 71 with a record, and `report --lang sv`
+                # called that corpus ✅.
+                # ▶ KEEP `no_qa` AS ITS OWN NUMBER. It and UNJUDGED are
+                #   different facts (never screened vs screened-and-undecided)
+                #   and the code below says which of the two it is refusing on.
                 no_qa += 1
+                unjudged_unscreened += 1
                 continue
             q = json.loads(qa.read_text(encoding="utf-8"))
             rec = _read_qa(q)
@@ -296,8 +341,23 @@ def cmd_report(a):
                 unreadable.append(f"{bdir.name}/{ogg.stem}")
                 continue
             judged, redrawn, failing, unjudged = rec
+            # ⚠ A gate_version < 2 record PREDATES the repace fix (2026-09-12)
+            # and cannot say whether an UNJUDGED re-roll replaced the take it
+            # describes: repace_outliers ran AFTER the record was built. That
+            # is UNKNOWN, never zero — a defaulted read is indistinguishable
+            # from a real zero, which is the trap _read_qa exists to avoid.
+            # ▶ research/_evidence/kjv_repace_bypasses_gate_2026-09-12.md
+            if "repairs" in q:
+                rp, dec, known = 0, 0, True     # repair_verses.py: repace not involved
+            elif q.get("gate_version", 1) >= 2:
+                rp = len(q.get("repaced", []))
+                dec = len(q.get("repace_declined", []))
+                known = True
+            else:
+                rp, dec, known = 0, 0, False
             rows.append((int(bdir.name), int(ogg.stem), judged,
-                         len(redrawn), failing, unjudged, qa.stat().st_mtime))
+                         len(redrawn), failing, unjudged, qa.stat().st_mtime,
+                         rp, dec, known))
     if a.since:
         rows = sorted(rows, key=lambda r: r[6])[-a.since:]
     if unreadable:
@@ -307,11 +367,16 @@ def cmd_report(a):
               + (" ..." if len(unreadable) > 8 else ""))
         return 1
     if not rows:
+        # ⚠ `no_qa` here is the whole corpus, so the run is UNJUDGED rather than
+        # a clean zero — but it is still rc 1 (not rc 2): the screen DID run,
+        # it simply found nothing screened. That distinction is what keeps the
+        # «zero vs non-zero» callers (the launch hook reads rc, not this text)
+        # working, and matches assertion 12b's existing contract.
         print(f"no .qa.json under narration/{a.lang} — gate never ran here "
               f"({no_qa} chapter(s) without a record). Screen the slow way.")
         return 1
     per_book = {}
-    for b, c, j, rd, fail, unj, _ in rows:
+    for b, c, j, rd, fail, unj, *_ in rows:
         e = per_book.setdefault(b, [0, 0, 0, 0, 0])
         e[0] += 1; e[1] += j; e[2] += rd; e[3] += len(fail); e[4] += len(unj)
     print(f"{'book':>4} {'ch':>4} {'judged':>7} {'redrawn':>8} {'failing':>8} {'unjudged':>9}")
@@ -319,20 +384,274 @@ def cmd_report(a):
         n, j, rd, f, u = per_book[b]
         print(f"{b:>4} {n:>4} {j:>7} {rd:>8} {f:>8} {u:>9}")
     J = sum(r[2] for r in rows); RD = sum(r[3] for r in rows)
-    F = sum(len(r[4]) for r in rows); U = sum(len(r[5]) for r in rows)
+    F = sum(len(r[4]) for r in rows); U_judged = sum(len(r[5]) for r in rows)
+    # ⚑ A never-screened chapter is the STRONGEST form of unjudged, so it counts
+    # into the UNJUDGED total while `no_qa` keeps its own number beside it. The
+    # brief's acceptance is literally «UNJUDGED 1265» for sv; the forbidden
+    # thing was folding the two FACTS into one, not counting the chapters.
+    U = U_judged + unjudged_unscreened
     print(f"\n{len(rows)} chapter(s) with a gate record, {no_qa} without; "
           f"judged {J}, re-drawn {RD} ({100*RD/max(J,1):.1f} %), still failing {F} "
           f"({100*F/max(J,1):.2f} % of verses), UNJUDGED {U}")
-    fails = [(b, c, v, r) for b, c, _, _, fail, _, _ in rows for v, r in fail.items()]
+    if unjudged_unscreened:
+        print(f"⚠ {unjudged_unscreened} of the {no_qa} chapter(s) WITHOUT a record "
+              f"hold audio and were NEVER SCREENED — counted into UNJUDGED above, "
+              f"not clean. They can only be judged by a screen that can read this "
+              f"language (qa_selfrepeat for sv, not whisper).")
+    fails = [(b, c, v, r) for b, c, _, _, fail, *_ in rows for v, r in fail.items()]
     for b, c, v, r in fails[:40]:
         print(f"   still failing  {b}/{c} v{v}  {'|'.join(r)}")
     if len(fails) > 40:
         print(f"   ... {len(fails) - 40} more")
+    RP = sum(r[7] for r in rows)
+    DEC = sum(r[8] for r in rows)
+    unknown = [r for r in rows if not r[9]]
+    print(f"re-paced {RP} verse(s) (judged), {DEC} re-roll(s) declined by the gate")
+    if unknown:
+        print(f"⚠ {len(unknown)} of {len(rows)} chapter(s) carry a gate_version<2 "
+              f"record. For those, whether an UNJUDGED re-roll replaced the take "
+              f"is UNKNOWN — not zero. Only an ASR screen of the AUDIO can tell.\n"
+              f"  ▶ research/_evidence/kjv_repace_bypasses_gate_2026-09-12.md")
+    # ⚠⚠ KNOWN-BAD CONTROL (selftest only): an UNJUDGED chapter is treated as
+    # judged-and-clean, so U collapses to 0 and the verdict goes green over a
+    # corpus that was never screened. Gated on _IN_SELFTEST.
+    # ⛔ It also removes the NEVER-SCREENED count, because that is the same
+    # defect in its larger form: pre-2026-09-22 a chapter with no record at all
+    # was already invisible to the total.
+    if ignore_unjudged():
+        if U:
+            print(f"⛔ IGNORE-UNJUDGED CONTROL: {U} unjudged chapter/verse(s) "
+                  f"treated as judged-and-clean — the pre-2026-09-03 condition")
+        U = 0
     bad = U > 0 or (J and F / J > 0.02)
-    print("\nVERDICT: " + ("⛔ STOP AND LOOK — unjudged verses or > 2 % still failing"
+    # ⚑ The verdict must NAME which fact it is refusing on: a screened-and-
+    # undecided verse and a never-screened chapter are different problems with
+    # different fixes, and folding them into one line is how the 1265 went
+    # unnoticed.
+    reason = []
+    if unjudged_unscreened and not ignore_unjudged():
+        reason.append(f"{unjudged_unscreened} chapter(s) NEVER SCREENED (no gate record)")
+    judged_unjudged = U - (0 if ignore_unjudged() else unjudged_unscreened)
+    if judged_unjudged:
+        reason.append(f"{judged_unjudged} unjudged verse(s)")
+    if J and F / J > 0.02:
+        reason.append(f"{100*F/J:.2f} % of verses still failing")
+    print("\nVERDICT: " + ("⛔ STOP AND LOOK — " + "; ".join(reason)
                          if bad else "✅ within expectation — the render may continue; "
                          "the still-failing verses go to repair_verses.py, not to a re-render"))
+    if unknown and not bad:
+        # ★ The gate speaks only for what the gate saw. Do not let a green
+        # verdict be read as a claim about chapters whose repace status is
+        # unknown — that over-claim is exactly the defect of 2026-09-12.
+        print(f"         ⚠ THIS VERDICT COVERS THE GATE, NOT THE FILE, for the "
+              f"{len(unknown)} chapter(s) above.")
     return 1 if bad else 0
+
+
+def selftest():
+    """Control on the pure report logic. No GPU, no nvidia-smi, no subprocess to
+    an ASR worker, no network.
+
+    Covers parse_books(), _read_qa() and the verdict arithmetic in cmd_report().
+    Fixtures are built in tempfile.mkdtemp() with NARRATION repointed at them.
+    ⛔ NEVER writes _work/preflight_<lang>.ok — writing that stamp would satisfy
+    the launch hook and let a render start on a test artifact. Asserted at the
+    end: no preflight_*.ok was created.
+    """
+    global _IN_SELFTEST, DATA, NARRATION, WORK
+    _IN_SELFTEST = True
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    import contextlib
+    import io
+    import shutil
+
+    saved = (DATA, NARRATION, WORK)
+    td = Path(tempfile.mkdtemp(prefix="render_preflight_selftest_"))
+    root = Path(td)
+    narration = root / "narration"
+    work = root / "_work"
+    narration.mkdir(parents=True)
+    work.mkdir(parents=True)
+
+    class A:
+        pass
+
+    def report(lang="sv", since=0):
+        a = A()
+        a.lang = lang
+        a.since = since
+        buf = io.StringIO()
+        rc = 0
+        try:
+            with contextlib.redirect_stdout(buf):
+                rc = cmd_report(a)
+        except Exception as e:  # noqa: BLE001 - surfaced as a FAIL
+            rc = f"EXC {type(e).__name__}"
+        return rc, buf.getvalue()
+
+    def chapter(lang, b, c, qa):
+        d = narration / lang / str(b)
+        d.mkdir(parents=True, exist_ok=True)
+        (d / f"{c}.ogg").write_bytes(b"x")
+        if qa is not None:
+            (d / f"{c}.qa.json").write_text(
+                qa if isinstance(qa, str) else json.dumps(qa), encoding="utf-8")
+
+    gate = lambda j, fail=None, unj=None: {          # narrate.py's gate schema
+        "judged": j, "redrawn": [], "failing": fail or {}, "unjudged": unj or []}
+
+    try:
+        DATA, NARRATION, WORK = root, narration, work
+
+        # ── parse_books ────────────────────────────────────────────────────
+        r = parse_books("66-82", 100)
+        ok(r == list(range(66, 83)) and len(r) == 17,
+           f"1. parse_books('66-82', 100) -> the inclusive range, length 17 "
+           f"(got len={len(r) if r else None})")
+        r = parse_books("40", 66)
+        ok(r == [40],
+           f"2. parse_books('40', 66) -> one book (got {r})")
+        r = parse_books("1,3,5-7", 66)
+        ok(r == [1, 3, 5, 6, 7],
+           f"3. parse_books('1,3,5-7', 66) -> the exact set (mixed list IS "
+           f"supported; got {r})")
+        r = parse_books("0-999", 66)
+        ok(r is not None and r == list(range(0, 66)) and len(r) > 0,
+           f"4. FINDING: parse_books('0-999', 66) CLAMPS to 0..65 rather than "
+           f"rejecting — it does not produce an empty set (got len="
+           f"{len(r) if r is not None else None}, first={r[0] if r else None})")
+        rejected = True
+        for bad in ("66-", "abc", "1-2-3"):
+            try:
+                parse_books(bad, 66)
+                rejected = False
+            except (ValueError, TypeError):
+                pass
+        ok(rejected,
+           "5. FINDING: garbage specs ('66-', 'abc') RAISE (ValueError) rather "
+           "than silently passing as an empty set — never a quiet pass")
+        # ⚠ Document the one empty-set case that IS quiet: an empty spec -> None.
+        ok(parse_books("", 66) is None,
+           "5b. an empty spec returns None (the caller then uses the config "
+           "default), not a silent empty set")
+
+        # ── cmd_report over fixtures ───────────────────────────────────────
+        # 6. the false-positive control: every chapter judged, 0 failing
+        shutil.rmtree(narration / "sv", ignore_errors=True)
+        chapter("sv", 0, 0, gate(50))
+        chapter("sv", 1, 0, gate(60))
+        rc, sout = report()
+        ok(rc == 0 and "UNJUDGED 0" in sout,
+           f"6. all judged, 0 failing -> rc 0 and UNJUDGED 0 (rc={rc})")
+
+        # 7. ONE unjudged chapter among many judged -> rc 1. HEADLINE.
+        chapter("sv", 1, 0, gate(60, unj=[7, 8]))
+        rc, sout = report()
+        ok(rc == 1 and "UNJUDGED 2" in sout,
+           f"7. ONE unjudged chapter among judged ones -> rc 1 and UNJUDGED>0 "
+           f"(rc={rc}, contains «UNJUDGED 2»: {'UNJUDGED 2' in sout})")
+
+        # 8. a chapter directory with NO .qa.json at all — THE RULE THIS TOOL
+        # NOW ENFORCES (was a pinned FINDING until 2026-09-22, when the owner
+        # approved the fix). A chapter holding audio and no gate record is
+        # UNJUDGED and forces rc 1. ⚠ The fixture is the same one that pinned
+        # the OLD behaviour; only what it asserts has been inverted, so the
+        # number cannot drift back unnoticed.
+        shutil.rmtree(narration / "sv", ignore_errors=True)
+        chapter("sv", 0, 0, gate(50))
+        chapter("sv", 1, 0, None)                 # ogg, no .qa.json
+        rc, sout = report()
+        ok("1 without" in sout and "UNJUDGED 1" in sout and rc == 1,
+           f"8. a chapter with NO .qa.json is counted as `1 without` AND as "
+           f"UNJUDGED, forcing rc 1 — a chapter the gate never screened is NOT "
+           f"reported clean (rc={rc}, «1 without»={'1 without' in sout}, "
+           f"«UNJUDGED 1»={'UNJUDGED 1' in sout})")
+        # 8b. the acceptance shape: `N without` survives as its OWN number.
+        ok("1 chapter(s) with a gate record, 1 without" in sout,
+           "8b. `N without` is still reported as its own number beside UNJUDGED "
+           "(the two facts are not folded into one label)")
+
+        # 9. the 2 % threshold, both sides.
+        # failing% = F/J. Build J=100 with F=1 (1 %) -> rc 0; F=3 (3 %) -> rc 1.
+        shutil.rmtree(narration / "sv", ignore_errors=True)
+        chapter("sv", 0, 0, gate(100, fail={"1": ["x"]}))          # 1/100 = 1 %
+        rc_below, s_below = report()
+        shutil.rmtree(narration / "sv", ignore_errors=True)
+        chapter("sv", 0, 0, gate(100, fail={"1": ["x"], "2": ["x"], "3": ["x"]}))  # 3 %
+        rc_above, s_above = report()
+        ok(rc_below == 0 and rc_above == 1,
+           f"9. the 2 % threshold: 1/100=1.00 % -> rc 0, 3/100=3.00 % -> rc 1 "
+           f"(below rc={rc_below}, above rc={rc_above})")
+
+        # 10. malformed / truncated .qa.json.
+        # ⚠⚠ FINDING, PINNED: invalid JSON RAISES (JSONDecodeError), i.e. a
+        # traceback — it is loud, but it is not the documented contract. It does
+        # NOT silently improve the verdict. Assert the measured behaviour.
+        shutil.rmtree(narration / "sv", ignore_errors=True)
+        chapter("sv", 0, 0, gate(50))
+        chapter("sv", 1, 0, "{ this is not json")
+        rc, sout = report()
+        ok(rc == "EXC JSONDecodeError",
+           f"10. FINDING: a malformed/truncated .qa.json RAISES JSONDecodeError "
+           f"(a traceback) rather than being counted UNJUDGED — loud, but not "
+           f"the documented contract (measured rc={rc})")
+
+        # 11. kept_existing_take.
+        # ⚠⚠ FINDING, PINNED: _read_qa IGNORES kept_existing_take entirely, so a
+        # chapter whose take the gate condemned, redrew, failed to improve and
+        # LEFT AS IT WAS reads as judged-and-clean. Per the standing note that is
+        # NOT a cleared verse. Assert the classification; do NOT change it.
+        q = gate(50)
+        q["kept_existing_take"] = True
+        rec = _read_qa(q)
+        ok(rec == (50, [], {}, []),
+           f"11. FINDING: a record carrying kept_existing_take=True is counted "
+           f"as judged-and-clean by _read_qa — the flag is IGNORED (returned "
+           f"{rec}). Per the standing note that verse was NOT cleared; "
+           f"classification NOT changed")
+
+        # 12. the could-not-run contract for an unknown --lang.
+        # ⛔ `report --lang xx` has no narration/xx dir; this used to die with a
+        # FileNotFoundError traceback out of root.iterdir(). It must be the
+        # documented could-not-run: rc 2 and ONE honest line. ⛔ And a directory
+        # that EXISTS but holds no records is a DIFFERENT result (rc 1) — the
+        # fix must not collapse the two.
+        shutil.rmtree(narration / "xx", ignore_errors=True)
+        rc, sout = report(lang="xx")
+        ok(rc == 2 and "COULD NOT RUN" in sout,
+           f"12. an unknown --lang (no narration dir) is COULD NOT RUN: rc={rc} "
+           f"(want 2), «COULD NOT RUN»={'COULD NOT RUN' in sout}")
+        # and the distinction is preserved: an EXISTING but empty dir -> rc 1
+        (narration / "yy").mkdir(parents=True, exist_ok=True)
+        rc2, sout2 = report(lang="yy")
+        ok(rc2 == 1 and "COULD NOT RUN" not in sout2,
+           f"12b. an existing-but-EMPTY narration dir is a DIFFERENT result: "
+           f"rc={rc2} (want 1), NOT reported as could-not-run "
+           f"(«COULD NOT RUN»={'COULD NOT RUN' in sout2})")
+
+        # ── MANDATORY: no preflight stamp was written ──────────────────────
+        stamps = list(root.rglob("preflight_*.ok"))
+        ok(not stamps,
+           f"MANDATORY: the selftest created NO preflight_*.ok stamp (found "
+           f"{[p.name for p in stamps]}) — a test artifact must never satisfy "
+           f"the launch hook")
+
+    finally:
+        DATA, NARRATION, WORK = saved
+        shutil.rmtree(td, ignore_errors=True)
+
+    print("", flush=True)
+    if ignore_unjudged():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_IGNORE_UNJUDGED=1 — an "
+              "unjudged chapter is treated as judged-and-clean", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
 
 
 def main():
@@ -346,7 +665,12 @@ def main():
     p = sub.add_parser("report")
     p.add_argument("--lang", required=True)
     p.add_argument("--since", type=int, default=0, help="only the N most recent chapters")
+    sub.add_parser("selftest",
+                   help="control on parse_books/_read_qa/cmd_report; no GPU, no "
+                        "ASR, never writes a preflight stamp")
     a = ap.parse_args()
+    if a.cmd == "selftest":
+        return selftest()
     return {"check": cmd_check, "launch": cmd_launch, "report": cmd_report}[a.cmd](a)
 
 

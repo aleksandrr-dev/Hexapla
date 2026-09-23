@@ -185,6 +185,22 @@ def main():
         total_pos += pos
         total_stroked += st
     measured = [r for r in rows if r[1] is not None]
+    # ⛔ A book with no page records has NO RATE, and must say so. It used to
+    # divide by a zero denominator and die on a ZeroDivisionError traceback,
+    # which reads as a broken tool rather than as the real finding: the pages
+    # were never adjudicated. A check that cannot run did not pass, and a
+    # status that fails must not print a plausible number.
+    if total_pos == 0:
+        print(f"\n⛔ «{a.book}» HAS NO ø RATE — {len(measured)} page(s) "
+              f"measured, {len(book_verses)} verse(s), 0 o-positions.")
+        print("   This is NOT a rate of 0 % and NOT a clean result. No page "
+              "record matched this book's range, so the denominator was never "
+              "tallied and no candidate list is exhaustive.")
+        print(f"   ▶ records are read from {WORK}\\*_READJUDICATED*; an "
+              "unmerged `*_NOT_MERGED.md` read is not one.")
+        print("   ⛔ Do not resolution-tune and do not quote a rate for this "
+              "book until its pages carry adjudication records.")
+        return 1
     print(f"\n▶ WHOLE BOOK ({len(measured)} page(s) measured, "
           f"{len(book_verses)} distinct verse(s) — shared boundary verses "
           f"counted ONCE):")

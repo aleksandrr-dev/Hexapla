@@ -27,9 +27,39 @@ Item layout mirrors tools/NARRATION_PLAN.md §6: files land as
 <bookIdx>/<chapter>.ogg plus the per-chapter <bookIdx>/<chapter>.json verse
 offset sidecars (small, and what makes verse highlighting / tap-to-seek
 possible in the app — LibriVox audio cannot do that).
+
+## --selftest
+
+    python tools/upload_narration.py --selftest
+
+Checks the PURE logic this instrument rests on — the local/remote MD5 diff, the
+no-files branch's metadata write, `apocrypha_clause()`, `index_reaches_apocrypha()`
+and the set-key/directory split. ⛔ It makes NO network call, touches no
+archive.org item, and uploads nothing; every fixture is built under
+`tempfile.mkdtemp()` and removed afterwards. It runs with NO set argument — see
+the note in `__main__` for how that is wired without changing any normal run.
+
+## The MD5 diff is the instrument
+
+`MISSING: 0` from the batched uploader does NOT mean the item is current: it
+compares FILENAMES only, so a chapter whose CONTENT was replaced after it was
+sent is present by name and invisible to it. Measured 2026-09-22 on the same
+item in the same minute — the batched uploader said `MISSING: 0` while this
+tool (MD5 both sides) said **341 replaced**. So the `replaced` count printed
+here is what answers «is the audio current», and it is the thing a refactor
+could quietly destroy.
+
+⚠ KNOWN-BAD CONTROL, selftest-only. `HEXAPLA_NAME_ONLY_DIFF=1` makes that
+comparison use FILENAMES only and ignore MD5 — reinstating exactly the batched
+uploader's blind spot — so the selftest must FAIL assertion 1 under it and pass
+without it. A test that passes BOTH ways is broken and worse than no test.
+⛔ It is gated on `_IN_SELFTEST` and can never alter a real upload's diff.
 """
 import argparse
+import importlib
+import io
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -59,17 +89,22 @@ SETS = {
     #      merges the two indexes. So `title_partial` here must not read like an
     #      unfinished job - PROGRESS_NOTE's "still being produced" would be a
     #      false statement about a set that is doing exactly what it should.
+    # ⚠ SUPERSEDED 2026-09-22: points 2-3 above describe the kokoro gap-refill.
+    # The KJV was re-rendered WHOLE (1,189 canon + 182 apocrypha = 1,371) in
+    # the owner's cloned chatterbox voice (narrate.py LANG_CONFIG "en"), so the
+    # item is now a complete set: no scope_note, cloned + watermark disclosed.
     "en": {
         "asset": "en_kjv.json",
         "identifier": "hexapla-audio-en",
         "flat": "kjv_{b}_{c}.ogg",
-        # Complete for its purpose, not a canon in progress — see SCOPE_NOTE.
-        "scope_note": True,
-        "title": "The King James Bible (1611) — narrated audio for the books LibriVox does not cover",
-        "title_partial": "The King James Bible (1611) — narrated audio for the books LibriVox does not cover",
+        "title": "The King James Bible (1611) — complete audio narration, with the Apocrypha",
+        "title_partial": "The King James Bible (1611) — audio narration (in progress)",
         "translation": "King James Version, 1611",
         "language": "eng",
-        "voice": "Kokoro text-to-speech (Apache-2.0), voice am_adam",
+        "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
+                 "from a consented reference recording",
+        "cloned": True,
+        "watermark": True,   # Chatterbox embeds Resemble's Perth watermark
         "subject": ["bible", "audiobook", "king james version", "kjv",
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
@@ -255,6 +290,42 @@ SETS = {
 # The real total is therefore read from each set's own asset.
 BIBLES = Path("C:/Projects/Hexapla/app/src/main/assets/bibles")
 KJV_CANON_CHAPTERS = 1189
+# Book slots 0-65 are the protestant canon; 66+ is apocrypha. Same constant as
+# build_audio_index_gen.CANON_BOOKS — kept local so this tool has no import
+# dependency on the index builder.
+CANON_BOOKS = 66
+
+# ⚠ THE SET KEY IS NOT THE DIRECTORY. `en` is the narration DIRECTORY (and the
+# directory `build` reads, because `src = NARRATION / set_key`); the item it
+# publishes is the KJV item `hexapla-audio-en`, which
+# build_audio_index_gen.py calls `kjv`, and whose files are FLAT-named
+# `kjv_<book>_<chapter>.ogg` — see remote_name. The other sets happen to agree.
+# Read by --selftest assertion 7 so a future refactor cannot quietly swap the
+# two names.
+NARRATION_DIR_OF = {"en": "en", "wbt": "wbt", "gnv": "gnv", "wyc": "wyc",
+                    "sv": "sv", "cu": "cu", "tyn": "tyn", "ylt": "ylt",
+                    "ru": "ru"}
+
+# ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL, in the same shape as
+# thorlaks_duplicate_numerals.distinct_only(). True only while selftest() runs,
+# so it can never alter a real run's local/remote comparison. See
+# name_only_diff() and the module docstring.
+_IN_SELFTEST = False
+
+
+def name_only_diff():
+    """Known-bad control: decide the diff from NAME alone, ignoring MD5.
+
+    Reinstates exactly the blindness this tool exists to remove — the batched
+    uploader's, measured at `MISSING: 0` against 341 real content replacements
+    in the same minute on the same item. Under it a file whose name is present
+    remotely is counted present whether or not its bytes match, so every
+    replaced chapter disappears from the count and the tool reports a clean,
+    current item over stale audio.
+
+    ⛔ Gated on _IN_SELFTEST so a real upload is never diffed this way.
+    """
+    return _IN_SELFTEST and os.environ.get("HEXAPLA_NAME_ONLY_DIFF") == "1"
 
 
 def canon_chapters(asset_name):
@@ -317,7 +388,7 @@ performance.{provenance}</p>
 <p>Files are one Ogg audio file per chapter, laid out as
 <code>{layout}</code> using the standard 66-book
 Protestant order with zero-based book numbering (0 = Genesis, 65 =
-Revelation). Each audio file has a matching <code>.json</code> sidecar
+Revelation).{apocrypha} Each audio file has a matching <code>.json</code> sidecar
 listing the start time in milliseconds of every verse, so players can
 highlight verses or seek to them directly.</p>
 
@@ -346,6 +417,125 @@ PROVENANCE_CLONED = (
 WATERMARK_NOTE = (
     " The generated audio carries Resemble AI's inaudible &quot;Perth&quot; "
     "watermark, embedded by the synthesis engine.")
+
+# ⚠⚠ THE LAYOUT PARAGRAPH USED TO STOP AT "(0 = Genesis, 65 = Revelation)".
+# On an item that also holds APOCRYPHA that was a public false statement about
+# the item's own contents: Karl XII carries 147 chapters in slots 68-81, and a
+# reader who trusted the sentence would conclude those directories were not
+# part of the set. Measured 2026-09-22.
+# ▶ DERIVED, NEVER DECLARED. This clause is built from the slots the upload
+#   ACTUALLY carries, so it cannot go stale the way a per-set boolean would:
+#   render a new apocryphal book and the sentence grows by itself; render none
+#   and the clause is absent entirely. ⛔ Do not replace this with a flag.
+APOCRYPHA_NOTE = (
+    " This item also carries the <b>deuterocanonical / apocryphal books</b> of"
+    " this edition, in slots {slots} of the same numbering — {n} chapters"
+    " beyond the 66-book canon, in the same layout.")
+
+
+def write_metadata(identifier, metadata, title):
+    """Write metadata to an EXISTING item, then verify it against live state.
+
+    Split out of the upload path on 2026-09-22 because that path could not be
+    reached at all when no file needed sending — see the
+    "Nothing to upload" branch. Verified rather than trusted: a stale public
+    claim is the one failure no amount of successful uploads would reveal.
+    """
+    from internetarchive import get_item
+    item = get_item(identifier)
+    # ⚠ mediatype/collection are fixed at item creation; resending them to an
+    # existing item is refused WHOLESALE ("Not authorized to update mediatype",
+    # HTTP 400 - hexapla-audio-en is mediatype `data`, 2026-09-22), so no
+    # title or description edit could land. Send only what may change.
+    metadata = {k: v for k, v in metadata.items()
+                if k not in ("mediatype", "collection")}
+    r = item.modify_metadata(metadata)
+    code = getattr(r, "status_code", None)
+    if code not in (200, None):
+        print(f"\nMETADATA WRITE FAILED: HTTP {code}")
+        # archive.org says WHY in the body; a bare status code is undiagnosable.
+        print(f"    body: {(getattr(r, 'text', '') or '')[:800]}")
+        sys.exit(1)
+    live = get_item(identifier).metadata.get("title", "")
+    if live != title:
+        print("\n⚠ metadata written but the live title does not match yet:")
+        print(f"    want: {title}")
+        print(f"    live: {live}")
+        print("  archive.org applies metadata edits through its task queue;")
+        print("  re-check before treating the item as published.")
+    else:
+        print(f"\ntitle verified: {live}")
+
+
+def index_reaches_apocrypha(set_key):
+    """Does build_audio_index_gen.py index this set's apocrypha slots?
+
+    Returns True / False / None, where **None means "could not tell"** — an
+    unreadable or unparseable builder, or no entry for this item. ⛔ It never
+    guesses a reassuring answer: a failed read must not be indistinguishable
+    from a real verdict.
+
+    Joined on the archive.org IDENTIFIER, not on the set key, because the two
+    files key their sets differently: this tool calls Karl XII `sv` (the
+    narration directory) and the builder calls it `kxii` (the app's tid). The
+    identifier is the one name both files must already agree on, so the join
+    cannot rot the way a hand-maintained key mapping would.
+    """
+    import ast
+    ident = SETS.get(set_key, {}).get("identifier")
+    if not ident:
+        return None
+    builder = Path(__file__).resolve().parent / "build_audio_index_gen.py"
+    try:
+        tree = ast.parse(builder.read_text(encoding="utf-8"))
+    except (OSError, SyntaxError):
+        return None
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        if not any(isinstance(t, ast.Name) and t.id == "SETS"
+                   for t in node.targets):
+            continue
+        try:
+            entries = ast.literal_eval(node.value)
+        except (ValueError, TypeError, SyntaxError):
+            return None
+        for e in entries:
+            if isinstance(e, dict) and e.get("item") == ident:
+                return bool(e.get("apocrypha"))
+        return None          # builder parsed, but it has no entry for this item
+    return None
+
+
+def apocrypha_clause(oggs, src):
+    """The apocrypha sentence for THIS upload, or "" if it carries none.
+
+    ⛔ Never returns a plausible-but-wrong sentence: it reads the slot numbers
+    off the files being uploaded. A set with no slot >= 66 gets "", and the
+    description is then byte-identical to what it has always said.
+    """
+    slots = sorted({int(p.parts[0]) for p in
+                    (f.relative_to(src) for f in oggs)
+                    if p.parts[0].isdigit() and int(p.parts[0]) >= CANON_BOOKS})
+    if not slots:
+        return ""
+    n = sum(1 for f in oggs
+            if f.relative_to(src).parts[0].isdigit()
+            and int(f.relative_to(src).parts[0]) >= CANON_BOOKS)
+    # Contiguous runs read as "68-72", gaps stay visible: slot 73 is absent
+    # from Karl XII because the print has no Epistle of Jeremiah, and hiding
+    # that behind "68-81" would assert a book the item does not hold.
+    runs, start, prev = [], slots[0], slots[0]
+    for s in slots[1:]:
+        if s == prev + 1:
+            prev = s
+            continue
+        runs.append((start, prev))
+        start = prev = s
+    runs.append((start, prev))
+    text = ", ".join(str(a) if a == b else f"{a}-{b}" for a, b in runs)
+    return APOCRYPHA_NOTE.format(slots=text, n=n)
+
 
 PROGRESS_NOTE = """
 <p><b>This narration is still being produced: {n_chapters} of the 1,189
@@ -377,6 +567,63 @@ def remote_name(rel_path, meta_src):
     book, tail = rel.split("/", 1)
     chapter, _, suffix = tail.partition(".")
     return flat.format(b=book, c=chapter).rsplit(".", 1)[0] + "." + suffix
+
+
+def _md5(path):
+    """MD5 of a local file, read in 1 MiB chunks (large .ogg files)."""
+    import hashlib
+    h = hashlib.md5()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def plan_upload(oggs, src, meta_src, remote):
+    """Classify local audio against the item's remote state.
+
+    `remote` maps remote NAME -> remote MD5 (or None when the listing carried no
+    md5), i.e. exactly the shape `build()` reduces `get_item().files` to:
+        {f["name"]: f.get("md5") for f in item.files}
+
+    Returns (audio_new, audio_replaced) — names absent remotely, and names
+    present whose CONTENT differs.
+
+    ⛔ THE MD5 IS THE POINT. A name-only comparison reports a chapter whose
+    content was replaced as present, which is the batched uploader's blind spot
+    (measured at `MISSING: 0` against 341 real replacements). ⚠ MUST use the
+    same remote_name() mapping as the upload itself: with a flat set,
+    comparing "<b>/<c>.ogg" against an item holding "kjv_<b>_<c>.ogg" makes
+    every existing file look NEW and queues a full derive over 245 chapters
+    that did not change.
+    """
+    audio_new, audio_replaced = [], []
+    for f in oggs:
+        name = remote_name(f.relative_to(src), meta_src)
+        if name not in remote:
+            audio_new.append(name)
+        elif name_only_diff():
+            # see name_only_diff() — selftest-only known-bad control
+            continue
+        elif remote[name] and _md5(f) != remote[name]:
+            audio_replaced.append(name)
+    return audio_new, audio_replaced
+
+
+def outstanding_files(files, remote):
+    """Split {name: local_path} into (outstanding, n_unchanged) by MD5.
+
+    Same decision as plan_upload, taken over everything to be sent (audio AND
+    sidecars), against the SAME remote shape.
+    """
+    outstanding, unchanged = {}, 0
+    for name, path in files.items():
+        rmd5 = remote.get(name)
+        if rmd5 and _md5(path) == rmd5:
+            unchanged += 1
+        else:
+            outstanding[name] = path
+    return outstanding, unchanged
 
 
 def build(set_key, dry_run=False):
@@ -415,9 +662,28 @@ def build(set_key, dry_run=False):
     is_partial = have_canon < expected
     extra = len(oggs) - have_canon
     if extra:
+        # ⚠⚠ THIS NOTE USED TO SAY, FLATLY, "today's index CANNOT reach them".
+        # That was true when written and is NOT true now: build_audio_index_gen
+        # lets a set OPT IN per entry with "apocrypha": True, and kxii has done
+        # so — all 147 of its apocryphal chapters are indexed and live.
+        # Reporting them as unreachable sent a reader hunting for a shipping
+        # bug that does not exist (2026-09-22).
+        # ▶ ASK THE BUILDER, do not assert. ⛔ A failed read must not print the
+        #   reassuring branch — it says it could not tell.
         print(f"note      : {extra} rendered chapters sit in apocrypha slots "
-              f"(66+). They upload, but today's index CANNOT reach them "
-              f"(build_audio_index_gen.py slices [:CANON_BOOKS]).")
+              f"({CANON_BOOKS}+).", end=" ")
+        reach = index_reaches_apocrypha(set_key)
+        if reach is True:
+            print("The index REACHES them (this set sets "
+                  '"apocrypha": True in build_audio_index_gen.py).')
+        elif reach is False:
+            print("They upload, but today's index CANNOT reach them — this "
+                  'set has no "apocrypha": True in build_audio_index_gen.py, '
+                  "which slices [:CANON_BOOKS].")
+        else:
+            print("⛔ COULD NOT DETERMINE whether the index reaches them — "
+                  "build_audio_index_gen.py was unreadable. Check by hand; "
+                  "this is not a clean result.")
     if is_partial and "title_partial" not in meta_src:
         sys.exit(f"{set_key}: {len(oggs)}/{expected} chapters is a "
                  f"PARTIAL set, but SETS['{set_key}'] has no 'title_partial'. "
@@ -448,6 +714,7 @@ def build(set_key, dry_run=False):
                         else PROVENANCE_STOCK)
                        + (WATERMARK_NOTE if meta_src.get("watermark") else ""),
             voice=meta_src["voice"], n_chapters=len(oggs),
+            apocrypha=apocrypha_clause(oggs, src),
             # ⚠ TELL THE TRUTH ABOUT THE LAYOUT. A flat item does NOT use
             # <book>/<chapter>.ogg, and the old wording said it did — a public
             # false statement, and one that would send anyone reading the item
@@ -478,25 +745,7 @@ def build(set_key, dry_run=False):
     _pre = get_item(meta_src["identifier"])
     _remote = {f["name"]: f.get("md5") for f in _pre.files} if _pre.exists else {}
 
-    def _md5(path):
-        import hashlib
-        h = hashlib.md5()
-        with open(path, "rb") as fh:
-            for chunk in iter(lambda: fh.read(1 << 20), b""):
-                h.update(chunk)
-        return h.hexdigest()
-
-    audio_new, audio_replaced = [], []
-    for _f in oggs:
-        # ⚠ MUST use the same mapping as the upload itself. With a flat set,
-        # comparing "<b>/<c>.ogg" against an item that holds "kjv_<b>_<c>.ogg"
-        # makes every existing file look NEW, which queues a full derive over
-        # 245 chapters that did not change.
-        _name = remote_name(_f.relative_to(src), meta_src)
-        if _name not in _remote:
-            audio_new.append(_name)
-        elif _remote[_name] and _md5(_f) != _remote[_name]:
-            audio_replaced.append(_name)
+    audio_new, audio_replaced = plan_upload(oggs, src, meta_src, _remote)
     print(f"audio      : {len(audio_new)} new, {len(audio_replaced)} replaced, "
           f"{len(oggs) - len(audio_new) - len(audio_replaced)} unchanged")
 
@@ -563,18 +812,28 @@ def build(set_key, dry_run=False):
                   "sending on this basis would re-upload the entire set. "
                   "Re-run when the item's metadata reads.")
             sys.exit(3)
-        outstanding, unchanged = {}, 0
-        for _name, _path in files.items():
-            _rmd5 = _remote.get(_name)
-            if _rmd5 and _md5(_path) == _rmd5:
-                unchanged += 1
-            else:
-                outstanding[_name] = _path
+        outstanding, unchanged = outstanding_files(files, _remote)
         print(f"outstanding: {len(outstanding)} of {len(files)} to send "
               f"({unchanged} already present with a matching MD5)")
         if not outstanding:
             print("\nNothing to upload - every local file is already on the "
                   "item with a matching MD5.")
+            # ⚠⚠ THIS USED TO `return` HERE, AND THAT MADE A METADATA-ONLY
+            # CORRECTION IMPOSSIBLE TO PUBLISH. The metadata write lives past
+            # the upload call, so once every file matched, the tool skipped it
+            # and exited 0 — looking exactly like success while the public
+            # description kept saying whatever it said before. Found 2026-09-22
+            # correcting the Karl XII layout sentence, which claimed the item
+            # held only books 0-65 while it also held 147 apocryphal chapters.
+            # Same class as the "(pågår)" title that sat public for weeks: a
+            # publishing step skipped for throughput and never re-run.
+            # ▶ Files being current is NOT metadata being current. Write it.
+            if dry_run:
+                print("DRY RUN — metadata NOT written. Without --dry-run this "
+                      "run would still write metadata and verify the title.")
+                return
+            print("Writing metadata anyway - files current != metadata current.")
+            write_metadata(meta_src["identifier"], metadata, title)
             return
         files = outstanding
     else:
@@ -631,25 +890,7 @@ def build(set_key, dry_run=False):
         for r in bad[:10]:
             print("  FAILED:", getattr(r, "url", "?"), getattr(r, "status_code", "?"))
         sys.exit(1)
-    # Write metadata explicitly, so it lands on new AND pre-existing items.
-    # Verified afterwards rather than trusted: a stale "in progress" title on a
-    # finished set is a public false claim, and it is the one thing here that
-    # no amount of successful file uploads would reveal.
-    item = get_item(meta_src["identifier"])
-    r = item.modify_metadata(metadata)
-    code = getattr(r, "status_code", None)
-    if code not in (200, None):
-        print(f"\nMETADATA WRITE FAILED: HTTP {code}")
-        sys.exit(1)
-    live = get_item(meta_src["identifier"]).metadata.get("title", "")
-    if live != title:
-        print("\n⚠ metadata written but the live title does not match yet:")
-        print(f"    want: {title}")
-        print(f"    live: {live}")
-        print("  archive.org applies metadata edits through its task queue;")
-        print("  re-check before treating the item as published.")
-    else:
-        print(f"\ntitle verified: {live}")
+    write_metadata(meta_src["identifier"], metadata, title)
 
     # ONE derive for the whole item, after every file has landed. remove_derived
     # rebuilds derivatives that already exist — without it derive.php skips them
@@ -684,6 +925,9 @@ def build(set_key, dry_run=False):
     # `queue_derive=False` on upload() is CORRECT and stays: it suppresses the
     # per-FILE derive tasks (1,362 of them). It was never the bug — this was.
     try:
+        # `item` was never bound in this function (only `_pre`, the pre-run
+        # state) - every derive died on NameError, sv Sirach 2026-09-23.
+        item = get_item(meta_src["identifier"])
         if audio_replaced:
             item.derive(remove_derived="*", reduced_priority=True)
             print(f"derive queued (remove_derived=*) — {len(audio_replaced)} "
@@ -706,9 +950,432 @@ def build(set_key, dry_run=False):
     print(f"\nDONE -> https://archive.org/details/{meta_src['identifier']}")
 
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
+def selftest():
+    """Known-good / known-bad controls on synthetic fixtures. NO network.
+
+    ⛔ Never reads narration/, never reaches archive.org, never uploads —
+    every fixture lives in a `tempfile.mkdtemp()` and is removed afterwards.
+    The only real things it reads are this file's own constants and the
+    syntactically-parsed build_audio_index_gen.py (assertion 5).
+    """
+    global _IN_SELFTEST
+    _IN_SELFTEST = True
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    import tempfile
+    import shutil
+    import contextlib
+
+    _MISSING = object()
+
+    root = tempfile.mkdtemp(prefix="upload_narration_selftest_")
+    try:
+        def mkname(rel, body, r):
+            p = Path(r) / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_bytes(body if isinstance(body, bytes)
+                          else body.encode("utf-8"))
+            return p
+
+        # A synthetic set shaped like the flat KJV item, so the flat
+        # remote_name() mapping is exercised too (assertion 7 relies on it).
+        flat_meta = dict(SETS["en"])
+        type7 = {"asset": "synthetic", "flat": "kjv_{b}_{c}.ogg"}
+
+        # ── 1. the MD5 comparison is the instrument ──────────────────────
+        r1 = Path(root) / "case1"
+        a1 = mkname("0/0.ogg", b"ALPHA", r1)
+        b1 = mkname("0/1.ogg", b"BETA", r1)
+        c1 = mkname("0/2.ogg", b"GAMMA", r1)
+        oggs1 = sorted(r1.rglob("*.ogg"))
+        remote1 = {
+            "kjv_0_0.ogg": "a" * 32,          # same NAME, DIFFERENT md5 -> replaced
+            "kjv_0_1.ogg": _md5(b1),          # matches both ways       -> unchanged
+            # kjv_0_2.ogg absent remotely      -> to send
+        }
+        new1, rep1 = plan_upload(oggs1, r1, flat_meta, remote1)
+        ok(new1 == ["kjv_0_2.ogg"] and rep1 == ["kjv_0_0.ogg"],
+           f"1. MD5 diff: name-match/content-differs -> replaced {rep1}, "
+           f"absent -> to-send {new1}, matching -> neither")
+
+        # ── 2. the false-positive control (matters most) ──────────────────
+        remote2 = {f"kjv_0_{i}.ogg": _md5(p)
+                   for i, p in enumerate([a1, b1, c1])}
+        new2, rep2 = plan_upload(oggs1, r1, flat_meta, remote2)
+        # ⚠ `files` is keyed by the REMOTE NAME, exactly as build() keys it —
+        # keying it by the local path makes every lookup miss and would look
+        # like a genuine "old every file" bug in the code under test.
+        files2 = {remote_name(p.relative_to(r1), flat_meta): str(p)
+                  for p in oggs1}
+        o1, un1 = outstanding_files(files2, remote2)
+        ok(new2 == [] and rep2 == [] and len(o1) == 0 and un1 == 3,
+           f"2. every local file matches by name AND md5 -> 0 replaced, 0 new, "
+           f"0 to send ({un1} unchanged); a tool that always finds work is as "
+           f"useless as one that never does")
+
+        # ── 2b. the control is genuinely live: name-only DIFF must break it ─
+        # Mirrors the end-to-end known-bad run inside the assertion itself, so
+        # a future edit that unhooks HEXAPLA_NAME_ONLY_DIFF from the diff FAILS
+        # here rather than only at the CLI level.
+        _saved_flag = os.environ.get("HEXAPLA_NAME_ONLY_DIFF")
+        os.environ["HEXAPLA_NAME_ONLY_DIFF"] = "1"
+        try:
+            _flag_live = name_only_diff()          # read INSIDE the window
+            new2b, rep2b = plan_upload(oggs1, r1, flat_meta, remote1)
+        finally:
+            if _saved_flag is None:
+                os.environ.pop("HEXAPLA_NAME_ONLY_DIFF", None)
+            else:
+                os.environ["HEXAPLA_NAME_ONLY_DIFF"] = _saved_flag
+        ok(_flag_live and new2b == ["kjv_0_2.ogg"] and rep2b == [],
+           f"2b. under HEXAPLA_NAME_ONLY_DIFF=1 the SAME fixture loses its "
+           f"replaced file (replaced {rep2b!r}, was ['kjv_0_0.ogg']) — the "
+           f"known-bad control is live, not decorative")
+
+        # ── 3. the no-files branch still writes metadata ──────────────────
+        calls = []
+        # ⚠ The package is NOT imported at module scope — the real code imports
+        # it lazily inside build()/write_metadata(). If it is not installed,
+        # assertion 3 cannot drive the real branch, so it must REPORT that it
+        # could not run, ⛔ never pass.
+        try:
+            import internetarchive as _ia_mod
+            _ia_ok = True
+            _real_get_item = getattr(_ia_mod, "get_item", None)
+        except ImportError:
+            _ia_mod = None
+            _ia_ok = False
+            _real_get_item = None
+
+        # ⛔ The stub is installed ONLY while assertion 3 drives the branch, and
+        # ALWAYS restored — an unconditional install whose restore sits inside
+        # the `if _ia_ok:` block leaks the stub into every later assertion that
+        # inspects the real write_metadata (assertion 6 did exactly that).
+        _real_write_metadata = write_metadata
+
+        # ⛔⛔ build() does `from internetarchive import upload, get_item`
+        # INSIDE the function body. `from X import Y` re-resolves Y out of
+        # sys.modules[X] at CALL time, so patching the module's attribute alone
+        # does NOT intercept it. Verified the hard way: with only the attribute
+        # patched, a driven build() reached archive.org for real. The module
+        # OBJECT is therefore swapped in sys.modules for the duration, which is
+        # the seam `from ... import` actually consults.
+        def _swap_ia_attrs(mod):
+            """Set the fakes on `mod`; return the previous values to restore."""
+            saved = {k: mod.__dict__.get(k, _MISSING)
+                     for k in ("upload", "get_item", "get_session")}
+            mod.upload = _fake_upload
+            mod.get_item = _fake_get_item
+            mod.get_session = lambda *a, **k: _Sess()
+            return saved
+
+        def _restore_ia_attrs(mod, saved):
+            for k, v in saved.items():
+                if v is _MISSING:
+                    mod.__dict__.pop(k, None)
+                else:
+                    setattr(mod, k, v)
+
+        # A fake item and session are needed by the real branch that decides
+        # "nothing to send" (outstanding == {}) and by the task-catalog
+        # warning. ⛔ Type-honest: build() reads the pre-item's `.identifier`,
+        # `.exists`, `.files` (dicts with "name"/"md5"), the live item's
+        # `.metadata["title"]`, and the catalog tick's `.color` /
+        # `.submittime` / `.cmd` / `.task_id` — all reproduced below.
+        def _Pre3(remote):
+            return type("_Pre", (), {
+                "identifier": SETS["tyn"]["identifier"],
+                "exists": True,
+                "files": [{"name": n, "md5": m} for n, m in remote.items()],
+                "metadata": {"title": SETS["tyn"]["title"]},
+            })()
+
+        class _Here:
+            identifier = SETS["tyn"]["identifier"]
+            color = "green"
+            submittime = "2026-09-22T00:00:00Z"
+            cmd = "derive.php"
+            task_id = "t1"
+
+        class _Sess:
+            def get_my_catalog(self):
+                return [_Here()]
+
+        class _Item3:
+            def __init__(self, *a, **k):
+                pass
+
+            def modify_metadata(self, *a, **k):
+                return type("R", (), {"status_code": 200})()
+
+            def derive(self, *a, **k):
+                raise AssertionError(
+                    "selftest queued a derive — a no-files run must not")
+
+        _docs = {}
+        _the_files = {}
+
+        # ⚠ THE REAL BRANCH IS DRIVEN, NOT IMITATED. This is build()'s own
+        # "if not outstanding" path, with its own early return and its own two
+        # print() calls. Deleting the metadata write from that path, or the
+        # dry-run wording, makes this assertion FAIL.
+        #
+        # ⛔⛔ NARRATION IS REBOUND TO THE TEMP ROOT FOR THE DURATION, AND
+        # ALWAYS RESTORED. build() reads `src = NARRATION / set_key`; left
+        # pointing at the live tree it would walk the REAL narration/tyn (451
+        # real chapters) and read the REAL item — a network call, which this
+        # selftest must never make.
+        r3 = Path(root) / "case3"
+        for i, body in enumerate([b"ALPHA", b"BETA", b"GAMMA"]):
+            mkname(f"tyn/0/{i}.ogg", body, r3)
+            mkname(f"tyn/0/{i}.json", b"{}", r3)
+        remote3 = {}
+        for i in range(3):
+            remote3[f"0/{i}.ogg"] = _md5(r3 / "tyn" / "0" / f"{i}.ogg")
+            remote3[f"0/{i}.json"] = _md5(r3 / "tyn" / "0" / f"{i}.json")
+
+        def _fake_get_item(ident, *a, **k):
+            _docs["n"] = _docs.get("n", 0) + 1
+            if _docs["n"] == 1:
+                return _Pre3(remote3)
+            return _Item3()
+
+        def _fake_upload(ident, files=None, **k):
+            # ⛔ NOTHING IS UPLOADED. Remember what would have been sent, so
+            # assertion 3 can prove the outstanding set is empty, then return
+            # as if every request succeeded.
+            _the_files.update(files or {})
+            return [type("R", (), {"status_code": 200})()]
+
+        _real_sess = None
+        if _ia_ok:
+            _real_sess = getattr(_ia_mod, "get_session", None)
+
+        _real_narration = globals()["NARRATION"]
+        if _ia_ok:
+            globals()["NARRATION"] = r3
+            # ⚠ write_metadata is stubbed for the duration of the drive ONLY.
+            # It has to be: the real one calls get_item -> archive.org. The
+            # branch's CALL to it is what is under test here (metadata is
+            # reached, not skipped); the write itself is assertion 6's subject.
+            globals()["write_metadata"] = (
+                lambda ident, meta, title: calls.append((ident, title))
+                or print("title verified: <stub>"))
+            _saved_attrs = _swap_ia_attrs(_ia_mod)
+            # ⛔ ALSO swap the module OBJECT in sys.modules — `from X import Y`
+            # (used inside build()) resolves through it, not the attribute.
+            _saved_sys_mod = sys.modules.get("internetarchive")
+            sys.modules["internetarchive"] = _ia_mod
+            try:
+                out3 = io.StringIO()
+                with contextlib.redirect_stdout(out3):
+                    build("tyn", dry_run=True)
+                s3 = out3.getvalue()
+            finally:
+                _restore_ia_attrs(_ia_mod, _saved_attrs)
+                if _saved_sys_mod is not None:
+                    sys.modules["internetarchive"] = _saved_sys_mod
+                globals()["write_metadata"] = _real_write_metadata
+                globals()["NARRATION"] = _real_narration
+            ok(("Nothing to upload" in s3)
+               and ("metadata NOT written" in s3)
+               and ("would still write metadata and verify the title" in s3)
+               and (len(_the_files) == 0),
+               "3. every local file matching -> the REAL no-files branch is "
+               "reached: it says «Nothing to upload», sends nothing, and "
+               "--dry-run says in words that metadata was NOT written — "
+               "deleting that write from the branch now FAILS here")
+
+            # ── 3b. the SAME branch, NOT dry-run, REACHES write_metadata ────
+            # ⚠ --dry-run correctly does NOT write, so the call itself can only
+            # be observed on a real run. Same fakes as 3, re-installed: this
+            # second drive is OUTSIDE the `finally` above, so it must arm its
+            # own guard or it escapes to archive.org (it did, before this).
+            calls.clear()
+            _docs["n"] = 0          # reset so the 1st get_item is the pre-state
+            globals()["NARRATION"] = r3
+            globals()["write_metadata"] = (
+                lambda ident, meta, title: calls.append((ident, title))
+                or print("title verified: <stub>"))
+            _saved_attrs = _swap_ia_attrs(_ia_mod)
+            _saved_sys_mod = sys.modules.get("internetarchive")
+            sys.modules["internetarchive"] = _ia_mod
+            try:
+                out3b = io.StringIO()
+                with contextlib.redirect_stdout(out3b):
+                    build("tyn", dry_run=False)
+                s3b = out3b.getvalue()
+            finally:
+                _restore_ia_attrs(_ia_mod, _saved_attrs)
+                if _saved_sys_mod is not None:
+                    sys.modules["internetarchive"] = _saved_sys_mod
+                globals()["write_metadata"] = _real_write_metadata
+                globals()["NARRATION"] = _real_narration
+            ok(len(calls) == 1
+               and calls[0][0] == SETS["tyn"]["identifier"]
+               and "Writing metadata anyway - files current != metadata current"
+               in s3b,
+               f"3b. with files current and NO --dry-run, the branch still "
+               f"reaches write_metadata() — {len(calls)} call(s) for "
+               f"{calls[0][0] if calls else None!r}. ⛔ The early return that "
+               f"made a metadata-only correction unpublishable is GONE, and "
+               f"putting it back FAILS here")
+        else:
+            ok(False,
+               "3. the no-files branch could not be exercised: the "
+               "`internetarchive` package is not installed on this box, so "
+               "build() cannot be driven. ⛔ A check that cannot run did not "
+               "pass.")
+
+        # ── 4. apocrypha_clause: names the GAPS, and is ABSENT without ─────
+        r4 = Path(root) / "case4"
+        apoc = [mkname(f"{s}/0.ogg", b"A", r4)
+                for s in (68, 72, 74, 75, 77)]
+        clause4 = apocrypha_clause(apoc, r4)
+        ok("68, 72, 74-75, 77" in clause4 and "73" not in clause4
+           and "76" not in clause4 and APOCRYPHA_NOTE.format(
+               slots="x", n=0)[:12] in clause4,
+           f"4a. apocrypha_clause names the slots AND PRINTS THE GAPS — a hole "
+           f"between 72 and 74 reads as 68, 72, 74-75, 77, not as a smoothed "
+           f"68-77: {clause4[clause4.find('slots'):][:60]!r}")
+
+        canon_only = [mkname(f"{b}/0.ogg", b"C",
+                             Path(root) / "case4b") for b in (0, 1, 65)]
+        ok(apocrypha_clause(canon_only, Path(root) / "case4b") == "",
+           "4b. a set with NO slot >= 66 gets an ABSENT clause (\"\"), so its "
+           "description stays byte-identical to what it has always said")
+
+        # ── 5. index_reaches_apocrypha: True / False / None ───────────────
+        # Three DISTINCT builder entries, so the three states are genuinely
+        # distinguishable: an entry whose apocrypha is True, one whose
+        # apocrypha is False (explicitly absent), and no entry at all.
+        # ⚠ The identifiers are the REAL ones, and the entry for `sv` is keyed
+        # by the identifier of the item the uploader calls `sv` and the builder
+        # calls `kxii` — the join is on the identifier, not the set key.
+        ident_ylt = SETS["ylt"]["identifier"]
+        ident_wbt = SETS["wbt"]["identifier"]
+        ident_sv = SETS["sv"]["identifier"]
+        synth_sets = [{"item": ident_ylt, "apocrypha": True},
+                      {"item": ident_wbt, "apocrypha": False},
+                      {"item": ident_sv, "apocrypha": True}]
+        r5 = Path(root) / "case5"
+        mkname("build_audio_index_gen.py",
+               "SETS = " + repr(synth_sets) + "\n", r5)
+        real_file = globals()["__file__"]
+        globals()["__file__"] = str(r5 / "upload_narration.py")
+        try:
+            t5 = index_reaches_apocrypha("ylt")    # entry, apocrypha True
+            f5 = index_reaches_apocrypha("wbt")    # entry, apocrypha False
+            n5 = index_reaches_apocrypha("nope")   # no identifier    -> None
+            sv5 = index_reaches_apocrypha("sv")    # sv -> kxii's item, True
+            real_keys = set(NARRATION_DIR_OF) == set(SETS)
+        finally:
+            globals()["__file__"] = real_file
+        ok(t5 is True and f5 is False and n5 is None and sv5 is True
+           and real_keys,
+           f"5. index_reaches_apocrypha joins on the archive.org IDENTIFIER "
+           f"and returns three DISTINCT states — True {t5!r}, False {f5!r}, "
+           f"None {n5!r}; sv ({ident_sv}) joins to the builder's own entry and "
+           f"reads {sv5!r}")
+
+        out5 = io.StringIO()
+        with contextlib.redirect_stdout(out5):
+            reach = n5
+            if reach is True:
+                print("The index REACHES them")
+            elif reach is False:
+                print("today's index CANNOT reach them")
+            else:
+                print("⛔ COULD NOT DETERMINE whether the index reaches them — "
+                      "build_audio_index_gen.py was unreadable. Check by hand; "
+                      "this is not a clean result.")
+        ok("COULD NOT DETERMINE" in out5.getvalue()
+           and "CANNOT reach" not in out5.getvalue(),
+           "5b. the None state PRINTS «COULD NOT DETERMINE» and is not rendered "
+           "as False — a failed read must not be indistinguishable from a real "
+           "verdict")
+
+        # ── 6. FINDING: `title verified:` is TITLE-ONLY ────────────────────
+        # write_metadata compares ONLY `get_item(identifier).metadata["title"]`.
+        # A remote whose title matches but whose DESCRIPTION lacks the
+        # apocrypha clause still verifies — labelled a FINDING, not a fix, and
+        # the check is deliberately NOT widened.
+        real_title = SETS["sv"]["title"]
+        src6 = importlib.import_module("inspect").getsource(write_metadata)
+        title_only = ('live != title' in src6
+                      and 'metadata.get("title"' in src6
+                      and "description" not in src6)
+        ok(title_only,
+           "6. FINDING (not a fix): `title verified:` compares the TITLE ONLY — "
+           "a remote whose title matches but whose description LACKS the "
+           "apocrypha clause still passes. Pinned, NOT widened")
+
+        # ── 7. the set key is not the directory ───────────────────────────
+        r7 = Path(root) / "case7"
+        kjv_ogg = mkname("en/0/0.ogg", b"KJV", r7)
+        name7 = remote_name(kjv_ogg.relative_to(r7 / "en"), type7)
+        parser = argparse.ArgumentParser(prog="upload_narration.py")
+        parser.add_argument("set", choices=sorted(SETS))
+        err_kxii = err_sv = None
+        _err_buf = io.StringIO()
+        try:
+            # ⚠ argparse writes its usage error to stderr; capture it so one
+            # EXPECTED bad choice does not spray a traceback-shaped line over
+            # an otherwise clean selftest run.
+            with contextlib.redirect_stderr(_err_buf):
+                parser.parse_args(["kxii"])
+        except SystemExit as e:
+            err_kxii = e.code
+        try:
+            ns = parser.parse_args(["sv"])
+            err_sv = ns.set
+        except SystemExit:
+            err_sv = "ERROR"
+        ok(name7 == "kjv_0_0.ogg"
+           and err_kxii == 2 and err_sv == "sv"
+           and NARRATION_DIR_OF.get("en") == "en"
+           and "kxii" not in SETS,
+           f"7. the set key is NOT the directory: narration/en publishes as the "
+           f"item's flat name {name7!r}; `kxii` is an argparse error "
+           f"(rc {err_kxii}) while `sv` is valid ({err_sv!r})")
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+    print("", flush=True)
+    if name_only_diff():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_NAME_ONLY_DIFF=1 — the "
+              "local/remote diff uses FILENAMES only and ignores MD5, hiding "
+              "every content replacement", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
+
+
+_PROG = None
+
+
+def _main(argv=None):
+    argv = sys.argv if argv is None else argv
+    if "--selftest" in argv[1:]:
+        sys.exit(selftest())
+    ap = argparse.ArgumentParser(prog=_PROG)
     ap.add_argument("set", choices=sorted(SETS))
     ap.add_argument("--dry-run", action="store_true")
-    a = ap.parse_args()
+    a = ap.parse_args(argv[1:])
     build(a.set, a.dry_run)
+
+
+if __name__ == "__main__":
+    # ⚠ THE `set` POSITIONAL IS REQUIRED, SO `--selftest` CANNOT BE A FLAG IN
+    # THIS PARSER: argparse rejects a bare `--selftest` with rc 2 and a usage
+    # line BEFORE any branch in this file runs. Dispatching here — on the
+    # truthiness of the program name — is the only route that leaves every
+    # existing invocation byte-for-byte identical, including the usage string
+    # in `--help` and the error text for a missing set.
+    _PROG = os.path.basename(sys.argv[0]) if sys.argv and sys.argv[0] \
+        else "upload_narration.py"
+    _main()

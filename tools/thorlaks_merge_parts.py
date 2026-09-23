@@ -47,6 +47,24 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 RESEARCH = Path("C:/Projects/Hexapla-releases/research")
 PARTS = RESEARCH / "_parts"
 
+# ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL. True only while selftest() runs, so it
+# can never turn a real merge into a concatenation. See concat_merge().
+_IN_SELFTEST = False
+
+
+def concat_merge():
+    """Known-bad control: replace merge-by-(chapter, verse) with naive
+    concatenation in page order.
+
+    Reinstates EXACTLY the duplicate-heading defect the docstring describes: a
+    chapter spanning a page boundary gets its `## <Book> N` heading emitted
+    twice, and thorlaks_corpus_audit.py (which resets its key on every heading)
+    then reports a short chapter that is actually complete.
+
+    ⛔ Gated on _IN_SELFTEST so it can never change a real run's merge.
+    """
+    return _IN_SELFTEST and os.environ.get("HEXAPLA_CONCAT_MERGE") == "1"
+
 # ⚠⚠ AGENTS DO NOT WRITE THE HEADING THE AUDIT PARSES, AND THE FAILURE IS SILENT.
 # thorlaks_corpus_audit.py matches ONLY `## <Book> <N>` (its CHAPTER_RE below).
 # Left to themselves, chunk agents write `## Chapter 8 (continued) - verses
@@ -179,10 +197,280 @@ def parse_part(path, book):
     return chapters, prose
 
 
+def selftest():
+    """Control on the merge using synthetic part files in a temp dir.
+
+    ⛔ Never touches C:/Projects/Hexapla-releases/. Drives main() via sys.argv
+    and asserts on the PRODUCED OUTPUT TEXT, not on an internal variable.
+
+    ⚠ UNIT NOTE. The tool prints `({len(text)} bytes)` where `text` is a `str`,
+    so that number is CHARACTERS, not bytes. The selftest asserts the expected
+    value in the SAME unit the tool uses (characters) and pins the distinction
+    explicitly — see assertion 8b, which is a FINDING, not a fix.
+    """
+    global _IN_SELFTEST, RESEARCH, PARTS
+    _IN_SELFTEST = True
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    import contextlib
+    import io
+    import shutil
+    import tempfile
+
+    saved_research, saved_parts = RESEARCH, PARTS
+    td = Path(tempfile.mkdtemp(prefix="merge_parts_selftest_"))
+    root = Path(td)
+    parts_dir = root / "_parts"
+    parts_dir.mkdir()
+    out_path = root / "out.md"
+
+    def part(name, text):
+        p = parts_dir / name
+        p.write_text(text, encoding="utf-8", newline="\n")
+        return p
+
+    def run(book, argv_extra=None):
+        """Drive main() via sys.argv; -> (rc, stdout)."""
+        old_argv = sys.argv
+        buf = io.StringIO()
+        rc = 0
+        sys.argv = ["thorlaks_merge_parts.py", "--book", book,
+                    "--out", str(out_path), "--apply"] + (argv_extra or [])
+        try:
+            with contextlib.redirect_stdout(buf):
+                main()
+        except SystemExit as e:
+            rc = e.code if isinstance(e.code, int) else 1
+        except Exception as e:  # noqa: BLE001 - surfaced as a FAIL below
+            rc = f"EXC {type(e).__name__}: {e}"
+        finally:
+            sys.argv = old_argv
+        return rc, buf.getvalue()
+
+    def emitted():
+        return out_path.read_text(encoding="utf-8") if out_path.exists() else ""
+
+    try:
+        RESEARCH, PARTS = root, parts_dir
+
+        # ── 1. the false-positive control: disjoint chapters ───────────────
+        part("luke_p10-11.md",
+             "## Luke 1\n\n1 First verse of chapter one.\n"
+             "2 Second verse of chapter one.\n")
+        part("luke_p12-13.md",
+             "## Luke 2\n\n1 First verse of chapter two.\n"
+             "2 Second verse of chapter two.\n"
+             "3 Third verse of chapter two.\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        h1 = [l for l in txt.splitlines() if l.strip() == "## Luke 1"]
+        h2 = [l for l in txt.splitlines() if l.strip() == "## Luke 2"]
+        ok(rc == 0 and len(h1) == 1 and len(h2) == 1,
+           f"1. disjoint chapters merge clean: no exception, `## Luke 1` and "
+           f"`## Luke 2` each emitted exactly once (rc={rc}, h1={len(h1)}, "
+           f"h2={len(h2)})")
+        ok(all(x in txt for x in ("1 First verse of chapter one.",
+                                  "2 Second verse of chapter one.",
+                                  "1 First verse of chapter two.",
+                                  "3 Third verse of chapter two.")),
+           "1b. every verse of both parts is present in page order")
+
+        # ── 2. the straddling chapter — the central case ───────────────────
+        out_path.unlink(missing_ok=True)
+        part("luke_p10-11.md",
+             "## Luke 8\n\n" + "".join(f"{v} Luke 8 verse {v}.\n"
+                                       for v in range(1, 21)))
+        part("luke_p12-13.md",
+             "## Luke 8\n\n" + "".join(f"{v} Luke 8 verse {v}.\n"
+                                       for v in range(21, 57)))
+        rc, sout = run("Luke")
+        txt = emitted()
+        h8 = [l for l in txt.splitlines() if l.strip() == "## Luke 8"]
+        has1 = "1 Luke 8 verse 1." in txt
+        has56 = "56 Luke 8 verse 56." in txt
+        ok(rc == 0 and len(h8) == 1 and has1 and has56,
+           f"2. straddling chapter: ONE `## Luke 8` heading, verse 1 AND verse "
+           f"56 both present (h8={len(h8)}, v1={has1}, v56={has56})")
+
+        # ── 3. loose heading normalisation ─────────────────────────────────
+        out_path.unlink(missing_ok=True)
+        part("luke_p10-11.md",
+             "## Chapter 8 (continued) - verses 14(cont)-39\n\n"
+             "14 A verse under a loose heading.\n15 Another verse.\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        em = [l for l in txt.splitlines()
+              if l.startswith("## ") and "Luke" in l and l.strip().endswith("8")]
+        clean = bool(em) and re.match(r"^##\s+\S.*\s+\d+\s*$", em[0])
+        ok(rc == 0 and clean,
+           f"3. loose heading `## Chapter 8 (continued) - verses 14(cont)-39` is "
+           f"recognised and re-emitted as the audit form "
+           f"(emitted {em[0]!r})" if em else
+           f"3. loose heading not recognised/normalised (emitted {em!r})")
+
+        # ── 4. overlap reported, resolved once ─────────────────────────────
+        out_path.unlink(missing_ok=True)
+        part("luke_p10-11.md",
+             "## Luke 8\n\n20 Luke 8 verse 20 from p10.\n21 Tail from p10.\n")
+        part("luke_p12-13.md",
+             "## Luke 8\n\n20 Luke 8 verse 20 from p12.\n22 Verse 22.\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        ok("8 v20" in sout and txt.count("20 Luke 8 verse 20") == 1,
+           "4. an overlap on 8:20 is REPORTED and the verse appears exactly once "
+           f"(reported={'8 v20' in sout}, occurrences="
+           f"{txt.count('20 Luke 8 verse 20')})")
+
+        # ── 5. a gap is reported ───────────────────────────────────────────
+        out_path.unlink(missing_ok=True)
+        # ⚠ The tool scans gaps from verse 1 upward, so a partial chunk prints a
+        # huge MISSING list. Emit 1-34 and 36 so the ONLY gap is 35.
+        part("luke_p10-11.md",
+             "## Luke 8\n\n" + "".join(f"{v} Verse {v}.\n"
+                                       for v in list(range(1, 35)) + [36]))
+        rc, sout = run("Luke")
+        ok("MISSING [35]" in sout,
+           f"5. a gap (8:35 in neither part) is reported (MISSING [35] in "
+           f"stdout: {'MISSING [35]' in sout})")
+
+        # ── 6. non-scripture carried into the appendix ─────────────────────
+        out_path.unlink(missing_ok=True)
+        # ⚠⚠ MEASURED SHAPE (this is what the tool actually does, and it is
+        # narrower than the docstring implies). A page table / PROGRESS line /
+        # findings paragraph is routed to `prose` — and thence to the appendix —
+        # only when it sits BEFORE the first chapter heading, or after a `##`
+        # level heading that resets the chapter (parse_part: a line with no
+        # current chapter is prose). A non-scripture line that follows a VERSE
+        # line becomes a CONTINUATION of that verse and stays in the BODY.
+        # ▶ The docstring's «everything else is carried into an appendix» is
+        # true for pre-heading / post-reset material only. The evidence is still
+        # never lost either way — but it is not always in the appendix. See the
+        # report; the label is NOT changed here.
+        part("luke_p10-11.md",
+             "PROGRESS: read page 10\n\n"
+             "| col | text |\n| --- | --- |\n| a | b |\n\n"
+             "Findings: the ink is faded along the gutter.\n\n"
+             "## Open sites\n\n"
+             "unplaced ink at the foot of the page\n\n"
+             "## Luke 8\n\n1 A verse.\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        app = txt.split("# Appendix", 1)[-1]
+        ok(all(x in app for x in ("PROGRESS: read page 10", "| col | text |",
+                                  "the ink is faded along the gutter")),
+           "6. pre-heading non-scripture (a page table, a PROGRESS line and a "
+           "findings paragraph) is carried into the appendix — nothing dropped")
+        ok("unplaced ink at the foot of the page" in app,
+           "6b. material AFTER a `## <non-scripture>` heading is also carried "
+           "into the appendix (the chapter reset routes it to prose)")
+
+        # ── 6c. FINDING: non-scripture after a verse stays in the body ─────
+        out_path.unlink(missing_ok=True)
+        part("luke_p10-11.md",
+             "## Luke 8\n\n1 A verse.\n\nPROGRESS: read page 10\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        app = txt.split("# Appendix", 1)[-1]
+        body = txt.split("# Appendix", 1)[0]
+        ok("PROGRESS: read page 10" in body
+           and "PROGRESS: read page 10" not in app,
+           "6c. FINDING: non-scripture immediately AFTER a verse is kept in the "
+           "BODY as a verse continuation, NOT moved to the appendix (the "
+           "docstring's «everything else → appendix» holds only before the "
+           "first heading or after a `##` reset; label NOT changed)")
+
+        # ── 7. seam markers ────────────────────────────────────────────────
+        out_path.unlink(missing_ok=True)
+        # The earlier part marks verse 5 as breaking off; the later part owns
+        # its tail. The documented behaviour: JOIN them and DROP the marker.
+        part("luke_p10-11.md",
+             "## Luke 9\n\n5 Head of verse five "
+             "[the verse breaks off at the page foot]\n")
+        part("luke_p12-13.md",
+             "## Luke 9\n\n5 tail of verse five continues here.\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        body = txt.split("# Appendix", 1)[0]
+        joined = ("JOINED across a page break" in sout
+                  and "tail of verse five" in body
+                  and "breaks off" not in body)
+        # ⚠ Hoisted out of the f-string: an expression spanning a line break
+        # inside an f-string is PEP 701 (Python 3.12+) and a SyntaxError on
+        # this machine's 3.11.9.
+        seam_seen = "JOINED across a page break" in sout
+        ok(joined,
+           "7. an explicit seam marker JOINs the two halves into one verse and "
+           f"drops the marker from the body (seam reported={seam_seen})")
+        # ⚠ A bare `-` with NO seam marker must NOT be treated as a seam.
+        out_path.unlink(missing_ok=True)
+        part("luke_p10-11.md", "## Luke 9\n\n5 Head of verse five -\n")
+        part("luke_p12-13.md", "## Luke 9\n\n5 A different reading entirely.\n")
+        rc, sout = run("Luke")
+        ok("JOINED across a page break" not in sout,
+           "7b. a verse ending in a bare `-` with NO seam marker is NOT treated "
+           "as a seam (no JOINED block printed)")
+
+        # ── 8. nothing is written by default ───────────────────────────────
+        before = {p.name for p in root.rglob("*")}
+        out2 = root / "dryrun.md"
+        old_argv = sys.argv
+        sys.argv = ["thorlaks_merge_parts.py", "--book", "Luke",
+                    "--out", str(out2)]
+        buf = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buf):
+                main()
+        except SystemExit:
+            pass
+        sys.argv = old_argv
+        ok(not out2.exists()
+           and "DRY RUN" in buf.getvalue()
+           and not list(root.rglob("*.bak*")),
+           "8. a plain (no --apply) run writes NOTHING and leaves no .bak "
+           f"(dryrun.md exists={out2.exists()}, baks="
+           f"{[p.name for p in root.rglob('*.bak*')]})")
+
+        # ── 8b. CHARS vs BYTES — a FINDING, pinned not fixed ───────────────
+        # The tool prints `len(text)` where text is a str => CHARACTERS, but
+        # labels it "bytes". Assert the tool's number equals the CHARACTER
+        # count (and generally differs from the UTF-8 byte count when the file
+        # carries Þ/á/ø). Do NOT relabel the message.
+        out_path.unlink(missing_ok=True)
+        part("luke_p10-11.md", "## Luke 8\n\n1 Ðorláks þá á ø.\n")
+        rc, sout = run("Luke")
+        txt = emitted()
+        m = re.search(r"wrote .*\((\d+) characters\)", sout)
+        charc = len(txt)
+        bytec = len(txt.encode("utf-8"))
+        ok(bool(m) and int(m.group(1)) == charc,
+           f"8b. FINDING: the printed size is CHARACTERS ({charc}), not bytes "
+           f"({bytec}) — the message calls it «bytes» (label NOT changed). "
+           f"printed={m.group(1) if m else None}")
+
+    finally:
+        RESEARCH, PARTS = saved_research, saved_parts
+        shutil.rmtree(td, ignore_errors=True)
+
+    print("", flush=True)
+    if concat_merge():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_CONCAT_MERGE=1 — naive "
+              "concatenation in page order", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--book", required=True,
+    ap.add_argument("--book",
                     help="book name as it appears in the '## <Book> <N>' headings")
+    ap.add_argument("--selftest", action="store_true",
+                    help="control on the merge with synthetic part files; never "
+                         "reads or writes C:/Projects/Hexapla-releases/")
     ap.add_argument("--prefix", action="append",
                     help="part-file prefix; REPEATABLE. A book can straddle two "
                          "prefixes - measured 2026-09-03: 2 John's verses live in "
@@ -192,6 +480,10 @@ def main():
     ap.add_argument("--out", help="override the canonical output path")
     ap.add_argument("--apply", action="store_true", help="actually write (default is a dry run)")
     a = ap.parse_args()
+    if a.selftest:
+        sys.exit(selftest())
+    if not a.book:
+        ap.error("--book is required (unless --selftest)")
 
     prefixes = a.prefix or [a.book.lower().replace(" ", "")]
     seen, parts = set(), []
@@ -239,36 +531,53 @@ def main():
               f"'## <Book> <N>', then re-run. Do not --apply through this.")
 
     merged, prose, conflicts, joins = {}, [], [], []
-    for p in parts:
-        chs, pr = parse_part(p, a.book)
-        prose.append((p.name, pr))
-        for ch, verses in chs.items():
-            for v, lines in verses.items():
-                if v in merged.setdefault(ch, {}):
-                    old = "\n".join(merged[ch][v]).strip()
-                    new = "\n".join(lines).strip()
-                    # ⛔ A verse the print BREAKS at a page foot is not an
-                    # overlap: page N owns its head, page N+1 its tail, and
-                    # «first writer wins» DELETES the tail silently. Luke 9:40
-                    # is the first (idx 61 head + idx 62 tail). Join them, and
-                    # drop the seam marker - it is apparatus, not scripture.
-                    # Known-bad control: HEXAPLA_NO_SEAMJOIN=1 restores the
-                    # first-wins drop, and the tail disappears again.
-                    if (SEAM_RE.search(old)
-                            and os.environ.get("HEXAPLA_NO_SEAMJOIN") != "1"):
-                        head = SEAM_RE.sub("", old).strip()
-                        # ⚠ both halves carry the verse NUMBER at their head -
-                        # the tail's is a repeat, and row 46 would then read it
-                        # as scripture opening with a digit.
-                        tail = re.sub(r"^%d\s+" % v, "", new).strip()
-                        head = re.sub(r"\s{2,}", " ", head)
-                        merged[ch][v] = [(head + " " + tail).strip()]
-                        joins.append((ch, v, p.name, head, tail))
-                        continue
-                    if old != new:
-                        conflicts.append((ch, v, p.name))
-                    continue                       # first writer wins; conflict reported
-                merged[ch][v] = lines
+    # ⚠⚠ KNOWN-BAD CONTROL PATH. Under HEXAPLA_CONCAT_MERGE=1 the merge is NAIVE
+    # CONCATENATION in page order: each part's chapter blocks are appended as
+    # they appear, so a chapter straddling a page boundary emits its
+    # `## <Book> N` heading TWICE. Only reachable inside --selftest, because
+    # concat_merge() is gated on _IN_SELFTEST.
+    concat_blocks = None
+    if concat_merge():
+        concat_blocks = []
+        for p in parts:
+            chs, pr = parse_part(p, a.book)
+            prose.append((p.name, pr))
+            for ch in sorted(chs):
+                concat_blocks.append((ch, chs[ch]))
+        for ch, verses in concat_blocks:
+            merged.setdefault(ch, {})       # only so the summary counts exist
+            merged[ch].update(verses)
+    else:
+        for p in parts:
+            chs, pr = parse_part(p, a.book)
+            prose.append((p.name, pr))
+            for ch, verses in chs.items():
+                for v, lines in verses.items():
+                    if v in merged.setdefault(ch, {}):
+                        old = "\n".join(merged[ch][v]).strip()
+                        new = "\n".join(lines).strip()
+                        # ⛔ A verse the print BREAKS at a page foot is not an
+                        # overlap: page N owns its head, page N+1 its tail, and
+                        # «first writer wins» DELETES the tail silently. Luke 9:40
+                        # is the first (idx 61 head + idx 62 tail). Join them, and
+                        # drop the seam marker - it is apparatus, not scripture.
+                        # Known-bad control: HEXAPLA_NO_SEAMJOIN=1 restores the
+                        # first-wins drop, and the tail disappears again.
+                        if (SEAM_RE.search(old)
+                                and os.environ.get("HEXAPLA_NO_SEAMJOIN") != "1"):
+                            head = SEAM_RE.sub("", old).strip()
+                            # ⚠ both halves carry the verse NUMBER at their head -
+                            # the tail's is a repeat, and row 46 would then read it
+                            # as scripture opening with a digit.
+                            tail = re.sub(r"^%d\s+" % v, "", new).strip()
+                            head = re.sub(r"\s{2,}", " ", head)
+                            merged[ch][v] = [(head + " " + tail).strip()]
+                            joins.append((ch, v, p.name, head, tail))
+                            continue
+                        if old != new:
+                            conflicts.append((ch, v, p.name))
+                        continue                       # first writer wins; conflict reported
+                    merged[ch][v] = lines
 
     if joins:
         print(f"\n★ {len(joins)} verse(s) JOINED across a page break (the earlier "
@@ -308,10 +617,17 @@ def main():
             f"Merged by tools/thorlaks_merge_parts.py from {len(parts)} part files "
             f"on {datetime.now():%Y-%m-%d %H:%M}. Each part was read from page images "
             f"by a separate agent; **the PDF text layer was never consulted.**", ""]
-    for ch in sorted(merged):
+    if concat_blocks is not None:
+        # ⚠⚠ KNOWN-BAD EMIT PATH. Each part's chapter block is emitted as its own
+        # `## <Book> N` section, in page order — so a chapter spanning a page
+        # boundary appears under the SAME heading TWICE, which is the defect.
+        body_blocks = concat_blocks
+    else:
+        body_blocks = [(ch, merged[ch]) for ch in sorted(merged)]
+    for ch, verses in body_blocks:
         body.append(f"## {a.book} {ch}")
         body.append("")
-        for v in sorted(merged[ch]):
+        for v in sorted(verses):
             # ⛔ A VERSE SPLIT ACROSS A SHEET BOUNDARY IS ONE VERSE, NOT TWO.
             # Agents label the resumption with the same numeral at column 0:
             # «8 [O][?] Fyrer Truna vard Abraham hlyden…» then, after the page
@@ -320,7 +636,7 @@ def main():
             # audit count two. MEASURED 2026-09-04: Hebrews 11 reported
             # 29 verses, «duplicate [8, 12]», against a real 27.
             # Only the FIRST line of a verse keeps its numeral at column 0.
-            for k, l in enumerate(merged[ch][v]):
+            for k, l in enumerate(verses[v]):
                 body.append(l if k == 0 or not re.match(r"^\d+\s", l)
                             else "  " + l)
         body.append("")
@@ -354,7 +670,7 @@ def main():
     text = "\n".join(body) + "\n"
 
     if not a.apply:
-        print(f"\nDRY RUN — would write {out} ({len(text)} bytes). "
+        print(f"\nDRY RUN — would write {out} ({len(text)} characters). "
               f"Re-run with --apply to write.")
         return
     if out.exists():
@@ -362,7 +678,7 @@ def main():
         bak.write_text(out.read_text(encoding="utf-8"), encoding="utf-8")
         print(f"\nbacked up existing -> {bak.name}")
     out.write_text(text, encoding="utf-8", newline="\n")
-    print(f"wrote {out} ({len(text)} bytes)")
+    print(f"wrote {out} ({len(text)} characters)")
     print("▶ NOW RUN, and believe the tools rather than this script:")
     print("     python C:/Projects/Hexapla/tools/thorlaks_corpus_audit.py")
     print("     python C:/Projects/Hexapla/tools/thorlaks_variants.py")

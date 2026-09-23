@@ -17,6 +17,14 @@ about this campaign is believed without it.
 Exit code is non-zero when anything is missing or unexplained, so it can gate a
 build or a handoff note.
 
+    rc 0 = audited clean
+    rc 1 = findings (gaps / duplicates / extras), or a report that is not clean
+    rc 2 = COULD NOT RUN (⛔ a run that could not be performed never returns 0)
+
+⛔ A bad `--book` index is rc 2 with ONE honest line, not an `IndexError`
+traceback: a caller reading «zero vs non-zero» is unaffected, and the owner
+reads these mid-chain.
+
 ## ⚠⚠ THE GRID IS A REFERENCE, NOT AN AUTHORITY
 
 Þorláks audits against a KJV grid describing the same canon. This one does not.
@@ -236,12 +244,72 @@ def parse(path, names):
     return out, units, unknown
 
 
+def book_index_ok(counts, idx):
+    """True when `idx` is a book index in the grid.
+
+    ⛔ The point of this predicate: `--book 99` must reach it and be REFUSED
+    with rc 2, never reach `counts[b]` as an IndexError. Kept separate so
+    selftest() can control it without running a real audit.
+    """
+    return idx is None or (0 <= idx < len(counts))
+
+
+def selftest():
+    """Controls on the could-not-run contract. Never reads research/.
+
+    ⛔ The assertion this encodes was found on 2026-09-22: `--book 99` died with
+    `IndexError: counts[b]` instead of the documented could-not-run + rc 2.
+    """
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    try:
+        names, counts, booknames = load_kjv()
+    except Exception as exc:
+        print("FAIL - cannot load the KJV grid (%s: %s); ⛔ a fake grid is not "
+              "a pass." % (type(exc).__name__, exc), flush=True)
+        return 1
+
+    n = len(counts)
+    ok(book_index_ok(counts, 0) and book_index_ok(counts, n - 1)
+       and not book_index_ok(counts, n) and not book_index_ok(counts, 99),
+       "1. book_index_ok bounds the grid: 0 and %d are valid, %d and 99 are "
+       "refused — so `--book 99` is COULD NOT RUN (rc 2), not an IndexError"
+       % (n - 1, n))
+    ok(book_index_ok(counts, None),
+       "2. an absent --book (None) passes the guard, so a full-corpus run is "
+       "unaffected")
+
+    print("", flush=True)
+    print("%d failure(s)" % len(fails), flush=True)
+    return 1 if fails else 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--book", type=int, help="report one book index in detail")
+    ap.add_argument("--selftest", action="store_true",
+                    help="control on the could-not-run contract; never reads "
+                         "research/")
     args = ap.parse_args()
+    if args.selftest:
+        sys.exit(selftest())
 
     names, counts, booknames = load_kjv()
+
+    # ⛔ VALIDATE THE INPUT UP FRONT — a bad --book index must read as the
+    # documented could-not-run (rc 2 with ONE honest line), never as
+    # `IndexError: counts[b]`. Only the INPUT is validated: a traceback from a
+    # genuine bug inside the audit still stands.
+    if args.book is not None and not (0 <= args.book < len(counts)):
+        print("⛔ COULD NOT RUN — --book %d is not a book index in the KJV grid "
+              "(0-%d); NOTHING WAS AUDITED."
+              % (args.book, len(counts) - 1))
+        return 2
 
     # Chunk ranges overlap at their seams: a chapter can appear as a trailing
     # fragment of one chunk AND in full in the chunk that owns it. Keep the BEST

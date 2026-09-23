@@ -169,6 +169,63 @@ def verdict(tail, density):
     return "not explained by the print — needs an EAR (text cannot clear it)"
 
 
+def selftest():
+    """Control on the could-not-run contract. Never reads a real queue.
+
+    ⛔ The assertion this encodes was found on 2026-09-22: `--queue <missing>`
+    died with a FileNotFoundError traceback instead of the documented
+    could-not-run + rc 2. Both directions are covered: a missing queue must be
+    rc 2 with the honest phrase and NO traceback; a present-but-empty file must
+    NOT masquerade as that (it is a different failure, rc 1).
+    """
+    import subprocess
+    import tempfile
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    me = str(Path(__file__).resolve())
+
+    def run(*args):
+        r = subprocess.run([sys.executable, me, *args], capture_output=True,
+                           text=True, encoding="utf-8", errors="replace",
+                           timeout=120)
+        return r.returncode, (r.stdout or "") + (r.stderr or "")
+
+    td = tempfile.mkdtemp(prefix="qte_selftest_")
+    try:
+        missing = str(Path(td) / "_nope_.txt")
+        rc, out = run("--set", "ylt", "--queue", missing)
+        ok(rc == 2 and "COULD NOT RUN" in out and "Traceback" not in out,
+           f"1. a missing --queue is COULD NOT RUN: rc={rc} (want 2), honest "
+           f"phrase={'COULD NOT RUN' in out}, no-traceback="
+           f"{'Traceback' not in out}")
+
+        empty = Path(td) / "empty.txt"
+        empty.write_text("# a comment only\n", encoding="utf-8")
+        rc2, out2 = run("--set", "ylt", "--queue", str(empty))
+        ok(rc2 != 0 and "COULD NOT RUN" not in out2,
+           f"2. a present-but-EMPTY queue is a different failure: rc={rc2} "
+           f"(non-zero), and it is NOT reported as could-not-run "
+           f"(COULD NOT RUN in output={'COULD NOT RUN' in out2})")
+
+        # ⛔ the existing --validate control must still pass after the change
+        rc3, out3 = run("--validate")
+        ok(rc3 == 0 and "controls pass" in out3,
+           f"3. --validate still passes (rc={rc3}, «controls pass» present="
+           f"{'controls pass' in out3})")
+    finally:
+        import shutil
+        shutil.rmtree(td, ignore_errors=True)
+
+    print("", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
+
+
 def main():
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -177,7 +234,12 @@ def main():
     ap.add_argument("--verse", nargs=3, type=int, metavar=("BOOK", "CHAPTER", "VERSE"),
                     help="0-based book and chapter, 1-based verse")
     ap.add_argument("--validate", action="store_true")
+    ap.add_argument("--selftest", action="store_true",
+                    help="control on the could-not-run contract; never reads a "
+                         "real queue")
     a = ap.parse_args()
+    if a.selftest:
+        sys.exit(selftest())
     books = load(a.set)
 
     if a.validate:
@@ -210,12 +272,44 @@ def main():
     if a.verse:
         sites = [tuple(a.verse)]
     elif a.queue:
-        for ln in Path(a.queue).read_text(encoding="utf-8", errors="replace").splitlines():
+        # ⛔ VALIDATE THE INPUT UP FRONT: a missing --queue must read as the
+        # documented could-not-run (rc 2, one honest line), not as a
+        # FileNotFoundError traceback out of Path.read_text().
+        if not Path(a.queue).is_file():
+            print("⛔ COULD NOT RUN — --queue %s does not exist. NOTHING WAS "
+                  "SCREENED; a queue that cannot be read is not an empty "
+                  "queue." % a.queue)
+            sys.exit(2)
+        # ⚠⚠ AN UNPARSEABLE QUEUE LINE USED TO VANISH IN SILENCE. `if m:` with
+        # no else meant a 41-line queue could report «10 of 40» with nobody told
+        # a line had been dropped — the denominator shrinking without saying so,
+        # which this project treats as the screen being unable to speak for that
+        # verse. Measured 2026-09-12: a queue built by grepping a preflight
+        # report picked up the report's own SUMMARY line, and the run looked
+        # complete. The sibling tool `qa_asr_clips.py` already refuses here;
+        # these two now agree.
+        # ▶ Comments (#…) and blank lines are legitimate and are skipped; a line
+        #   that is neither is a FAILURE, never a silent skip.
+        bad = []
+        for n, raw in enumerate(
+                Path(a.queue).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            ln = raw.split("#")[0].strip()
+            if not ln:
+                continue
             m = re.match(r"^\s*(\d+)\s+(\d+)\s+v?([\d, ]+)\s*$", ln)
-            if m:
-                for v in m.group(3).split(","):
-                    if v.strip():
-                        sites.append((int(m.group(1)), int(m.group(2)), int(v)))
+            if not m:
+                bad.append(f"  line {n}: {raw.strip()!r}")
+                continue
+            for v in m.group(3).split(","):
+                if v.strip():
+                    sites.append((int(m.group(1)), int(m.group(2)), int(v)))
+        if bad:
+            sys.exit(f"⛔ {len(bad)} queue line(s) NOT understood — "
+                     "refusing, because a dropped line silently shrinks the\n"
+                     "  denominator and the run would look complete:\n"
+                     + "\n".join(bad[:20])
+                     + "\n  expected 'book chapter vN' (e.g. '2 12 v45'); "
+                       "'#' starts a comment.")
     else:
         sys.exit("give --queue, --verse or --validate")
     if not sites:

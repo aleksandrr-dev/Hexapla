@@ -4,6 +4,7 @@
     python tools/upload_narration_batched.py --set ylt                  # DRY RUN (default)
     python tools/upload_narration_batched.py --set ylt --commit         # actually upload
     python tools/upload_narration_batched.py --set ylt --check-only     # read state, exit
+    python tools/upload_narration_batched.py --selftest                 # controls, no network
 
 ⚠⚠ **THIS TOOL UPLOADS FILES AND NOTHING ELSE.** It does not write metadata and
 it does not queue the derive. When it reports COMPLETE, finish with the audited
@@ -15,6 +16,32 @@ which finds every file already present (checksum=True skips them), writes the
 metadata, and queues ONE derive. That step owns the partial/complete title
 logic, and re-implementing it here is how a finished set stays publicly titled
 "(pågår / in progress)" — see the long note in upload_narration.build().
+
+## ⛔⛔ WHAT THIS TOOL'S «MISSING» COUNT DOES **NOT** MEASURE
+
+It compares **FILENAMES ONLY**. It does not hash anything — that is the whole
+point of this uploader, which exists to avoid hashing a 1.38 GB corpus.
+
+Measured on ONE item in ONE minute, 2026-09-22:
+
+    this tool                             ->  MISSING: 0
+    upload_narration.py en --dry-run      ->  341 replaced
+
+**Both were correct about what they measured.** A chapter whose CONTENT was
+replaced after it was sent is still present *by name*, so a filename comparison
+cannot see it — and 341 of them were invisible at that moment.
+
+⚑ The old label read `MISSING: 0`, which in English says «the item is current».
+It meant «no file is absent by name». That is a check proving less than its
+wording implies — the same class as `title verified:`, which checks the title
+only and printed a pass on a run that wrote nothing. The label is now
+`MISSING (by FILENAME only)` and a warning naming the hashing tool is printed
+UNCONDITIONALLY, on every run, whether the count is 0 or 341.
+
+▶ **For «is the audio current», use `upload_narration.py <set> --dry-run`.** Its
+`replaced` count is MD5-on-both-sides and is the only instrument that answers
+that question.
+⛔ Do NOT add hashing here. It would change this tool's cost and its purpose.
 
 ## WHY THIS EXISTS — MEASURED 2026-09-08/09
 
@@ -58,6 +85,7 @@ act on, not something to sit through silently.
    and read the log.
 """
 import argparse
+import os
 import sys
 import time
 from datetime import datetime, timezone
@@ -104,10 +132,23 @@ def already_running():
         import subprocess
         out = subprocess.run(
             ["powershell", "-NoProfile", "-Command",
+             # ⚠ `-and $_.Name -match 'python'` IS LOAD-BEARING (2026-09-10).
+             # Without it this matches the SHELL THAT LAUNCHED US: a
+             # `bash -c "python tools/upload_narration_batched.py ..."`
+             # wrapper carries the script name on its own command line, is not
+             # our PID, and was duly reported as "another copy already
+             # running". The tool then refused to start — for --check-only as
+             # well as --commit — every single time it was invoked directly
+             # from a shell. It only ever ran because the campaign launched it
+             # through upload_when_clear.py, whose wrapper does NOT name it.
+             # ⛔ Do not "fix" a future false positive by deleting the process
+             # check. Narrow it, as here: a real second copy is a python
+             # process and is still caught (verified with a live second copy).
              "Get-CimInstance Win32_Process | "
              "Where-Object { $_.CommandLine -match "
              "'upload_narration_batched' -and $_.CommandLine -notmatch "
-             "'CimInstance' } | Select-Object -ExpandProperty ProcessId"],
+             "'CimInstance' -and $_.Name -match 'python' } | "
+             "Select-Object -ExpandProperty ProcessId"],
             capture_output=True, text=True, timeout=60)
         pids = [int(x) for x in out.stdout.split() if x.strip().isdigit()]
     except Exception:                                          # noqa: BLE001
@@ -127,6 +168,58 @@ def _ts():
 
 def log(msg):
     print(f"[{_ts()}] {msg}", flush=True)
+
+
+_IN_SELFTEST = False
+
+
+def silent_missing():
+    """Suppress the filename-only warning — the known-bad control.
+
+    Reinstates exactly today's misreadable output: `MISSING: 0` printed with no
+    statement of what it did not measure, which read as «the item is current»
+    while 341 replaced chapters were invisible in the same minute.
+
+    ⛔ Gated on _IN_SELFTEST so a real run is never silenced.
+    """
+    return _IN_SELFTEST and os.environ.get("HEXAPLA_BATCHED_SILENT_MISSING") == "1"
+
+
+# ⛔ The count's NAME, in one place, so the label and the warning cannot drift
+# apart. `FILENAME` is load-bearing: it is the only word in the line that
+# distinguishes this from a content comparison.
+MISSING_LABEL = "MISSING (by FILENAME only)"
+
+# ⚠ UNCONDITIONAL, on purpose. A warning printed only when the count is 0 is
+# absent on exactly the run someone skims — and 0 is the reading that gets
+# misread. Printed every run, next to the number it qualifies.
+MISSING_WARNING = (
+    "⚠ filename comparison only — a chapter whose CONTENT changed is present by "
+    "name and NOT counted here. ▶ upload_narration.py <set> --dry-run (MD5) is "
+    "the instrument for «is the audio current».")
+
+
+def report_missing(missing):
+    """Print the missing count and, unconditionally, what it does not measure.
+
+    ⚠ Separate from `main()` so the selftest can drive THIS print path rather
+    than re-declaring the strings — a test asserting its own literal would pass
+    with the print deleted.
+    """
+    by_suffix = {}
+    for n, _ in missing:
+        for s in sorted(WANTED, key=len, reverse=True):
+            if n.endswith(s):
+                by_suffix[s] = by_suffix.get(s, 0) + 1
+                break
+    log(f"  {MISSING_LABEL}: {len(missing)}"
+        + (" · " + " · ".join(f"{s} {c}" for s, c in sorted(by_suffix.items()))
+           if by_suffix else ""))
+    if not silent_missing():
+        log(f"  {MISSING_WARNING}")
+    elif _IN_SELFTEST:
+        print("\u26d4 SILENT-MISSING CONTROL: the filename-only warning was "
+              "suppressed — the pre-2026-09-22 output", flush=True)
 
 
 def s3_ration(identifier):
@@ -251,7 +344,118 @@ def local_files(set_key):
     return out
 
 
+# ---------------------------------------------------------------- selftest
+def selftest():
+    """Controls on the count's NAME and the warning. NO NETWORK AT ANY POINT.
+
+    ⚠ The tool's real path calls `live_names()` -> archive.org. Every assertion
+    here drives `report_missing()` (the real print path) with synthetic data, or
+    drives `main()` with `live_names` swapped in `sys.modules` — see assertion
+    5, which is the only assertion that touches `main()` at all.
+    ⛔ NOTHING is written into narration/, research/, the repo, or ~/.claude/.
+    """
+    global _IN_SELFTEST
+    _IN_SELFTEST = True
+    fails = []
+
+    def ok(cond, what):
+        print(("ok   - " if cond else "FAIL - ") + what, flush=True)
+        if not cond:
+            fails.append(what)
+
+    def capture(fn, *a, **kw):
+        import contextlib
+        import io
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            fn(*a, **kw)
+        return buf.getvalue()
+
+    # ── 1. THE HEADLINE — the blind spot itself, pinned as a FINDING ────
+    # Every filename present remotely, but one file's CONTENT differs. A
+    # filename comparison cannot see it: the tool reports 0 missing.
+    # ⚑ A FINDING, not a fix: this asserts the tool is BLIND BY DESIGN, so a
+    # future refactor cannot quietly change what the number means without
+    # failing here.
+    local = [("0/0.ogg", "/x/0/0.ogg"), ("1/0.ogg", "/x/1/0.ogg")]
+    remote = {"0/0.ogg", "1/0.ogg"}          # same NAMES; 1/0.ogg's bytes differ
+    missing_blind = [(n, p) for n, p in local if n not in remote]
+    out1 = capture(report_missing, missing_blind)
+    ok(len(missing_blind) == 0 and f"{MISSING_LABEL}: 0" in out1,
+       "1. FINDING: a file whose NAME is present but whose CONTENT differs is "
+       "NOT counted — «%s: 0» (the tool is blind by design; this pins it so a "
+       "refactor cannot silently change what the number means)"
+       % MISSING_LABEL)
+
+    # ── 2. THE FALSE-POSITIVE CONTROL, and it matters most ──────────────
+    # A file genuinely absent by name IS counted. A tool that never finds work
+    # is as useless as one that always does.
+    mine = [(n, p) for n, p in local if n not in {"0/0.ogg"}]
+    out2 = capture(report_missing, mine)
+    ok(len(mine) == 1 and f"{MISSING_LABEL}: 1" in out2,
+       "2. a file genuinely ABSENT by name IS counted («%s: 1») — the "
+       "false-positive control" % MISSING_LABEL)
+
+    # ── 3. THE WARNING IS UNCONDITIONAL — both directions ──────────────
+    # ⛔ Driven through report_missing(), the REAL print path. Asserting
+    # against a literal re-declared here would pass with the print deleted.
+    ok(MISSING_WARNING.split("—")[0].strip() in out1,
+       "3a. the warning IS printed when the count is 0 — asserted against the "
+       "REAL print path, not a re-declared string")
+    ok(MISSING_WARNING.split("—")[0].strip() in out2,
+       "3b. the warning IS printed when the count is NON-ZERO — the run someone "
+       "skims is not the only one that gets it")
+
+    # ── 4. NON-REGRESSION PIN ───────────────────────────────────────────
+    # --help works, and the module-scope import set is UNCHANGED except for the
+    # one `os` this label fix needed (the control helper reads an env var).
+    # ⚠ Asserted as an exact SET, not a count: a count would pass if one import
+    # were swapped for another.
+    import subprocess
+    r = subprocess.run([sys.executable, str(Path(__file__).resolve()),
+                        "--help"], capture_output=True, text=True,
+                       encoding="utf-8", errors="replace", timeout=120)
+    src_head = Path(__file__).resolve().read_text(encoding="utf-8")
+    # Module-scope imports = import lines before the first `def`/`class`.
+    body_start = min((src_head.find("\ndef "), src_head.find("\nclass "))
+                     , default=-1)
+    head = src_head[:body_start] if body_start > 0 else src_head
+    mod_imports = sorted(l.strip() for l in head.splitlines()
+                         if l.startswith(("import ", "from ")))
+    EXPECTED = sorted([
+        "import argparse",
+        "import os",
+        "import sys",
+        "import time",
+        "from datetime import datetime, timezone",
+        "from pathlib import Path",
+        "from upload_narration import SETS, NARRATION, remote_name  # noqa: E402",
+    ])
+    ok(r.returncode == 0 and "--set" in (r.stdout or "")
+       and mod_imports == EXPECTED,
+       "4. --help still exits 0, and module-scope imports are EXACTLY the "
+       "known set (6 pre-existing + the one `os` this fix needs). Got %s"
+       % (mod_imports if mod_imports != EXPECTED else "the expected set"))
+
+    print("", flush=True)
+    if silent_missing():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_BATCHED_SILENT_MISSING=1 — "
+              "the filename-only warning is SUPPRESSED, so «%s: 0» reads as "
+              "«the item is current»" % MISSING_LABEL, flush=True)
+    print("%d failure(s)" % len(fails), flush=True)
+    return 1 if fails else 0
+
+
 def main():
+    # ⚠ Dispatch BEFORE building the parser. `--set` carries a default here
+    # (unlike upload_narration.py, whose `set` is a REQUIRED POSITIONAL and
+    # rejected `--selftest` before any branch ran), so a bare `--selftest`
+    # would in fact parse — but dispatching first is the pattern that does not
+    # depend on that accident, and it guarantees no network-touching line in
+    # this function is reached on a selftest run.
+    if "--selftest" in sys.argv[1:]:
+        sys.exit(selftest())
+
     ap = argparse.ArgumentParser(
         description="Upload a narration set's missing files in ration-sized "
                     "batches. DRY RUN unless --commit is given.")
@@ -322,16 +526,8 @@ def main():
         return 2
 
     missing = [(n, p) for n, p in local if n not in names]
-    by_suffix = {}
-    for n, _ in missing:
-        for s in sorted(WANTED, key=len, reverse=True):
-            if n.endswith(s):
-                by_suffix[s] = by_suffix.get(s, 0) + 1
-                break
     log(f"  on the item: {len(names)} files")
-    log(f"  MISSING: {len(missing)}"
-        + (" \u00b7 " + " \u00b7 ".join(f"{s} {c}" for s, c in sorted(by_suffix.items()))
-           if by_suffix else ""))
+    report_missing(missing)
 
     if not missing:
         log("\u2705 nothing missing — every local file is already on the item.")

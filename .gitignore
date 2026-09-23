@@ -44,3 +44,24 @@ CLAUDE.md.doctor-backup
 # Claude Code local state
 .claude/settings.local.json
 .claude/skills/
+
+# Web app (WEB_APP_PLAN.md): the data tree is built, never committed.
+web/node_modules/
+web/dist/
+site/
+
+# Internal docs: local only, never published (owner, 2026-09-23). The repo is
+# public and branch-mode Pages rendered every .md here as a live web page.
+# PRIVACY.md and README.md stay tracked on purpose.
+CLAUDE.md
+CLAUDE-ARCHIVE.md
+IOS_PORT_PLAN.md
+WEB_APP_PLAN.md
+docs/
+store-assets/STORE_LISTING.md
+tools/*.md
+
+# WorkBuddy scratch and reports
+_wb_reports/
+_wb_scratch/
+then

@@ -37,15 +37,48 @@ they separate. Three predecessors looked reasonable and failed on real data.
 import argparse
 import difflib
 import json
+import os
 import random
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
-import numpy as np
+# ⚠ numpy is imported LAZILY (in the two places that need it: --validate's
+# summary arithmetic and score_set's callers) so that --selftest runs with
+# stdlib only. The name is still bound at module scope for anything that did
+# `from qa_selfrepeat import np`; see _np().
+try:  # pragma: no cover - environment probe
+    import numpy as np
+except ImportError:  # selftest must run without the kokoro venv
+    np = None
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+# ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL. True only while selftest() is running,
+# so it can never change a real run's scoring. See exact_tokens().
+_IN_SELFTEST = False
+
+
+def _np():
+    """numpy, imported on demand; raises a plain error if the venv is absent."""
+    global np
+    if np is None:
+        import numpy as np  # noqa: F811 - intentional late bind
+    return np
+
+
+def exact_tokens():
+    """Known-bad control: compare tokens by EXACT equality only.
+
+    Reinstates the pre-fuzz detector: no difflib ratio, no STRONG_TOKEN, no
+    PAIR_JOINED_FLOOR. That detector misses the ear-confirmed
+    «humbleth her / AND HUMBLED HER» class outright, which is the whole reason
+    FUZZ and the per-token fallback exist.
+
+    ⛔ Gated on _IN_SELFTEST so it can never alter a run without --selftest.
+    """
+    return _IN_SELFTEST and os.environ.get("HEXAPLA_EXACT_TOKENS") == "1"
 HERE = Path(__file__).parent
 NAR = Path("C:/Projects/Hexapla-releases/narration")
 SR = 16000
@@ -134,6 +167,15 @@ def tail_repeat(tokens):
         if len(tokens) < 2 * k:
             break
         a, b = tokens[-k:], tokens[-2 * k:-k]
+        # ⚠⚠ KNOWN-BAD CONTROL (selftest only). HEXAPLA_EXACT_TOKENS=1 makes the
+        # comparison exact equality — the detector as it stood BEFORE the fuzz
+        # and the per-token fallback existed. Under it the ear-confirmed
+        # «humbleth her / AND HUMBLED HER» span scores 0 and the selftest must
+        # FAIL. It is the control the brief requires to prove the fuzzy path is
+        # the thing doing the work.
+        if exact_tokens():
+            best = k if a == b else best
+            continue
         # ⚠⚠ COMPARE CHARACTERS, NOT TOKEN LISTS. The TTS often clips the
         # last word of the repeat, so the transcript reads
         # «its sockets ... its socket» or «kenaz ... kena». A token-list
@@ -221,6 +263,126 @@ def iter_verses(lang, every):
                     yield int(bd.name), ch, v
 
 
+def selftest():
+    """Zero-dependency control on tail_repeat(). Token lists only.
+
+    ⚠ This does NOT validate the detector against audio — that is what
+    --validate is for, and it needs the kokoro venv, whisper, numpy and the
+    narration corpus. This checks the SCORING FUNCTION against the cases the
+    docstring names, and prints the measured score of each so the record shows
+    the margin, not just a boolean.
+
+    ⛔ The constants are NOT tuned here. MAX_K, FUZZ, STRONG_TOKEN,
+    MIN_STRONG_LEN and PAIR_JOINED_FLOOR are read as-is; a case that does not
+    behave as written is a FINDING, not a threshold to move.
+    """
+    global _IN_SELFTEST
+    _IN_SELFTEST = True
+    fails = []
+
+    def check(ok, what):
+        print(("ok   - " if ok else "FAIL - ") + what, flush=True)
+        if not ok:
+            fails.append(what)
+
+    def toks(s):
+        return [t for t in "".join(c if c.isalnum() or c.isspace() else " "
+                                   for c in s.lower()).split() if t]
+
+    # ── measured table: every case, with its actual score ────────────────
+    # The docstring's true positives are transcripts of verses the owner
+    # confirmed by ear.
+    cases = [
+        # (label, expected-class, text)
+        ("1 exact 2-token repeat", "fire",
+         "he shall be a servant to him to him"),
+        ("2 exact 1-token repeat", "fire",
+         "and he saw the face of jehovah jehovah"),
+        ("3 fuzzy humbled", "fire",
+         "and she and humbleth her and humbled her"),
+        ("4 ordinary tail", "quiet",
+         "and the lord spake unto moses in the wilderness of sinai"),
+        ("5a holy holy holy", "?",
+         "holy holy holy is the lord of hosts"),
+        ("5b verily verily", "?",
+         "verily verily i say unto you"),
+        ("5c for ever and ever", "?",
+         "and they shall reign for ever and ever amen"),
+    ]
+    scored = []
+    print("measured tail_repeat() scores:", flush=True)
+    for label, cls, text in cases:
+        k = tail_repeat(toks(text))
+        scored.append((label, cls, k, text))
+        print(f"  k={k}   [{cls:5}] {label}   «…{text[-38:]}»", flush=True)
+    print("", flush=True)
+
+    s = {label: k for label, _cls, k, _t in scored}
+
+    # 1-3: the docstring's true positives.
+    check(s["1 exact 2-token repeat"] >= 1,
+          "1. exact 2-token repeat (servant to him TO HIM) scores >= 1 "
+          f"(measured k={s['1 exact 2-token repeat']})")
+    check(s["2 exact 1-token repeat"] >= 1,
+          "2. exact 1-token repeat (face of jehovah JEHOVAH) scores >= 1 "
+          f"(measured k={s['2 exact 1-token repeat']})")
+    # ⚠ THE ASSERTION THE KNOWN-BAD CONTROL MUST BREAK.
+    check(s["3 fuzzy humbled"] >= 1,
+          "3. FUZZY repeat (humbleth her / AND HUMBLED HER) scores >= 1 — "
+          "humbleth != humbled, so this is what FUZZ/STRONG_TOKEN buy "
+          f"(measured k={s['3 fuzzy humbled']})")
+
+    # 4: the negative control.
+    check(s["4 ordinary tail"] == 0,
+          "4. ordinary tail with no repetition scores 0 "
+          f"(measured k={s['4 ordinary tail']})")
+
+    # 5: scripture's own legitimate repetition. ⚠ This is RECORDED, not
+    # asserted-pass. ⛔ The brief forbids tuning a threshold to make it go away,
+    # and a false positive here is a MEASURED property of the detector, not a
+    # bug in the test. So the assertion is that the case is MEASURED AND
+    # PRINTED (the table above), and the count of flagged ones is on the record.
+    fp = [lab for lab in ("5a holy holy holy", "5b verily verily",
+                          "5c for ever and ever") if s[lab] >= 1]
+    print(f"⚠ MEASURED FALSE-POSITIVE RATE on scripture's own repetition: "
+          f"{len(fp)}/3 flagged ({', '.join(fp) if fp else 'none'})", flush=True)
+    if fp:
+        print("   ⛔ NOT a threshold to move. The flagged case is a REAL repeat "
+              "in the printed text (`ever` `and` `ever`) whose trailing word "
+              "(`amen`) pairs against `and` and clears PAIR_JOINED_FLOOR. It "
+              "belongs to the already-known TEXT-REPEAT class; the cost is a "
+              "few seconds of listening, against shipping a defect.", flush=True)
+    check(True,
+          "5. scripture's own repetition measured and reported "
+          "(holy=%d verily=%d forever=%d; flagged %d/3 — recorded, not tuned)"
+          % (s["5a holy holy holy"], s["5b verily verily"],
+             s["5c for ever and ever"], len(fp)))
+
+    # 6: the slicing edge case — fewer than 2*MAX_K tokens.
+    short = toks("and god said let there be light")
+    check(len(short) < 2 * MAX_K and tail_repeat(short) == 0,
+          f"6. short tail (n={len(short)} < 2*MAX_K={2 * MAX_K}) scores 0, "
+          "no exception")
+
+    # 7: empty and single-token.
+    check(tail_repeat([]) == 0 and tail_repeat(["amen"]) == 0,
+          "7. empty list and single-token list score 0, no exception")
+
+    # 8: a repeat longer than MAX_K is still detected, at MAX_K.
+    long_rep = toks("alpha bravo charlie delta echo foxtrot "
+                    "alpha bravo charlie delta echo foxtrot")
+    check(tail_repeat(long_rep) == MAX_K,
+          f"8. a repeat longer than MAX_K is detected at MAX_K={MAX_K} "
+          f"(measured k={tail_repeat(long_rep)})")
+
+    print("", flush=True)
+    if exact_tokens():
+        print("⚠ KNOWN-BAD CONTROL ACTIVE: HEXAPLA_EXACT_TOKENS=1 — "
+              "exact-token comparison only", flush=True)
+    print(f"{len(fails)} failure(s)", flush=True)
+    return 1 if fails else 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", default="ylt")
@@ -231,8 +393,13 @@ def main():
     ap.add_argument("--books")
     ap.add_argument("--model")
     ap.add_argument("--validate", action="store_true")
+    ap.add_argument("--selftest", action="store_true",
+                    help="zero-dependency control on tail_repeat(); no audio, "
+                         "no ASR, no venv, no numpy")
     ap.add_argument("--out")
     a = ap.parse_args()
+    if a.selftest:
+        return selftest()
     asr_lang = ASR_LANG.get(a.lang)
     if not asr_lang:
         sys.exit(f"no ASR language for {a.lang}")
@@ -264,8 +431,9 @@ def main():
                 if t[0] in (0, 1) and t not in EAR_CONFIRMED_YLT]
         print("\n40 random verses from the same books:", flush=True)
         neg = score_set(model, "ylt", random.sample(pool, 40), "en")
-        pk = np.array([r[0] for r in pos])
-        nk = np.array([r[0] for r in neg])
+        npx = _np()
+        pk = npx.array([r[0] for r in pos])
+        nk = npx.array([r[0] for r in neg])
         print(f"\n  CONFIRMED (n={len(pk)}): k>=1 on {(pk >= 1).sum()}/{len(pk)}"
               f"   mean k {pk.mean():.2f}")
         print(f"  RANDOM    (n={len(nk)}): k>=1 on {(nk >= 1).sum()}/{len(nk)}"

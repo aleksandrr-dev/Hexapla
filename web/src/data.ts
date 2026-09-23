@@ -1,0 +1,72 @@
+// Data access for the built `data/` tree. `fetch` + parse, nothing else:
+// no IndexedDB, no service worker, no offline logic — those are P4
+// (WEB_APP_PLAN.md § 3) and do not belong in the scaffold.
+//
+// All URLs are relative to `import.meta.env.BASE_URL`, which Vite fills in
+// from `base` in vite.config.ts ("/Hexapla/app/"). Hard-coding a path here
+// instead would work under `npm run dev` and 404 on Pages.
+
+import type { Book, BooksIndex, Manifest } from "./types";
+
+/** A failed fetch or an unparseable payload. Carries the HTTP status so the
+ *  caller can tell a 404 (no such translation) from a 500 (broken deploy). */
+export class DataError extends Error {
+  readonly url: string;
+  readonly status: number;
+
+  constructor(url: string, status: number, message: string) {
+    super(message);
+    this.name = "DataError";
+    this.url = url;
+    this.status = status;
+  }
+}
+
+// Keyed by absolute URL, so two translations with a same-named book file do
+// not collide. Values are promises, not resolved data: two components asking
+// for the manifest at first paint share one request, not two.
+const cache = new Map<string, Promise<unknown>>();
+
+function url(path: string): string {
+  const base = import.meta.env.BASE_URL;
+  return (base.endsWith("/") ? base : base + "/") + path;
+}
+
+async function fetchJson<T>(path: string): Promise<T> {
+  const href = url(path);
+  const hit = cache.get(href);
+  if (hit !== undefined) return hit as Promise<T>;
+  const pending = (async (): Promise<T> => {
+    const res = await fetch(href);
+    if (!res.ok) {
+      throw new DataError(href, res.status, "fetch " + href + " failed: HTTP " + String(res.status));
+    }
+    return (await res.json()) as T;
+  })();
+  cache.set(href, pending);
+  // A failed load must not be cached as a permanent failure — the reader may
+  // be offline for a second and come back.
+  pending.catch(() => cache.delete(href));
+  return pending;
+}
+
+/** `data/manifest.json` — the translation list and the licence credit text. */
+export function loadManifest(): Promise<Manifest> {
+  return fetchJson<Manifest>("data/manifest.json");
+}
+
+/** `data/<id>/books.json` — book names and per-chapter verse counts. */
+export function loadBooksIndex(translation: string): Promise<BooksIndex> {
+  return fetchJson<BooksIndex>("data/" + translation + "/books.json");
+}
+
+/** `data/<id>/<bookIndex>.json` — one book. `bookIndex` is 0-based. */
+export function loadBook(translation: string, bookIndex: number): Promise<Book> {
+  return fetchJson<Book>("data/" + translation + "/" + String(bookIndex) + ".json");
+}
+
+/** Drop every cached response. Exposed for tests and for a future "retry"
+ *  affordance; nothing in the scaffold calls it. */
+export function clearCache(): void {
+  cache.clear();
+}

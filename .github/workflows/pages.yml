@@ -1,0 +1,124 @@
+# Hexapla — the GitHub Pages deploy for the landing page and the web reader.
+# See WEB_APP_PLAN.md § 0 and § 3 P0.
+#
+# ⛔ workflow_dispatch ONLY, deliberately. Until the owner flips the repo's
+# Pages source from "deploy from a branch" to "GitHub Actions"
+# (Settings → Pages), this file must do NOTHING on its own: a push-triggered
+# deploy here would publish an Actions-built site while branch mode is still
+# the source, and P0's gate — "the landing page still serves byte-identical
+# HTML afterwards" — has not been run. The flip is the owner's, not a
+# workflow's.
+#
+# WHY JEKYLL IS IN HERE AT ALL. The live privacy policy is Jekyll OUTPUT, not
+# a file. Branch-mode Pages runs Jekyll over the repo root, so the committed
+# PRIVACY.md is published as PRIVACY.html (verified 2026-09-10: the live page
+# carries <meta name="generator" content="Jekyll v3.10.0">). The landing page
+# links it — index.html:50 `href="PRIVACY.html"` — and so do the store
+# listings and the app itself. actions/deploy-pages does NOT run Jekyll. A
+# workflow that simply uploaded the repo would 404 that URL. So the build
+# renders the site with actions/jekyll-build-pages first, and then fails
+# loudly if _site/PRIVACY.html is not there afterwards.
+#
+# data/ is BUILD ARTIFACT and is never written back to the repository:
+# WEB_APP_PLAN.md § 4, the split tree is ~200 MB. Nothing below runs a git
+# write command, and tools/check_web_workflow.py enforces that.
+
+name: pages
+
+on:
+  workflow_dispatch:
+
+# Least privilege, and nothing beyond it: no token is read anywhere below, the
+# Pages deployment mints its own via id-token.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages deployment at a time. cancel-in-progress is false because a
+# half-cancelled deploy leaves the environment's URL pointing at nothing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Renders the WHOLE repo root through the same Jekyll that branch mode
+      # runs today, into _site: PRIVACY.md -> PRIVACY.html, index.html copied,
+      # README.md -> README.html, docs/*.md -> docs/*.html, and so on. This
+      # step is the reason the privacy-policy URL keeps working after the flip.
+      - name: Build the site with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
+      # A check that cannot run did not pass. `test -f` fails the step, and so
+      # the job, if the privacy policy is not in the published tree — the
+      # exact failure P0 names. Do not turn this into an assumption.
+      - name: Assert the privacy policy was rendered
+        run: test -f _site/PRIVACY.html
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # --out MUST live under runner.temp: tools/build_web_data.py refuses an
+      # --out that resolves inside the checkout, by design (the tree is
+      # ~200 MB and must never be committed).
+      - name: Build the reader data and the aux assets
+        run: |
+          python tools/build_web_data.py --out "${{ runner.temp }}/web-data"
+          python tools/build_web_data.py --aux --out "${{ runner.temp }}/web-data"
+
+      - name: Overlay the data into the site
+        run: |
+          mkdir -p _site/data
+          cp -R "${{ runner.temp }}/web-data/data/." _site/data/
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # `npm ci` is deterministic and fails on a lockfile/dependency drift.
+      # ⚠ web/package-lock.json is NOT committed yet (the scaffold brief never
+      # ran an install; there is no network here to generate one). `npm ci`
+      # fails without it. The planner generates the lockfile on a networked
+      # machine, and that is a precondition of this workflow, not a bug in it.
+      - name: Build the web app
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+
+      # vite.config.ts sets base "/Hexapla/app/", so web/dist is the whole
+      # app and it belongs at <site>/app/.
+      - name: Overlay the web app into the site
+        run: |
+          mkdir -p _site/app
+          cp -R web/dist/. _site/app/
+
+      - name: Upload the site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

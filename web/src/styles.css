@@ -186,8 +186,9 @@ a:hover { color: var(--lea); }
 @media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
 .msg { padding: 40px 0; font-size: 17px; }
 
-.endnav { display: flex; justify-content: space-between; gap: 12px; padding: 36px 0 12px; }
-.endnav .btn:only-child { margin-inline-start: auto; }
+.endnav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 36px 0 12px; }
+/* Next stays at the right edge alone, and when a narrow screen wraps it under Previous. */
+.endnav .btn:last-child { margin-inline-start: auto; }
 /* ---- settings (the Android app's sections) ------------------------------- */
 .sec { margin: 22px 0 6px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ox); }
 .sec:first-child { margin-top: 4px; }

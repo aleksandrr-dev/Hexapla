@@ -213,6 +213,7 @@ a:hover { color: var(--lea); }
 .foot { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--ol); font-size: 12.5px; line-height: 1.55; color: var(--mu); }
 .foot h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--ink); }
 .foot p { margin: 6px 0; white-space: pre-line; }
+.foot details.src summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink); min-height: 44px; display: flex; align-items: center; }
 
 /* ---- verse actions ---------------------------------------------------------- */
 .actions {

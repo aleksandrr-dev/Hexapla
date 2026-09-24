@@ -898,8 +898,12 @@ export function App() {
             2026-09-24: a footnote here, not in the Aa sheet). */}
         {manifest !== null && (
           <footer class="foot">
-            <h3>Text sources</h3>
-            <p>{manifest.credits}</p>
+            {/* Collapsed to its title; the credit opens on tap (owner,
+                2026-09-24: the full text on show was too messy). */}
+            <details class="src">
+              <summary>Text sources</summary>
+              <p>{manifest.credits}</p>
+            </details>
             <p>
               <a href="../">Hexapla</a> is free and collects no data. <a href="../PRIVACY.html">Privacy</a>
             </p>

@@ -9,6 +9,15 @@
 <!-- The reader has its own dark theme; Dark Reader repainting it hid the
      Light theme and the narration highlight (owner's phone, 2026-09-24). -->
 <meta name="darkreader-lock">
+<!-- Installable: Android/desktop read the manifest; iOS reads only these
+     apple-* tags and never offers an install prompt of its own. -->
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hexapla">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Hexapla — read</title>
 </head>
 <body>

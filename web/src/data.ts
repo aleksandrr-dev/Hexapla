@@ -7,6 +7,7 @@
 // instead would work under `npm run dev` and 404 on Pages.
 
 import type { Book, BooksIndex, Manifest } from "./types";
+import type { VerseMapData } from "./versemap";
 
 /** A failed fetch or an unparseable payload. Carries the HTTP status so the
  *  caller can tell a 404 (no such translation) from a 500 (broken deploy). */
@@ -27,9 +28,14 @@ export class DataError extends Error {
 // for the manifest at first paint share one request, not two.
 const cache = new Map<string, Promise<unknown>>();
 
+// The deploy puts the app at <site>/app/ and the data at <site>/data/ — a
+// SIBLING of the app, not inside it (.github/workflows/pages.yml). So every
+// "data/..." path resolves one level above BASE_URL. The scaffold resolved it
+// inside, and /Hexapla/app/data/manifest.json was a live 404 on 2026-09-24.
 function url(path: string): string {
   const base = import.meta.env.BASE_URL;
-  return (base.endsWith("/") ? base : base + "/") + path;
+  const app = base.endsWith("/") ? base : base + "/";
+  return app.replace(/[^/]+\/$/, "") + path;
 }
 
 async function fetchJson<T>(path: string): Promise<T> {
@@ -63,6 +69,11 @@ export function loadBooksIndex(translation: string): Promise<BooksIndex> {
 /** `data/<id>/<bookIndex>.json` — one book. `bookIndex` is 0-based. */
 export function loadBook(translation: string, bookIndex: number): Promise<Book> {
   return fetchJson<Book>("data/" + translation + "/" + String(bookIndex) + ".json");
+}
+
+/** `data/versemap.json` — the versification map (versemap.ts). */
+export function loadVersemap(): Promise<VerseMapData> {
+  return fetchJson<VerseMapData>("data/versemap.json");
 }
 
 /** Drop every cached response. Exposed for tests and for a future "retry"

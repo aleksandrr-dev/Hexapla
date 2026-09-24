@@ -9,12 +9,13 @@
     "jsxImportSource": "preact",
     "types": ["vite/client"],
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "vite.config.ts"],
-  "exclude": ["src/route.test.ts"]
+  "include": ["src"],
+  "exclude": ["src/route.test.ts", "src/parallel.test.ts"]
 }

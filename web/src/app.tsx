@@ -34,6 +34,7 @@ import { EMPTY, HL_COUNT, bookmarkKey, bookmarksAt, canonKey, fromBackup, parseC
 import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
 import { xrefsFor, type XrefData } from "./xrefs";
 import { lookup as lookupWebster, paragraphs as websterParagraphs, wordSpanAt } from "./webster";
+import { currentEnv, loadDismissed, saveDismissed, shouldHint } from "./install";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 // The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
 // Refs tap only, then kept for the page's life.
@@ -343,6 +344,7 @@ export function App() {
   const done = () => (setSheet(stack.length > 0 ? stack[stack.length - 1] : null), setStack(stack.slice(0, -1)));
   const [selected, setSelected] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [a2hs, setA2hs] = useState<boolean>(() => shouldHint(currentEnv(), loadDismissed()));
   const [wide, setWide] = useState<boolean>(() => window.matchMedia("(min-width: 960px)").matches);
   const [vw, setVw] = useState<number>(() => window.innerWidth);
   const scrollTo = useRef<number | null>(route.verse);
@@ -1695,6 +1697,24 @@ export function App() {
         }}
       />
       {ps.status !== "idle" && (pip === null ? mini : createPortal(mini, pip.document.body))}
+      {a2hs && chap !== null && ps.status === "idle" && sheet === null && selected === null && noteEdit === null && (
+        <div class="a2hs" role="note">
+          <span>
+            Install Hexapla: tap <Icon d={I.share} size={18} /> Share, then «Add to Home Screen». It then opens full screen, like an app.
+          </span>
+          <button
+            type="button"
+            class="ib"
+            aria-label="Close"
+            onClick={() => {
+              saveDismissed();
+              setA2hs(false);
+            }}
+          >
+            <Icon d={I.close} size={20} />
+          </button>
+        </div>
+      )}
       {toast !== null && (
         <div class="toast" role="status">
           {toast}

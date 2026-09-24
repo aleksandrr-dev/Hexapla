@@ -245,6 +245,14 @@ a:hover { color: var(--lea); }
 .row.play[dir="rtl"] { box-shadow: inset -3px 0 0 color-mix(in srgb, var(--ox) 55%, transparent); }
 .row.play.sel { background: var(--sv); box-shadow: inset 3px 0 0 var(--ox); }
 mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: inherit; border-radius: 3px; box-shadow: 0 0 0 2px color-mix(in srgb, var(--ox) 24%, transparent); }
+/* The one-time iOS «Add to Home Screen» hint (install.ts). */
+.a2hs {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 7;
+  display: flex; align-items: center; gap: 6px; padding: 8px 8px 8px 16px; width: min(560px, calc(100% - 24px)); box-sizing: border-box;
+  background: var(--bg); color: var(--ink); border: 1px solid var(--ol); border-radius: 16px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18); font-size: 14px;
+}
+.a2hs span { flex: 1; min-width: 0; }
+.a2hs svg { vertical-align: -3px; color: var(--ox); }
 .mini {
   position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 7;
   display: flex; align-items: center; gap: 2px; padding: 6px 8px; width: min(560px, calc(100% - 24px));

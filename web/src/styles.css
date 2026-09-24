@@ -391,3 +391,12 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .sg button:hover { text-decoration: underline; }
 .strongs .ssub { margin: 0 4px 8px; font-size: 14px; font-weight: 600; color: var(--ox); }
 .strongs .sdef { margin: 0 4px 10px; line-height: 1.5; white-space: pre-line; }
+
+/* «Keep offline» rows (P4): the row itself is not a button; its Keep/Remove is. */
+.srow.kr { cursor: default; }
+.srow.kr:hover { background: transparent; }
+.srow.kr .st > span:first-child { color: var(--ink); }
+.kbtn { flex: none; min-height: 36px; min-width: 76px; padding: 0 14px; border-radius: 18px; border: 1px solid var(--ox); background: transparent; color: var(--ox); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.kbtn.on { border-color: var(--ol); color: var(--mu); }
+.kbtn:disabled { opacity: 0.5; cursor: default; }
+.hint.err { color: var(--ox); }

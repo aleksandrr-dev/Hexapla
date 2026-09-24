@@ -1,9 +1,9 @@
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { join, normalize, resolve } from "node:path";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, type Plugin, type PreviewServer, type ViteDevServer } from "vite";
 import preact from "@preact/preset-vite";
 
-// Dev only: serve a built data tree at /Hexapla/data/, where Pages serves it
+// Dev and preview: serve a built data tree at /Hexapla/data/, where Pages serves it
 // (a SIBLING of /Hexapla/app/ — see src/data.ts). The tree is ~200 MB and
 // must live OUTSIDE the repo (tools/build_web_data.py refuses otherwise):
 //
@@ -12,23 +12,30 @@ import preact from "@preact/preset-vite";
 function devData(): Plugin {
   return {
     name: "hexapla-dev-data",
-    apply: "serve",
     configureServer(server) {
-      const root = process.env.HEXAPLA_WEB_DATA;
-      if (root === undefined || !existsSync(root)) {
-        server.config.logger.warn("HEXAPLA_WEB_DATA is not set to a built data/ tree; every data fetch will 404");
-        return;
-      }
-      const base = resolve(root);
-      server.middlewares.use("/Hexapla/data", (req, res, next) => {
-        const rel = decodeURIComponent((req.url ?? "/").split("?")[0]);
-        const file = normalize(join(base, rel));
-        if (!file.startsWith(base) || !existsSync(file) || !statSync(file).isFile()) return next();
-        res.setHeader("Content-Type", "application/json; charset=utf-8");
-        createReadStream(file).pipe(res);
-      });
+      serve(server);
+    },
+    // `vite preview` too: the service worker registers only in a production
+    // build, so the offline e2e runs against the preview server.
+    configurePreviewServer(server) {
+      serve(server);
     },
   };
+  function serve(server: ViteDevServer | PreviewServer): void {
+    const root = process.env.HEXAPLA_WEB_DATA;
+    if (root === undefined || !existsSync(root)) {
+      server.config.logger.warn("HEXAPLA_WEB_DATA is not set to a built data/ tree; every data fetch will 404");
+      return;
+    }
+    const base = resolve(root);
+    server.middlewares.use("/Hexapla/data", (req, res, next) => {
+      const rel = decodeURIComponent((req.url ?? "/").split("?")[0]);
+      const file = normalize(join(base, rel));
+      if (!file.startsWith(base) || !existsSync(file) || !statSync(file).isFile()) return next();
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      createReadStream(file).pipe(res);
+    });
+  }
 }
 
 // Published under the landing page's domain, as a subdirectory — see

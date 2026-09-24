@@ -11,7 +11,8 @@
 // the sounding verse and word are lit in the PRIMARY column.
 //
 // Search (P2) is one translation at a time: search.ts, run in search.worker.ts.
-// Offline and UI locales are P4 and deliberately absent.
+// Offline (P4): chapters read are cached by public/sw.js; «Keep offline» in
+// Settings saves a whole translation (offline.ts). UI locales are still to come.
 
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
@@ -33,6 +34,7 @@ import { EMPTY, HL_COUNT, bookmarkKey, bookmarksAt, canonKey, fromBackup, parseC
 import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
 import { xrefsFor, type XrefData } from "./xrefs";
 import { lookup as lookupWebster, paragraphs as websterParagraphs, wordSpanAt } from "./webster";
+import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 // The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
 // Refs tap only, then kept for the page's life.
 import xrefsUrl from "../../app/src/main/assets/xrefs.json?url";
@@ -317,7 +319,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -1262,6 +1264,12 @@ export function App() {
         </div>
       </Sheet>
     );
+  } else if (sheet === "offline") {
+    sheetEl = (
+      <Sheet title="Keep offline" onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
+        <OfflineKeep list={manifest?.translations ?? []} />
+      </Sheet>
+    );
   } else if (sheet === "par") {
     sheetEl = (
       <Sheet title="Parallel translations" onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
@@ -1516,6 +1524,18 @@ export function App() {
             {prefs.bedKind === "music" && toggle("Same music throughout", "One calm track after another, instead of music matched to the passage.", prefs.uniformBed, () => update({ uniformBed: !prefs.uniformBed }))}
           </>
         )}
+        {offlineSupported() && (
+          <>
+            <h3 class="sec">Offline</h3>
+            <button type="button" class="srow" onClick={() => openFrom("offline", "prefs")}>
+              <div class="st">
+                <span>Keep offline</span>
+                <span class="sn">Chapters you open are saved as you read. Keep a whole translation to read any of it without a connection.</span>
+              </div>
+              <Icon d={I.chev} size={18} />
+            </button>
+          </>
+        )}
         <h3 class="sec">Backup</h3>
         {backupRows(stored, saveBackup, () => fileIn.current?.click())}
         {/* The sources_text credit is a licence obligation: verbatim, at the
@@ -1694,6 +1714,67 @@ function markCount(m: Marks): string {
 }
 
 /** Settings › Backup, as on Android: the same file, so it moves both ways. */
+/** «Keep offline»: one row per translation, its state read from the cache
+ *  itself (offline.ts), so a row can never claim what is not stored. */
+function OfflineKeep({ list }: { list: Translation[] }) {
+  const [st, setSt] = useState<Record<string, KeepState>>({});
+  const [busy, setBusy] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const set = (id: string, s: KeepState) => setSt((o) => ({ ...o, [id]: s }));
+  useEffect(() => {
+    let live = true;
+    void cachedUrls().then((have) => {
+      if (live) setSt(Object.fromEntries(list.map((t) => [t.id, stateIn(have, t.id, t.bookCount)])));
+    }, () => undefined);
+    return () => {
+      live = false;
+    };
+  }, [list]);
+  const toggle = async (t: Translation, kept: boolean) => {
+    setErr(null);
+    setBusy(t.id);
+    try {
+      if (kept) await unkeep(t.id, t.bookCount);
+      else await keep(t.id, t.bookCount, (s) => set(t.id, s));
+    } catch (e) {
+      setErr("Could not save " + t.label + " (" + String(e instanceof Error ? e.message : e) + "). Check the connection and try again; what was saved stays.");
+    } finally {
+      set(t.id, await keepState(t.id, t.bookCount).catch(() => ({ have: 0, total: 1 })));
+      setBusy(null);
+    }
+  };
+  return (
+    <>
+      <p class="hint">Chapters you open are saved on this device as you read. Keep a whole translation to read any of it without a connection.</p>
+      <p class="hint">In Safari on iPhone and iPad, saved data may be deleted after seven days without a visit. Adding Hexapla to the Home Screen avoids that limit.</p>
+      {err !== null && <p class="hint err" role="alert">{err}</p>}
+      {list.map((t) => {
+        const s = st[t.id];
+        const kept = s !== undefined && s.have === s.total;
+        const saving = busy === t.id && s !== undefined;
+        const note = saving
+          ? "Saving… " + String(Math.round((100 * s.have) / s.total)) + "%"
+          : kept
+            ? "Saved on this device"
+            : s !== undefined && s.have > 3
+              ? "Partly saved: " + String(s.have - 3) + " of " + String(s.total - 3) + " books"
+              : "";
+        return (
+          <div class="srow off kr" key={t.id} data-id={t.id}>
+            <div class="st">
+              <span lang={t.lang} dir={directionOf(t.label) ?? undefined}>{t.label}</span>
+              {note !== "" && <span class="sn">{note}</span>}
+            </div>
+            <button type="button" class={"kbtn" + (kept ? " on" : "")} disabled={busy !== null || s === undefined} onClick={() => void toggle(t, kept)}>
+              {kept ? "Remove" : "Keep"}
+            </button>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 function backupRows(stored: boolean, onSave: () => void, onRestore: () => void): JSX.Element {
   return (
     <>

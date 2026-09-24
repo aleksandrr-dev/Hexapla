@@ -9,6 +9,7 @@
 import type { Book, BooksIndex, Manifest } from "./types";
 import type { VerseMapData } from "./versemap";
 import type { GenIndex, LibriVoxIndex } from "./audio";
+import type { RawLexicon } from "./strongs";
 
 /** A failed fetch or an unparseable payload. Carries the HTTP status so the
  *  caller can tell a 404 (no such translation) from a 500 (broken deploy). */
@@ -85,6 +86,23 @@ export function loadLibriVoxIndex(): Promise<LibriVoxIndex> {
 /** `data/audio_index_gen.json` — generated narration with verse offsets. */
 export function loadGenIndex(): Promise<GenIndex> {
   return fetchJson<GenIndex>("data/audio_index_gen.json");
+}
+
+/** `data/kjv_strongs/<bookIndex>.json` — the KJV with Strong's tags, as
+ *  `{"<bookIndex>": chapters}` (strongs.ts). */
+export async function loadStrongsBook(bookIndex: number): Promise<string[][]> {
+  const k = String(bookIndex);
+  const o = await fetchJson<Record<string, string[][]>>("data/kjv_strongs/" + k + ".json");
+  const chapters = o[k];
+  if (!Array.isArray(chapters)) throw new DataError(url("data/kjv_strongs/" + k + ".json"), 200, "kjv_strongs " + k + ": no chapters");
+  return chapters;
+}
+
+/** `data/strongs_lexicon.json`, or `strongs_lexicon_<lang>.json` for a
+ *  translated gloss (strongs.ts TRANSLATED). About 2 MB each: fetched only
+ *  when a number is tapped. */
+export function loadStrongsLexicon(lang: string | null): Promise<RawLexicon> {
+  return fetchJson<RawLexicon>(lang === null ? "data/strongs_lexicon.json" : "data/strongs_lexicon_" + lang + ".json");
 }
 
 /** Drop every cached response. Exposed for tests and for a future "retry"

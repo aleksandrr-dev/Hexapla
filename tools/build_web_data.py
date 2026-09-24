@@ -21,6 +21,8 @@ may be run on its own:
     data/interlinear/gr/<b>.json         interlinear_gr.json split by book
     data/interlinear/he/<b>.json         interlinear_he.json split by book
     data/webster/<L>.json                webster1828.json split by first letter
+    data/kjv_strongs/<b>.json            en_kjv_strongs.json (tagged KJV) by book,
+                                         {"<b>": chapters}; also text-controlled
     data/<name>.json                     versemap, strongs_lexicon*,
                                          audio_index{,_gen} copied byte for byte
 
@@ -54,6 +56,8 @@ STRINGS_XML = REPO / "app/src/main/res/values/strings.xml"
 COUNT_TOOL = REPO / "tools/count_translations.py"
 
 KJV_ASSET = ASSETS / "bibles/en_kjv.json"
+STRONGS_ASSET = ASSETS / "bibles/en_kjv_strongs.json"
+STRONGS_TAG = re.compile(r"\[[HG]\d+\]")
 
 # BibleRepo.parseAsset (Bible.kt ~line 166): a brace group CONTAINING a colon
 # is a translator's margin note — the whole group goes, leading whitespace
@@ -507,6 +511,25 @@ def write_split(source, out_dir, rel_dir, key_of, label, mutate=None):
     return n_files, len(merged), ok
 
 
+def check_strongs_text(strongs, kjv):
+    """Every tagged verse, with its [H/G] tags removed, must read as the plain
+    KJV verse at the same place (the asset lost verse tails until
+    tools/fix_kjv_text_loss.py). Returns the verse count; raises BuildError."""
+    if [[len(c) for c in b["chapters"]] for b in strongs] != \
+            [[len(c) for c in b["chapters"]] for b in kjv[:len(strongs)]]:
+        raise BuildError("kjv_strongs: book/chapter/verse shape differs from the KJV")
+    n = 0
+    for bi, b in enumerate(strongs):
+        for ci, ch in enumerate(b["chapters"]):
+            for vi, v in enumerate(ch):
+                plain = MULTI_SPACE.sub(" ", STRONGS_TAG.sub("", v)).strip()
+                if plain != kjv[bi]["chapters"][ci][vi]:
+                    raise BuildError("kjv_strongs: {} {}:{} untagged is not the KJV verse".format(
+                        kjv[bi]["name"], ci + 1, vi + 1))
+                n += 1
+    return n
+
+
 def build_aux(out_dir):
     """Write every auxiliary asset under --out. Raises BuildError. Returns the
     count of entries checked, so a control that could not run is loud."""
@@ -525,6 +548,18 @@ def build_aux(out_dir):
         n_files, n_keys, _ = write_split(
             data, out_root, rel, lambda k: k, name[:-5])
         checked += n_keys
+
+    # --- en_kjv_strongs.json: the tagged KJV Android shows when Strong's is
+    # on, parsed as BibleRepo.parseAsset parses it, one file per book
+    # {"<b>": chapters}. Controlled by reassembly AND by the text: every
+    # verse, untagged, must read exactly as the plain KJV verse.
+    strongs = load_books(STRONGS_ASSET)
+    n_verses = check_strongs_text(strongs, load_books(KJV_ASSET))
+    print("kjv_strongs: {} verses untag to the plain KJV".format(n_verses))
+    n_files, n_keys, _ = write_split(
+        {str(i): b["chapters"] for i, b in enumerate(strongs)},
+        out_root, "kjv_strongs", lambda k: k, "kjv_strongs")
+    checked += n_keys
 
     # --- webster1828.json: first letter A-Z, everything else _other.
     webster = load_json_dict(ASSETS / "webster1828.json")
@@ -720,6 +755,23 @@ def _selftest():
         dst.write_bytes(bytes(blob))
         assert md5_file(dst) != src_md5, "MD5 control did not fire on a mutated byte"
 
+    def a12():
+        """The tagged KJV untags to the plain KJV, and the control fires on a
+        verse cut short (Gen 1:9 lost «and it was so.» before the fix)."""
+        strongs = load_books(STRONGS_ASSET)
+        n = check_strongs_text(strongs, kjv)
+        assert n > 31000, "only {} verses checked".format(n)
+        v = strongs[0]["chapters"][0][8]
+        cut = v[:v.rindex(" and it was so.")]
+        if __import__("os").environ.get("HEXAPLA_WEB_STRONGS_BAD") == "1":
+            cut = v
+        strongs[0]["chapters"][0][8] = cut
+        try:
+            check_strongs_text(strongs, kjv)
+        except BuildError:
+            return
+        raise AssertionError("text control did not fire on a truncated verse")
+
     check("assert 1: Genesis 1:4 — supplied words kept, colon note dropped", a1)
     check("assert 2: Genesis 1:2 — supplied words survive", a2)
     check("assert 3: Genesis 1:6 — trailing colon note dropped", a3)
@@ -732,6 +784,7 @@ def _selftest():
     check("assert 9: reassembly control fires on a dropped split file", a9)
     check("assert 10: Webster sends non-A-Z to _other and reassembles", a10)
     check("assert 11: MD5 copy control fires on a mutated byte", a11)
+    check("assert 12: Strong's text untags to the KJV; control fires on a cut verse", a12)
 
     passed = sum(1 for r in results if r)
     print("\n{} of {} assertions passed".format(passed, len(results)))

@@ -16,7 +16,8 @@
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { loadBook, loadBooksIndex, loadManifest, loadVersemap } from "./data";
+import { loadBook, loadBooksIndex, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap } from "./data";
+import { afterCap, lexiconLang, mergeLexicon, shown as shownSegs, shownNumber, shownText, subline, type Lexicon, type Seg } from "./strongs";
 import { chapterRows, type Row, type Side } from "./parallel";
 import { Player, type AudioPrefs, type PlayState } from "./player";
 import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
@@ -171,7 +172,50 @@ function marked(text: string, from: number, m: [number, number] | null): preact.
   );
 }
 
-function VerseText({ text, lang, cap, cls, word = null, after = null }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null }) {
+/** Strong's-tagged text (strongs.ts): the runs, each number a superscript
+ *  button (ReaderScreen.kt VerseText taggedText). */
+function tagged(segs: Seg[], onId: (id: string) => void): preact.ComponentChildren {
+  return segs.map((s, i) =>
+    "text" in s ? (
+      s.text
+    ) : (
+      <sup key={i} class="sg">
+        <button
+          type="button"
+          aria-label={"Strong's " + s.id}
+          onClick={(e) => {
+            e.stopPropagation();
+            onId(s.id);
+          }}
+        >
+          {shownNumber(s.id)}
+        </button>
+      </sup>
+    ),
+  );
+}
+
+function VerseText({ text, lang, cap, cls, word = null, after = null, segs = null, onId }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null; segs?: Seg[] | null; onId?: (id: string) => void }) {
+  if (segs !== null && onId !== undefined) {
+    // Word ranges index the plain text; the tagged text shows none (Android).
+    const plain = shownText(segs);
+    const dir = directionOf(plain) ?? undefined;
+    const end = cap ? dropCapEnd(plain) : -1;
+    return (
+      <div class={cls} lang={lang} dir={dir}>
+        {end >= 0 && (
+          <>
+            <span class="dropcap" aria-hidden="true">
+              {plain.slice(0, end)}
+            </span>
+            <span class="sr">{plain.slice(0, end)}</span>
+          </>
+        )}
+        {tagged(end >= 0 ? afterCap(segs, end) : segs, onId)}
+        {after}
+      </div>
+    );
+  }
   const dir = directionOf(text) ?? undefined;
   const end = cap ? dropCapEnd(text) : -1;
   const c = cls + (isCjk(lang) ? " cjk" : "");
@@ -202,7 +246,7 @@ interface Sounding {
   word: [number, number] | null;
 }
 
-function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn }) {
+function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn }) {
   if (side.kind === "gap") return null;
   return (
     <>
@@ -213,7 +257,7 @@ function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null,
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
             {showNum && !cap && <span class="inum">{refLabel([r], chapter)}</span>}
-            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} />
+            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} segs={strongs === undefined ? null : strongs.at(r)} onId={strongs?.open} />
           </div>
         );
       })}
@@ -223,6 +267,13 @@ function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null,
 
 /** The translator's margin-note marker for one verse, or null. */
 type MarginFn = (r: Ref) => JSX.Element | null;
+
+/** Strong's for the primary KJV column: a verse's shown segments (null =
+ *  show the plain text), and what a tapped number opens. */
+interface StrongsFn {
+  at: (r: Ref) => Seg[] | null;
+  open: (id: string) => void;
+}
 
 function Gap({ name, other }: { name: string; other: string | null }) {
   return (
@@ -265,7 +316,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -311,6 +362,9 @@ export function App() {
   // The row whose cross-references are open: its KJV keys, as marks use.
   const [xref, setXref] = useState<{ keys: string[]; label: string } | null>(null);
   const [margin, setMargin] = useState<{ label: string; notes: string[]; lang: string } | null>(null);
+  // Strong's: the tagged KJV book on screen, and the number tapped.
+  const [sBook, setSBook] = useState<{ book: number; chapters: string[][] } | null>(null);
+  const [strongsId, setStrongsId] = useState<string | null>(null);
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -429,6 +483,20 @@ export function App() {
       live = false;
     };
   }, [manifest, route.translation, route.book, route.chapter, parKey]);
+
+  // The tagged KJV, only while Strong's is on and the KJV is the primary.
+  const wantStrongs = prefs.strongs && route.translation === "kjv" && route.book < 66;
+  useEffect(() => {
+    if (!wantStrongs || sBook?.book === route.book) return;
+    let live = true;
+    loadStrongsBook(route.book).then(
+      (chapters) => live && setSBook({ book: route.book, chapters }),
+      () => live && flash("Strong's numbers could not be loaded"),
+    );
+    return () => {
+      live = false;
+    };
+  }, [wantStrongs, route.book]);
 
   const ready =
     chap !== null &&
@@ -1002,6 +1070,18 @@ export function App() {
               );
             };
           };
+          // Strong's rides on the primary column only, and only the KJV.
+          const sChapters = wantStrongs && sBook !== null && sBook.book === route.book ? sBook.chapters : null;
+          const strongsOf = (c: Col): StrongsFn | undefined =>
+            sChapters === null || c !== cols[0] || c.id !== "kjv"
+              ? undefined
+              : {
+                  at: (x: Ref) => {
+                    const v = sChapters[x.c - 1]?.[x.v - 1];
+                    return v === undefined ? null : shownSegs(v);
+                  },
+                  open: (id: string) => (setStrongsId(id), openFrom("strongs", null)),
+                };
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
           const base = numOf.kind === "text" ? numOf.refs : [];
@@ -1009,7 +1089,7 @@ export function App() {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
             if (s.kind === "gap") return labelled ? <div class="gap1">Not in {c.tiny}</div> : <Gap name={c.name} other={nameOfText} />;
-            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] ? sounding : null} margin={marginOf(c)} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} />;
           };
           if (n === 1) {
             const c = shown[0];
@@ -1019,7 +1099,7 @@ export function App() {
               <div {...common} class={common.class + " single"}>
                 {numCell("num")}
                 <div class="txt">
-                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] ? sounding : null} margin={marginOf(c)} />
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} />
                 </div>
                 {noteEl}
               </div>
@@ -1272,6 +1352,8 @@ export function App() {
         </div>
       </Sheet>
     );
+  } else if (sheet === "strongs" && strongsId !== null) {
+    sheetEl = <StrongsSheet id={strongsId} onClose={() => (setStrongsId(null), done())} />;
   } else if (sheet === "xref" && xref !== null) {
     sheetEl = (
       <XrefSheet
@@ -1386,7 +1468,12 @@ export function App() {
         <h3 class="sec">Appearance</h3>
         {textControls}
         <h3 class="sec">Study</h3>
-        {soon("Strong's numbers (KJV)", "Tap a number for the Hebrew or Greek word and its definition.")}
+        {toggle(
+          "Strong's numbers (KJV)",
+          route.translation === "kjv" ? "Tap a number for the Hebrew or Greek word and its definition." : "Shown when the King James Version is the main translation.",
+          prefs.strongs,
+          () => update({ strongs: !prefs.strongs }),
+        )}
         {soon("Webster's 1828 Dictionary", "Tap an English word for what it meant in the era of the classic Bibles.")}
         <h3 class="sec">Listening</h3>
         {!player.opus && <p class="hint">This browser cannot play the generated narration (Ogg Opus). The King James Version's LibriVox readings still play.</p>}
@@ -1725,6 +1812,56 @@ function MarksSheet(p: {
       </div>
       <h3 class="sec">Backup</h3>
       {backupRows(p.stored, p.onSave, p.onRestore)}
+    </Sheet>
+  );
+}
+
+// The lexicon for the UI language, merged once (strongs.ts mergeLexicon).
+let lexicon: { lang: string | null; p: Promise<Lexicon> } | null = null;
+function loadLexicon(): Promise<Lexicon> {
+  const lang = lexiconLang(navigator.language || "en");
+  if (lexicon === null || lexicon.lang !== lang) {
+    const p = Promise.all([loadStrongsLexicon(null), lang === null ? Promise.resolve(null) : loadStrongsLexicon(lang)]).then(([en, tr]) => mergeLexicon(en, tr));
+    p.catch(() => (lexicon = null));
+    lexicon = { lang, p };
+  }
+  return lexicon.p;
+}
+
+/** One Strong's number: the original word, transliteration · part of speech,
+ *  and the definition (ReaderScreen.kt, the strongsId dialog). */
+function StrongsSheet(p: { id: string; onClose: () => void }) {
+  const [lex, setLex] = useState<Lexicon | null>(null);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    let live = true;
+    loadLexicon().then(
+      (l) => live && setLex(l),
+      () => live && setErr(true),
+    );
+    return () => {
+      live = false;
+    };
+  }, []);
+  const e = lex?.[p.id];
+  return (
+    <Sheet title={e !== undefined && e.word !== "" ? p.id + " · " + e.word : p.id} onClose={p.onClose}>
+      <div class="strongs">
+        {err ? (
+          <p class="hint">The dictionary could not be loaded.</p>
+        ) : lex === null ? (
+          <p class="hint">Loading…</p>
+        ) : e === undefined ? (
+          <p class="hint">No entry for {p.id}.</p>
+        ) : (
+          <>
+            {subline(e) !== "" && <p class="ssub">{subline(e)}</p>}
+            <p class="sdef" dir="auto">
+              {e.def}
+            </p>
+          </>
+        )}
+      </div>
     </Sheet>
   );
 }

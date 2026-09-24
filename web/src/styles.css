@@ -385,3 +385,9 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .li.mrow.dim .mgo { opacity: 0.55; }
 .mnote { white-space: pre-wrap; overflow-wrap: anywhere; }
 .li.mrow .htx { font-size: 14px; color: var(--mu); -webkit-line-clamp: 2; }
+/* Strong's numbers (KJV): a superscript button after its word, as the app. */
+.sg { font-size: 0.55em; line-height: 0; }
+.sg button { padding: 0 1px; margin: 0; border: 0; background: none; color: var(--ox); font: inherit; line-height: 1; cursor: pointer; }
+.sg button:hover { text-decoration: underline; }
+.strongs .ssub { margin: 0 4px 8px; font-size: 14px; font-weight: 600; color: var(--ox); }
+.strongs .sdef { margin: 0 4px 10px; line-height: 1.5; white-space: pre-line; }

@@ -3,13 +3,17 @@
 // passed 2026-09-24; its link is in the session handoff, not here — this tree
 // may name no remote origin, not even in a comment).
 //
+// The parallel view is the hexapla: the primary translation and up to five
+// more (owner, 2026-09-24). One translation beside it keeps the two-column
+// look the design gate passed; two or more label and tint each column.
+//
 // Search, audio, offline and UI locales are P2-P4 and deliberately absent.
 
 import type { JSX } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { loadBook, loadBooksIndex, loadManifest, loadVersemap } from "./data";
 import { chapterRows, type Row, type Side } from "./parallel";
-import { FONT_MAX, FONT_MIN, loadPrefs, savePrefs, type Layout, type Mode, type Prefs, type Theme } from "./prefs";
+import { FONT_MAX, FONT_MIN, MAX_PARALLEL, loadPrefs, parseWith, savePrefs, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
 import { directionOf, dropCapEnd, isCjk } from "./text";
 import type { Book, BooksIndex, Manifest, Translation } from "./types";
@@ -17,6 +21,10 @@ import type { Ref, VerseMapData } from "./versemap";
 
 // John 1: where a first-time reader with no link is most likely to start.
 const START: Route = { translation: "kjv", book: 42, chapter: 0, verse: null };
+
+/** A column narrower than this is not readable side by side; below it,
+ *  «Auto» stacks (owner, 2026-09-24: ~260px). */
+const COL_MIN = 250;
 
 function initialRoute(prefs: Prefs): Route {
   return parseRoute(window.location.hash) ?? (prefs.last !== null ? parseRoute(prefs.last) : null) ?? START;
@@ -43,6 +51,14 @@ function refLabel(refs: Ref[], chapter: number | null): string {
 
 function sameRefs(x: Ref[], y: Ref[]): boolean {
   return x.length === y.length && x.every((r, i) => r.c === y[i].c && r.v === y[i].v);
+}
+
+function moved<T>(xs: T[], i: number, d: number): T[] {
+  const j = i + d;
+  if (j < 0 || j >= xs.length) return xs;
+  const out = xs.slice();
+  [out[i], out[j]] = [out[j], out[i]];
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,6 +91,9 @@ const I = {
     </>
   ),
   chev: <path d="M9 6l6 6-6 6" />,
+  up: <path d="M6 15l6-6 6 6" />,
+  down: <path d="M6 9l6 6 6-6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
 };
 
 function Icon({ d, size = 22 }: { d: JSX.Element; size?: number }) {
@@ -110,13 +129,13 @@ function VerseText({ text, lang, cap, cls }: { text: string; lang: string; cap: 
   );
 }
 
-function SideText({ side, lang, cls, chapter, showNum }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean }) {
+function SideText({ side, lang, cls, chapter, showNum, noCap = false }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean }) {
   if (side.kind === "gap") return null;
   return (
     <>
       {side.texts.map((t, i) => {
         const r = side.refs[i];
-        const cap = r.v === 1 && i === 0;
+        const cap = !noCap && r.v === 1 && i === 0;
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
             {showNum && !cap && <span class="inum">{refLabel([r], chapter)}</span>}
@@ -143,26 +162,38 @@ function Gap({ name, other }: { name: string; other: string | null }) {
 
 interface Chapter {
   aId: string;
-  bId: string | null;
+  /** The translations beside A that contain this book, in column order. */
+  others: { id: string; book: Book }[];
+  /** Ids read alongside that do NOT contain this book. */
+  missing: string[];
   book: number;
   chapter: number; // 0-based
   a: Book;
-  b: Book | null;
-  bMissing: boolean;
   vm: VerseMapData | null;
 }
 
-// "text" is the quick Aa sheet; "prefs" is the full Settings menu, laid out
-// in the Android app's own sections (owner, 2026-09-24).
-type Sheet = null | "a" | "b" | "book" | "text" | "prefs";
+/** One column on screen: the primary is index 0. */
+interface Col {
+  id: string;
+  t: Translation | undefined;
+  name: string;
+  tiny: string;
+  lang: string;
+  book: Book;
+  side: (r: Row) => Side;
+}
 
-/** `?with=<id>` in a shared link opens the reader with that second
- *  translation beside the first — what the sender was looking at. */
+// "text" is the quick Aa sheet; "prefs" is the full Settings menu, laid out
+// in the Android app's own sections (owner, 2026-09-24). "par" is the list of
+// translations read alongside; "add" picks one more for it.
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs";
+
+/** `?with=a,b,c` in a shared link opens the reader with those translations
+ *  beside the first — what the sender was looking at. */
 function initialPrefs(): Prefs {
   const p = loadPrefs();
-  const w = new URLSearchParams(window.location.search).get("with");
-  if (w !== null && /^[A-Za-z0-9_-]+$/.test(w)) return { ...p, second: w, mode: "both" };
-  return p;
+  const w = parseWith(window.location.search);
+  return w !== null ? { ...p, parallel: w, show: "all" } : p;
 }
 
 export function App() {
@@ -173,13 +204,14 @@ export function App() {
   const [chap, setChap] = useState<Chapter | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sheet, setSheet] = useState<Sheet>(null);
-  // A picker opened from Settings returns to Settings, not to the page.
-  const [ret, setRet] = useState<Sheet>(null);
-  const openFrom = (s: Sheet, from: Sheet) => (setRet(from), setSheet(s));
-  const done = () => (setSheet(ret), setRet(null));
+  // A picker opened from another sheet returns to it, not to the page.
+  const [stack, setStack] = useState<Sheet[]>([]);
+  const openFrom = (s: Sheet, from: Sheet) => (setStack([...stack, from]), setSheet(s));
+  const done = () => (setSheet(stack.length > 0 ? stack[stack.length - 1] : null), setStack(stack.slice(0, -1)));
   const [selected, setSelected] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [wide, setWide] = useState<boolean>(() => window.matchMedia("(min-width: 960px)").matches);
+  const [vw, setVw] = useState<number>(() => window.innerWidth);
   const scrollTo = useRef<number | null>(route.verse);
 
   const update = (p: Partial<Prefs>) =>
@@ -202,9 +234,12 @@ export function App() {
     const mq = window.matchMedia("(min-width: 960px)");
     const onMq = () => setWide(mq.matches);
     mq.addEventListener("change", onMq);
+    const onResize = () => setVw(window.innerWidth);
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("hashchange", onHash);
       mq.removeEventListener("change", onMq);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -220,9 +255,11 @@ export function App() {
     loadManifest().then(setManifest, (e) => setError(String(e)));
   }, []);
 
-  const aT = manifest?.translations.find((t) => t.id === route.translation);
-  const bId = prefs.second !== null && prefs.second !== route.translation ? prefs.second : null;
-  const bT = bId === null ? undefined : manifest?.translations.find((t) => t.id === bId);
+  const find = (id: string) => manifest?.translations.find((t) => t.id === id);
+  const aT = find(route.translation);
+  // Read alongside: known translations only, never the primary itself.
+  const parIds = prefs.parallel.filter((id) => id !== route.translation && (manifest === null || find(id) !== undefined));
+  const parKey = parIds.join(",");
 
   useEffect(() => {
     let live = true;
@@ -244,15 +281,23 @@ export function App() {
       try {
         if (aT === undefined) throw new Error("There is no translation called «" + route.translation + "».");
         if (route.book >= aT.bookCount) throw new Error(shortLabel(aT, aT.id) + " does not contain book " + String(route.book + 1) + ".");
-        const bHas = bT !== undefined && route.book < bT.bookCount;
-        const [a, b, vm] = await Promise.all([
+        const has = parIds.filter((id) => route.book < (find(id)?.bookCount ?? 0));
+        const [a, vm, ...books] = await Promise.all([
           loadBook(route.translation, route.book),
-          bHas ? loadBook(bT.id, route.book) : Promise.resolve(null),
-          bHas ? loadVersemap() : Promise.resolve(null),
+          has.length > 0 ? loadVersemap() : Promise.resolve(null),
+          ...has.map((id) => loadBook(id, route.book)),
         ]);
         if (route.chapter >= a.chapters.length) throw new Error(a.name + " has " + String(a.chapters.length) + " chapters.");
         if (live) {
-          setChap({ aId: route.translation, bId: bHas ? bT.id : null, book: route.book, chapter: route.chapter, a, b, bMissing: bT !== undefined && !bHas, vm });
+          setChap({
+            aId: route.translation,
+            others: has.map((id, i) => ({ id, book: books[i] })),
+            missing: parIds.filter((id) => !has.includes(id)),
+            book: route.book,
+            chapter: route.chapter,
+            a,
+            vm,
+          });
         }
       } catch (e) {
         if (live) setError(e instanceof Error ? e.message : String(e));
@@ -261,15 +306,34 @@ export function App() {
     return () => {
       live = false;
     };
-  }, [manifest, route.translation, route.book, route.chapter, bT?.id]);
+  }, [manifest, route.translation, route.book, route.chapter, parKey]);
 
-  const ready = chap !== null && chap.aId === route.translation && chap.book === route.book && chap.chapter === route.chapter && chap.bId === (bT !== undefined && route.book < bT.bookCount ? bT.id : null);
+  const ready =
+    chap !== null &&
+    chap.aId === route.translation &&
+    chap.book === route.book &&
+    chap.chapter === route.chapter &&
+    [...chap.others.map((o) => o.id), ...chap.missing].sort().join(",") === parIds.slice().sort().join(",");
 
   const rows: Row[] = useMemo(() => {
     if (chap === null) return [];
-    const vm = chap.vm ?? {};
-    return chapterRows(vm, chap.book, chap.aId, chap.chapter + 1, chap.a.chapters, chap.bId, chap.b?.chapters ?? null);
+    const others = chap.others.map((o) => ({ id: o.id, book: o.book.chapters }));
+    return chapterRows(chap.vm ?? {}, chap.book, chap.aId, chap.chapter + 1, chap.a.chapters, others);
   }, [chap]);
+
+  // The columns on screen, primary first.
+  const cols: Col[] =
+    chap === null
+      ? []
+      : [
+          { id: chap.aId, t: aT, book: chap.a, side: (r: Row) => r.a },
+          ...chap.others.map((o, i) => ({ id: o.id, t: find(o.id), book: o.book, side: (r: Row) => r.others[i] })),
+        ].map((c) => ({ ...c, name: shortLabel(c.t, c.id), tiny: tinyLabel(c.t, c.id), lang: c.t?.lang ?? "und" }));
+  const multi = cols.length > 1;
+  // «Show»: all columns, or one alone. A remembered id that is not on screen
+  // (another book, removed) reads as «All».
+  const alone = multi && prefs.show !== "all" ? cols.findIndex((c) => c.id === prefs.show) : -1;
+  const shown = alone >= 0 ? [cols[alone]] : cols;
 
   // Deep link to a verse: bring it to the middle of the screen, select it.
   useEffect(() => {
@@ -333,16 +397,22 @@ export function App() {
     window.setTimeout(() => setToast((t) => (t === msg ? null : t)), 1800);
   };
 
-  // ---- share ---------------------------------------------------------------
+  // ---- share: every column on screen ------------------------------------------
   const selRow = rows.find((r) => r.key === selected) ?? null;
   const selVerse = selRow !== null && selRow.a.kind === "text" ? selRow.a.refs[0].v - 1 : null;
   const selRoute: Route = { ...route, verse: selVerse };
-  const withB = chap?.bId != null && prefs.mode !== "a" ? "?with=" + chap.bId : "";
-  const selLink = window.location.origin + window.location.pathname + withB + buildHash(selRoute);
+  // The recipient opens what the sender sees: every column, unless the
+  // primary was being read alone.
+  const withIds = alone === 0 ? [] : cols.slice(1).map((c) => c.id);
+  const selLink = window.location.origin + window.location.pathname + (withIds.length > 0 ? "?with=" + withIds.join(",") : "") + buildHash(selRoute);
   const selRef = (() => {
     if (selRow === null) return "";
-    if (selRow.a.kind === "text") return bookName + " " + String(route.chapter + 1) + ":" + refLabel(selRow.a.refs, null);
-    return (chap?.b?.name ?? bookName) + " " + (selRow.b?.kind === "text" ? refLabel(selRow.b.refs, -1) : "");
+    if (selRow.a.kind === "text" && alone <= 0) return bookName + " " + String(route.chapter + 1) + ":" + refLabel(selRow.a.refs, null);
+    for (const c of shown) {
+      const s = c.side(selRow);
+      if (s.kind === "text") return c.book.name + " " + refLabel(s.refs, -1);
+    }
+    return "";
   })();
 
   useEffect(() => {
@@ -352,12 +422,9 @@ export function App() {
   const selText = (): string => {
     if (selRow === null) return "";
     const parts: string[] = [];
-    const showA = prefs.mode !== "b" || chap?.bId === null;
-    const showB = chap?.bId !== null && prefs.mode !== "a";
-    if (showA && selRow.a.kind === "text") parts.push(selRow.a.texts.join(" ") + "\n— " + selRef + " (" + shortLabel(aT, route.translation) + ")");
-    if (showB && selRow.b?.kind === "text") {
-      const bref = (chap?.b?.name ?? "") + " " + refLabel(selRow.b.refs, -1);
-      parts.push(selRow.b.texts.join(" ") + "\n— " + bref + " (" + shortLabel(bT, bId ?? "") + ")");
+    for (const c of shown) {
+      const s = c.side(selRow);
+      if (s.kind === "text") parts.push(s.texts.join(" ") + "\n— " + c.book.name + " " + refLabel(s.refs, -1) + " (" + c.name + ")");
     }
     return parts.join("\n\n") + "\n" + selLink;
   };
@@ -373,16 +440,26 @@ export function App() {
 
   const canShare = typeof navigator.share === "function";
 
-  // ---- render ----------------------------------------------------------------
+  // ---- layout -------------------------------------------------------------------
   const style = { "--fs": String(prefs.fontSize) + "px" } as JSX.CSSProperties;
-  const both = chap?.bId != null && prefs.mode === "both";
-  const side = prefs.layout === "side" || (prefs.layout === "auto" && wide);
-  const onlyB = chap?.bId != null && prefs.mode === "b";
-  const aName = shortLabel(aT, route.translation);
-  const bName = shortLabel(bT, bId ?? "");
+  const n = shown.length;
+  // Room for the text column: the page minus its padding (and the chapter
+  // rail on a wide screen). Two columns keep the design's centre gutter.
+  const gutter = n === 2 ? 56 : 40;
+  const room = wide ? vw - 264 - 112 : vw - 40;
+  const fits = n * COL_MIN + gutter <= room;
+  const side = n > 1 && (prefs.layout === "side" || (prefs.layout === "auto" && wide && fits));
+  // An explicit «Side by side» that does not fit scrolls sideways.
+  const scroll = side && !fits;
+  const aName = cols[0]?.name ?? shortLabel(aT, route.translation);
   const aLang = aT?.lang ?? "und";
-  const bLang = bT?.lang ?? "und";
   const chapNo = route.chapter + 1;
+  const tint = (i: number) => ({ "--tc": "var(--c" + String(i) + ")" }) as JSX.CSSProperties;
+  const parLabel = (() => {
+    if (parIds.length === 0) return "+ Parallel";
+    const first = wide ? shortLabel(find(parIds[0]), parIds[0]) : tinyLabel(find(parIds[0]), parIds[0]);
+    return parIds.length === 1 ? first : first + " +" + String(parIds.length - 1);
+  })();
 
   const header = (
     <header class="bar">
@@ -392,24 +469,29 @@ export function App() {
         </a>
       )}
       <div class="tr">
-        <button type="button" class="btn tbtn" onClick={() => setSheet("a")} aria-label={"Translation: " + aName}>
+        <button type="button" class="btn tbtn" onClick={() => openFrom("a", null)} aria-label={"Translation: " + aName}>
           <span class="ell">{wide ? aName : tinyLabel(aT, route.translation)}</span>
         </button>
-        {bT !== undefined && (
+        {parIds.length === 1 && (
           <button
             type="button"
             class="ib"
             aria-label="Swap translations"
             onClick={() => {
-              update({ second: route.translation });
-              go({ ...route, translation: bT.id, verse: null });
+              update({ parallel: [route.translation] });
+              go({ ...route, translation: parIds[0], verse: null });
             }}
           >
             <Icon d={I.swap} size={20} />
           </button>
         )}
-        <button type="button" class={"btn tbtn" + (bT === undefined ? " add" : "")} onClick={() => setSheet("b")} aria-label={bT === undefined ? "Add a second translation" : "Second translation: " + bName}>
-          <span class="ell">{bT === undefined ? "+ Parallel" : wide ? bName : tinyLabel(bT, bId ?? "")}</span>
+        <button
+          type="button"
+          class={"btn tbtn" + (parIds.length === 0 ? " add" : "")}
+          onClick={() => openFrom(parIds.length === 0 ? "add" : "par", null)}
+          aria-label={parIds.length === 0 ? "Add a parallel translation" : "Parallel translations: " + parIds.map((id) => shortLabel(find(id), id)).join(", ")}
+        >
+          <span class="ell">{parLabel}</span>
         </button>
       </div>
       <button type="button" class="ib" aria-label="Text size and theme" onClick={() => openFrom("text", null)}>
@@ -445,6 +527,20 @@ export function App() {
     </div>
   );
 
+  // The Show bar: «All» and one chip per translation, to read one alone.
+  const showBar = (label: string) => (
+    <div class="modes chips" role="group" aria-label={label}>
+      {[["all", "All"] as [string, string], ...cols.map((c) => [c.id, c.tiny] as [string, string])].map(([id, l]) => {
+        const on = id === "all" ? alone < 0 : cols[alone]?.id === id;
+        return (
+          <button type="button" key={id} class={"seg" + (on ? " sel" : "")} aria-pressed={on} onClick={() => update({ show: id })}>
+            <span class="ell">{l}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
   let body: JSX.Element;
   if (error !== null) {
     body = (
@@ -474,94 +570,130 @@ export function App() {
         </div>
       </div>
     );
-    const colHeads = chap.bId !== null && prefs.mode === "both" && (
-      <div class={"colheads" + (side ? " w" : "")}>
-        <div>{aName}</div>
-        {side && <div />}
-        <div>{bName}</div>
+    // Column index (into `cols`) of each shown column, for its tint.
+    const ci = (c: Col) => cols.indexOf(c);
+    const grid = { gridTemplateColumns: n === 2 ? "minmax(0, 1fr) 56px minmax(0, 1fr)" : "40px repeat(" + String(n) + ", minmax(0, 1fr))" } as JSX.CSSProperties;
+    const scrollW = scroll ? ({ minWidth: String(n * 240 + gutter + 16) + "px" } as JSX.CSSProperties) : undefined;
+    // One other column beside A keeps the passed design; more are labelled.
+    const labelled = n > 2;
+    const colHeads = side && (
+      <div class={"colheads w" + (n > 2 ? " n" : "")} style={{ ...grid, ...scrollW }}>
+        {n > 2 && <div />}
+        {shown.flatMap((c, i) => [
+          ...(n === 2 && i === 1 ? [<div key="gutter" />] : []),
+          <div key={c.id} class={labelled ? "tc" : undefined} style={labelled ? tint(ci(c)) : undefined} lang={c.lang}>
+            {c.name}
+          </div>,
+        ])}
+      </div>
+    );
+    const missing = chap.missing.map((id) => shortLabel(find(id), id));
+    const verses = (
+      <div class={"verses" + (side ? " cols" : "")} style={scrollW}>
+        {rows.map((r) => {
+          const sel = r.key === selected;
+          const lead = shown.find((c) => c.side(r).kind === "text");
+          if (lead === undefined) return null; // nothing to show in the shown columns
+          const leadSide = lead.side(r) as Extract<Side, { kind: "text" }>;
+          const pick = () => setSelected(sel ? null : r.key);
+          const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              pick();
+            }
+          };
+          // The row's number is the first shown column's; the number gutter
+          // sits on that verse's own reading side.
+          const numOf = shown[0].side(r);
+          const num = numOf.kind === "text" ? (numOf.refs[0].v === 1 ? "" : refLabel(numOf.refs, chapNo)) : "";
+          const rowDir = directionOf(leadSide.texts[0]) ?? undefined;
+          const common = { dir: rowDir, id: "r-" + r.key, class: "row" + (sel ? " sel" : ""), onClick: pick, onKeyDown: onKey, tabIndex: 0, "aria-pressed": sel };
+          // A verse number inside a cell only where that column's verses
+          // differ from the row's own numbering.
+          const base = numOf.kind === "text" ? numOf.refs : [];
+          const cell = (c: Col, secondary: boolean) => {
+            const s = c.side(r);
+            const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
+            if (s.kind === "gap") return labelled ? <div class="gap1">Not in {c.tiny}</div> : <Gap name={c.name} other={nameOfText} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} />;
+          };
+          if (n === 1) {
+            const c = shown[0];
+            const s = c.side(r);
+            if (s.kind === "gap") return null;
+            return (
+              <div {...common} class={common.class + " single"}>
+                <div class="num">{num}</div>
+                <div class="txt">
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} />
+                </div>
+              </div>
+            );
+          }
+          if (side && n === 2) {
+            return (
+              <div {...common} class={common.class + " triple"} style={grid}>
+                <div class="cell">{cell(shown[0], false)}</div>
+                <div class="num mid">{num}</div>
+                <div class="cell">{cell(shown[1], true)}</div>
+              </div>
+            );
+          }
+          if (side) {
+            return (
+              <div {...common} class={common.class + " grid"} style={grid}>
+                <div class="num">{num}</div>
+                {shown.map((c, i) => (
+                  <div class="cell" key={c.id}>
+                    {cell(c, i > 0)}
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          return (
+            <div {...common} class={common.class + " single"}>
+              <div class="num">{num}</div>
+              <div class="txt stack">
+                {cell(shown[0], false)}
+                {shown.slice(1).map((c) =>
+                  labelled ? (
+                    <div class="oc" key={c.id} style={tint(ci(c))}>
+                      <div class="ol" lang={c.lang}>
+                        {c.tiny}
+                      </div>
+                      {cell(c, true)}
+                    </div>
+                  ) : (
+                    <div key={c.id}>{cell(c, true)}</div>
+                  ),
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
     body = (
       <>
         {heading}
-        {chap.bId !== null && (
-          <div class="modes" role="group" aria-label="Text shown">
-            {(
-              [
-                ["a", tinyLabel(aT, route.translation)],
-                ["both", "Both"],
-                ["b", tinyLabel(bT, bId ?? "")],
-              ] as [Mode, string][]
-            ).map(([m, l]) => (
-              <button type="button" key={m} class={"seg" + (prefs.mode === m ? " sel" : "")} aria-pressed={prefs.mode === m} onClick={() => update({ mode: m })}>
-                <span class="ell">{l}</span>
-              </button>
-            ))}
-          </div>
+        {multi && showBar("Text shown")}
+        {missing.length > 0 && (
+          <p class="note">
+            {missing.join(", ")} {missing.length === 1 ? "does" : "do"} not contain {chap.a.name}.
+          </p>
         )}
-        {chap.bMissing && <p class="note">{bName} does not contain {chap.a.name}; showing {aName} alone.</p>}
-        {colHeads}
-        <div class={"verses" + (both && side ? " cols" : "")}>
-          {rows.map((r) => {
-            const sel = r.key === selected;
-            const aNum = r.a.kind === "text" ? refLabel(r.a.refs, chapNo) : "";
-            const aCap = r.a.kind === "text" && r.a.refs[0].v === 1;
-            const bDiffers = r.b !== null && r.b.kind === "text" && (r.a.kind !== "text" || !sameRefs(r.a.refs, r.b.refs));
-            if (onlyB && (r.b === null || r.b.kind === "gap")) return null;
-            const pick = () => setSelected(sel ? null : r.key);
-            const onKey = (e: KeyboardEvent) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                pick();
-              }
-            };
-            // The number gutter sits on the verse's own reading side.
-            const lead = onlyB ? r.b : r.a.kind === "text" ? r.a : r.b;
-            const rowDir = lead !== null && lead.kind === "text" ? (directionOf(lead.texts[0]) ?? undefined) : undefined;
-            const common = { dir: rowDir, id: "r-" + r.key, class: "row" + (sel ? " sel" : ""), onClick: pick, onKeyDown: onKey, tabIndex: 0, "aria-pressed": sel };
-            if (onlyB && r.b !== null && r.b.kind === "text") {
-              const bCap = r.b.refs[0].v === 1;
-              return (
-                <div {...common} class={common.class + " single"}>
-                  <div class="num">{bCap ? "" : refLabel(r.b.refs, chapNo)}</div>
-                  <div class="txt">
-                    <SideText side={r.b} lang={bLang} cls="vt" chapter={chapNo} showNum={r.b.refs.length > 1} />
-                  </div>
-                </div>
-              );
-            }
-            if (!both) {
-              return (
-                <div {...common} class={common.class + " single"}>
-                  <div class="num">{aCap ? "" : aNum}</div>
-                  <div class="txt">
-                    <SideText side={r.a} lang={aLang} cls="vt" chapter={chapNo} showNum={r.a.kind === "text" && r.a.refs.length > 1} />
-                  </div>
-                </div>
-              );
-            }
-            const aCell = r.a.kind === "gap" ? <Gap name={aName} other={bName} /> : <SideText side={r.a} lang={aLang} cls="vt" chapter={chapNo} showNum={r.a.refs.length > 1} />;
-            const bCell = r.b === null ? null : r.b.kind === "gap" ? <Gap name={bName} other={null} /> : <SideText side={r.b} lang={bLang} cls={side ? "vt" : "vt b"} chapter={chapNo} showNum={bDiffers} />;
-            if (side) {
-              return (
-                <div {...common} class={common.class + " triple"}>
-                  <div class="cell">{aCell}</div>
-                  <div class="num mid">{aCap ? "" : aNum}</div>
-                  <div class="cell">{bCell}</div>
-                </div>
-              );
-            }
-            return (
-              <div {...common} class={common.class + " single"}>
-                <div class="num">{aCap ? "" : aNum}</div>
-                <div class="txt stack">
-                  {aCell}
-                  {bCell}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {scroll ? (
+          <div class="hscroll">
+            {colHeads}
+            {verses}
+          </div>
+        ) : (
+          <>
+            {colHeads}
+            {verses}
+          </>
+        )}
         <div class="endnav">
           {prev !== null && (
             <button type="button" class="btn" onClick={() => go(prev)}>
@@ -606,22 +738,18 @@ export function App() {
   );
 
   // ---- sheets ------------------------------------------------------------------
+  const full = parIds.length >= MAX_PARALLEL;
   let sheetEl: JSX.Element | null = null;
-  if (sheet === "a" || sheet === "b") {
-    const forB = sheet === "b";
+  if (sheet === "a" || sheet === "add") {
+    const adding = sheet === "add";
     const list = manifest?.translations ?? [];
     sheetEl = (
-      <Sheet title={forB ? "Read alongside" : "Translation"} onClose={done} back={ret !== null ? done : undefined}>
+      <Sheet title={adding ? "Read alongside" : "Translation"} onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
         <div class="list">
-          {forB && (
-            <button type="button" class={"li" + (bT === undefined ? " cur" : "")} onClick={() => (update({ second: null }), done())}>
-              One translation only
-            </button>
-          )}
           {list
-            .filter((t) => !forB || t.id !== route.translation)
+            .filter((t) => !adding || (t.id !== route.translation && !parIds.includes(t.id)))
             .map((t) => {
-              const cur = forB ? t.id === bT?.id : t.id === route.translation;
+              const cur = !adding && t.id === route.translation;
               return (
                 <button
                   type="button"
@@ -632,9 +760,11 @@ export function App() {
                   aria-current={cur ? "true" : undefined}
                   onClick={() => {
                     done();
-                    if (forB) update({ second: t.id, mode: prefs.mode === "a" ? "both" : prefs.mode });
+                    if (adding) update({ parallel: [...parIds, t.id].slice(0, MAX_PARALLEL) });
                     else {
-                      if (t.id === bId) update({ second: route.translation });
+                      // The new primary leaves the parallel list; the old one
+                      // takes its place there, so no column is lost.
+                      if (parIds.includes(t.id)) update({ parallel: parIds.map((id) => (id === t.id ? route.translation : id)) });
                       const book = route.book < t.bookCount ? route.book : START.book;
                       go({ translation: t.id, book, chapter: book === route.book ? route.chapter : 0, verse: null });
                     }
@@ -647,6 +777,46 @@ export function App() {
         </div>
       </Sheet>
     );
+  } else if (sheet === "par") {
+    sheetEl = (
+      <Sheet title="Parallel translations" onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
+        <p class="hint">
+          Up to six translations at once, verse by verse. {aName} leads; the others follow in this order.
+        </p>
+        <div class="list">
+          <div class="li plain" lang={aLang}>
+            <span class="ell">{aName}</span>
+          </div>
+          {parIds.map((id, i) => (
+            <div class="li prow" key={id} style={tint(i + 1)}>
+              <span class="dot" aria-hidden="true" />
+              <span class="ell" lang={find(id)?.lang}>
+                {shortLabel(find(id), id)}
+              </span>
+              <button type="button" class="ib" aria-label="Move up" disabled={i === 0} onClick={() => update({ parallel: moved(parIds, i, -1) })}>
+                <Icon d={I.up} size={20} />
+              </button>
+              <button type="button" class="ib" aria-label="Move down" disabled={i === parIds.length - 1} onClick={() => update({ parallel: moved(parIds, i, 1) })}>
+                <Icon d={I.down} size={20} />
+              </button>
+              <button type="button" class="ib" aria-label={"Remove " + shortLabel(find(id), id)} onClick={() => update({ parallel: parIds.filter((x) => x !== id) })}>
+                <Icon d={I.close} size={20} />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div class="pact">
+          <button type="button" class="btn" disabled={full} onClick={() => openFrom("add", "par")}>
+            <Icon d={I.plus} size={18} /> {full ? "Six is the most" : "Add a translation"}
+          </button>
+          {parIds.length > 0 && (
+            <button type="button" class="btn" onClick={() => (update({ parallel: [] }), done())}>
+              One translation only
+            </button>
+          )}
+        </div>
+      </Sheet>
+    );
   } else if (sheet === "book") {
     sheetEl = <BookSheet index={index} lang={aLang} current={route} grid={chapterGrid} onClose={() => setSheet(null)} onPick={(b, c) => (setSheet(null), go({ ...route, book: b, chapter: c, verse: null }))} />;
   } else if (sheet === "text") {
@@ -656,7 +826,7 @@ export function App() {
       </Sheet>
     );
   } else if (sheet === "prefs") {
-    const split = bT !== undefined;
+    const split = parIds.length > 0;
     const seg = <T extends string>(label: string, cur: T, opts: [T, string][], set: (v: T) => void) => (
       <div class="modes" role="group" aria-label={label}>
         {opts.map(([v, l]) => (
@@ -687,32 +857,28 @@ export function App() {
           </div>
           <Icon d={I.chev} size={18} />
         </button>
-        <button
-          type="button"
-          class="srow"
-          role="switch"
-          aria-checked={split}
-          onClick={() => (split ? update({ second: null }) : openFrom("b", "prefs"))}
-        >
+        <button type="button" class="srow" role="switch" aria-checked={split} onClick={() => (split ? update({ parallel: [] }) : openFrom("add", "prefs"))}>
           <div class="st">
             <span>Split view</span>
-            <span class="sn">Two translations, verse by verse</span>
+            <span class="sn">Translations side by side, verse by verse</span>
           </div>
           <span class={"sw" + (split ? " on" : "")} aria-hidden="true" />
         </button>
         {split && (
           <>
-            <button type="button" class="srow" onClick={() => openFrom("b", "prefs")}>
+            <button type="button" class="srow" onClick={() => openFrom("par", "prefs")}>
               <div class="st">
-                <span>Second translation</span>
-                <span class="sn" lang={bLang}>{bName}</span>
+                <span>Parallel translations</span>
+                <span class="sn">{parIds.map((id) => tinyLabel(find(id), id)).join(" · ")}</span>
               </div>
               <Icon d={I.chev} size={18} />
             </button>
-            <div class="sfield">
-              <span>Show</span>
-              {seg<Mode>("Text shown", prefs.mode, [["a", tinyLabel(aT, route.translation)], ["both", "Both"], ["b", tinyLabel(bT, bId ?? "")]], (m) => update({ mode: m }))}
-            </div>
+            {multi && (
+              <div class="sfield">
+                <span>Show</span>
+                {showBar("Text shown")}
+              </div>
+            )}
             <div class="sfield">
               <span>Split layout</span>
               {seg<Layout>("Split layout", prefs.layout, [["auto", "Auto"], ["side", "Side by side"], ["stacked", "Stacked"]], (l) => update({ layout: l }))}
@@ -744,7 +910,7 @@ export function App() {
   }
 
   return (
-    <div class={"hx" + (wide ? " wide" : "")} style={style}>
+    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "")} style={style}>
       {header}
       <div class="main">
         {wide && index !== null && (

@@ -171,7 +171,7 @@ function marked(text: string, from: number, m: [number, number] | null): preact.
   );
 }
 
-function VerseText({ text, lang, cap, cls, word = null }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null }) {
+function VerseText({ text, lang, cap, cls, word = null, after = null }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null }) {
   const dir = directionOf(text) ?? undefined;
   const end = cap ? dropCapEnd(text) : -1;
   const c = cls + (isCjk(lang) ? " cjk" : "");
@@ -179,6 +179,7 @@ function VerseText({ text, lang, cap, cls, word = null }: { text: string; lang: 
     return (
       <div class={c} lang={lang} dir={dir}>
         {marked(text, 0, word)}
+        {after}
       </div>
     );
   }
@@ -189,6 +190,7 @@ function VerseText({ text, lang, cap, cls, word = null }: { text: string; lang: 
       </span>
       <span class="sr">{text.slice(0, end)}</span>
       {marked(text, end, word)}
+      {after}
     </div>
   );
 }
@@ -200,7 +202,7 @@ interface Sounding {
   word: [number, number] | null;
 }
 
-function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null }) {
+function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn }) {
   if (side.kind === "gap") return null;
   return (
     <>
@@ -211,13 +213,16 @@ function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null 
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
             {showNum && !cap && <span class="inum">{refLabel([r], chapter)}</span>}
-            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} />
+            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} />
           </div>
         );
       })}
     </>
   );
 }
+
+/** The translator's margin-note marker for one verse, or null. */
+type MarginFn = (r: Ref) => JSX.Element | null;
 
 function Gap({ name, other }: { name: string; other: string | null }) {
   return (
@@ -260,7 +265,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -305,6 +310,7 @@ export function App() {
   const [noteEdit, setNoteEdit] = useState<{ key: string; label: string; text: string } | null>(null);
   // The row whose cross-references are open: its KJV keys, as marks use.
   const [xref, setXref] = useState<{ keys: string[]; label: string } | null>(null);
+  const [margin, setMargin] = useState<{ label: string; notes: string[]; lang: string } | null>(null);
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -618,6 +624,33 @@ export function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+
+  // Swipe between chapters, as on Android (ReaderScreen.kt pointerInput):
+  // a mostly-horizontal drag past a threshold; toward the reading direction
+  // is next, flipped for a right-to-left UI. Not from inside something that
+  // scrolls sideways itself (the parallel columns, the chips).
+  const swipe = useRef<{ x: number; y: number; t: number } | null>(null);
+  const scrollsX = (el: Element | null): boolean => {
+    for (let e = el; e !== null && e !== document.body; e = e.parentElement) {
+      if (e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).overflowX !== "visible" && getComputedStyle(e).overflowX !== "hidden") return true;
+    }
+    return false;
+  };
+  const onTouchStart = (e: TouchEvent) => {
+    const t = e.touches[0];
+    swipe.current = e.touches.length === 1 && !scrollsX(e.target as Element) ? { x: t.clientX, y: t.clientY, t: Date.now() } : null;
+  };
+  const onTouchEnd = (e: TouchEvent) => {
+    const s0 = swipe.current;
+    swipe.current = null;
+    if (s0 === null || sheet !== null) return;
+    const t = e.changedTouches[0];
+    const dx = (t.clientX - s0.x) * (document.documentElement.dir === "rtl" ? -1 : 1);
+    const dy = t.clientY - s0.y;
+    if (Date.now() - s0.t > 800 || Math.abs(dx) < 70 || Math.abs(dx) < 2 * Math.abs(dy)) return;
+    if (dx < 0 && next !== null) go(next);
+    else if (dx > 0 && prev !== null) go(prev);
+  };
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -943,6 +976,32 @@ export function App() {
                 ))}
               </div>
             ) : null;
+          // The translator's margin notes (KJV, Luther, a few others), kept by
+          // the build per book at the column's own "c:v", 0-based; Android
+          // shows them from the verse's actions (BibleRepo.notes).
+          const marginOf = (c: Col): MarginFn | undefined => {
+            const mn = c.book.notes;
+            if (mn === undefined) return undefined;
+            return (x: Ref) => {
+              const list = mn[String(x.c - 1) + ":" + String(x.v - 1)];
+              if (list === undefined) return null;
+              const label = c.book.name + " " + String(x.c) + ":" + String(x.v);
+              return (
+                <button
+                  type="button"
+                  class="mn"
+                  aria-label={"Translator's note, " + label}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMargin({ label, notes: list, lang: c.lang });
+                    openFrom("margin", null);
+                  }}
+                >
+                  †
+                </button>
+              );
+            };
+          };
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
           const base = numOf.kind === "text" ? numOf.refs : [];
@@ -950,7 +1009,7 @@ export function App() {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
             if (s.kind === "gap") return labelled ? <div class="gap1">Not in {c.tiny}</div> : <Gap name={c.name} other={nameOfText} />;
-            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] ? sounding : null} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] ? sounding : null} margin={marginOf(c)} />;
           };
           if (n === 1) {
             const c = shown[0];
@@ -960,7 +1019,7 @@ export function App() {
               <div {...common} class={common.class + " single"}>
                 {numCell("num")}
                 <div class="txt">
-                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] ? sounding : null} />
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] ? sounding : null} margin={marginOf(c)} />
                 </div>
                 {noteEl}
               </div>
@@ -1201,6 +1260,18 @@ export function App() {
         </div>
       </Sheet>
     );
+  } else if (sheet === "margin" && margin !== null) {
+    sheetEl = (
+      <Sheet title={"Translator's notes · " + margin.label} onClose={() => (setMargin(null), done())}>
+        <div class="mnotes">
+          {margin.notes.map((t, i) => (
+            <p key={i} lang={margin.lang} dir="auto">
+              {t}
+            </p>
+          ))}
+        </div>
+      </Sheet>
+    );
   } else if (sheet === "xref" && xref !== null) {
     sheetEl = (
       <XrefSheet
@@ -1428,7 +1499,7 @@ export function App() {
             {chapterGrid(route.book, (c) => go({ ...route, chapter: c, verse: null }))}
           </nav>
         )}
-        <main class="page">
+        <main class="page" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onTouchCancel={() => (swipe.current = null)}>
           {nav}
           {body}
         </main>

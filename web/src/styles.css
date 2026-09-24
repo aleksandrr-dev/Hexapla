@@ -303,6 +303,10 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .sload progress { flex: 1; accent-color: var(--ox); }
 .li.hit { display: flex; flex-direction: column; gap: 2px; }
 .li.hit.dim { opacity: 0.55; cursor: default; }
+/* Margin-note marker: small, after the verse, a 32 px tap target. */
+.mn { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; margin: -8px -6px -8px 0; padding: 0; border: 0; background: none; color: var(--ox); font: inherit; font-size: 0.75em; vertical-align: super; line-height: 1; cursor: pointer; }
+.mn:hover { color: var(--fg, inherit); }
+.mnotes p { margin: 0 4px 10px; line-height: 1.5; }
 .li.hit.dim:hover { background: transparent; }
 .href { font-size: 14px; font-weight: 600; color: var(--ox); }
 .htx { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }

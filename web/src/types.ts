@@ -33,6 +33,9 @@ export interface Manifest {
 export interface Book {
   name: string;
   chapters: string[][];
+  /** The translator's margin notes the build stripped from the text, at
+   *  "c:v" 0-based; absent when the book has none. */
+  notes?: Record<string, string[]>;
 }
 
 /** One row of `data/<id>/books.json` — enough to navigate without fetching

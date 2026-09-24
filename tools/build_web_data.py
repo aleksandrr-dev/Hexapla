@@ -221,11 +221,22 @@ def load_books(path):
         if not isinstance(chapters, list):
             raise BuildError("{}: book {} chapters is not a list".format(path, i))
         clean = []
+        notes = {}
         for c, verses in enumerate(chapters):
             if not isinstance(verses, list):
                 raise BuildError("{}: book {} chapter {} is not a list".format(path, i, c))
             clean.append([strip_notes(v) for v in verses])
-        books.append({"name": obj["name"], "chapters": clean})
+            # The notes the strip removes, kept as BibleRepo.notes keeps them
+            # (Bible.kt ~line 197): "c:v" 0-based -> each group, trimmed.
+            for v, raw in enumerate(verses):
+                found = [m.group(1).strip() for m in MARGIN_NOTE.finditer(raw)]
+                if found:
+                    notes["{}:{}".format(c, v)] = found
+        book = {"name": obj["name"], "chapters": clean}
+        # Absent, not empty, where a book has none: those files stay byte-identical.
+        if notes:
+            book["notes"] = notes
+        books.append(book)
     return books
 
 
@@ -591,6 +602,19 @@ def _selftest():
                 "waters, and let it divide the waters from the waters.")
         assert got == want, "got {!r}".format(got)
 
+    def a3n():
+        # The notes the strip removed are kept per book, "c:v" 0-based, and a
+        # book-level control: every stripped group is kept exactly once.
+        got = kjv[0]["notes"].get("0:5")
+        want = ["firmament: Heb. expansion"]
+        if __import__("os").environ.get("HEXAPLA_WEB_NOTES_BAD") == "1":
+            want = ["firmament"]
+        assert got == want, "got {!r}".format(got)
+        raw = json.loads(read_text(KJV_ASSET))
+        n_raw = sum(len(MARGIN_NOTE.findall(v)) for b in raw for ch in b["chapters"] for v in ch)
+        n_kept = sum(len(x) for b in kjv for x in b.get("notes", {}).values())
+        assert n_raw == n_kept and n_raw > 7000, "{} groups in source, {} kept".format(n_raw, n_kept)
+
     def a4():
         rows = parse_translations()
         expected = bible_kt_entry_count()
@@ -699,6 +723,7 @@ def _selftest():
     check("assert 1: Genesis 1:4 — supplied words kept, colon note dropped", a1)
     check("assert 2: Genesis 1:2 — supplied words survive", a2)
     check("assert 3: Genesis 1:6 — trailing colon note dropped", a3)
+    check("assert 3n: margin notes kept per book, every stripped group once", a3n)
     check("assert 4: Bible.kt parser == count_translations.py rows", a4)
     check("assert 5: Locale mapper raises on an unknown form", a5)
     check("assert 6: --out inside the repo is refused", a6)

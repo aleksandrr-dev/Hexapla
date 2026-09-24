@@ -25,6 +25,8 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.layout.layout
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -70,6 +72,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -88,6 +91,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -107,6 +111,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.MotionDurationScale
@@ -477,7 +486,7 @@ fun ReaderScreen(settings: AppSettings) {
                 TextButton(onClick = { showPicker = true }, modifier = Modifier.weight(1f)) {
                     // Shrink instead of ellipsizing: "Cantique des cantiques 8"
                     // must keep its chapter number visible.
-                    val title = "${books[book].name} ${chapter + 1}"
+                    val title = localDigits("${books[book].name} ${chapter + 1}")
                     var titleScale by remember(title) { mutableFloatStateOf(1f) }
                     Text(
                         title,
@@ -632,24 +641,24 @@ fun ReaderScreen(settings: AppSettings) {
                             else null
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
                                 }
                             } else {
-                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
                                     i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
                                     onWordIndexed = secondTap,
-                                    red = red, showNumber = !settings.hideVerseNumbers,
+                                    red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0,
                                     onLongPress = { actionVerse = i }
                                 )
                             }
                         } else {
-                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, onLongPress = { actionVerse = i })
+                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
                         }
                         if (noteText != null) {
                             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -882,7 +891,7 @@ fun ReaderScreen(settings: AppSettings) {
         val noteList = BibleRepo.notes(settings.primaryId)["$book:$chapter:$v"] ?: emptyList()
         AlertDialog(
             onDismissRequest = { notesVerse = null },
-            title = { Text("${books[book].name} ${chapter + 1}:${v + 1}") },
+            title = { Text(localDigits("${books[book].name} ${chapter + 1}:${v + 1}")) },
             text = {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     Text(
@@ -1122,16 +1131,19 @@ private fun ChapterTranslationHead(settings: AppSettings, hasSecondary: Boolean)
 
 @Composable
 private fun ChapterHeadLabel(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text,
-        modifier = modifier,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        // Two lines: the labels carry an edition and a date ("Sveto pismo —
-        // Karadžić/Daničić, 1847/1865"), and in a split column that wraps.
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis
-    )
+    // The label sits over its verses, so it takes their direction, not the UI's.
+    CompositionLocalProvider(LocalLayoutDirection provides directionOf(text)) {
+        Text(
+            text,
+            modifier = modifier,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            // Two lines: the labels carry an edition and a date ("Sveto pismo —
+            // Karadžić/Daničić, 1847/1865"), and in a split column that wraps.
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @Composable
@@ -1149,6 +1161,7 @@ private fun VerseText(
     onWordIndexed: ((Int, String) -> Unit)? = null,
     red: Boolean = false,
     showNumber: Boolean = true,
+    dropCap: Boolean = false,
     onLongPress: (() -> Unit)? = null
 ) {
     val annotated = when {
@@ -1227,27 +1240,171 @@ private fun VerseText(
             }
         }
     } else modifier
-    Row(rowModifier) {
-        if (showNumber) {
+    val textColor = when {
+        red -> redColor
+        secondary -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> MaterialTheme.colorScheme.onBackground
+    }
+    val capEnd = if (dropCap) dropCapEnd(annotated.text) else -1
+    if (capEnd > 0) {
+        // The initial stands in for the verse number, as in print.
+        DropCapText(
+            annotated, capEnd,
+            TextStyle(
+                fontSize = fontSize.sp, lineHeight = (fontSize * 1.45f).sp,
+                fontFamily = fontFamily, color = textColor
+            ),
+            capColor = if (red) redColor else MaterialTheme.colorScheme.primary,
+            modifier = rowModifier
+        )
+        return
+    }
+    // A verse is laid out in its OWN direction, not the UI's: a Persian verse
+    // under an English UI put its number on the left and its short last line
+    // flush left (owner's phone, 2026-09-24); English under a Persian UI is
+    // the mirror case. No strong letter (blank verse) keeps the UI direction.
+    val dir = directionOf(text)
+    val numberLabel = localDigits("$number")
+    CompositionLocalProvider(LocalLayoutDirection provides dir) {
+        Row(rowModifier) {
+            if (showNumber) {
+                Text(
+                    numberLabel,
+                    fontSize = (fontSize * 0.65f).sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(end = 6.dp, top = 2.dp)
+                )
+            }
             Text(
-                "$number",
-                fontSize = (fontSize * 0.65f).sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(end = 6.dp, top = 2.dp)
+                annotated,
+                fontSize = fontSize.sp,
+                lineHeight = (fontSize * 1.45f).sp,
+                fontFamily = fontFamily,
+                color = textColor
             )
         }
-        Text(
-            annotated,
-            fontSize = fontSize.sp,
-            lineHeight = (fontSize * 1.45f).sp,
-            fontFamily = fontFamily,
-            color = when {
-                red -> redColor
-                secondary -> MaterialTheme.colorScheme.onSurfaceVariant
-                else -> MaterialTheme.colorScheme.onBackground
+    }
+}
+
+/** Layout direction for a run of text: its own, else the UI's. */
+@Composable
+private fun directionOf(text: String): LayoutDirection =
+    when (remember(text) { textIsRtl(text) }) {
+        true -> LayoutDirection.Rtl
+        false -> LayoutDirection.Ltr
+        null -> LocalLayoutDirection.current
+    }
+
+/** Direction of the first strong letter: true RTL, false LTR, null none. */
+private fun textIsRtl(s: String): Boolean? {
+    for (c in s) when (Character.getDirectionality(c)) {
+        Character.DIRECTIONALITY_RIGHT_TO_LEFT,
+        Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC -> return true
+        Character.DIRECTIONALITY_LEFT_TO_RIGHT -> return false
+    }
+    return null
+}
+
+/** Persian UI writes numerals in Persian digits (۱۲۳), as Persian print does.
+ *  Only fa: Arabic is left on Western digits on purpose — usage differs by
+ *  country, and no Arabic speaker has asked. */
+@Composable
+private fun localDigits(s: String): String =
+    if (LocalConfiguration.current.locales[0].language != "fa") s
+    else buildString(s.length) { for (c in s) append(if (c in '0'..'9') '۰' + (c - '0') else c) }
+
+/** Scripts whose printed Bibles set a chapter's first letter as a drop cap.
+ *  RTL (Arabic, Hebrew, Syriac) and CJK never get one. */
+private val DROP_CAP_SCRIPTS = setOf(
+    Character.UnicodeScript.LATIN, Character.UnicodeScript.CYRILLIC,
+    Character.UnicodeScript.GREEK, Character.UnicodeScript.ARMENIAN,
+    Character.UnicodeScript.GEORGIAN
+)
+
+/** End offset of the drop-cap initial (up to two leading quote/bracket marks,
+ *  the first letter and its combining marks), or -1 when the verse gets none. */
+private fun dropCapEnd(text: String): Int {
+    var i = 0
+    var lead = 0
+    while (i < text.length && !Character.isLetter(text.codePointAt(i))) {
+        if (text[i].isWhitespace() || ++lead > 2) return -1
+        i += Character.charCount(text.codePointAt(i))
+    }
+    if (i >= text.length) return -1
+    val cp = text.codePointAt(i)
+    if (Character.UnicodeScript.of(cp) !in DROP_CAP_SCRIPTS) return -1
+    i += Character.charCount(cp)
+    while (i < text.length) {
+        val t = Character.getType(text.codePointAt(i))
+        if (t != Character.NON_SPACING_MARK.toInt() && t != Character.ENCLOSING_MARK.toInt() &&
+            t != Character.COMBINING_SPACING_MARK.toInt()) break
+        i += Character.charCount(text.codePointAt(i))
+    }
+    // A one-letter verse would leave the body empty.
+    return if (i < text.length) i else -1
+}
+
+/** The first letter floated two lines deep, the text wrapping beside it and
+ *  then running full width below. The body is measured once at the narrow
+ *  width to find how many lines sit beside the initial; the cap's baseline is
+ *  aligned to the second of those lines (the first, for a one-line verse).
+ *  Both halves are subSequences, so links and the spoken-word mark survive. */
+@Composable
+private fun DropCapText(
+    annotated: AnnotatedString,
+    capEnd: Int,
+    style: TextStyle,
+    capColor: Color,
+    modifier: Modifier = Modifier
+) {
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val capStyle = style.copy(
+        fontSize = style.fontSize * 2.9f, lineHeight = style.fontSize * 2.9f,
+        fontWeight = FontWeight.Bold, fontStyle = FontStyle.Normal, color = capColor
+    )
+    val cap = annotated.subSequence(0, capEnd)
+    val body = annotated.subSequence(capEnd, annotated.length)
+    BoxWithConstraints(modifier) {
+        val gap = with(density) { 6.dp.roundToPx() }
+        val capLayout = remember(cap, capStyle) { measurer.measure(cap, capStyle) }
+        val narrow = (constraints.maxWidth - capLayout.size.width - gap).coerceAtLeast(1)
+        val bodyLayout = remember(body, style, narrow) {
+            measurer.measure(body, style, constraints = Constraints(maxWidth = narrow))
+        }
+        val target = if (bodyLayout.lineCount > 1) 1 else 0
+        val shift = bodyLayout.getLineBaseline(target) - capLayout.getLineBaseline(0)
+        val capTop = shift.coerceAtLeast(0f)
+        val bodyTop = (-shift).coerceAtLeast(0f)
+        val capBaseline = capTop + capLayout.getLineBaseline(0) - bodyTop
+        var beside = 1
+        while (beside < bodyLayout.lineCount && bodyLayout.getLineTop(beside) < capBaseline) beside++
+        val split = bodyLayout.getLineEnd(beside - 1)
+        // The cap reports no height of its own: its line box runs far below the
+        // baseline, and letting it size the row opened a gap before the text
+        // that continues full width. The box keeps only down to the cap's baseline.
+        Box(Modifier.heightIn(min = with(density) { (capTop + capLayout.getLineBaseline(0)).toDp() })) {
+            Text(
+                cap, style = capStyle,
+                modifier = Modifier
+                    .padding(top = with(density) { capTop.toDp() })
+                    .layout { m, c ->
+                        val p = m.measure(c)
+                        layout(p.width, 0) { p.place(0, 0) }
+                    }
+            )
+            Column {
+                Text(
+                    body.subSequence(0, split), style = style,
+                    modifier = Modifier.padding(
+                        start = with(density) { (capLayout.size.width + gap).toDp() },
+                        top = with(density) { bodyTop.toDp() }
+                    )
+                )
+                if (split < body.length) Text(body.subSequence(split, body.length), style = style)
             }
-        )
+        }
     }
 }
 
@@ -2031,7 +2188,7 @@ fun BookChapterPicker(
                                 val isCurrent = picked == currentBook && ch - 1 == currentChapter
                                 TextButton(onClick = { onSelect(picked, ch - 1) }) {
                                     Text(
-                                        "$ch",
+                                        localDigits("$ch"),
                                         color = if (isCurrent) MaterialTheme.colorScheme.primary
                                         else Color.Unspecified,
                                         fontWeight = if (isCurrent) FontWeight.Bold else null

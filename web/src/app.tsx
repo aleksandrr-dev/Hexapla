@@ -1119,6 +1119,10 @@ export function App() {
             <details class="src">
               <summary>Text sources</summary>
               <p>{manifest.credits}</p>
+              <p>
+                Chinese and Japanese search matches character variants using Unihan (Unicode License v3) and OpenCC (Apache-2.0):{" "}
+                <a href={cjkFoldNotice} target="_blank" rel="noopener">licences</a>.
+              </p>
             </details>
             {/* CC BY: the music pack's credits must be shown (Scott Buckley
                 is not in sources_text). */}
@@ -1377,11 +1381,6 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
       {hits === null && load === null && err === null && (
         <p class="hint">
           Finds a phrase in {p.name}, then verses with every word in any order. Searching all translations at once is not on the web yet (it would download about 200 MB).
-        </p>
-      )}
-      {hits === null && load === null && err === null && /^(zh|ja)/.test(p.lang) && (
-        <p class="hint">
-          Any form of a character finds the others (独/獨, 爱/愛). Variant table from Unihan and OpenCC: <a href={cjkFoldNotice} target="_blank" rel="noopener">licences</a>.
         </p>
       )}
       {hits !== null && hits.length > 0 && (

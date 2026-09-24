@@ -27,7 +27,9 @@ import type { SearchMsg, SearchReq } from "./search.worker";
 // Unicode License v3 + Apache-2.0: the fold table's notice travels with it.
 import cjkFoldNotice from "../../app/src/main/assets/CJK_FOLD_NOTICE.txt?url";
 import type { Book, BooksIndex, Manifest, Translation } from "./types";
-import type { Ref, VerseMapData } from "./versemap";
+import { fromKjv, type Ref, type VerseMapData } from "./versemap";
+import { EMPTY, HL_COUNT, bookmarkKey, bookmarksAt, canonKey, fromBackup, parseCanon, placeIn, sortedBookmarks, sortedCanon, toBackup, withBookmark, withHighlight, withNote, type Marks } from "./marks";
+import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
 
 // John 1: where a first-time reader with no link is most likely to start.
 const START: Route = { translation: "kjv", book: 42, chapter: 0, verse: null };
@@ -126,7 +128,13 @@ const I = {
     </>
   ),
   listen: <path d="M4 15v-3a8 8 0 0 1 16 0v3M4 15a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2zM20 15a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2z" />,
+  bookmark: <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z" />,
+  bookmarked: <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z" fill="currentColor" />,
+  note: <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />,
 };
+
+/** Android's HighlightColors (ReaderScreen.kt), same order: the index is stored. */
+const HL_NAMES = ["Amber", "Green", "Blue", "Pink"];
 
 function audioPrefs(p: Prefs): AudioPrefs {
   return { rate: p.rate, autoNext: p.autoNext, bed: p.bed, bedKind: p.bedKind, bedVolume: p.bedVolume, uniformBed: p.uniformBed };
@@ -245,7 +253,9 @@ interface Col {
 // "text" is the quick Aa sheet; "prefs" is the full Settings menu, laid out
 // in the Android app's own sections (owner, 2026-09-24). "par" is the list of
 // translations read alongside; "add" picks one more for it.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search";
+// "note" edits the selected verse's note; "marks" lists bookmarks, highlights
+// and notes.
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -279,6 +289,15 @@ export function App() {
   const [credits, setCredits] = useState<string[]>([]);
   // Kept across openings: back from a hit, the list is where it was left.
   const [query, setQuery] = useState("");
+  // Bookmarks, highlights, notes (marks.ts). `stored` false = this browser
+  // gives no storage: marks still work until the page closes, and it says so.
+  const [marks, setMarks] = useState<Marks>(EMPTY);
+  const marksRef = useRef<Marks>(EMPTY);
+  const [stored, setStored] = useState(true);
+  // The versemap for every mark (63 KB, the same cached fetch the parallel
+  // view uses): a note's key is the KJV position, whatever is being read.
+  const [vmAll, setVmAll] = useState<VerseMapData | null>(null);
+  const [noteEdit, setNoteEdit] = useState<{ key: string; label: string; text: string } | null>(null);
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -319,7 +338,31 @@ export function App() {
 
   useEffect(() => {
     loadManifest().then(setManifest, (e) => setError(String(e)));
+    loadVersemap().then(setVmAll, () => undefined);
+    const reload = () =>
+      void loadMarks().then((m) => {
+        if (m === null) return setStored(false);
+        marksRef.current = m;
+        setMarks(m);
+      });
+    reload();
+    return onOtherTab(reload);
   }, []);
+
+  /** Change the marks: on screen at once, then written through. */
+  const mutate = (f: (m: Marks) => Marks) => {
+    const before = marksRef.current;
+    const after = f(before);
+    marksRef.current = after;
+    setMarks(after);
+    saveMarks(before, after).then(
+      () => setStored(true),
+      () => {
+        if (stored) flash("Not kept: this browser is not saving site data");
+        setStored(false);
+      },
+    );
+  };
 
   const find = (id: string) => manifest?.translations.find((t) => t.id === id);
   const aT = find(route.translation);
@@ -400,6 +443,29 @@ export function App() {
   // (another book, removed) reads as «All».
   const alone = multi && prefs.show !== "all" ? cols.findIndex((c) => c.id === prefs.show) : -1;
   const shown = alone >= 0 ? [cols[alone]] : cols;
+
+  // ---- marks on a row: the first shown column with text owns them ------------
+  const leadOf = (r: Row): { c: Col; refs: Ref[] } | null => {
+    for (const c of shown) {
+      const s = c.side(r);
+      if (s.kind === "text") return { c, refs: s.refs };
+    }
+    return null;
+  };
+  /** Canonical keys (KJV grid) of the row's verses; empty until the map loads. */
+  const keysOf = (r: Row): string[] => {
+    const l = leadOf(r);
+    return l === null || vmAll === null ? [] : l.refs.map((x) => canonKey(vmAll, l.c.id, route.book, x.c, x.v));
+  };
+  /** Stored bookmarks, from any translation, that land on the row's verses. */
+  const bookmarksOf = (r: Row): string[] => {
+    const l = leadOf(r);
+    return l === null || vmAll === null ? [] : l.refs.flatMap((x) => bookmarksAt(vmAll, marks, l.c.id, route.book, x.c - 1, x.v - 1));
+  };
+  const hlOf = (keys: string[]): number | null => {
+    for (const k of keys) if (k in marks.highlights) return marks.highlights[k];
+    return null;
+  };
 
   // Deep link to a verse: bring it to the middle of the screen, select it.
   useEffect(() => {
@@ -594,6 +660,49 @@ export function App() {
 
   const canShare = typeof navigator.share === "function";
 
+  // ---- marks on the selected verse ----------------------------------------------
+  const openNote = (key: string, label: string) => {
+    setNoteEdit({ key, label, text: marksRef.current.notes[key] ?? "" });
+    openFrom("note", null);
+  };
+  const selKeys = selRow === null ? [] : keysOf(selRow);
+  const selHl = hlOf(selKeys);
+  const selBms = selRow === null ? [] : bookmarksOf(selRow);
+  // A row that is a block (several verses together) is marked as a whole.
+  const setSelHl = (c: number | null) => mutate((m) => selKeys.reduce((acc, k) => withHighlight(acc, k, c), m));
+  const toggleSelBm = () => {
+    const l = selRow === null ? null : leadOf(selRow);
+    if (l === null) return;
+    if (selBms.length > 0) {
+      mutate((m) => selBms.reduce((acc, k) => withBookmark(acc, k, false), m));
+      flash("Bookmark removed");
+    } else {
+      const x = l.refs[0];
+      mutate((m) => withBookmark(m, bookmarkKey({ id: l.c.id, book: route.book, chapter: x.c - 1, verse: x.v - 1 }), true));
+      flash("Bookmarked");
+    }
+  };
+
+  // ---- backup: the Android app's own file («Settings › Backup») -------------------
+  const fileIn = useRef<HTMLInputElement>(null);
+  const saveBackup = () => {
+    const blob = new Blob([toBackup(marksRef.current, vmAll ?? {})], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "hexapla-backup.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  };
+  const restoreBackup = async (f: File) => {
+    const r = fromBackup(await f.text(), marksRef.current);
+    if (r === null) return flash("That file is not a Hexapla backup");
+    mutate(() => r.marks);
+    const n = r.read;
+    flash("Restored " + String(n.bookmarks) + " bookmarks, " + String(n.highlights) + " highlights, " + String(n.notes) + " notes");
+  };
+
   // ---- layout -------------------------------------------------------------------
   const style = { "--fs": String(prefs.fontSize) + "px" } as JSX.CSSProperties;
   const n = shown.length;
@@ -651,6 +760,12 @@ export function App() {
       <button type="button" class="ib" aria-label="Search" onClick={() => openFrom("search", null)}>
         <Icon d={I.search} size={22} />
       </button>
+      {/* A narrow phone keeps three icons; the list is in Settings there too. */}
+      {(wide || vw >= 400) && (
+        <button type="button" class="ib" aria-label="Bookmarks, highlights and notes" onClick={() => openFrom("marks", null)}>
+          <Icon d={I.bookmark} size={21} />
+        </button>
+      )}
       <button type="button" class="ib" aria-label="Text size and theme" onClick={() => openFrom("text", null)}>
         <Icon d={I.aa} size={24} />
       </button>
@@ -777,7 +892,50 @@ export function App() {
           const rowDir = directionOf(leadSide.texts[0]) ?? undefined;
           // The narration reads the primary translation, so its refs decide.
           const play = sounding !== null && r.a.kind === "text" && r.a.refs.some((x) => x.c === sounding.c && x.v === sounding.v);
-          const common = { dir: rowDir, id: "r-" + r.key, class: "row" + (sel ? " sel" : "") + (play ? " play" : ""), onClick: pick, onKeyDown: onKey, tabIndex: 0, "aria-pressed": sel };
+          const keys = keysOf(r);
+          const hl = hlOf(keys);
+          const bm = bookmarksOf(r).length > 0;
+          const notes = keys.filter((k) => k in marks.notes);
+          const common = {
+            dir: rowDir,
+            id: "r-" + r.key,
+            class: "row" + (sel ? " sel" : "") + (play ? " play" : "") + (hl !== null ? " hl" + String(hl) : ""),
+            onClick: pick,
+            onKeyDown: onKey,
+            tabIndex: 0,
+            "aria-pressed": sel,
+          };
+          const numCell = (cls: string) => (
+            <div class={cls}>
+              {bm && (
+                <span class="bmk" role="img" aria-label="Bookmarked">
+                  <Icon d={I.bookmarked} size={13} />
+                </span>
+              )}
+              {num}
+            </div>
+          );
+          const noteEl =
+            notes.length > 0 ? (
+              <div class="rnote">
+                {notes.map((k) => (
+                  <button
+                    type="button"
+                    key={k}
+                    class="rn"
+                    dir="auto"
+                    aria-label="Edit note"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openNote(k, lead.book.name + " " + refLabel(leadSide.refs, -1));
+                    }}
+                  >
+                    <Icon d={I.note} size={14} />
+                    <span>{marks.notes[k]}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null;
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
           const base = numOf.kind === "text" ? numOf.refs : [];
@@ -793,10 +951,11 @@ export function App() {
             if (s.kind === "gap") return null;
             return (
               <div {...common} class={common.class + " single"}>
-                <div class="num">{num}</div>
+                {numCell("num")}
                 <div class="txt">
                   <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] ? sounding : null} />
                 </div>
+                {noteEl}
               </div>
             );
           }
@@ -804,26 +963,28 @@ export function App() {
             return (
               <div {...common} class={common.class + " triple"} style={grid}>
                 <div class="cell">{cell(shown[0], false)}</div>
-                <div class="num mid">{num}</div>
+                {numCell("num mid")}
                 <div class="cell">{cell(shown[1], true)}</div>
+                {noteEl}
               </div>
             );
           }
           if (side) {
             return (
               <div {...common} class={common.class + " grid"} style={grid}>
-                <div class="num">{num}</div>
+                {numCell("num")}
                 {shown.map((c, i) => (
                   <div class="cell" key={c.id}>
                     {cell(c, i > 0)}
                   </div>
                 ))}
+                {noteEl}
               </div>
             );
           }
           return (
             <div {...common} class={common.class + " single"}>
-              <div class="num">{num}</div>
+              {numCell("num")}
               <div class="txt stack">
                 {cell(shown[0], false)}
                 {shown.slice(1).map((c) =>
@@ -839,6 +1000,7 @@ export function App() {
                   ),
                 )}
               </div>
+              {noteEl}
             </div>
           );
         })}
@@ -1002,6 +1164,52 @@ export function App() {
         onPick={(h) => (done(), go({ translation: route.translation, book: h.b, chapter: h.c, verse: h.v }))}
       />
     );
+  } else if (sheet === "note" && noteEdit !== null) {
+    const had = noteEdit.key in marks.notes;
+    const save = (text: string) => {
+      mutate((m) => withNote(m, noteEdit.key, text));
+      setNoteEdit(null);
+      done();
+    };
+    sheetEl = (
+      <Sheet title={"Note · " + noteEdit.label} onClose={() => (setNoteEdit(null), done())}>
+        <textarea
+          class="ntext"
+          dir="auto"
+          rows={6}
+          aria-label="Note"
+          value={noteEdit.text}
+          onInput={(e) => setNoteEdit({ ...noteEdit, text: (e.target as HTMLTextAreaElement).value })}
+        />
+        <p class="hint">Kept in this browser only. The note stays with the verse in every translation.</p>
+        <div class="pact">
+          <button type="button" class="btn pri" onClick={() => save(noteEdit.text)}>
+            Save
+          </button>
+          {had && (
+            <button type="button" class="btn" onClick={() => save("")}>
+              Delete note
+            </button>
+          )}
+        </div>
+      </Sheet>
+    );
+  } else if (sheet === "marks") {
+    sheetEl = (
+      <MarksSheet
+        marks={marks}
+        vm={vmAll}
+        t={route.translation}
+        lang={aLang}
+        index={index}
+        stored={stored}
+        onClose={done}
+        onPick={(b, c, v) => (done(), go({ translation: route.translation, book: b, chapter: c, verse: v }))}
+        onChange={mutate}
+        onSave={saveBackup}
+        onRestore={() => fileIn.current?.click()}
+      />
+    );
   } else if (sheet === "text") {
     sheetEl = (
       <Sheet title="Text" onClose={done}>
@@ -1077,6 +1285,13 @@ export function App() {
             </div>
           </>
         )}
+        <button type="button" class="srow" onClick={() => openFrom("marks", "prefs")}>
+          <div class="st">
+            <span>Bookmarks, highlights and notes</span>
+            <span class="sn">{markCount(marks)}</span>
+          </div>
+          <Icon d={I.chev} size={18} />
+        </button>
         <h3 class="sec">Appearance</h3>
         {textControls}
         <h3 class="sec">Study</h3>
@@ -1109,6 +1324,8 @@ export function App() {
             {prefs.bedKind === "music" && toggle("Same music throughout", "One calm track after another, instead of music matched to the passage.", prefs.uniformBed, () => update({ uniformBed: !prefs.uniformBed }))}
           </>
         )}
+        <h3 class="sec">Backup</h3>
+        {backupRows(stored, saveBackup, () => fileIn.current?.click())}
         {/* The sources_text credit is a licence obligation: verbatim, at the
             foot of Settings as on Android, never on every chapter (owner,
             2026-09-24: a footnote here, not in the Aa sheet). */}
@@ -1180,7 +1397,7 @@ export function App() {
   );
 
   return (
-    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "")} style={style}>
+    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "") + (selRow !== null ? " selecting" : "")} style={style}>
       {header}
       <div class="main">
         {wide && index !== null && (
@@ -1198,6 +1415,30 @@ export function App() {
       </div>
       {selRow !== null && (
         <div class="actions" role="toolbar" aria-label={"Verse " + selRef}>
+          {/* Highlight colours as on Android: tap one to mark, the lit one to clear. */}
+          <div class="arow amarks">
+            {Array.from({ length: HL_COUNT }, (_, c) => (
+              <button
+                type="button"
+                key={c}
+                class={"hdot hd" + String(c) + (selHl === c ? " on" : "")}
+                aria-label={"Highlight " + HL_NAMES[c]}
+                aria-pressed={selHl === c}
+                disabled={selKeys.length === 0}
+                onClick={() => setSelHl(selHl === c ? null : c)}
+              />
+            ))}
+            <span class="asp" />
+            <button type="button" class="ab" aria-pressed={selBms.length > 0} disabled={selKeys.length === 0} onClick={toggleSelBm}>
+              <Icon d={selBms.length > 0 ? I.bookmarked : I.bookmark} size={20} />
+              <span>{selBms.length > 0 ? "Saved" : "Bookmark"}</span>
+            </button>
+            <button type="button" class="ab" disabled={selKeys.length === 0} onClick={() => openNote(selKeys[0], selRef)}>
+              <Icon d={I.note} size={20} />
+              <span>Note</span>
+            </button>
+          </div>
+          <div class="arow">
           <span class="aref">{selRef}</span>
           {canListen && selVerse !== null && (
             <button type="button" class="ab" onClick={() => (listen(selVerse), setSelected(null))}>
@@ -1222,8 +1463,21 @@ export function App() {
           <button type="button" class="ib" aria-label="Close" onClick={() => setSelected(null)}>
             <Icon d={I.close} size={20} />
           </button>
+          </div>
         </div>
       )}
+      <input
+        ref={fileIn}
+        type="file"
+        accept="application/json,.json"
+        hidden
+        onChange={(e) => {
+          const el = e.target as HTMLInputElement;
+          const f = el.files?.[0];
+          el.value = "";
+          if (f !== undefined) void restoreBackup(f);
+        }}
+      />
       {ps.status !== "idle" && (pip === null ? mini : createPortal(mini, pip.document.body))}
       {toast !== null && (
         <div class="toast" role="status">
@@ -1232,6 +1486,151 @@ export function App() {
       )}
       {sheetEl}
     </div>
+  );
+}
+
+function markCount(m: Marks): string {
+  const b = m.bookmarks.length;
+  const h = Object.keys(m.highlights).length;
+  const n = Object.keys(m.notes).length;
+  if (b + h + n === 0) return "None yet. Tap a verse to mark it.";
+  return String(b) + " bookmarks · " + String(h) + " highlights · " + String(n) + " notes";
+}
+
+/** Settings › Backup, as on Android: the same file, so it moves both ways. */
+function backupRows(stored: boolean, onSave: () => void, onRestore: () => void): JSX.Element {
+  return (
+    <>
+      {!stored && <p class="hint">This browser is not keeping site data, so marks last only until the page closes. Save a backup to keep them.</p>}
+      <button type="button" class="srow" onClick={onSave}>
+        <div class="st">
+          <span>Save backup…</span>
+          <span class="sn">Bookmarks, highlights and notes as hexapla-backup.json — the Android app restores it too.</span>
+        </div>
+      </button>
+      <button type="button" class="srow" onClick={onRestore}>
+        <div class="st">
+          <span>Restore backup…</span>
+          <span class="sn">From this app or the Android app. Adds to what is here; nothing is lost.</span>
+        </div>
+      </button>
+    </>
+  );
+}
+
+type MarkTab = "bookmarks" | "highlights" | "notes";
+
+/** Bookmarks, highlights and notes, in Bible order, read in the current
+ *  translation (BookmarksScreen.kt): a mark on a verse this translation lacks
+ *  is dimmed and keeps its own reference. */
+function MarksSheet(p: {
+  marks: Marks;
+  vm: VerseMapData | null;
+  t: string;
+  lang: string;
+  index: BooksIndex | null;
+  stored: boolean;
+  onClose: () => void;
+  onPick: (b: number, c: number, v: number) => void;
+  onChange: (f: (m: Marks) => Marks) => void;
+  onSave: () => void;
+  onRestore: () => void;
+}) {
+  const [tab, setTab] = useState<MarkTab>(() => (p.marks.bookmarks.length > 0 ? "bookmarks" : Object.keys(p.marks.notes).length > 0 ? "notes" : "highlights"));
+  const [books, setBooks] = useState<Map<number, Book>>(new Map());
+  const vm = p.vm ?? {};
+
+  interface Item {
+    id: string;
+    book: number;
+    /** 0-based position in the current translation, or null when it has none. */
+    at: { chapter: number; verse: number } | null;
+    /** The stored reference, 1-based, shown when `at` is null. */
+    fallback: string;
+    hl?: number;
+    note?: string;
+    remove: (m: Marks) => Marks;
+  }
+  const canonItem = (k: string, extra: Partial<Item>, remove: (m: Marks) => Marks): Item | null => {
+    const c = parseCanon(k);
+    if (c === null) return null;
+    const pos = fromKjv(vm, p.t, c[0], c[1] + 1, c[2] + 1)[0];
+    return { id: k, book: c[0], at: pos === undefined ? null : { chapter: pos.c - 1, verse: pos.v - 1 }, fallback: String(c[1] + 1) + ":" + String(c[2] + 1) + " (KJV)", remove, ...extra };
+  };
+  const items: Item[] =
+    tab === "bookmarks"
+      ? sortedBookmarks(vm, p.marks).map((b) => {
+          const k = bookmarkKey(b);
+          return { id: k, book: b.book, at: placeIn(vm, b, p.t), fallback: String(b.chapter + 1) + ":" + String(b.verse + 1) + " (" + b.id + ")", remove: (m: Marks) => withBookmark(m, k, false) };
+        })
+      : tab === "highlights"
+        ? sortedCanon(Object.keys(p.marks.highlights)).flatMap((k) => canonItem(k, { hl: p.marks.highlights[k] }, (m) => withHighlight(m, k, null)) ?? [])
+        : sortedCanon(Object.keys(p.marks.notes)).flatMap((k) => canonItem(k, { note: p.marks.notes[k] }, (m) => withNote(m, k, "")) ?? []);
+
+  // The verse texts: the books the marks are in, in the current translation.
+  const need = [...new Set(items.map((x) => x.book))].filter((b) => !books.has(b) && b < (p.index?.length ?? 0)).join(",");
+  useEffect(() => {
+    if (need === "") return;
+    let live = true;
+    void Promise.all(need.split(",").map((b) => loadBook(p.t, Number(b)).then((x) => [Number(b), x] as const, () => null))).then((got) => {
+      if (!live) return;
+      setBooks((old) => {
+        const m = new Map(old);
+        for (const g of got) if (g !== null) m.set(g[0], g[1]);
+        return m;
+      });
+    });
+    return () => {
+      live = false;
+    };
+  }, [need, p.t]);
+
+  const counts: Record<MarkTab, number> = { bookmarks: p.marks.bookmarks.length, highlights: Object.keys(p.marks.highlights).length, notes: Object.keys(p.marks.notes).length };
+  return (
+    <Sheet title="Your marks" onClose={p.onClose}>
+      <div class="modes" role="group" aria-label="Show">
+        {(["bookmarks", "highlights", "notes"] as MarkTab[]).map((k) => (
+          <button type="button" key={k} class={"seg" + (tab === k ? " sel" : "")} aria-pressed={tab === k} onClick={() => setTab(k)}>
+            <span class="ell">{k[0].toUpperCase() + k.slice(1) + " " + String(counts[k])}</span>
+          </button>
+        ))}
+      </div>
+      {items.length === 0 && <p class="hint">{tab === "bookmarks" ? "No bookmarks yet. Tap a verse, then Bookmark." : tab === "highlights" ? "No highlights yet. Tap a verse, then a colour." : "No notes yet. Tap a verse, then Note."}</p>}
+      <div class="list">
+        {items.map((x) => {
+          const name = p.index?.[x.book]?.name ?? "Book " + String(x.book + 1);
+          const text = x.at === null ? "" : (books.get(x.book)?.chapters[x.at.chapter]?.[x.at.verse] ?? "");
+          const ref = name + " " + (x.at === null ? x.fallback : String(x.at.chapter + 1) + ":" + String(x.at.verse + 1));
+          const at = x.at;
+          return (
+            <div class={"li mrow" + (at === null ? " dim" : "")} key={x.id}>
+              <button type="button" class="mgo" disabled={at === null} onClick={() => at !== null && p.onPick(x.book, at.chapter, at.verse)}>
+                <span class="href" lang={p.lang}>
+                  {x.hl !== undefined && <span class={"hdot mini hd" + String(x.hl)} aria-hidden="true" />}
+                  {ref}
+                </span>
+                {x.note !== undefined && (
+                  <span class="mnote" dir="auto">
+                    {x.note}
+                  </span>
+                )}
+                {text !== "" && (
+                  <span class="htx" lang={p.lang} dir="auto">
+                    {text}
+                  </span>
+                )}
+                {at === null && <span class="sn">Not in this translation</span>}
+              </button>
+              <button type="button" class="ib" aria-label={"Remove " + ref} onClick={() => p.onChange(x.remove)}>
+                <Icon d={I.close} size={18} />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+      <h3 class="sec">Backup</h3>
+      {backupRows(p.stored, p.onSave, p.onRestore)}
+    </Sheet>
   );
 }
 

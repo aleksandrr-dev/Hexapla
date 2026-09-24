@@ -327,3 +327,55 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .dot { width: 10px; height: 10px; border-radius: 5px; background: var(--tc); flex: none; margin-inline-end: 6px; }
 .pact { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .btn:disabled { opacity: 0.45; cursor: default; background: transparent; }
+
+/* ---- marks: highlights, bookmarks, notes (marks.ts) ------------------------ */
+/* Android's HighlightColors at 35 % over the page, both themes. */
+:root { --h0: rgba(255, 213, 79, 0.35); --h1: rgba(129, 199, 132, 0.35); --h2: rgba(100, 181, 246, 0.35); --h3: rgba(240, 98, 146, 0.35); }
+.row.hl0 { background: var(--h0); }
+.row.hl1 { background: var(--h1); }
+.row.hl2 { background: var(--h2); }
+.row.hl3 { background: var(--h3); }
+.row.hl0.sel, .row.hl1.sel, .row.hl2.sel, .row.hl3.sel { background-image: linear-gradient(color-mix(in srgb, var(--sv) 45%, transparent), color-mix(in srgb, var(--sv) 45%, transparent)); }
+.bmk { display: block; color: var(--ox); line-height: 0; margin-bottom: 2px; }
+.num.mid .bmk { display: flex; justify-content: center; }
+.num:not(.mid) .bmk { display: flex; justify-content: flex-end; }
+.rnote { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.row.single .rnote { grid-column: 2; }
+.rn {
+  display: flex; align-items: flex-start; gap: 6px; padding: 6px 10px; border: 0; border-inline-start: 2px solid var(--ox);
+  border-radius: 0 8px 8px 0; background: color-mix(in srgb, var(--sv) 70%, transparent); color: var(--mu);
+  font: inherit; font-size: 14.5px; line-height: 1.45; text-align: start; cursor: pointer; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.rn svg { flex: none; margin-top: 3px; color: var(--ox); }
+.actions { flex-direction: column; align-items: stretch; gap: 2px; padding: 6px 6px 6px 14px; border-radius: 26px; }
+.arow { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.amarks { flex-wrap: wrap; }
+.asp { flex: 1; }
+.hdot { width: 44px; height: 44px; flex: none; border: 0; background: transparent; cursor: pointer; position: relative; padding: 0; }
+.hdot::after { content: ""; position: absolute; inset: 9px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.55); }
+.hdot.on::after { border: 3px solid var(--bg); inset: 7px; }
+.hd0::after { background: #ffd54f; } .hd1::after { background: #81c784; } .hd2::after { background: #64b5f6; } .hd3::after { background: #f06292; }
+.hdot:disabled, .ab:disabled { opacity: 0.4; cursor: default; }
+.hdot.mini { display: inline-block; width: 12px; height: 12px; margin-inline-end: 6px; vertical-align: -1px; cursor: default; }
+.hdot.mini::after { inset: 0; border: 0; }
+.hx.selecting .page { padding-bottom: 220px; }
+.hx.selecting.playing .page { padding-bottom: 290px; }
+.hx.selecting .toast { bottom: calc(150px + env(safe-area-inset-bottom)); }
+.hx.selecting.playing .toast { bottom: calc(214px + env(safe-area-inset-bottom)); }
+.ntext {
+  width: 100%; min-height: 140px; padding: 12px 14px; font: inherit; font-size: 17px; line-height: 1.5; resize: vertical;
+  color: var(--ink); background: var(--sv); border: 1px solid var(--ol); border-radius: 12px;
+}
+.ntext:focus-visible { outline: 2px solid var(--ox); outline-offset: 0; }
+.btn.pri { background: var(--ox); color: var(--on); border-color: var(--ox); }
+.li.mrow { display: flex; align-items: flex-start; gap: 2px; padding: 0; cursor: default; }
+.li.mrow:hover { background: transparent; }
+.mgo {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border: 0; border-radius: 10px;
+  background: transparent; color: var(--ink); font: inherit; font-size: 16px; line-height: 1.35; text-align: start; cursor: pointer;
+}
+.mgo:hover:not(:disabled) { background: var(--sv); }
+.mgo:disabled { cursor: default; }
+.li.mrow.dim .mgo { opacity: 0.55; }
+.mnote { white-space: pre-wrap; overflow-wrap: anywhere; }
+.li.mrow .htx { font-size: 14px; color: var(--mu); -webkit-line-clamp: 2; }

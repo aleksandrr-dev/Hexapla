@@ -128,10 +128,12 @@ a:hover { color: var(--lea); }
 .ch.cur { background: var(--ox); color: var(--on); font-weight: 700; }
 
 /* ---- chapter -------------------------------------------------------------- */
-.chead { display: flex; align-items: flex-end; gap: 14px; padding: 18px 0 8px; }
+/* Wraps rather than squeeze: at a large system text size (Samsung Internet,
+   owner 2026-09-24) «anywhere» broke the book name one letter per line. */
+.chead { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; padding: 18px 0 8px; }
 .cnum { font-size: 96px; line-height: 0.8; font-weight: 700; color: var(--ox); letter-spacing: -0.04em; }
 .wide .cnum { font-size: 128px; }
-.cname { font-size: 28px; font-weight: 600; font-style: italic; line-height: 1.15; padding-bottom: 4px; min-width: 0; overflow-wrap: anywhere; }
+.cname { font-size: 28px; font-weight: 600; font-style: italic; line-height: 1.15; padding-bottom: 4px; min-width: 0; overflow-wrap: break-word; }
 .cname:lang(ja), .cname:lang(zh-Hans), .cname:lang(zh-Hant), .cname:lang(fa), .cname:lang(ar), .cname:lang(he) { font-style: normal; }
 .wide .cname { font-size: 40px; }
 

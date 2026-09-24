@@ -219,3 +219,22 @@ export function packUrl(idx: MusicIndex | null, bed: Bed, book: number, chapter:
   const t = pinned ?? pick(idx.moods[bed.mood] ?? [], book * 1000 + chapter);
   return t != null ? idx.base + "/" + t.f : null;
 }
+
+/** The book's cover plate for the lock screen, as BookArt.forBook picks it:
+ *  `names` are the bookart/ file names (`<book>.webp`, `<book>_<n>.webp`);
+ *  a book with several plates turns them over daily, offset by book so the
+ *  library does not change in lockstep. null = no plate (Android draws one;
+ *  the web shows the app icon). `day` = year * 1000 + day of year. */
+export function plateFor(names: string[], book: number, day: number): string | null {
+  const plates = names.filter((n) => Number(n.replace(/\.[^.]*$/, "").split("_")[0]) === book && /^\d/.test(n)).sort();
+  if (plates.length === 0) return null;
+  const n = plates.length;
+  return plates[(((day + book * 7) % n) + n) % n];
+}
+
+/** Calendar.YEAR * 1000 + Calendar.DAY_OF_YEAR, local time. */
+export function artDay(d: Date): number {
+  const start = new Date(d.getFullYear(), 0, 1);
+  const doy = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() - start.getTime()) / 86400000) + 1;
+  return d.getFullYear() * 1000 + doy;
+}

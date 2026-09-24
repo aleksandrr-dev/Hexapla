@@ -2,8 +2,8 @@
 // indexes, the mood map, the music index and the versemap.
 // Run: node --experimental-strip-types src/audio.test.ts   (from web/)
 // Exit 0 all pass, 1 any fail. No test runner, no dependency.
-import { readFileSync } from "node:fs";
-import { bundledFor, moodFor, packUrl, parseWords, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordAt, wordsUrl, type GenIndex, type LibriVoxIndex, type MoodMapData, type MusicIndex, type Section } from "./audio.ts";
+import { readdirSync, readFileSync } from "node:fs";
+import { artDay, bundledFor, moodFor, packUrl, parseWords, plateFor, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordAt, wordsUrl, type GenIndex, type LibriVoxIndex, type MoodMapData, type MusicIndex, type Section } from "./audio.ts";
 import type { VerseMapData } from "./versemap.ts";
 
 const ASSETS = new URL("../../app/src/main/assets/", import.meta.url);
@@ -90,6 +90,22 @@ eq("unaligned verse", wordAt(null, 150), null);
   eq("follower: unaligned verse, already clear", followWord(null, 150, -1), null);
   // Control: HEXAPLA_AUDIO_BAD=2 asserts the old blink (a pause = no word).
   if (process.env.HEXAPLA_AUDIO_BAD === "2") eq("control (must fail)", followWord(words, 350, 0), { i: 0, word: null });
+}
+// ---- the lock-screen plate (BookArt.forBook) --------------------------------
+{
+  const names = readdirSync(new URL("bookart/", ASSETS));
+  eq("artDay 2026-09-24", artDay(new Date(2026, 8, 24)), 2026267);
+  eq("artDay 1 Jan", artDay(new Date(2026, 0, 1)), 2026001);
+  eq("artDay 31 Dec leap", artDay(new Date(2028, 11, 31)), 2028366);
+  // Genesis has 0.webp and 0_1..0_6; '.' sorts before '_', so 0.webp is plate 0.
+  eq("Genesis plates", names.filter((n) => /^0[._]/.test(n)).sort(), ["0.webp", "0_1.webp", "0_2.webp", "0_3.webp", "0_4.webp", "0_5.webp", "0_6.webp"]);
+  eq("Genesis on 2026267 = floorMod(2026267, 7) = 5", plateFor(names, 0, 2026267), "0_5.webp");
+  eq("next day", plateFor(names, 0, 2026268), "0_6.webp");
+  eq("the day after wraps to the base plate", plateFor(names, 0, 2026269), "0.webp");
+  const one = [...new Set(names.map((n) => Number(n.split(/[._]/)[0])))].find((b) => names.filter((n) => n.split(/[._]/)[0] === String(b)).length === 1);
+  if (one !== undefined) eq("a one-plate book always shows it", plateFor(names, one, 12345), String(one) + ".webp");
+  eq("a book with no plate: null (the icon)", plateFor(names, 999, 2026267), null);
+  if (process.env.HEXAPLA_AUDIO_BAD === "3") eq("control (must fail)", plateFor(names, 0, 2026267), "0_2.webp");
 }
 eq("sidecar parse", parseWords({ v: [[[1, 2, 3, 4]], null, "junk"] }), [[[1, 2, 3, 4]], null, null]);
 eq("malformed sidecar is null", parseWords({ nope: 1 }), null);

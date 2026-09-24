@@ -16,7 +16,7 @@
 // fallback (Web Speech is a v2 candidate), so a chapter with no recording
 // says so instead of reading it aloud.
 
-import { bundledFor, moodFor, packUrl, parseWords, pick, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordsUrl, type Bed, type MoodMapData, type MusicIndex, type Section, type Words } from "./audio";
+import { artDay, bundledFor, moodFor, packUrl, parseWords, pick, plateFor, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordsUrl, type Bed, type MoodMapData, type MusicIndex, type Section, type Words } from "./audio";
 import { loadBooksIndex, loadGenIndex, loadLibriVoxIndex, loadVersemap } from "./data";
 import type { Prefs } from "./prefs";
 import type { BooksIndex } from "./types";
@@ -33,6 +33,12 @@ import moodMapUrl from "../../app/src/main/assets/mood_map.json?url";
 import musicIndexUrl from "../../app/src/main/assets/music_index.json?url";
 
 const BUNDLED = [airPrelude, canonInD, healing, meditation];
+
+// The Doré cover plates the Android notification shows (BookArt.kt), 512 px
+// webp, 5.4 MB in all; each is fetched only when its book plays.
+const PLATES: Record<string, string> = Object.fromEntries(
+  Object.entries(import.meta.glob("../../app/src/main/assets/bookart/*.webp", { query: "?url", import: "default", eager: true }) as Record<string, string>).map(([k, v]) => [k.slice(k.lastIndexOf("/") + 1), v]),
+);
 
 /** The Listening prefs (stored and migrated in prefs.ts). */
 export type AudioPrefs = Pick<Prefs, "rate" | "autoNext" | "bed" | "bedKind" | "bedVolume" | "uniformBed">;
@@ -622,11 +628,13 @@ export class Player {
   private metadata(): void {
     if (!("mediaSession" in navigator) || typeof MediaMetadata === "undefined") return;
     const icon = new URL("../icon.png", window.location.href).href;
+    const plate = plateFor(Object.keys(PLATES), this.st.book, artDay(new Date()));
+    const art = plate !== null ? [{ src: new URL(PLATES[plate], window.location.href).href, sizes: "512x512", type: "image/webp" }] : [{ src: icon, sizes: "512x512", type: "image/png" }];
     navigator.mediaSession.metadata = new MediaMetadata({
       title: this.st.bookName + " " + String(this.st.chapter + 1),
       artist: this.st.label,
       album: "Hexapla",
-      artwork: [{ src: icon, sizes: "512x512", type: "image/png" }],
+      artwork: art,
     });
   }
 

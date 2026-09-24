@@ -30,6 +30,10 @@ import type { Book, BooksIndex, Manifest, Translation } from "./types";
 import { fromKjv, type Ref, type VerseMapData } from "./versemap";
 import { EMPTY, HL_COUNT, bookmarkKey, bookmarksAt, canonKey, fromBackup, parseCanon, placeIn, sortedBookmarks, sortedCanon, toBackup, withBookmark, withHighlight, withNote, type Marks } from "./marks";
 import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
+import { xrefsFor, type XrefData } from "./xrefs";
+// The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
+// Refs tap only, then kept for the page's life.
+import xrefsUrl from "../../app/src/main/assets/xrefs.json?url";
 
 // John 1: where a first-time reader with no link is most likely to start.
 const START: Route = { translation: "kjv", book: 42, chapter: 0, verse: null };
@@ -131,6 +135,7 @@ const I = {
   bookmark: <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z" />,
   bookmarked: <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z" fill="currentColor" />,
   note: <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />,
+  xref: <path d="M4 8h13l-3-3M20 16H7l3 3" />,
 };
 
 /** Android's HighlightColors (ReaderScreen.kt), same order: the index is stored. */
@@ -255,7 +260,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -298,6 +303,8 @@ export function App() {
   // view uses): a note's key is the KJV position, whatever is being read.
   const [vmAll, setVmAll] = useState<VerseMapData | null>(null);
   const [noteEdit, setNoteEdit] = useState<{ key: string; label: string; text: string } | null>(null);
+  // The row whose cross-references are open: its KJV keys, as marks use.
+  const [xref, setXref] = useState<{ keys: string[]; label: string } | null>(null);
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -1194,6 +1201,19 @@ export function App() {
         </div>
       </Sheet>
     );
+  } else if (sheet === "xref" && xref !== null) {
+    sheetEl = (
+      <XrefSheet
+        keys={xref.keys}
+        label={xref.label}
+        vm={vmAll}
+        lang={aLang}
+        t={route.translation}
+        index={index}
+        onClose={() => (setXref(null), done())}
+        onPick={(b, c, v) => (setXref(null), done(), go({ translation: route.translation, book: b, chapter: c, verse: v }))}
+      />
+    );
   } else if (sheet === "marks") {
     sheetEl = (
       <MarksSheet
@@ -1446,6 +1466,10 @@ export function App() {
               <span>Listen</span>
             </button>
           )}
+          <button type="button" class="ab" disabled={selKeys.length === 0} onClick={() => (setXref({ keys: selKeys, label: selRef }), openFrom("xref", null))}>
+            <Icon d={I.xref} size={20} />
+            <span>Refs</span>
+          </button>
           <button type="button" class="ab" onClick={() => void copy(selLink, "Link copied")}>
             <Icon d={I.link} size={20} />
             <span>Link</span>
@@ -1630,6 +1654,98 @@ function MarksSheet(p: {
       </div>
       <h3 class="sec">Backup</h3>
       {backupRows(p.stored, p.onSave, p.onRestore)}
+    </Sheet>
+  );
+}
+
+let xrefData: Promise<XrefData> | null = null;
+function loadXrefs(): Promise<XrefData> {
+  if (xrefData === null) {
+    xrefData = fetch(xrefsUrl).then((r) => {
+      if (!r.ok) throw new Error("HTTP " + String(r.status));
+      return r.json() as Promise<XrefData>;
+    });
+    // A failed fetch is not remembered: the next tap tries again.
+    xrefData.catch(() => (xrefData = null));
+  }
+  return xrefData;
+}
+
+/** A verse's cross-references (ReaderScreen.kt XrefsDialog), read in the
+ *  current translation; one it lacks is dimmed and keeps its KJV reference. */
+function XrefSheet(p: {
+  keys: string[];
+  label: string;
+  vm: VerseMapData | null;
+  t: string;
+  lang: string;
+  index: BooksIndex | null;
+  onClose: () => void;
+  onPick: (b: number, c: number, v: number) => void;
+}) {
+  const [data, setData] = useState<XrefData | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [books, setBooks] = useState<Map<number, Book>>(new Map());
+  useEffect(() => {
+    let live = true;
+    loadXrefs().then(
+      (d) => live && setData(d),
+      (e) => live && setErr(String(e)),
+    );
+    return () => {
+      live = false;
+    };
+  }, []);
+  const n = p.index?.length ?? 0;
+  // A book this translation does not have at all (an NT-only one) is absent too.
+  const items = data === null ? null : xrefsFor(data, p.vm ?? {}, p.keys, p.t).map((x) => ({ ...x, at: x.book < n && (p.index?.[x.book]?.chapters.length ?? 0) > 0 ? x.at : null }));
+
+  const need = items === null ? "" : [...new Set(items.filter((x) => x.at !== null).map((x) => x.book))].filter((b) => !books.has(b)).join(",");
+  useEffect(() => {
+    if (need === "") return;
+    let live = true;
+    void Promise.all(need.split(",").map((b) => loadBook(p.t, Number(b)).then((x) => [Number(b), x] as const, () => null))).then((got) => {
+      if (!live) return;
+      setBooks((old) => {
+        const m = new Map(old);
+        for (const g of got) if (g !== null) m.set(g[0], g[1]);
+        return m;
+      });
+    });
+    return () => {
+      live = false;
+    };
+  }, [need, p.t]);
+
+  return (
+    <Sheet title={"Cross-references · " + p.label} onClose={p.onClose}>
+      {err !== null && <p class="hint">Could not load the cross-references: {err}</p>}
+      {items === null && err === null && <p class="hint">Loading…</p>}
+      {items !== null && items.length === 0 && <p class="hint">No cross-references for this verse.</p>}
+      {items !== null && items.length > 0 && (
+        <div class="list">
+          {items.map((x) => {
+            const name = p.index?.[x.book]?.name ?? "Book " + String(x.book + 1);
+            const at = x.at;
+            const ref = name + " " + (at === null ? String(x.kjv.chapter + 1) + ":" + String(x.kjv.verse + 1) + " (KJV)" : String(at.chapter + 1) + ":" + String(at.verse + 1));
+            const text = at === null ? "" : (books.get(x.book)?.chapters[at.chapter]?.[at.verse] ?? "");
+            return (
+              <button type="button" key={String(x.book) + ":" + String(x.kjv.chapter) + ":" + String(x.kjv.verse)} class={"li hit" + (at === null ? " dim" : "")} disabled={at === null} onClick={() => at !== null && p.onPick(x.book, at.chapter, at.verse)}>
+                <span class="href" lang={p.lang} dir={directionOf(name) ?? undefined}>
+                  {ref}
+                </span>
+                {text !== "" && (
+                  <span class="htx" lang={p.lang} dir={directionOf(text) ?? undefined}>
+                    {text}
+                  </span>
+                )}
+                {at === null && <span class="sn">Not in this translation</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+      <p class="hint">The most-voted references at openbible.info (CC BY).</p>
     </Sheet>
   );
 }

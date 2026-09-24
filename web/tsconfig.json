@@ -17,5 +17,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src"],
-  "exclude": ["src/route.test.ts", "src/parallel.test.ts", "src/prefs.test.ts", "src/audio.test.ts", "src/search.test.ts", "src/marks.test.ts"]
+  "exclude": ["src/route.test.ts", "src/parallel.test.ts", "src/prefs.test.ts", "src/audio.test.ts", "src/search.test.ts", "src/marks.test.ts", "src/xrefs.test.ts"]
 }

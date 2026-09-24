@@ -302,6 +302,8 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .sload { display: flex; align-items: center; gap: 10px; margin: 0 4px 10px; font-size: 13px; color: var(--mu); font-variant-numeric: tabular-nums; }
 .sload progress { flex: 1; accent-color: var(--ox); }
 .li.hit { display: flex; flex-direction: column; gap: 2px; }
+.li.hit.dim { opacity: 0.55; cursor: default; }
+.li.hit.dim:hover { background: transparent; }
 .href { font-size: 14px; font-weight: 600; color: var(--ox); }
 .htx { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 

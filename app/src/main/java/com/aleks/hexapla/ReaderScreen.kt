@@ -124,6 +124,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
+import android.util.SparseIntArray
 import java.text.Normalizer
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -206,20 +207,25 @@ fun ReaderScreen(settings: AppSettings) {
         Rubrics.load(context); rubricsReady = true
     }
     // Secondary pane rows aligned to the primary through the KJV pivot:
-    // (text, secondary's own 1-based chapter/verse for interlinear taps).
+    // (text, secondary's own 1-based chapter/verse for interlinear taps,
+    // the translator's margin notes of every secondary verse on the row).
     val sBooks = secondaryBooks
-    val secondaryAligned: List<Pair<String, Pair<Int, Int>>>? =
+    val secondaryAligned: List<Triple<String, Pair<Int, Int>, List<String>>>? =
         if (settings.splitEnabled && sBooks != null)
             remember(book, chapter, verses, sBooks, settings.primaryId,
                      settings.secondaryId, mapsReady) {
                 val chs = sBooks.getOrNull(book)?.chapters
+                val sNotes = BibleRepo.notes(settings.secondaryId)
                 List(verses.size) { i ->
                     val (kc, kv) = VerseMap.toKjv(settings.primaryId, book, chapter + 1, i + 1)
                     val segs = VerseMap.fromKjv(settings.secondaryId, book, kc, kv)
                     val text = segs.mapNotNull { (c2, v2) ->
                         chs?.getOrNull(c2 - 1)?.getOrNull(v2 - 1)
                     }.filter { it.isNotBlank() }.joinToString(" ")
-                    text to (segs.firstOrNull() ?: (chapter + 1 to i + 1))
+                    val margin = segs.flatMap { (c2, v2) ->
+                        sNotes["$book:${c2 - 1}:${v2 - 1}"] ?: emptyList()
+                    }
+                    Triple(text, segs.firstOrNull() ?: (chapter + 1 to i + 1), margin)
                 }
             }
         else null
@@ -447,7 +453,9 @@ fun ReaderScreen(settings: AppSettings) {
     var xrefVerse by remember { mutableStateOf<Int?>(null) }
     var compareVerse by remember { mutableStateOf<Int?>(null) }
     var originalVerse by remember { mutableStateOf<Int?>(null) }
-    var notesVerse by remember { mutableStateOf<Int?>(null) }
+    // The translator's margin notes on show: (title, notes). Opened from the
+    // verse actions or from a verse's † marker, primary or secondary.
+    var marginShown by remember { mutableStateOf<Pair<String, List<String>>?>(null) }
     var dragTotal by remember { mutableFloatStateOf(0f) }
     val layoutDirection = LocalLayoutDirection.current
 
@@ -600,6 +608,13 @@ fun ReaderScreen(settings: AppSettings) {
                     val spoken = if (tagged == null && highlighted && Playback.wordStart.intValue >= 0)
                         Playback.wordStart.intValue..Playback.wordEnd.intValue else null
                     val bookmarked = bookmarkedVerses.contains(i)
+                    // The translator's margin notes the parser stripped from
+                    // this verse (KJV, Luther and a few others): a † after the
+                    // text opens them, as on the web app.
+                    val primaryMargin = BibleRepo.notes(settings.primaryId)["$book:$chapter:$i"]
+                    val onPrimaryMargin: (() -> Unit)? = primaryMargin?.let { l ->
+                        { marginShown = "${books[book].name} ${chapter + 1}:${i + 1}" to l }
+                    }
                     val noteText = notes[canonKey]
                     val userColor = liveHighlights[canonKey]
                     val bg = when {
@@ -632,8 +647,12 @@ fun ReaderScreen(settings: AppSettings) {
                                 )
                             }
                         if (settings.splitEnabled && secondaryAligned != null) {
-                            val (second, secondPos) = secondaryAligned.getOrNull(i)
-                                ?: ("" to (chapter + 1 to i + 1))
+                            val (second, secondPos, secondMargin) = secondaryAligned.getOrNull(i)
+                                ?: Triple("", chapter + 1 to i + 1, emptyList())
+                            val onSecondMargin: (() -> Unit)? = if (secondMargin.isEmpty()) null else ({
+                                val name = sBooks?.getOrNull(book)?.name ?: books[book].name
+                                marginShown = "$name ${secondPos.first}:${secondPos.second}" to secondMargin
+                            })
                             // Interlinear taps need the secondary's OWN verse
                             // index; disabled on the rare cross-chapter rows.
                             val secondTap = if (interSecondary && secondPos.first == chapter + 1)
@@ -641,12 +660,12 @@ fun ReaderScreen(settings: AppSettings) {
                             else null
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
+                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
+                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onSecondMargin)
                                 }
                             } else {
-                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
+                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
                                     i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily,
@@ -654,11 +673,12 @@ fun ReaderScreen(settings: AppSettings) {
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
                                     onWordIndexed = secondTap,
                                     red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0,
-                                    onLongPress = { actionVerse = i }
+                                    onLongPress = { actionVerse = i },
+                                    onMargin = onSecondMargin
                                 )
                             }
                         } else {
-                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i })
+                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                         }
                         if (noteText != null) {
                             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -770,7 +790,7 @@ fun ReaderScreen(settings: AppSettings) {
                 actionVerse = null
             }) else null,
             onNotes = if (!verseNotes.isNullOrEmpty()) ({
-                notesVerse = v
+                marginShown = "${books[book].name} ${chapter + 1}:${v + 1}" to verseNotes
                 actionVerse = null
             }) else null,
             onListen = {
@@ -887,11 +907,10 @@ fun ReaderScreen(settings: AppSettings) {
         )
     }
 
-    notesVerse?.let { v ->
-        val noteList = BibleRepo.notes(settings.primaryId)["$book:$chapter:$v"] ?: emptyList()
+    marginShown?.let { (title, noteList) ->
         AlertDialog(
-            onDismissRequest = { notesVerse = null },
-            title = { Text(localDigits("${books[book].name} ${chapter + 1}:${v + 1}")) },
+            onDismissRequest = { marginShown = null },
+            title = { Text(localDigits(title)) },
             text = {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     Text(
@@ -910,7 +929,7 @@ fun ReaderScreen(settings: AppSettings) {
                 }
             },
             confirmButton = {
-                TextButton(onClick = { notesVerse = null }) { Text(stringResource(R.string.cancel)) }
+                TextButton(onClick = { marginShown = null }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -1162,9 +1181,10 @@ private fun VerseText(
     red: Boolean = false,
     showNumber: Boolean = true,
     dropCap: Boolean = false,
-    onLongPress: (() -> Unit)? = null
+    onLongPress: (() -> Unit)? = null,
+    onMargin: (() -> Unit)? = null
 ) {
-    val annotated = when {
+    val body = when {
         taggedText != null -> {
             val accent = MaterialTheme.colorScheme.primary
             buildAnnotatedString {
@@ -1203,6 +1223,27 @@ private fun VerseText(
         onWordIndexed != null -> buildAnnotatedString { appendWordsIndexed(text, onWordIndexed) }
         onWord != null -> buildAnnotatedString { appendWords(text, onWord) }
         else -> AnnotatedString(text)
+    }
+    // The translator's-note marker: a superscript † after the text, its own
+    // link. Appended last, so the spoken-word range above still indexes the
+    // plain text. The long-press watcher below still wins on a hold.
+    val markColor = MaterialTheme.colorScheme.primary
+    val annotated = if (onMargin == null) body else buildAnnotatedString {
+        append(body)
+        append(" ")
+        withLink(
+            LinkAnnotation.Clickable(
+                "margin",
+                TextLinkStyles(
+                    SpanStyle(
+                        color = markColor,
+                        fontSize = (fontSize * 0.75f).sp,
+                        fontWeight = FontWeight.Bold,
+                        baselineShift = BaselineShift.Superscript
+                    )
+                )
+            ) { onMargin() }
+        ) { append("†") }
     }
     // Classic red-letter tone, adjusted for theme luminance.
     val redColor = if (MaterialTheme.colorScheme.background.luminance() < 0.5f)
@@ -1731,11 +1772,54 @@ private data class SearchHit(
     val translationLabel: String? = null
 )
 
-/** Case- and diacritic-insensitive form: strips accents, Hebrew niqqud, Greek breathing marks. */
-private fun searchNorm(s: String): String =
-    Normalizer.normalize(s, Normalizer.Form.NFD)
+/** CJK variant fold (assets/cjk_fold.json, derived by tools/build_cjk_fold.py;
+ *  web/src/search.ts applies the same table). Every key is at or above
+ *  U+2E80. A BMP key is a flat index (0 = no mapping), an astral one is looked
+ *  up in [cjkFoldAstral]: scanBooks folds every verse on every search, and a
+ *  binary search per character tripled a CUV scan (JVM, 15 -> 52 ms; flat, 24). */
+private class CjkFold(val bmp: IntArray, val astral: SparseIntArray)
+
+private const val FOLD_BASE = 0x2E80
+
+@Volatile private var cjkFold: CjkFold? = null
+
+private fun loadCjkFold(context: android.content.Context) {
+    if (cjkFold != null) return
+    val o = org.json.JSONObject(context.assets.open("cjk_fold.json").bufferedReader().use { it.readText() })
+    val bmp = IntArray(0x10000 - FOLD_BASE)
+    val astral = SparseIntArray()
+    for (k in o.keys()) {
+        val c = k.codePointAt(0)
+        val v = o.getString(k).codePointAt(0)
+        if (c < 0x10000) bmp[c - FOLD_BASE] = v else astral.put(c, v)
+    }
+    cjkFold = CjkFold(bmp, astral)
+}
+
+/** Case- and diacritic-insensitive form: strips accents, Hebrew niqqud, Greek
+ *  breathing marks; then folds CJK variants (獨/独, 愛/爱) to one key, so a
+ *  reader finds Meiji's old kanji and either CUV with the form they know. */
+private fun searchNorm(s: String): String {
+    val n = Normalizer.normalize(s, Normalizer.Form.NFD)
         .replace(Regex("\\p{Mn}+"), "")
         .lowercase()
+    val fold = cjkFold
+    // Surrogates are above U+2E80 too, so an astral character is not skipped.
+    if (fold == null || n.none { it >= '⺀' }) return n
+    val sb = StringBuilder(n.length)
+    var i = 0
+    while (i < n.length) {
+        val c = n.codePointAt(i)
+        val k = when {
+            c < FOLD_BASE -> 0
+            c < 0x10000 -> fold.bmp[c - FOLD_BASE]
+            else -> fold.astral.get(c, 0)
+        }
+        sb.appendCodePoint(if (k != 0) k else c)
+        i += Character.charCount(c)
+    }
+    return sb.toString()
+}
 
 /** Most hits we will collect before stopping. */
 private const val SEARCH_CAP = 300
@@ -1845,6 +1929,10 @@ private fun SearchDialog(
         // 154 MB of JSON per character typed — the scan never survived long
         // enough to produce a result, so the dialog just sat empty.
         delay(300)
+        // Without the table search still works, it just stops folding variants.
+        withContext(Dispatchers.IO) {
+            try { loadCjkFold(context) } catch (e: Exception) { Log.w("Hexapla", "search: no cjk_fold.json", e) }
+        }
         val q = searchNorm(raw)
         val words = searchTerms(q)
         results = emptyList(); searched = false

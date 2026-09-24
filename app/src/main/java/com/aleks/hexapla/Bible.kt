@@ -167,8 +167,8 @@ object BibleRepo {
     private val multiSpace = Regex("""\s+""")
 
     // Stripped colon-notes per asset, keyed "book:chapter:verse" (0-based).
-    // Only the KJV asset actually has them (~7.8k notes); the map is empty
-    // for every other translation, so the memory cost is a few hundred KB.
+    // Only a few assets have them (KJV ~7.8k notes; Luther, Marathi, Georgian,
+    // Synodal); the map is empty for the rest, so the memory cost is small.
     private val notesByAsset =
         java.util.concurrent.ConcurrentHashMap<String, Map<String, List<String>>>()
 

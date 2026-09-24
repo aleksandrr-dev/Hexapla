@@ -293,6 +293,16 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .field input { flex: 1; accent-color: var(--ox); height: 44px; }
 .field .val { width: 2.2em; text-align: end; font-variant-numeric: tabular-nums; }
 .preview { margin: 4px 0 12px; line-height: 1.5; }
+.sq {
+  width: 100%; box-sizing: border-box; height: 48px; padding: 0 14px; margin: 0 0 10px; font: inherit; font-size: 17px;
+  color: var(--ink); background: var(--sv); border: 1px solid var(--ol); border-radius: 12px;
+}
+.sq:focus-visible { outline: 2px solid var(--ox); outline-offset: 0; }
+.sload { display: flex; align-items: center; gap: 10px; margin: 0 4px 10px; font-size: 13px; color: var(--mu); font-variant-numeric: tabular-nums; }
+.sload progress { flex: 1; accent-color: var(--ox); }
+.li.hit { display: flex; flex-direction: column; gap: 2px; }
+.href { font-size: 14px; font-weight: 600; color: var(--ox); }
+.htx { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ---- hexapla: up to six columns ---------------------------------------------- */
 .modes.chips { width: max-content; max-width: 100%; overflow-x: auto; scrollbar-width: none; }

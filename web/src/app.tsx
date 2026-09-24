@@ -10,7 +10,8 @@
 // Audio (P3) lives in player.ts; this file only drives it and follows it:
 // the sounding verse and word are lit in the PRIMARY column.
 //
-// Search, offline and UI locales are P2-P4 and deliberately absent.
+// Search (P2) is one translation at a time: search.ts, run in search.worker.ts.
+// Offline and UI locales are P4 and deliberately absent.
 
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
@@ -21,6 +22,8 @@ import { Player, type AudioPrefs, type PlayState } from "./player";
 import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
 import { directionOf, dropCapEnd, isCjk } from "./text";
+import { SEARCH_CAP, SEARCH_MIN, type SearchHit } from "./search";
+import type { SearchMsg, SearchReq } from "./search.worker";
 import type { Book, BooksIndex, Manifest, Translation } from "./types";
 import type { Ref, VerseMapData } from "./versemap";
 
@@ -96,6 +99,12 @@ const I = {
     </>
   ),
   chev: <path d="M9 6l6 6-6 6" />,
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4.5 4.5" />
+    </>
+  ),
   up: <path d="M6 15l6-6 6 6" />,
   down: <path d="M6 9l6 6 6-6" />,
   plus: <path d="M12 5v14M5 12h14" />,
@@ -234,7 +243,7 @@ interface Col {
 // "text" is the quick Aa sheet; "prefs" is the full Settings menu, laid out
 // in the Android app's own sections (owner, 2026-09-24). "par" is the list of
 // translations read alongside; "add" picks one more for it.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -266,6 +275,8 @@ export function App() {
   const [ps, setPs] = useState<PlayState>(player.state);
   const [canListen, setCanListen] = useState(false);
   const [credits, setCredits] = useState<string[]>([]);
+  // Kept across openings: back from a hit, the list is where it was left.
+  const [query, setQuery] = useState("");
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -635,6 +646,9 @@ export function App() {
           <span class="ell">{parLabel}</span>
         </button>
       </div>
+      <button type="button" class="ib" aria-label="Search" onClick={() => openFrom("search", null)}>
+        <Icon d={I.search} size={22} />
+      </button>
       <button type="button" class="ib" aria-label="Text size and theme" onClick={() => openFrom("text", null)}>
         <Icon d={I.aa} size={24} />
       </button>
@@ -973,6 +987,19 @@ export function App() {
     );
   } else if (sheet === "book") {
     sheetEl = <BookSheet index={index} lang={aLang} current={route} grid={chapterGrid} onClose={() => setSheet(null)} onPick={(b, c) => (setSheet(null), go({ ...route, book: b, chapter: c, verse: null }))} />;
+  } else if (sheet === "search") {
+    sheetEl = (
+      <SearchSheet
+        t={route.translation}
+        name={aName}
+        lang={aLang}
+        index={index}
+        query={query}
+        setQuery={setQuery}
+        onClose={done}
+        onPick={(h) => (done(), go({ translation: route.translation, book: h.b, chapter: h.c, verse: h.v }))}
+      />
+    );
   } else if (sheet === "text") {
     sheetEl = (
       <Sheet title="Text" onClose={done}>
@@ -1263,6 +1290,108 @@ function Sheet({ title, onClose, children, back }: { title: string; onClose: () 
         <div class="sb">{children}</div>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Search
+
+let searchWorker: Worker | null = null;
+let searchSeq = 0;
+function worker(): Worker {
+  searchWorker ??= new Worker(new URL("./search.worker.ts", import.meta.url), { type: "module" });
+  return searchWorker;
+}
+
+/** Android's debounce: a scan per keystroke would redo the work per letter. */
+const DEBOUNCE_MS = 300;
+
+function SearchSheet(p: { t: string; name: string; lang: string; index: BooksIndex | null; query: string; setQuery: (q: string) => void; onClose: () => void; onPick: (h: SearchHit) => void }) {
+  const [hits, setHits] = useState<SearchHit[] | null>(null);
+  const [load, setLoad] = useState<[number, number] | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const live = useRef(0);
+
+  // After Sheet's own effect, which focuses the dialog.
+  useEffect(() => input.current?.focus(), []);
+
+  useEffect(() => {
+    const w = worker();
+    const onMsg = (e: MessageEvent<SearchMsg>) => {
+      const m = e.data;
+      if (m.id !== live.current) return;
+      if (m.kind === "progress") setLoad(m.done < m.total ? [m.done, m.total] : null);
+      else if (m.kind === "hits") (setLoad(null), setHits(m.hits));
+      else (setLoad(null), setErr(m.message));
+    };
+    w.addEventListener("message", onMsg);
+    return () => w.removeEventListener("message", onMsg);
+  }, []);
+
+  useEffect(() => {
+    const raw = p.query.trim();
+    const id = ++searchSeq;
+    live.current = id;
+    setErr(null);
+    // Short query: nothing to find, but start loading the translation now so
+    // the first real query does not wait for the download.
+    if (raw.length < SEARCH_MIN) {
+      setHits(null);
+      worker().postMessage({ id, t: p.t, q: "" } satisfies SearchReq);
+      return;
+    }
+    const timer = setTimeout(() => worker().postMessage({ id, t: p.t, q: raw } satisfies SearchReq), DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [p.query, p.t]);
+
+  const name = (b: number) => p.index?.[b]?.name ?? "?";
+  return (
+    <Sheet title="Search" onClose={p.onClose}>
+      <input
+        ref={input}
+        class="sq"
+        type="search"
+        enterkeyhint="search"
+        autoComplete="off"
+        spellcheck={false}
+        placeholder={"Search " + p.name}
+        aria-label={"Search " + p.name}
+        value={p.query}
+        onInput={(e) => p.setQuery(e.currentTarget.value)}
+        lang={p.lang}
+      />
+      {load !== null && (
+        <div class="sload" role="status">
+          <progress max={load[1]} value={load[0]} />
+          <span>
+            {load[0]} / {load[1]}
+          </span>
+        </div>
+      )}
+      {err !== null && <p class="hint">Search failed: {err}</p>}
+      {hits !== null && hits.length === 0 && load === null && <p class="hint">No results</p>}
+      {hits !== null && hits.length >= SEARCH_CAP && <p class="hint">The first {SEARCH_CAP} verses. Add a word to narrow it.</p>}
+      {hits === null && load === null && err === null && (
+        <p class="hint">
+          Finds a phrase in {p.name}, then verses with every word in any order. Searching all translations at once is not on the web yet (it would download about 200 MB).
+        </p>
+      )}
+      {hits !== null && hits.length > 0 && (
+        <div class="list">
+          {hits.map((h) => (
+            <button type="button" key={String(h.b) + ":" + String(h.c) + ":" + String(h.v)} class="li hit" onClick={() => p.onPick(h)}>
+              <span class="href" lang={p.lang} dir={directionOf(name(h.b)) ?? undefined}>
+                {name(h.b)} {h.c + 1}:{h.v + 1}
+              </span>
+              <span class="htx" lang={p.lang} dir={directionOf(h.text) ?? undefined}>
+                {h.text}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </Sheet>
   );
 }
 

@@ -42,6 +42,8 @@ export interface Prefs {
   uniformBed: boolean;
   /** Strong's numbers over the KJV when it is the primary translation. */
   strongs: boolean;
+  /** Tap a word in an English column for Webster's 1828 definition. */
+  dictionary: boolean;
 }
 
 const KEY = "hexapla.prefs.v1";
@@ -68,6 +70,7 @@ export const DEFAULTS: Prefs = {
   bedVolume: 0.45,
   uniformBed: false,
   strongs: false,
+  dictionary: false,
 };
 
 /** A stored number inside [lo, hi], or the default when it is not a number. */
@@ -129,6 +132,7 @@ export function migrate(p: Record<string, unknown>): Prefs {
     bedVolume: num(p.bedVolume, VOL_MIN, 1, DEFAULTS.bedVolume),
     uniformBed: bool(p.uniformBed, DEFAULTS.uniformBed),
     strongs: bool(p.strongs, DEFAULTS.strongs),
+    dictionary: bool(p.dictionary, DEFAULTS.dictionary),
   };
 }
 

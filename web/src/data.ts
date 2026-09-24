@@ -105,6 +105,12 @@ export function loadStrongsLexicon(lang: string | null): Promise<RawLexicon> {
   return fetchJson<RawLexicon>(lang === null ? "data/strongs_lexicon.json" : "data/strongs_lexicon_" + lang + ".json");
 }
 
+/** `data/webster/<L>.json` — Webster's 1828, one first letter (or `_other`)
+ *  per file (webster.ts bucket). Fetched only when a word is tapped. */
+export function loadWebster(bucket: string): Promise<Record<string, string>> {
+  return fetchJson<Record<string, string>>("data/webster/" + bucket + ".json");
+}
+
 /** Drop every cached response. Exposed for tests and for a future "retry"
  *  affordance; nothing in the scaffold calls it. */
 export function clearCache(): void {

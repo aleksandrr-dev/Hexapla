@@ -16,7 +16,7 @@
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { loadBook, loadBooksIndex, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap } from "./data";
+import { loadBook, loadBooksIndex, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster } from "./data";
 import { afterCap, lexiconLang, mergeLexicon, shown as shownSegs, shownNumber, shownText, subline, type Lexicon, type Seg } from "./strongs";
 import { chapterRows, type Row, type Side } from "./parallel";
 import { Player, type AudioPrefs, type PlayState } from "./player";
@@ -32,6 +32,7 @@ import { fromKjv, type Ref, type VerseMapData } from "./versemap";
 import { EMPTY, HL_COUNT, bookmarkKey, bookmarksAt, canonKey, fromBackup, parseCanon, placeIn, sortedBookmarks, sortedCanon, toBackup, withBookmark, withHighlight, withNote, type Marks } from "./marks";
 import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
 import { xrefsFor, type XrefData } from "./xrefs";
+import { lookup as lookupWebster, paragraphs as websterParagraphs, wordSpanAt } from "./webster";
 // The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
 // Refs tap only, then kept for the page's life.
 import xrefsUrl from "../../app/src/main/assets/xrefs.json?url";
@@ -316,7 +317,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -365,6 +366,7 @@ export function App() {
   // Strong's: the tagged KJV book on screen, and the number tapped.
   const [sBook, setSBook] = useState<{ book: number; chapters: string[][] } | null>(null);
   const [strongsId, setStrongsId] = useState<string | null>(null);
+  const [dictWord, setDictWord] = useState<string | null>(null);
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -1008,7 +1010,12 @@ export function App() {
             dir: rowDir,
             id: "r-" + r.key,
             class: "row" + (sel ? " sel" : "") + (play ? " play" : "") + (hl !== null ? " hl" + String(hl) : ""),
-            onClick: pick,
+            onClick: (e: MouseEvent) => {
+              const w = prefs.dictionary ? tappedWord(e) : null;
+              if (w === null) return pick();
+              setDictWord(w);
+              openFrom("webster", null);
+            },
             onKeyDown: onKey,
             tabIndex: 0,
             "aria-pressed": sel,
@@ -1354,6 +1361,8 @@ export function App() {
     );
   } else if (sheet === "strongs" && strongsId !== null) {
     sheetEl = <StrongsSheet id={strongsId} onClose={() => (setStrongsId(null), done())} />;
+  } else if (sheet === "webster" && dictWord !== null) {
+    sheetEl = <WebsterSheet word={dictWord} onClose={() => (setDictWord(null), done())} />;
   } else if (sheet === "xref" && xref !== null) {
     sheetEl = (
       <XrefSheet
@@ -1474,7 +1483,12 @@ export function App() {
           prefs.strongs,
           () => update({ strongs: !prefs.strongs }),
         )}
-        {soon("Webster's 1828 Dictionary", "Tap an English word for what it meant in the era of the classic Bibles.")}
+        {toggle(
+          "Webster's 1828 Dictionary",
+          "Tap any word in an English translation to see what it meant in the era of the classic Bibles — Noah Webster's American Dictionary of the English Language, 1828.",
+          prefs.dictionary,
+          () => update({ dictionary: !prefs.dictionary }),
+        )}
         <h3 class="sec">Listening</h3>
         {!player.opus && <p class="hint">This browser cannot play the generated narration (Ogg Opus). The King James Version's LibriVox readings still play.</p>}
         <label class="field">
@@ -1860,6 +1874,71 @@ function StrongsSheet(p: { id: string; onClose: () => void }) {
               {e.def}
             </p>
           </>
+        )}
+      </div>
+    </Sheet>
+  );
+}
+
+/** The word under a tap on an English verse, or null — then the tap is an
+ *  ordinary verse selection. A caret query lands on the NEAREST character,
+ *  so the word's own boxes must contain the point, or a tap in the margin
+ *  after a line would open the last word on it. */
+function tappedWord(e: MouseEvent): string | null {
+  const t = e.target as Element | null;
+  if (t === null || t.closest("button, .dropcap, .inum") !== null) return null;
+  const host = t.closest(".vt");
+  if (host === null || !(host.getAttribute("lang") ?? "").toLowerCase().startsWith("en")) return null;
+  let node: Node | null = null;
+  let offset = 0;
+  const doc = document as Document & { caretPositionFromPoint?: (x: number, y: number) => { offsetNode: Node; offset: number } | null };
+  if (typeof doc.caretPositionFromPoint === "function") {
+    const p = doc.caretPositionFromPoint(e.clientX, e.clientY);
+    if (p !== null) ((node = p.offsetNode), (offset = p.offset));
+  } else if (typeof document.caretRangeFromPoint === "function") {
+    const r = document.caretRangeFromPoint(e.clientX, e.clientY);
+    if (r !== null) ((node = r.startContainer), (offset = r.startOffset));
+  }
+  if (node === null || node.nodeType !== Node.TEXT_NODE || !host.contains(node)) return null;
+  const text = (node as Text).data;
+  const span = wordSpanAt(text, offset);
+  if (span === null) return null;
+  const range = document.createRange();
+  range.setStart(node, span[0]);
+  range.setEnd(node, span[1]);
+  const inside = [...range.getClientRects()].some((b) => e.clientX >= b.left - 2 && e.clientX <= b.right + 2 && e.clientY >= b.top - 2 && e.clientY <= b.bottom + 2);
+  return inside ? text.slice(span[0], span[1]) : null;
+}
+
+function WebsterSheet(p: { word: string; onClose: () => void }) {
+  const [hit, setHit] = useState<[string, string] | null | undefined>(undefined);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    let live = true;
+    lookupWebster(p.word, loadWebster).then(
+      (h) => live && setHit(h),
+      () => live && setErr(true),
+    );
+    return () => {
+      live = false;
+    };
+  }, [p.word]);
+  return (
+    <Sheet title={hit ? hit[0] : p.word} onClose={p.onClose}>
+      <div class="strongs">
+        <p class="ssub">Webster's American Dictionary, 1828</p>
+        {err ? (
+          <p class="hint">The dictionary could not be loaded.</p>
+        ) : hit === undefined ? (
+          <p class="hint">Loading…</p>
+        ) : hit === null ? (
+          <p class="hint">Not in the 1828 dictionary — likely a proper name.</p>
+        ) : (
+          websterParagraphs(hit[1]).map((t, i) => (
+            <p key={i} class="sdef" lang="en">
+              {t}
+            </p>
+          ))
         )}
       </div>
     </Sheet>

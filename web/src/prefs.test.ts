@@ -34,6 +34,7 @@ eq("old keeps the rest", migrate({ last: "#/kjv/43/3", second: "syn", mode: "bot
   bedVolume: 0.45,
   uniformBed: false,
   strongs: false,
+  dictionary: false,
 });
 
 // The current shape.
@@ -49,6 +50,9 @@ eq("no audio keys -> Store.kt defaults", migrate({ theme: "dark" }).bedVolume, 0
 const au = { rate: 1.5, autoNext: false, bed: true, bedKind: "fireside", bedVolume: 0.3, uniformBed: true };
 eq("strongs round trip", migrate({ ...DEFAULTS, strongs: true }).strongs, true);
 eq("strongs junk -> off", migrate({ strongs: "yes" }).strongs, false);
+eq("dictionary defaults off", migrate({ theme: "dark" }).dictionary, false);
+eq("dictionary round trip", migrate({ ...DEFAULTS, dictionary: true }).dictionary, true);
+eq("dictionary junk -> off", migrate({ dictionary: 1 }).dictionary, false);
 eq("audio round trip", migrate({ ...DEFAULTS, ...au }), { ...DEFAULTS, ...au });
 eq("rate clamped high", migrate({ rate: 9 }).rate, RATE_MAX);
 eq("volume clamped low", migrate({ bedVolume: 0 }).bedVolume, VOL_MIN);

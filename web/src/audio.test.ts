@@ -3,7 +3,7 @@
 // Run: node --experimental-strip-types src/audio.test.ts   (from web/)
 // Exit 0 all pass, 1 any fail. No test runner, no dependency.
 import { readFileSync } from "node:fs";
-import { bundledFor, moodFor, packUrl, parseWords, sectionFor, sectionsFor, SILENCE, startMs, verseAt, wordAt, wordsUrl, type GenIndex, type LibriVoxIndex, type MoodMapData, type MusicIndex, type Section } from "./audio.ts";
+import { bundledFor, moodFor, packUrl, parseWords, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordAt, wordsUrl, type GenIndex, type LibriVoxIndex, type MoodMapData, type MusicIndex, type Section } from "./audio.ts";
 import type { VerseMapData } from "./versemap.ts";
 
 const ASSETS = new URL("../../app/src/main/assets/", import.meta.url);
@@ -71,6 +71,26 @@ eq("word 2", wordAt(words, 700), [3, 7]);
 eq("past the last word lights nothing", wordAt(words, 900), null);
 eq("before the first word", wordAt(words, 50), null);
 eq("unaligned verse", wordAt(null, 150), null);
+// The follower, polled as ReadingService polls: a word holds through the
+// pause after it (the web blinked it off there before 2026-09-24).
+{
+  let last = -2;
+  const poll = (pos: number) => {
+    const f = followWord(words, pos, last);
+    if (f !== null) last = f.i;
+    return f;
+  };
+  eq("follower: before the first word lights nothing", poll(50), { i: -1, word: null });
+  eq("follower: word 1", poll(150), { i: 0, word: [0, 2] });
+  eq("follower: pause keeps word 1 lit", poll(350), null);
+  eq("follower: word 2", poll(700), { i: 1, word: [3, 7] });
+  eq("follower: past the last word keeps it lit", poll(900), null);
+  eq("follower: a seek into a pause lights nothing", followWord(words, 350, -2), { i: 0, word: null });
+  eq("follower: unaligned verse clears once", followWord(null, 150, 1), { i: -1, word: null });
+  eq("follower: unaligned verse, already clear", followWord(null, 150, -1), null);
+  // Control: HEXAPLA_AUDIO_BAD=2 asserts the old blink (a pause = no word).
+  if (process.env.HEXAPLA_AUDIO_BAD === "2") eq("control (must fail)", followWord(words, 350, 0), { i: 0, word: null });
+}
 eq("sidecar parse", parseWords({ v: [[[1, 2, 3, 4]], null, "junk"] }), [[[1, 2, 3, 4]], null, null]);
 eq("malformed sidecar is null", parseWords({ nope: 1 }), null);
 

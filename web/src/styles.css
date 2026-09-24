@@ -25,7 +25,9 @@
   --c3: #56662a;
   --c4: #6b3c63;
   --c5: #85561a;
-  color-scheme: light;
+  /* «only»: Chrome's Auto Dark Mode for web contents would otherwise
+     repaint the light theme dark (owner's phone, 2026-09-24). */
+  color-scheme: only light;
 }
 :root[data-theme="dark"] {
   --bg: #12100c;

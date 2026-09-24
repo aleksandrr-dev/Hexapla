@@ -117,6 +117,23 @@ export function wordAt(words: Word[] | null | undefined, posMs: number): [number
   return w >= 0 && posMs <= words[w][1] ? [words[w][2], words[w][3]] : null;
 }
 
+/** One poll of the word follower, as ReadingService does it: the highlight
+ *  is re-decided only when the word INDEX changes, so a word stays lit
+ *  through the pause after it until the next one starts (re-deciding every
+ *  poll made the mark blink off between words — 53 of 100 polls in John 5).
+ *  `last` is the previous index, -2 for a fresh verse. Returns the new index
+ *  and range, or null when nothing changes. */
+export function followWord(words: Word[] | null | undefined, posMs: number, last: number): { i: number; word: [number, number] | null } | null {
+  if (words == null) return last === -1 ? null : { i: -1, word: null };
+  let w = -1;
+  for (let i = 0; i < words.length; i++) {
+    if (words[i][0] <= posMs) w = i;
+    else break;
+  }
+  if (w === last) return null;
+  return { i: w, word: w >= 0 && posMs <= words[w][1] ? [words[w][2], words[w][3]] : null };
+}
+
 /** Parse a `.w.json` body. A malformed sidecar is null, never an error:
  *  the chapter simply falls back to verse-level following. */
 export function parseWords(body: unknown): Words | null {

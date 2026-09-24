@@ -16,7 +16,7 @@
 // fallback (Web Speech is a v2 candidate), so a chapter with no recording
 // says so instead of reading it aloud.
 
-import { bundledFor, moodFor, packUrl, parseWords, pick, sectionFor, sectionsFor, SILENCE, startMs, verseAt, wordAt, wordsUrl, type Bed, type MoodMapData, type MusicIndex, type Section, type Words } from "./audio";
+import { bundledFor, moodFor, packUrl, parseWords, pick, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordsUrl, type Bed, type MoodMapData, type MusicIndex, type Section, type Words } from "./audio";
 import { loadBooksIndex, loadGenIndex, loadLibriVoxIndex, loadVersemap } from "./data";
 import type { Prefs } from "./prefs";
 import type { BooksIndex } from "./types";
@@ -225,6 +225,9 @@ export class Player {
   private words: Words | null = null;
   private wordsCache = new Map<string, Promise<Words | null>>();
   private timer: number | null = null;
+  /** Word follower state (followWord): its verse and last word index. */
+  private wordVerse = -1;
+  private lastWord = -2;
   private token = 0;
   private books: BooksIndex | null = null;
   private sections = new Map<string, Promise<Map<number, Section[]>>>();
@@ -336,6 +339,7 @@ export class Player {
     this.stopTimer();
     this.sec = null;
     this.words = null;
+    this.wordVerse = -1;
     this.set({ status: "loading", translation, label, book, chapter, verse: -1, word: null, following: false, message: null, bookName: this.st.translation === translation ? this.st.bookName : "" });
     try {
       const [sections, books] = await Promise.all([this.sectionsOf(translation), loadBooksIndex(translation)]);
@@ -488,7 +492,13 @@ export class Player {
     if (offs == null || this.st.status !== "playing") return;
     const pos = this.el.currentTime * 1000;
     const v = verseAt(offs, pos);
-    const w = wordAt(this.words?.[v], pos);
+    if (v !== this.wordVerse) {
+      this.wordVerse = v;
+      this.lastWord = -2;
+    }
+    const f = followWord(this.words?.[v], pos, this.lastWord);
+    if (f !== null) this.lastWord = f.i;
+    const w = f === null ? this.st.word : f.word;
     const old = this.st.word;
     const same = old === w || (old !== null && w !== null && old[0] === w[0] && old[1] === w[1]);
     if (v !== this.st.verse) {

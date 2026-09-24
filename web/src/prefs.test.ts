@@ -1,7 +1,7 @@
 // Behaviour check for stored-prefs migration and the `?with=` list.
 // Run: node --experimental-strip-types src/prefs.test.ts
 // Exit 0 all pass, 1 any fail. No test runner, no dependency.
-import { DEFAULTS, MAX_PARALLEL, migrate, parseWith } from "./prefs.ts";
+import { DEFAULTS, MAX_PARALLEL, RATE_MAX, VOL_MIN, migrate, parseWith } from "./prefs.ts";
 
 let bad = 0;
 
@@ -27,6 +27,12 @@ eq("old keeps the rest", migrate({ last: "#/kjv/43/3", second: "syn", mode: "bot
   fontSize: 22,
   theme: "dark",
   layout: "side",
+  rate: 1,
+  autoNext: true,
+  bed: false,
+  bedKind: "music",
+  bedVolume: 0.45,
+  uniformBed: false,
 });
 
 // The current shape.
@@ -35,6 +41,18 @@ eq("new: junk ids dropped, repeats dropped", migrate({ parallel: ["a", "a", "x y
 eq("new: capped at MAX_PARALLEL", migrate({ parallel: ["a", "b", "c", "d", "e", "f", "g"] }).parallel.length, MAX_PARALLEL);
 eq("new: bad show -> all", migrate({ parallel: [], show: "<x>" }).show, "all");
 eq("empty object -> defaults", migrate({}), DEFAULTS);
+
+// Listening: stored before audio existed -> the Android defaults; kept when set;
+// clamped or defaulted when junk.
+eq("no audio keys -> Store.kt defaults", migrate({ theme: "dark" }).bedVolume, 0.45);
+const au = { rate: 1.5, autoNext: false, bed: true, bedKind: "fireside", bedVolume: 0.3, uniformBed: true };
+eq("audio round trip", migrate({ ...DEFAULTS, ...au }), { ...DEFAULTS, ...au });
+eq("rate clamped high", migrate({ rate: 9 }).rate, RATE_MAX);
+eq("volume clamped low", migrate({ bedVolume: 0 }).bedVolume, VOL_MIN);
+eq("rate NaN -> default", migrate({ rate: Number.NaN }).rate, 1);
+eq("bad bedKind -> music", migrate({ bedKind: "rain" }).bedKind, "music");
+eq("bed as string -> default", migrate({ bed: "true" }).bed, false);
+eq("fontSize NaN -> default", migrate({ fontSize: Number.NaN }).fontSize, DEFAULTS.fontSize);
 
 // Shared links.
 eq("?with=mei (old single form)", parseWith("?with=mei"), ["mei"]);

@@ -8,6 +8,7 @@
 
 import type { Book, BooksIndex, Manifest } from "./types";
 import type { VerseMapData } from "./versemap";
+import type { GenIndex, LibriVoxIndex } from "./audio";
 
 /** A failed fetch or an unparseable payload. Carries the HTTP status so the
  *  caller can tell a 404 (no such translation) from a 500 (broken deploy). */
@@ -74,6 +75,16 @@ export function loadBook(translation: string, bookIndex: number): Promise<Book> 
 /** `data/versemap.json` — the versification map (versemap.ts). */
 export function loadVersemap(): Promise<VerseMapData> {
   return fetchJson<VerseMapData>("data/versemap.json");
+}
+
+/** `data/audio_index.json` — LibriVox sections (audio.ts LibriVoxIndex). */
+export function loadLibriVoxIndex(): Promise<LibriVoxIndex> {
+  return fetchJson<LibriVoxIndex>("data/audio_index.json");
+}
+
+/** `data/audio_index_gen.json` — generated narration with verse offsets. */
+export function loadGenIndex(): Promise<GenIndex> {
+  return fetchJson<GenIndex>("data/audio_index_gen.json");
 }
 
 /** Drop every cached response. Exposed for tests and for a future "retry"

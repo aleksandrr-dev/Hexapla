@@ -11,6 +11,8 @@ export type Theme = "auto" | "light" | "dark";
 /** Split layout, as Android's «Split layout»; auto = side by side when the
  *  columns fit, stacked otherwise. */
 export type Layout = "auto" | "side" | "stacked";
+/** What plays under the narration (Android «Background while listening»). */
+export type BedKind = "music" | "fireside";
 
 /** Translations beside the primary one: five, so six columns at most
  *  (`parallel.ts` MAX_COLUMNS). */
@@ -26,6 +28,18 @@ export interface Prefs {
   fontSize: number;
   theme: Theme;
   layout: Layout;
+  // ---- Listening: the Android `Store.kt` defaults (player.ts AudioPrefs) ----
+  /** Reading speed, RATE_MIN-RATE_MAX. */
+  rate: number;
+  /** Continue to the next chapter at the end of one. */
+  autoNext: boolean;
+  /** Something plays underneath the narration. */
+  bed: boolean;
+  bedKind: BedKind;
+  /** VOL_MIN-1, the slider position; loudness is its square. */
+  bedVolume: number;
+  /** «Same music throughout»: no mood matching. */
+  uniformBed: boolean;
 }
 
 const KEY = "hexapla.prefs.v1";
@@ -34,7 +48,33 @@ export const FONT_MIN = 14;
 /** The app's slider max is 30sp; the P0.5 largest-font board is drawn at it. */
 export const FONT_MAX = 30;
 
-export const DEFAULTS: Prefs = { last: null, parallel: [], show: "all", fontSize: 19, theme: "auto", layout: "auto" };
+export const RATE_MIN = 0.5;
+export const RATE_MAX = 2;
+export const VOL_MIN = 0.1;
+
+export const DEFAULTS: Prefs = {
+  last: null,
+  parallel: [],
+  show: "all",
+  fontSize: 19,
+  theme: "auto",
+  layout: "auto",
+  rate: 1,
+  autoNext: true,
+  bed: false,
+  bedKind: "music",
+  bedVolume: 0.45,
+  uniformBed: false,
+};
+
+/** A stored number inside [lo, hi], or the default when it is not a number. */
+function num(x: unknown, lo: number, hi: number, dflt: number): number {
+  return typeof x === "number" && Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : dflt;
+}
+
+function bool(x: unknown, dflt: boolean): boolean {
+  return typeof x === "boolean" ? x : dflt;
+}
 
 const ID_RE = /^[A-Za-z0-9_-]+$/;
 
@@ -60,7 +100,7 @@ export function parseWith(search: string): string[] | null {
 /** Stored JSON -> Prefs. Reads the two-column shape the reader shipped with
  *  (`second` + `mode` "a" | "both" | "b") as well as the current one. */
 export function migrate(p: Record<string, unknown>): Prefs {
-  const size = typeof p.fontSize === "number" ? Math.min(FONT_MAX, Math.max(FONT_MIN, p.fontSize)) : DEFAULTS.fontSize;
+  const size = num(p.fontSize, FONT_MIN, FONT_MAX, DEFAULTS.fontSize);
   let parallel: string[];
   let show: string;
   if (Array.isArray(p.parallel)) {
@@ -79,6 +119,12 @@ export function migrate(p: Record<string, unknown>): Prefs {
     fontSize: size,
     theme: p.theme === "light" || p.theme === "dark" || p.theme === "auto" ? p.theme : DEFAULTS.theme,
     layout: p.layout === "side" || p.layout === "stacked" || p.layout === "auto" ? p.layout : DEFAULTS.layout,
+    rate: num(p.rate, RATE_MIN, RATE_MAX, DEFAULTS.rate),
+    autoNext: bool(p.autoNext, DEFAULTS.autoNext),
+    bed: bool(p.bed, DEFAULTS.bed),
+    bedKind: p.bedKind === "music" || p.bedKind === "fireside" ? p.bedKind : DEFAULTS.bedKind,
+    bedVolume: num(p.bedVolume, VOL_MIN, 1, DEFAULTS.bedVolume),
+    uniformBed: bool(p.uniformBed, DEFAULTS.uniformBed),
   };
 }
 

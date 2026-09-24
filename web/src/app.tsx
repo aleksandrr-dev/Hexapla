@@ -7,13 +7,18 @@
 // more (owner, 2026-09-24). One translation beside it keeps the two-column
 // look the design gate passed; two or more label and tint each column.
 //
-// Search, audio, offline and UI locales are P2-P4 and deliberately absent.
+// Audio (P3) lives in player.ts; this file only drives it and follows it:
+// the sounding verse and word are lit in the PRIMARY column.
+//
+// Search, offline and UI locales are P2-P4 and deliberately absent.
 
 import type { JSX } from "preact";
+import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { loadBook, loadBooksIndex, loadManifest, loadVersemap } from "./data";
 import { chapterRows, type Row, type Side } from "./parallel";
-import { FONT_MAX, FONT_MIN, MAX_PARALLEL, loadPrefs, parseWith, savePrefs, type Layout, type Prefs, type Theme } from "./prefs";
+import { Player, type AudioPrefs, type PlayState } from "./player";
+import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
 import { directionOf, dropCapEnd, isCjk } from "./text";
 import type { Book, BooksIndex, Manifest, Translation } from "./types";
@@ -94,7 +99,27 @@ const I = {
   up: <path d="M6 15l6-6 6 6" />,
   down: <path d="M6 9l6 6 6-6" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  play: <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />,
+  pause: (
+    <>
+      <rect x="6.5" y="5" width="3.5" height="14" rx="1" fill="currentColor" />
+      <rect x="14" y="5" width="3.5" height="14" rx="1" fill="currentColor" />
+    </>
+  ),
+  skipPrev: <path d="M7 5v14M18 5.5v13L9 12z" />,
+  skipNext: <path d="M17 5v14M6 5.5v13L15 12z" />,
+  pip: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <rect x="12" y="11" width="7" height="6" rx="1" fill="currentColor" />
+    </>
+  ),
+  listen: <path d="M4 15v-3a8 8 0 0 1 16 0v3M4 15a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2zM20 15a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2z" />,
 };
+
+function audioPrefs(p: Prefs): AudioPrefs {
+  return { rate: p.rate, autoNext: p.autoNext, bed: p.bed, bedKind: p.bedKind, bedVolume: p.bedVolume, uniformBed: p.uniformBed };
+}
 
 function Icon({ d, size = 22 }: { d: JSX.Element; size?: number }) {
   return (
@@ -107,14 +132,29 @@ function Icon({ d, size = 22 }: { d: JSX.Element; size?: number }) {
 // ---------------------------------------------------------------------------
 // Verse text
 
-function VerseText({ text, lang, cap, cls }: { text: string; lang: string; cap: boolean; cls: string }) {
+/** `text` from `from` on, with the sounding word `[start, end)` in a <mark>.
+ *  The range indexes the displayed text (build_web_data.strip_notes =
+ *  parseAsset); a word inside a drop cap is clamped to after it. */
+function marked(text: string, from: number, m: [number, number] | null): preact.ComponentChildren {
+  if (m === null || m[1] <= from || m[0] >= text.length) return text.slice(from);
+  const s = Math.max(m[0], from);
+  return (
+    <>
+      {text.slice(from, s)}
+      <mark class="word">{text.slice(s, m[1])}</mark>
+      {text.slice(m[1])}
+    </>
+  );
+}
+
+function VerseText({ text, lang, cap, cls, word = null }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null }) {
   const dir = directionOf(text) ?? undefined;
   const end = cap ? dropCapEnd(text) : -1;
   const c = cls + (isCjk(lang) ? " cjk" : "");
   if (end < 0) {
     return (
       <div class={c} lang={lang} dir={dir}>
-        {text}
+        {marked(text, 0, word)}
       </div>
     );
   }
@@ -124,22 +164,30 @@ function VerseText({ text, lang, cap, cls }: { text: string; lang: string; cap: 
         {text.slice(0, end)}
       </span>
       <span class="sr">{text.slice(0, end)}</span>
-      {text.slice(end)}
+      {marked(text, end, word)}
     </div>
   );
 }
 
-function SideText({ side, lang, cls, chapter, showNum, noCap = false }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean }) {
+/** The verse the narration is on: 1-based chapter and verse, and its word. */
+interface Sounding {
+  c: number;
+  v: number;
+  word: [number, number] | null;
+}
+
+function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null }) {
   if (side.kind === "gap") return null;
   return (
     <>
       {side.texts.map((t, i) => {
         const r = side.refs[i];
         const cap = !noCap && r.v === 1 && i === 0;
+        const word = hl !== null && hl.c === r.c && hl.v === r.v ? hl.word : null;
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
             {showNum && !cap && <span class="inum">{refLabel([r], chapter)}</span>}
-            <VerseText text={t} lang={lang} cap={cap} cls={cls} />
+            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} />
           </div>
         );
       })}
@@ -213,6 +261,11 @@ export function App() {
   const [wide, setWide] = useState<boolean>(() => window.matchMedia("(min-width: 960px)").matches);
   const [vw, setVw] = useState<number>(() => window.innerWidth);
   const scrollTo = useRef<number | null>(route.verse);
+  // ONE player for the page's life; the reader follows its state.
+  const [player] = useState(() => new Player(audioPrefs(prefs)));
+  const [ps, setPs] = useState<PlayState>(player.state);
+  const [canListen, setCanListen] = useState(false);
+  const [credits, setCredits] = useState<string[]>([]);
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -361,6 +414,94 @@ export function App() {
   useEffect(() => {
     if (bookName !== "") document.title = bookName + " " + String(route.chapter + 1) + " · " + shortLabel(aT, route.translation) + " · Hexapla";
   }, [bookName, route.chapter, aT]);
+
+  // ---- audio -------------------------------------------------------------------
+  useEffect(() => {
+    const off = player.subscribe(setPs);
+    return () => void off();
+  }, []);
+
+  useEffect(() => player.setPrefs(audioPrefs(prefs)), [prefs.rate, prefs.autoNext, prefs.bed, prefs.bedKind, prefs.bedVolume, prefs.uniformBed]);
+
+  // Is there a recording of this chapter? The indexes (~1.7 MB, fetched
+  // once) wait until the chapter itself is on screen.
+  useEffect(() => {
+    let live = true;
+    const t = window.setTimeout(() => {
+      player.hasAudio(route.translation, route.book, route.chapter).then(
+        (x) => live && setCanListen(x),
+        () => live && setCanListen(false),
+      );
+    }, 400);
+    return () => {
+      live = false;
+      window.clearTimeout(t);
+    };
+  }, [route.translation, route.book, route.chapter]);
+
+  // The chapter the player is on; a LibriVox section may hold several.
+  const onAir = ps.status !== "idle" && ps.translation === route.translation && ps.book === route.book && ps.chapter === route.chapter;
+  const sounding: Sounding | null = onAir && ps.verse >= 0 ? { c: route.chapter + 1, v: ps.verse + 1, word: ps.word } : null;
+
+  // At the end of a chapter the player moves on; a reader who was on that
+  // chapter turns the page with it.
+  const aired = useRef<string | null>(null);
+  useEffect(() => {
+    if (ps.status === "idle" || ps.book < 0) {
+      aired.current = null;
+      return;
+    }
+    const key = ps.translation + "/" + String(ps.book) + "/" + String(ps.chapter);
+    const was = aired.current;
+    aired.current = key;
+    if (was !== null && was !== key && was === route.translation + "/" + String(route.book) + "/" + String(route.chapter)) {
+      go({ translation: ps.translation, book: ps.book, chapter: ps.chapter, verse: null });
+    }
+  }, [ps.translation, ps.book, ps.chapter, ps.status === "idle"]);
+
+  // Keep the sounding verse on screen, without yanking a reader who is
+  // merely a little ahead: only when it has left the viewport.
+  useEffect(() => {
+    if (sounding === null || !ready) return;
+    const el = document.querySelector(".row.play");
+    if (el === null) return;
+    const r = el.getBoundingClientRect();
+    if (r.top < 80 || r.bottom > window.innerHeight - 90) el.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [sounding?.v, ready]);
+
+  useEffect(() => {
+    if (sheet === "prefs" && credits.length === 0) player.musicCredits().then(setCredits, () => undefined);
+  }, [sheet]);
+
+  // Pop-out player (Document PiP): a small always-on-top window that keeps the
+  // controls in reach when the reader switches to another tab or app.
+  const [pip, setPip] = useState<Window | null>(null);
+  const popOut = async () => {
+    if (docPip === undefined || docPip.window !== null) return;
+    try {
+      const w = await docPip.requestWindow({ width: 420, height: 84 });
+      dressPip(w);
+      w.addEventListener("pagehide", () => setPip(null));
+      setPip(w);
+    } catch {
+      // Refused (no user gesture, or the browser said no): stay in the page.
+    }
+  };
+  useEffect(() => {
+    if (ps.status === "idle" && pip !== null) pip.close();
+  }, [ps.status === "idle", pip]);
+  // Chrome may open it by itself when the tab is left while audio plays
+  // («automatic picture-in-picture», Chrome 134+); elsewhere this is a no-op.
+  useEffect(() => {
+    if (docPip === undefined || !("mediaSession" in navigator)) return;
+    try {
+      navigator.mediaSession.setActionHandler("enterpictureinpicture" as MediaSessionAction, () => void popOut());
+    } catch {
+      // Not a known action here.
+    }
+  }, []);
+
+  const listen = (verse: number) => player.play(route.translation, aName, route.book, route.chapter, verse);
 
   const step = (delta: number): Route | null => {
     if (index === null) return null;
@@ -568,6 +709,17 @@ export function App() {
         <div class="cname" lang={aLang} dir={directionOf(chap.a.name) ?? undefined}>
           {chap.a.name}
         </div>
+        {canListen && (
+          <button
+            type="button"
+            class="btn listen"
+            aria-label={onAir && ps.status === "playing" ? "Pause" : "Listen to this chapter"}
+            onClick={() => (onAir && ps.status !== "error" && ps.status !== "loading" ? player.toggle() : listen(0))}
+          >
+            <Icon d={onAir && ps.status === "playing" ? I.pause : I.listen} size={20} />
+            <span>{onAir && ps.status === "playing" ? "Pause" : "Listen"}</span>
+          </button>
+        )}
       </div>
     );
     // Column index (into `cols`) of each shown column, for its tint.
@@ -607,7 +759,9 @@ export function App() {
           const numOf = shown[0].side(r);
           const num = numOf.kind === "text" ? (numOf.refs[0].v === 1 ? "" : refLabel(numOf.refs, chapNo)) : "";
           const rowDir = directionOf(leadSide.texts[0]) ?? undefined;
-          const common = { dir: rowDir, id: "r-" + r.key, class: "row" + (sel ? " sel" : ""), onClick: pick, onKeyDown: onKey, tabIndex: 0, "aria-pressed": sel };
+          // The narration reads the primary translation, so its refs decide.
+          const play = sounding !== null && r.a.kind === "text" && r.a.refs.some((x) => x.c === sounding.c && x.v === sounding.v);
+          const common = { dir: rowDir, id: "r-" + r.key, class: "row" + (sel ? " sel" : "") + (play ? " play" : ""), onClick: pick, onKeyDown: onKey, tabIndex: 0, "aria-pressed": sel };
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
           const base = numOf.kind === "text" ? numOf.refs : [];
@@ -615,7 +769,7 @@ export function App() {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
             if (s.kind === "gap") return labelled ? <div class="gap1">Not in {c.tiny}</div> : <Gap name={c.name} other={nameOfText} />;
-            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] ? sounding : null} />;
           };
           if (n === 1) {
             const c = shown[0];
@@ -625,7 +779,7 @@ export function App() {
               <div {...common} class={common.class + " single"}>
                 <div class="num">{num}</div>
                 <div class="txt">
-                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} />
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] ? sounding : null} />
                 </div>
               </div>
             );
@@ -847,6 +1001,15 @@ export function App() {
         <span class="badge">Coming</span>
       </div>
     );
+    const toggle = (title: string, note: string, on: boolean, flip: () => void) => (
+      <button type="button" class="srow" role="switch" aria-checked={on} onClick={flip}>
+        <div class="st">
+          <span>{title}</span>
+          <span class="sn">{note}</span>
+        </div>
+        <span class={"sw" + (on ? " on" : "")} aria-hidden="true" />
+      </button>
+    );
     sheetEl = (
       <Sheet title="Settings" onClose={done}>
         <h3 class="sec">Reading</h3>
@@ -891,8 +1054,32 @@ export function App() {
         {soon("Strong's numbers (KJV)", "Tap a number for the Hebrew or Greek word and its definition.")}
         {soon("Webster's 1828 Dictionary", "Tap an English word for what it meant in the era of the classic Bibles.")}
         <h3 class="sec">Listening</h3>
-        {soon("Narrated audio", "Chapters read aloud, following the verse and the word.")}
-        {soon("Background while listening", "Music or a fireside underneath the narration.")}
+        {!player.opus && <p class="hint">This browser cannot play the generated narration (Ogg Opus). The King James Version's LibriVox readings still play.</p>}
+        <label class="field">
+          <span>Reading speed</span>
+          <input type="range" min={RATE_MIN} max={RATE_MAX} step={0.05} value={prefs.rate} onInput={(e) => update({ rate: Number((e.target as HTMLInputElement).value) })} />
+          <span class="val wide">{prefs.rate.toFixed(2)}×</span>
+        </label>
+        {toggle("Continue to the next chapter", "When a chapter ends, go on to the next one.", prefs.autoNext, () => update({ autoNext: !prefs.autoNext }))}
+        {toggle("Background while listening", "Music or a fireside underneath the narration.", prefs.bed, () => {
+          // iOS lets the bed start later only if this tap has played it.
+          if (!prefs.bed) player.unlockBed();
+          update({ bed: !prefs.bed });
+        })}
+        {prefs.bed && (
+          <>
+            <div class="sfield">
+              <span>Background</span>
+              {seg<BedKind>("Background", prefs.bedKind, [["music", "Music"], ["fireside", "Fireside"]], (k) => (player.unlockBed(), update({ bedKind: k })))}
+            </div>
+            <label class="field">
+              <span>Volume</span>
+              <input type="range" min={VOL_MIN} max={1} step={0.05} value={prefs.bedVolume} onInput={(e) => update({ bedVolume: Number((e.target as HTMLInputElement).value) })} />
+              <span class="val">{Math.round(prefs.bedVolume * 100)}</span>
+            </label>
+            {prefs.bedKind === "music" && toggle("Same music throughout", "One calm track after another, instead of music matched to the passage.", prefs.uniformBed, () => update({ uniformBed: !prefs.uniformBed }))}
+          </>
+        )}
         {/* The sources_text credit is a licence obligation: verbatim, at the
             foot of Settings as on Android, never on every chapter (owner,
             2026-09-24: a footnote here, not in the Aa sheet). */}
@@ -904,6 +1091,14 @@ export function App() {
               <summary>Text sources</summary>
               <p>{manifest.credits}</p>
             </details>
+            {/* CC BY: the music pack's credits must be shown (Scott Buckley
+                is not in sources_text). */}
+            {credits.length > 0 && (
+              <details class="src">
+                <summary>Music</summary>
+                <p>{credits.join("\n")}</p>
+              </details>
+            )}
             <p>
               <a href="../">Hexapla</a> is free and collects no data. <a href="../PRIVACY.html">Privacy</a>
             </p>
@@ -913,8 +1108,46 @@ export function App() {
     );
   }
 
+  const mini = (
+    <div class="mini" role="region" aria-label="Audio player">
+      <button type="button" class="ib" aria-label="Previous chapter" onClick={() => player.skip(-1)}>
+        <Icon d={I.skipPrev} size={20} />
+      </button>
+      <button
+        type="button"
+        class="ib pp"
+        aria-label={ps.status === "playing" ? "Pause" : "Play"}
+        disabled={ps.status === "loading"}
+        onClick={() => (ps.status === "error" ? player.play(ps.translation, ps.label, ps.book, ps.chapter, 0) : player.toggle())}
+      >
+        {ps.status === "loading" ? <span class="spin" aria-hidden="true" /> : <Icon d={ps.status === "playing" ? I.pause : I.play} size={22} />}
+      </button>
+      <button
+        type="button"
+        class="mlabel"
+        onClick={() => ps.book >= 0 && !onAir && go({ translation: ps.translation, book: ps.book, chapter: ps.chapter, verse: null })}
+      >
+        <span class="ell mt">{ps.bookName !== "" ? ps.bookName + " " + String(ps.chapter + 1) : " "}</span>
+        <span class={"ell ms" + (ps.status === "error" ? " err" : "")} role={ps.status === "error" ? "alert" : undefined}>
+          {ps.status === "error" ? ps.message : ps.status === "loading" ? "Loading…" : ps.label}
+        </span>
+      </button>
+      <button type="button" class="ib" aria-label="Next chapter" onClick={() => player.skip(1)}>
+        <Icon d={I.skipNext} size={20} />
+      </button>
+      {docPip !== undefined && pip === null && (
+        <button type="button" class="ib" aria-label="Pop out the player" title="Keep the player on top of other windows" onClick={() => void popOut()}>
+          <Icon d={I.pip} size={20} />
+        </button>
+      )}
+      <button type="button" class="ib" aria-label="Stop" onClick={() => player.stop()}>
+        <Icon d={I.close} size={20} />
+      </button>
+    </div>
+  );
+
   return (
-    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "")} style={style}>
+    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "")} style={style}>
       {header}
       <div class="main">
         {wide && index !== null && (
@@ -933,6 +1166,12 @@ export function App() {
       {selRow !== null && (
         <div class="actions" role="toolbar" aria-label={"Verse " + selRef}>
           <span class="aref">{selRef}</span>
+          {canListen && selVerse !== null && (
+            <button type="button" class="ab" onClick={() => (listen(selVerse), setSelected(null))}>
+              <Icon d={I.listen} size={20} />
+              <span>Listen</span>
+            </button>
+          )}
           <button type="button" class="ab" onClick={() => void copy(selLink, "Link copied")}>
             <Icon d={I.link} size={20} />
             <span>Link</span>
@@ -952,6 +1191,7 @@ export function App() {
           </button>
         </div>
       )}
+      {ps.status !== "idle" && (pip === null ? mini : createPortal(mini, pip.document.body))}
       {toast !== null && (
         <div class="toast" role="status">
           {toast}
@@ -960,6 +1200,40 @@ export function App() {
       {sheetEl}
     </div>
   );
+}
+
+/** Chrome/Edge desktop's Document Picture-in-Picture (116+). Not in the
+ *  TypeScript DOM lib yet, and absent from Safari, Firefox and every mobile
+ *  browser — there the Media Session (lock screen, notification) is the
+ *  control surface once the page is left. */
+interface DocPip {
+  requestWindow(o: { width: number; height: number }): Promise<Window>;
+  window: Window | null;
+}
+const docPip = (window as unknown as { documentPictureInPicture?: DocPip }).documentPictureInPicture;
+
+/** Carry the page's styles and theme into the PiP window: it starts blank. */
+function dressPip(w: Window): void {
+  for (const sheet of Array.from(document.styleSheets)) {
+    try {
+      const css = Array.from(sheet.cssRules).map((r) => r.cssText).join("\n");
+      const el = w.document.createElement("style");
+      el.textContent = css;
+      w.document.head.appendChild(el);
+    } catch {
+      // A cross-origin sheet (the web font): link it instead.
+      if (sheet.href !== null) {
+        const l = w.document.createElement("link");
+        l.rel = "stylesheet";
+        l.href = sheet.href;
+        w.document.head.appendChild(l);
+      }
+    }
+  }
+  const t = document.documentElement.getAttribute("data-theme");
+  if (t !== null) w.document.documentElement.setAttribute("data-theme", t);
+  w.document.body.className = "pipbody";
+  w.document.title = "Hexapla";
 }
 
 function Sheet({ title, onClose, children, back }: { title: string; onClose: () => void; children: preact.ComponentChildren; back?: () => void }) {

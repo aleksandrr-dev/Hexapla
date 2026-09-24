@@ -10,10 +10,27 @@ export const SEARCH_CAP = 300;
 /** A query shorter than this (after trim) searches nothing. */
 export const SEARCH_MIN = 2;
 
+/** CJK variant fold, {char: key} (app/src/main/assets/cjk_fold.json, derived
+ *  by tools/build_cjk_fold.py). Null until setFold: the worker sets it before
+ *  normalising anything; the test loads it from disk. */
+let fold: Map<string, string> | null = null;
+
+export function setFold(table: Record<string, string> | null): void {
+  fold = table === null ? null : new Map(Object.entries(table));
+}
+
+/** Every key in the fold table is at or above U+2E80 (CJK Radicals). */
+const MAYBE_CJK = /[\u2E80-\u{3FFFF}]/u;
+
 /** Case- and diacritic-insensitive form: strips accents, Hebrew niqqud,
- *  Greek breathing marks. */
+ *  Greek breathing marks; then folds CJK variants (獨/独, 愛/爱) to one key,
+ *  so a reader finds Meiji's old kanji and either CUV with the form they know. */
 export function searchNorm(s: string): string {
-  return s.normalize("NFD").replace(/\p{Mn}+/gu, "").toLowerCase();
+  const n = s.normalize("NFD").replace(/\p{Mn}+/gu, "").toLowerCase();
+  if (fold === null || !MAYBE_CJK.test(n)) return n;
+  let out = "";
+  for (const ch of n) out += fold.get(ch) ?? ch;
+  return out;
 }
 
 /** Scripts written without spaces between words. Hangul is deliberately NOT

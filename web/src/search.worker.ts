@@ -8,7 +8,10 @@
 // The page keeps the newest id and drops anything older.
 
 import { loadBook, loadBooksIndex } from "./data";
-import { search, toCorpus, type Corpus, type SearchHit } from "./search";
+import { search, setFold, toCorpus, type Corpus, type SearchHit } from "./search";
+import cjkFold from "../../app/src/main/assets/cjk_fold.json";
+
+setFold(cjkFold as Record<string, string>);
 
 export type SearchReq = { id: number; t: string; q: string };
 export type SearchMsg =

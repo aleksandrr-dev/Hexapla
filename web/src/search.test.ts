@@ -3,11 +3,12 @@
 // Exit 0 all pass, 1 any fail. With HEXAPLA_WEB_DATA=<tree>/data it also
 // searches the real KJV and CUV; without it those checks are SKIPPED, loudly.
 //
-// Control: HEXAPLA_SEARCH_BAD=1 swaps in the character-BIGRAM tokenizer that
+// Controls: HEXAPLA_SEARCH_BAD=1 swaps in the character-BIGRAM tokenizer that
 // Android measured at 1/16; the reordered-CJK assertions must then FAIL.
+// HEXAPLA_SEARCH_BAD=2 leaves the CJK fold unset; the variant assertions must FAIL.
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { scanBooks, search, searchNorm, searchTerms, toCorpus, SEARCH_CAP, type Corpus } from "./search.ts";
+import { scanBooks, search, searchNorm, searchTerms, setFold, toCorpus, SEARCH_CAP, type Corpus } from "./search.ts";
 
 let bad = 0;
 
@@ -32,6 +33,8 @@ function bigramTerms(q: string): string[] {
 }
 
 const CONTROL = process.env.HEXAPLA_SEARCH_BAD === "1";
+const NO_FOLD = process.env.HEXAPLA_SEARCH_BAD === "2";
+if (!NO_FOLD) setFold(JSON.parse(readFileSync(new URL("../../app/src/main/assets/cjk_fold.json", import.meta.url), "utf-8")) as Record<string, string>);
 const terms = CONTROL ? bigramTerms : searchTerms;
 /** search() with the tokenizer under test. */
 function run(corpus: Corpus, query: string): { b: number; c: number; v: number }[] {
@@ -46,6 +49,8 @@ const has = (hits: { b: number; c: number; v: number }[], b: number, c: number, 
 eq("greek breathings and accents", searchNorm("Ἐν ἀρχῇ ἦν ὁ λόγος"), "εν αρχη ην ο λογος");
 eq("latin accents + case", searchNorm("Élohim CRÉA"), "elohim crea");
 eq("hebrew niqqud", searchNorm("בְּרֵאשִׁית"), "בראשית");
+eq("cjk fold: old, new and simplified forms meet", [searchNorm("獨爲愛"), searchNorm("独為爱"), searchNorm("独为爱")], ["独为爱", "独为爱", "独为爱"]);
+eq("cjk fold leaves kana and latin alone", searchNorm("かみ God"), "かみ god");
 
 // ---- terms ---------------------------------------------------------------
 eq("latin splits on spaces, drops empties", searchTerms("for  god so"), ["for", "god", "so"]);
@@ -73,6 +78,8 @@ eq("query under 2 chars = nothing", run(fx, " g "), []);
 eq("case/diacritics in the query", run(fx, "Gód"), run(fx, "god"));
 // The bigram failure: 世人神愛 invents 人神, in no verse.
 eq("reordered han phrase finds the verse", run(fx, "世人神愛"), [{ b: 3, c: 0, v: 0 }]);
+eq("simplified query finds traditional text", run(fx, "神爱世人"), [{ b: 3, c: 0, v: 0 }]);
+eq("new kanji finds old kanji", run(fx, "独生子"), [{ b: 3, c: 0, v: 0 }]);
 eq("search() = the same path", search(fx, "loved world").map(({ b, c, v }) => ({ b, c, v })), run(fx, "loved world"));
 
 const many = toCorpus([[Array.from({ length: 500 }, (_, i) => "word " + String(i))]]);
@@ -90,7 +97,9 @@ function corpusOf(id: string): Corpus | null {
 }
 const kjv = corpusOf("kjv");
 const cuv = corpusOf("cuv");
-if (kjv === null || cuv === null) {
+const cus = corpusOf("cus");
+const mei = corpusOf("mei");
+if (kjv === null || cuv === null || cus === null || mei === null) {
   console.log("SKIP real-data checks: set HEXAPLA_WEB_DATA to a built data/ tree");
 } else {
   const t0 = performance.now();
@@ -102,9 +111,14 @@ if (kjv === null || cuv === null) {
   eq("kjv: 'jesus wept' = John 11:35 first, then loose", run(kjv, "jesus wept"), [{ b: 42, c: 10, v: 34 }, { b: 39, c: 25, v: 74 }, { b: 40, c: 13, v: 71 }]);
   eq("cuv: reordered 世人神愛 finds John 3:16", has(run(cuv, "世人神愛"), 42, 2, 15), true);
   eq("cuv: reordered 永生信 finds John 3:16", has(run(cuv, "永生 信他"), 42, 2, 15), true);
+  eq("cuv (traditional): simplified 神爱世人 finds John 3:16", has(run(cuv, "神爱世人"), 42, 2, 15), true);
+  eq("cus (simplified): traditional 神愛世人 finds John 3:16", has(run(cus, "神愛世人"), 42, 2, 15), true);
+  eq("mei: new-form 独子 finds John 3:16 (printed 獨子)", has(run(mei, "独子"), 42, 2, 15), true);
+  eq("mei: 为 finds John 3:16 (printed 爲)", has(run(mei, "永生を受しめんが为"), 42, 2, 15), true);
   console.log("info: kjv 'for god so loved' scan " + ms.toFixed(1) + " ms (node, unthrottled)");
 }
 
 if (CONTROL) console.log("control: bigram tokenizer in use — this run MUST fail");
+if (NO_FOLD) console.log("control: CJK fold unset — this run MUST fail");
 console.log(bad === 0 ? "search: all assertions passed" : "search: " + String(bad) + " FAILED");
 process.exit(bad === 0 ? 0 : 1);

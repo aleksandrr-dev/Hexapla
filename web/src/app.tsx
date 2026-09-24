@@ -24,6 +24,8 @@ import { buildHash, parseRoute, type Route } from "./route";
 import { directionOf, dropCapEnd, isCjk } from "./text";
 import { SEARCH_CAP, SEARCH_MIN, type SearchHit } from "./search";
 import type { SearchMsg, SearchReq } from "./search.worker";
+// Unicode License v3 + Apache-2.0: the fold table's notice travels with it.
+import cjkFoldNotice from "../../app/src/main/assets/CJK_FOLD_NOTICE.txt?url";
 import type { Book, BooksIndex, Manifest, Translation } from "./types";
 import type { Ref, VerseMapData } from "./versemap";
 
@@ -1375,6 +1377,11 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
       {hits === null && load === null && err === null && (
         <p class="hint">
           Finds a phrase in {p.name}, then verses with every word in any order. Searching all translations at once is not on the web yet (it would download about 200 MB).
+        </p>
+      )}
+      {hits === null && load === null && err === null && /^(zh|ja)/.test(p.lang) && (
+        <p class="hint">
+          Any form of a character finds the others (独/獨, 爱/愛). Variant table from Unihan and OpenCC: <a href={cjkFoldNotice} target="_blank" rel="noopener">licences</a>.
         </p>
       )}
       {hits !== null && hits.length > 0 && (

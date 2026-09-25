@@ -42,6 +42,9 @@ export interface Prefs {
   bedVolume: number;
   /** «Same music throughout»: no mood matching. */
   uniformBed: boolean;
+  /** The device voice chosen per language (speech.ts voiceKey -> voice
+   *  name), for chapters with no recording; absent = the best one. */
+  voices: Record<string, string>;
   /** Strong's numbers over the KJV when it is the primary translation. */
   strongs: boolean;
   /** Tap a word in an English column for Webster's 1828 definition. */
@@ -73,6 +76,7 @@ export const DEFAULTS: Prefs = {
   bedKind: "music",
   bedVolume: 0.45,
   uniformBed: false,
+  voices: {},
   strongs: false,
   dictionary: false,
   uiLang: "auto",
@@ -85,6 +89,17 @@ function num(x: unknown, lo: number, hi: number, dflt: number): number {
 
 function bool(x: unknown, dflt: boolean): boolean {
   return typeof x === "boolean" ? x : dflt;
+}
+
+/** Language key -> voice name, junk dropped: a voice name is shown in a
+ *  select, so only short strings under a primary-subtag key survive. */
+function voiceMap(x: unknown): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (x === null || typeof x !== "object" || Array.isArray(x)) return out;
+  for (const [k, v] of Object.entries(x as Record<string, unknown>)) {
+    if (/^[a-z]{2,3}$/.test(k) && typeof v === "string" && v !== "" && v.length <= 200) out[k] = v;
+  }
+  return out;
 }
 
 const ID_RE = /^[A-Za-z0-9_-]+$/;
@@ -136,6 +151,7 @@ export function migrate(p: Record<string, unknown>): Prefs {
     bedKind: p.bedKind === "music" || p.bedKind === "fireside" ? p.bedKind : DEFAULTS.bedKind,
     bedVolume: num(p.bedVolume, VOL_MIN, 1, DEFAULTS.bedVolume),
     uniformBed: bool(p.uniformBed, DEFAULTS.uniformBed),
+    voices: voiceMap(p.voices),
     strongs: bool(p.strongs, DEFAULTS.strongs),
     dictionary: bool(p.dictionary, DEFAULTS.dictionary),
     uiLang: typeof p.uiLang === "string" && isTag(p.uiLang) ? p.uiLang : DEFAULTS.uiLang,

@@ -12,12 +12,14 @@
 //    falls back — pack -> bundled; fireside -> bundled loop -> music — because
 //    a listener cannot tell an unintended silence from a bug.
 //
-// What the web cannot do that Android does: there is no text-to-speech
-// fallback (Web Speech is a v2 candidate), so a chapter with no recording
-// says so instead of reading it aloud.
+// A chapter with no recording is read by the device's own voice (Web Speech),
+// as Android falls back to TTS: ONE verse per utterance, the next spoken only
+// when it ends, the normalized text spoken and the original highlighted
+// (speech.ts). No voice for the language = it says so.
 
 import { artDay, bundledFor, moodFor, packUrl, parseWords, pick, plateFor, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordsUrl, type Bed, type MoodMapData, type MusicIndex, type Section, type Words } from "./audio";
-import { loadBooksIndex, loadGenIndex, loadLibriVoxIndex, loadVersemap } from "./data";
+import { loadBook, loadBooksIndex, loadGenIndex, loadLibriVoxIndex, loadManifest, loadVersemap } from "./data";
+import { forSpeech, pickVoice, PRON_ASSET, voiceKey, voicesFor, wordOf, type PronTable, type VoiceLike } from "./speech";
 import { t } from "./i18n";
 import type { Prefs } from "./prefs";
 import type { BooksIndex } from "./types";
@@ -32,6 +34,16 @@ import meditation from "../../app/src/main/assets/music/meditation01.mp3?url";
 import fireLoop from "../../app/src/main/assets/ambience/fire_loop.ogg?url";
 import moodMapUrl from "../../app/src/main/assets/mood_map.json?url";
 import musicIndexUrl from "../../app/src/main/assets/music_index.json?url";
+import pronTyndale from "../../app/src/main/assets/pron_tyndale.json?url";
+import pronGnv from "../../app/src/main/assets/pron_gnv.json?url";
+import pronWyc from "../../app/src/main/assets/pron_wyc.json?url";
+
+/** The Android pronunciation tables, fetched only when their set is read aloud. */
+const PRON_URL: Record<string, string> = { "pron_tyndale.json": pronTyndale, "pron_gnv.json": pronGnv, "pron_wyc.json": pronWyc };
+
+function synth(): SpeechSynthesis | null {
+  return typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined" ? window.speechSynthesis : null;
+}
 
 const BUNDLED = [airPrelude, canonInD, healing, meditation];
 
@@ -42,7 +54,7 @@ const PLATES: Record<string, string> = Object.fromEntries(
 );
 
 /** The Listening prefs (stored and migrated in prefs.ts). */
-export type AudioPrefs = Pick<Prefs, "rate" | "autoNext" | "bed" | "bedKind" | "bedVolume" | "uniformBed">;
+export type AudioPrefs = Pick<Prefs, "rate" | "autoNext" | "bed" | "bedKind" | "bedVolume" | "uniformBed" | "voices">;
 
 export interface PlayState {
   status: "idle" | "loading" | "playing" | "paused" | "error";
@@ -242,6 +254,12 @@ export class Player {
   private music: MusicIndex | null = null;
   private vm: VerseMapData | null = null;
   private rotation = 0;
+  /** Reading aloud: the chapter's verses and how to say them; null = a recording. */
+  private speech: { verses: string[]; lang: string; english: boolean; table: PronTable | null } | null = null;
+  /** Utterance generation: a cancelled verse's late onend/onerror must not act. */
+  private utt = 0;
+  private spokeOnce = false;
+  private prons = new Map<string, Promise<PronTable | null>>();
   readonly opus = canPlay('audio/ogg; codecs="opus"');
   readonly vorbis = canPlay('audio/ogg; codecs="vorbis"');
 
@@ -256,7 +274,7 @@ export class Player {
       this.set({ status: "error", message: t("w_rec_failed") });
     });
     this.el.addEventListener("pause", () => {
-      if (this.st.status === "playing" && !this.el.ended) {
+      if (this.st.status === "playing" && !this.el.ended && this.speech === null) {
         // Paused from outside the app (headphones, lock screen, a call).
         this.bed.pause();
         this.stopTimer();
@@ -264,7 +282,7 @@ export class Player {
       }
     });
     this.el.addEventListener("play", () => {
-      if (this.st.status === "paused") {
+      if (this.st.status === "paused" && this.speech === null) {
         this.bed.resume();
         this.startTimer();
         this.set({ status: "playing" });
@@ -305,10 +323,60 @@ export class Player {
     }
   }
 
-  /** Does `translation` have any recording at all? Loads the indexes. */
+  /** Can this chapter be listened to: a recording, or a device voice for
+   *  the translation's language? Loads the indexes. */
   async hasAudio(translation: string, book: number, chapter: number): Promise<boolean> {
     const s = await this.sectionsOf(translation);
-    return sectionFor(s.get(book), chapter) !== null;
+    if (sectionFor(s.get(book), chapter) !== null) return true;
+    return this.voiceFor(await this.langOf(translation)) !== null;
+  }
+
+  /** The device voices that can read `lang`, best first (Settings). */
+  voices(lang: string): VoiceLike[] {
+    const s = synth();
+    return s === null ? [] : voicesFor(s.getVoices(), lang);
+  }
+
+  /** Voices arrive asynchronously (Chrome: none until `voiceschanged`). */
+  onVoices(fn: () => void): () => void {
+    const s = synth();
+    if (s === null) return () => undefined;
+    s.addEventListener("voiceschanged", fn);
+    return () => s.removeEventListener("voiceschanged", fn);
+  }
+
+  private voiceFor(lang: string): SpeechSynthesisVoice | null {
+    const s = synth();
+    if (s === null) return null;
+    return pickVoice(s.getVoices(), lang, this.prefs.voices[voiceKey(lang)]) as SpeechSynthesisVoice | null;
+  }
+
+  private async langOf(translation: string): Promise<string> {
+    const m = await loadManifest();
+    return m.translations.find((x) => x.id === translation)?.lang ?? "und";
+  }
+
+  /** Wait up to `ms` for the voice list when it is still empty. */
+  private async voicesLoaded(ms = 1500): Promise<void> {
+    const s = synth();
+    if (s === null || s.getVoices().length > 0) return;
+    await new Promise<void>((res) => {
+      const done = () => (s.removeEventListener("voiceschanged", done), window.clearTimeout(tm), res());
+      const tm = window.setTimeout(done, ms);
+      s.addEventListener("voiceschanged", done);
+    });
+  }
+
+  private pronFor(translation: string): Promise<PronTable | null> {
+    const url = PRON_URL[PRON_ASSET[translation] ?? ""];
+    if (url === undefined) return Promise.resolve(null);
+    let p = this.prons.get(url);
+    if (p === undefined) {
+      // No table = the text read as printed: worse, never silent.
+      p = fetch(url).then((r) => (r.ok ? (r.json() as Promise<PronTable>) : null), () => null);
+      this.prons.set(url, p);
+    }
+    return p;
   }
 
   private sectionsOf(translation: string): Promise<Map<number, Section[]>> {
@@ -334,6 +402,16 @@ export class Player {
   }
 
   private unlock(): void {
+    // iOS speaks from a script later only if a tap has spoken once.
+    const s = synth();
+    if (s !== null && !this.spokeOnce) {
+      this.spokeOnce = true;
+      try {
+        s.speak(new SpeechSynthesisUtterance(""));
+      } catch {
+        // No voice at all: the chapter says so when it starts.
+      }
+    }
     if (this.el.src === "") {
       this.el.src = SILENT;
       this.el.play().catch(() => undefined);
@@ -344,6 +422,7 @@ export class Player {
   private async start(translation: string, label: string, book: number, chapter: number, verse: number): Promise<void> {
     const token = ++this.token;
     this.stopTimer();
+    this.hush();
     this.sec = null;
     this.words = null;
     this.wordVerse = -1;
@@ -357,8 +436,7 @@ export class Player {
       const sec = sectionFor(sections.get(book), chapter);
       if (sec === null) {
         this.el.pause();
-        this.bed.stop();
-        this.set({ status: "error", message: t("w_no_recording", bookName + " " + String(chapter + 1)) });
+        await this.readAloud(token, translation, book, chapter, verse, bookName);
         return;
       }
       if (sec.generated && !this.opus) {
@@ -407,6 +485,77 @@ export class Player {
     }
   }
 
+  /** No recording: read the chapter with the device's voice, from `verse`. */
+  private async readAloud(token: number, translation: string, book: number, chapter: number, verse: number, bookName: string): Promise<void> {
+    await this.voicesLoaded();
+    const lang = await this.langOf(translation);
+    if (token !== this.token) return;
+    if (this.voiceFor(lang) === null) {
+      this.bed.stop();
+      this.set({ status: "error", message: synth() === null ? t("w_no_recording", bookName + " " + String(chapter + 1)) : t("tts_unavailable") });
+      return;
+    }
+    const [b, table] = await Promise.all([loadBook(translation, book), this.pronFor(translation)]);
+    if (token !== this.token) return;
+    this.speech = { verses: b.chapters[chapter] ?? [], lang, english: voiceKey(lang) === "en", table };
+    this.set({ following: true, status: "playing" });
+    this.metadata();
+    this.speak(Math.max(0, verse));
+    void this.updateBed(true);
+  }
+
+  /** Speak verse `i`; its end speaks the next, the last one ends the chapter. */
+  private speak(i: number): void {
+    const sp = this.speech;
+    const s = synth();
+    if (sp === null || s === null) return;
+    const gen = ++this.utt;
+    let v = i;
+    // An empty verse (a translation's gap) would never fire onend.
+    while (v < sp.verses.length && sp.verses[v].trim() === "") v++;
+    if (v >= sp.verses.length) {
+      void this.onEnded();
+      return;
+    }
+    const text = sp.verses[v];
+    const spoken = forSpeech(text, sp.english, sp.table);
+    const u = new SpeechSynthesisUtterance(spoken.text);
+    // Re-picked every verse, so a voice chosen in Settings takes the next one.
+    const voice = this.voiceFor(sp.lang);
+    if (voice !== null) {
+      u.voice = voice;
+      u.lang = voice.lang;
+    }
+    u.rate = this.prefs.rate;
+    u.onboundary = (e) => {
+      if (gen !== this.utt || e.name !== "word") return;
+      const w = wordOf(text, spoken, e.charIndex);
+      if (w !== null) this.set({ word: w });
+    };
+    u.onend = () => {
+      if (gen === this.utt && this.st.status === "playing") this.speak(v + 1);
+    };
+    u.onerror = (e) => {
+      if (gen !== this.utt || e.error === "interrupted" || e.error === "canceled") return;
+      this.hush();
+      this.bed.stop();
+      this.set({ status: "error", message: t("tts_unavailable") });
+    };
+    const moved = v !== this.st.verse;
+    this.set({ verse: v, word: null });
+    if (moved) void this.updateBed(false);
+    s.speak(u);
+  }
+
+  /** Stop reading aloud, if it was; late events of the old verse do nothing. */
+  private hush(): void {
+    this.utt += 1;
+    if (this.speech !== null) {
+      this.speech = null;
+      synth()?.cancel();
+    }
+  }
+
   toggle(): void {
     if (this.st.status === "playing") this.pause();
     else if (this.st.status === "paused") this.resume();
@@ -414,6 +563,12 @@ export class Player {
 
   pause(): void {
     if (this.st.status !== "playing") return;
+    if (this.speech !== null) {
+      // speechSynthesis.pause() is unreliable (Android Chrome): cancel, and
+      // resume restarts the verse.
+      this.utt += 1;
+      synth()?.cancel();
+    }
     this.set({ status: "paused" });
     this.el.pause();
     this.bed.pause();
@@ -423,6 +578,13 @@ export class Player {
   resume(): void {
     if (this.st.status !== "paused") return;
     this.unlock();
+    if (this.speech !== null) {
+      this.set({ status: "playing" });
+      this.bed.resume();
+      if (this.prefs.bed && this.bed.url === null) void this.updateBed(true);
+      this.speak(Math.max(0, this.st.verse));
+      return;
+    }
     this.el.playbackRate = this.prefs.rate;
     this.el.play().then(
       () => {
@@ -437,6 +599,7 @@ export class Player {
 
   stop(): void {
     this.token += 1;
+    this.hush();
     this.el.pause();
     this.bed.stop();
     this.stopTimer();
@@ -472,7 +635,7 @@ export class Player {
   }
 
   private async onEnded(): Promise<void> {
-    if (this.sec === null || this.st.status !== "playing") return;
+    if ((this.sec === null && this.speech === null) || this.st.status !== "playing") return;
     const n = this.prefs.autoNext ? this.neighbour(1, true) : null;
     if (n === null) {
       this.stop();

@@ -21,6 +21,7 @@ import { loadBook, loadBooksIndex, loadManifest, loadStrongsBook, loadStrongsLex
 import { afterCap, lexiconLang, mergeLexicon, shown as shownSegs, shownNumber, shownText, subline, type Lexicon, type Seg } from "./strongs";
 import { chapterRows, type Row, type Side } from "./parallel";
 import { Player, type AudioPrefs, type PlayState } from "./player";
+import { voiceKey } from "./speech";
 import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
 import { directionOf, dropCapEnd, isCjk } from "./text";
@@ -156,7 +157,7 @@ const I = {
 const hlName = (c: number): string => [t("w_hl_amber"), t("w_hl_green"), t("w_hl_blue"), t("w_hl_pink")][c] ?? "";
 
 function audioPrefs(p: Prefs): AudioPrefs {
-  return { rate: p.rate, autoNext: p.autoNext, bed: p.bed, bedKind: p.bedKind, bedVolume: p.bedVolume, uniformBed: p.uniformBed };
+  return { rate: p.rate, autoNext: p.autoNext, bed: p.bed, bedKind: p.bedKind, bedVolume: p.bedVolume, uniformBed: p.uniformBed, voices: p.voices };
 }
 
 function Icon({ d, size = 22 }: { d: JSX.Element; size?: number }) {
@@ -363,6 +364,8 @@ export function App() {
   const [player] = useState(() => new Player(audioPrefs(prefs)));
   const [ps, setPs] = useState<PlayState>(player.state);
   const [canListen, setCanListen] = useState(false);
+  // Bumped when the device's voice list arrives or changes (it loads late).
+  const [voiceTick, setVoiceTick] = useState(0);
   const [credits, setCredits] = useState<string[]>([]);
   // Kept across openings: back from a hit, the list is where it was left.
   const [query, setQuery] = useState("");
@@ -615,7 +618,9 @@ export function App() {
     return () => void off();
   }, []);
 
-  useEffect(() => player.setPrefs(audioPrefs(prefs)), [prefs.rate, prefs.autoNext, prefs.bed, prefs.bedKind, prefs.bedVolume, prefs.uniformBed]);
+  useEffect(() => player.setPrefs(audioPrefs(prefs)), [prefs.rate, prefs.autoNext, prefs.bed, prefs.bedKind, prefs.bedVolume, prefs.uniformBed, prefs.voices]);
+
+  useEffect(() => player.onVoices(() => setVoiceTick((n) => n + 1)), []);
 
   // Is there a recording of this chapter? The indexes (~1.7 MB, fetched
   // once) wait until the chapter itself is on screen.
@@ -631,7 +636,7 @@ export function App() {
       live = false;
       window.clearTimeout(t);
     };
-  }, [route.translation, route.book, route.chapter]);
+  }, [route.translation, route.book, route.chapter, voiceTick]);
 
   // The chapter the player is on; a LibriVox section may hold several.
   const onAir = ps.status !== "idle" && ps.translation === route.translation && ps.book === route.book && ps.chapter === route.chapter;
@@ -1456,6 +1461,8 @@ export function App() {
       </Sheet>
     );
   } else if (sheet === "prefs") {
+    // The device voices for the language being read (voiceTick re-renders it).
+    const readingVoices = player.voices(aLang);
     const split = parIds.length > 0;
     const seg = <T extends string>(label: string, cur: T, opts: [T, string][], set: (v: T) => void) => (
       <div class="modes" role="group" aria-label={label}>
@@ -1579,6 +1586,28 @@ export function App() {
           <span class="val wide">{prefs.rate.toFixed(2)}×</span>
         </label>
         {toggle(t("auto_continue"), t("w_auto_next_note"), prefs.autoNext, () => update({ autoNext: !prefs.autoNext }))}
+        {readingVoices.length > 0 && (
+          <label class="sfield lang">
+            <span>{t("voice_title")}</span>
+            <select
+              value={prefs.voices[voiceKey(aLang)] ?? ""}
+              onChange={(e) => {
+                const v = (e.target as HTMLSelectElement).value;
+                const voices = { ...prefs.voices };
+                if (v === "") delete voices[voiceKey(aLang)];
+                else voices[voiceKey(aLang)] = v;
+                update({ voices });
+              }}
+            >
+              <option value="">{t("voice_default")}</option>
+              {readingVoices.map((v) => (
+                <option key={v.name} value={v.name}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {toggle(t("w_bed"), t("w_bed_note"), prefs.bed, () => {
           // iOS lets the bed start later only if this tap has played it.
           if (!prefs.bed) player.unlockBed();

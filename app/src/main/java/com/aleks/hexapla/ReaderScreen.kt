@@ -1157,8 +1157,8 @@ private fun ChapterTranslationHead(
     val primary = BibleRepo.translation(settings.primaryId).label
     val secondary = if (settings.splitEnabled && hasSecondary)
         BibleRepo.translation(settings.secondaryId).label else null
-    // A licence credit (BibleRepo.columnCredit) heads its own column, under
-    // that column's label.
+    // A licence credit (BibleRepo.columnCredit) heads its own column, to the
+    // right of that column's label (owner, 2026-09-25: beside «(TR)», not under).
     val primaryCredit = BibleRepo.columnCredit(settings.primaryId)
     val secondaryCredit = if (secondary != null) BibleRepo.columnCredit(settings.secondaryId) else null
 
@@ -1174,23 +1174,19 @@ private fun ChapterTranslationHead(
             // with the text they name.
             Row(Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
-                    ChapterHeadLabel(primary, Modifier.fillMaxWidth())
-                    primaryCredit?.let { ColumnCreditLine(it) { onCredit(primary, it) } }
+                    HeadWithCredit(primary, primaryCredit) { onCredit(primary, it) }
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    ChapterHeadLabel(secondary, Modifier.fillMaxWidth())
-                    secondaryCredit?.let { ColumnCreditLine(it) { onCredit(secondary, it) } }
+                    HeadWithCredit(secondary, secondaryCredit) { onCredit(secondary, it) }
                 }
             }
         } else {
             // Stacked: primary then secondary, the same order the verses
             // themselves use — position is the cue, so no extra marker.
-            ChapterHeadLabel(primary, Modifier.fillMaxWidth())
-            primaryCredit?.let { ColumnCreditLine(it) { onCredit(primary, it) } }
+            HeadWithCredit(primary, primaryCredit) { onCredit(primary, it) }
             if (secondary != null) {
-                ChapterHeadLabel(secondary, Modifier.fillMaxWidth())
-                secondaryCredit?.let { ColumnCreditLine(it) { onCredit(secondary, it) } }
+                HeadWithCredit(secondary, secondaryCredit) { onCredit(secondary, it) }
             }
         }
         Spacer(Modifier.height(6.dp))
@@ -1198,26 +1194,44 @@ private fun ChapterTranslationHead(
     }
 }
 
+/** The column label with its credit mark (if any) INLINE at its end, so the ©
+ *  always follows «(TR)» — a separate Row child sat at the column's far edge
+ *  once a narrow side-by-side column wrapped the label (owner, 2026-09-25).
+ *  Only the © is the tap target (a LinkAnnotation on that span), not the
+ *  whole label (owner, 2026-09-25). */
 @Composable
-private fun ColumnCreditLine(credit: BibleRepo.ColumnCredit, onClick: () -> Unit) {
-    // The credit is Latin-script Turkish whatever the UI direction.
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Text(
-            credit.short,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(vertical = 6.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
+private fun HeadWithCredit(
+    label: String,
+    credit: BibleRepo.ColumnCredit?,
+    onClick: (BibleRepo.ColumnCredit) -> Unit
+) {
+    if (credit == null) {
+        ChapterHeadLabel(AnnotatedString(label), label, Modifier.fillMaxWidth())
+        return
     }
+    val mark = MaterialTheme.colorScheme.primary
+    val text = buildAnnotatedString {
+        append(label)
+        append(' ')
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = "credit",
+                styles = TextLinkStyles(style = SpanStyle(color = mark)),
+                linkInteractionListener = { onClick(credit) }
+            )
+        ) { append(credit.short) }
+    }
+    ChapterHeadLabel(text, label, Modifier.fillMaxWidth())
 }
 
 @Composable
-private fun ChapterHeadLabel(text: String, modifier: Modifier = Modifier) {
+private fun ChapterHeadLabel(text: String, modifier: Modifier = Modifier) =
+    ChapterHeadLabel(AnnotatedString(text), text, modifier)
+
+@Composable
+private fun ChapterHeadLabel(text: AnnotatedString, label: String, modifier: Modifier = Modifier) {
     // The label sits over its verses, so it takes their direction, not the UI's.
-    CompositionLocalProvider(LocalLayoutDirection provides directionOf(text)) {
+    CompositionLocalProvider(LocalLayoutDirection provides directionOf(label)) {
         Text(
             text,
             modifier = modifier,

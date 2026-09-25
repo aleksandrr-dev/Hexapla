@@ -2467,7 +2467,8 @@ function MarksSheet(p: {
 // The lexicon for the UI language, merged once (strongs.ts mergeLexicon).
 let lexicon: { lang: string | null; p: Promise<Lexicon> } | null = null;
 function loadLexicon(): Promise<Lexicon> {
-  const lang = lexiconLang(navigator.language || "en");
+  // The interface language, not the browser's: Android follows the app's.
+  const lang = lexiconLang(locale());
   if (lexicon === null || lexicon.lang !== lang) {
     const p = Promise.all([loadStrongsLexicon(null), lang === null ? Promise.resolve(null) : loadStrongsLexicon(lang)]).then(([en, tr]) => mergeLexicon(en, tr));
     p.catch(() => (lexicon = null));

@@ -38,6 +38,7 @@ import { currentEnv, loadDismissed, saveDismissed, shouldHint } from "./install"
 import { locale, setLocale, t } from "./i18n";
 import { LOCALES, uiTag } from "./locale";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
+import { buildPlans, bumped, loadPlanState, nextDay, reset as resetPlan, savePlanState, toggled, type Plan, type PlanState } from "./plans";
 // The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
 // Refs tap only, then kept for the page's life.
 import xrefsUrl from "../../app/src/main/assets/xrefs.json?url";
@@ -143,6 +144,12 @@ const I = {
   bookmarked: <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z" fill="currentColor" />,
   note: <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />,
   xref: <path d="M4 8h13l-3-3M20 16H7l3 3" />,
+  plans: (
+    <>
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M4 10h16M8 3v4M16 3v4M8 14l2 2 4-4" />
+    </>
+  ),
 };
 
 /** Android's HighlightColors (ReaderScreen.kt), same order: the index is stored. */
@@ -322,7 +329,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -379,6 +386,19 @@ export function App() {
   const [sBook, setSBook] = useState<{ book: number; chapters: string[][] } | null>(null);
   const [strongsId, setStrongsId] = useState<string | null>(null);
   const [dictWord, setDictWord] = useState<string | null>(null);
+  // Reading plans (plans.ts): ticked days and the daily streak, which counts
+  // this opening once, as Android's Store.touchStreak on app start.
+  const [planSt, setPlanSt] = useState<PlanState>(() => {
+    const s = bumped(loadPlanState(), new Date());
+    savePlanState(s);
+    return s;
+  });
+  const updatePlans = (f: (s: PlanState) => PlanState) =>
+    setPlanSt((old) => {
+      const next = f(old);
+      savePlanState(next);
+      return next;
+    });
 
   const update = (p: Partial<Prefs>) =>
     setPrefs((old) => {
@@ -888,6 +908,11 @@ export function App() {
           <Icon d={I.bookmark} size={21} />
         </button>
       )}
+      {(wide || vw >= 440) && (
+        <button type="button" class="ib" aria-label={t("plans_title")} onClick={() => openFrom("plans", null)}>
+          <Icon d={I.plans} size={21} />
+        </button>
+      )}
       <button type="button" class="ib" aria-label={t("w_text_theme")} onClick={() => openFrom("text", null)}>
         <Icon d={I.aa} size={24} />
       </button>
@@ -1395,6 +1420,19 @@ export function App() {
         onPick={(b, c, v) => (setXref(null), done(), go({ translation: route.translation, book: b, chapter: c, verse: v }))}
       />
     );
+  } else if (sheet === "plans") {
+    sheetEl = (
+      <PlansSheet
+        st={planSt}
+        vm={vmAll}
+        tr={route.translation}
+        lang={aLang}
+        index={index}
+        onClose={done}
+        onChange={updatePlans}
+        onPick={(b, c) => (setStack([]), setSheet(null), go({ translation: route.translation, book: b, chapter: c, verse: null }))}
+      />
+    );
   } else if (sheet === "marks") {
     sheetEl = (
       <MarksSheet
@@ -1490,6 +1528,13 @@ export function App() {
           <div class="st">
             <span>{t("w_marks")}</span>
             <span class="sn">{markCount(marks)}</span>
+          </div>
+          <Icon d={I.chev} size={18} />
+        </button>
+        <button type="button" class="srow" onClick={() => openFrom("plans", "prefs")}>
+          <div class="st">
+            <span>{t("plans_title")}</span>
+            <span class="sn">{planSummary(planSt)}</span>
           </div>
           <Icon d={I.chev} size={18} />
         </button>
@@ -1758,6 +1803,140 @@ function markCount(m: Marks): string {
   const n = Object.keys(m.notes).length;
   if (b + h + n === 0) return t("w_marks_none");
   return t("w_marks_count", b, h, n);
+}
+
+// Every plan and era string as a literal t() call: scripts/strings.ts ships
+// only the keys it finds written that way, so plans.ts keeps ids, not keys.
+function planTitle(id: string): string {
+  switch (id) {
+    case "year": return t("plan_year");
+    case "chrono": return t("plan_chrono");
+    case "nt90": return t("plan_nt90");
+    case "gospels30": return t("plan_gospels");
+    case "prov31": return t("plan_proverbs");
+    default: return t("plan_psalms");
+  }
+}
+function planDesc(id: string): string {
+  switch (id) {
+    case "year": return t("plan_year_desc");
+    case "chrono": return t("plan_chrono_desc");
+    case "nt90": return t("plan_nt90_desc");
+    case "gospels30": return t("plan_gospels_desc");
+    case "prov31": return t("plan_proverbs_desc");
+    default: return t("plan_psalms_desc");
+  }
+}
+function eraName(k: string): string {
+  switch (k) {
+    case "era_beginning": return t("era_beginning");
+    case "era_patriarchs": return t("era_patriarchs");
+    case "era_exodus": return t("era_exodus");
+    case "era_wilderness": return t("era_wilderness");
+    case "era_conquest": return t("era_conquest");
+    case "era_judges": return t("era_judges");
+    case "era_saul": return t("era_saul");
+    case "era_david": return t("era_david");
+    case "era_solomon": return t("era_solomon");
+    case "era_divided": return t("era_divided");
+    case "era_isaiah": return t("era_isaiah");
+    case "era_last_kings": return t("era_last_kings");
+    case "era_fall": return t("era_fall");
+    case "era_exile": return t("era_exile");
+    case "era_return": return t("era_return");
+    case "era_christ": return t("era_christ");
+    case "era_church": return t("era_church");
+    default: return t("era_revelation");
+  }
+}
+
+/** The Settings row's second line: the plan last open and how far along. */
+function planSummary(s: PlanState): string {
+  const plans = buildPlans();
+  const p = plans.find((x) => x.id === s.last) ?? plans[0];
+  return planTitle(p.id) + " · " + t("days_done", (s.done[p.id] ?? []).length, p.days.length);
+}
+
+/** Reading plans, as PlansScreen.kt: a tab per plan, a card per day. Days are
+ *  on the KJV chapter grid; each chapter is shown and opened in the primary
+ *  translation through the versemap, and one it lacks is dimmed, not hidden. */
+function PlansSheet(p: {
+  st: PlanState;
+  vm: VerseMapData | null;
+  tr: string;
+  lang: string;
+  index: BooksIndex | null;
+  onClose: () => void;
+  onChange: (f: (s: PlanState) => PlanState) => void;
+  onPick: (b: number, c: number) => void;
+}) {
+  const plans = buildPlans();
+  const plan: Plan = plans.find((x) => x.id === p.st.last) ?? plans[0];
+  const done = new Set(p.st.done[plan.id] ?? []);
+  const next = nextDay(plan, done);
+  const list = useRef<HTMLDivElement>(null);
+  // Open on the current day once per plan shown, not on every tick (that
+  // would yank the list as days are ticked) — PlansScreen's scrolledTab.
+  useEffect(() => {
+    const el = list.current?.querySelector<HTMLElement>('[data-day="' + String(next) + '"]');
+    el?.scrollIntoView({ block: "start" });
+  }, [plan.id]);
+  const vm = p.vm ?? {};
+  return (
+    <Sheet title={t("plans_title")} onClose={p.onClose}>
+      {p.st.streak > 1 && <p class="pstreak">{t("streak", p.st.streak)}</p>}
+      <div class="modes chips" role="group" aria-label={t("plans_title")}>
+        {plans.map((x) => (
+          <button type="button" key={x.id} class={"seg" + (x.id === plan.id ? " sel" : "")} aria-pressed={x.id === plan.id} onClick={() => p.onChange((s) => ({ ...s, last: x.id }))}>
+            <span class="ell">{planTitle(x.id)}</span>
+          </button>
+        ))}
+      </div>
+      <p class="hint">{planDesc(plan.id)}</p>
+      <div class="pbar" role="progressbar" aria-valuemin={0} aria-valuemax={plan.days.length} aria-valuenow={done.size}>
+        <span style={{ width: String((100 * done.size) / plan.days.length) + "%" }} />
+      </div>
+      <div class="pstat">
+        <span>{t("days_done", done.size, plan.days.length)}</span>
+        <button type="button" class="btn" disabled={done.size === 0} onClick={() => p.onChange((s) => resetPlan(s, plan.id))}>
+          {t("reset_plan")}
+        </button>
+      </div>
+      <div class="list plist" ref={list}>
+        {plan.days.map((d) => {
+          const isDone = done.has(d.day);
+          const isNext = d.day === next && !isDone;
+          const era = plan.eraByDay.get(d.day);
+          return (
+            <div key={d.day} data-day={d.day}>
+              {era !== undefined && <h3 class="sec era">{eraName(era)}</h3>}
+              <div class={"pday" + (isNext ? " next" : "") + (isDone ? " done" : "")}>
+                <div class="pd">
+                  <div class="pdh">
+                    <b>{t("day_n", d.day)}</b>
+                    {isNext && <span class="ptoday">{t("today")}</span>}
+                  </div>
+                  <div class="pch" lang={p.lang}>
+                    {d.chapters.map(([b, c]) => {
+                      const ch = fromKjv(vm, p.tr, b, c + 1, 1)[0]?.c ?? c + 1;
+                      const entry = p.index?.[b];
+                      const has = (entry?.chapters[ch - 1] ?? 0) > 0;
+                      return (
+                        <button type="button" key={String(b) + ":" + String(c)} class="pc" disabled={!has} onClick={() => p.onPick(b, ch - 1)}>
+                          {(entry?.name ?? t("w_book_n", b + 1)) + " " + String(ch)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <input type="checkbox" class="pchk" checked={isDone} aria-label={t("day_n", d.day)} onChange={() => p.onChange((s) => toggled(s, plan.id, d.day))} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Sheet>
+  );
 }
 
 /** Settings › Backup, as on Android: the same file, so it moves both ways. */

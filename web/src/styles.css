@@ -411,3 +411,24 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .kbtn.on { border-color: var(--ol); color: var(--mu); }
 .kbtn:disabled { opacity: 0.5; cursor: default; }
 .hint.err { color: var(--ox); }
+
+/* ---- reading plans (PlansScreen.kt) ---------------------------------------- */
+.pstreak { margin: 0 4px 8px; font-weight: 600; color: var(--ox); }
+.pbar { height: 6px; margin: 2px 4px 6px; border-radius: 3px; background: var(--sv); overflow: hidden; }
+.pbar > span { display: block; height: 100%; background: var(--ox); }
+.pstat { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 0 4px 8px; font-size: 14px; color: var(--mu); }
+.pstat .btn { min-height: 36px; font-size: 14px; }
+.pstat .btn:disabled { opacity: 0.5; cursor: default; }
+.plist { gap: 6px; }
+.sec.era { margin: 16px 4px 4px; }
+.pday { display: flex; align-items: center; gap: 8px; padding: 8px 6px 8px 12px; border-radius: 12px; background: var(--sv); }
+.pday.next { background: var(--hl); box-shadow: inset 3px 0 0 var(--ox); }
+.pday.done .pdh b { color: var(--mu); }
+.pd { flex: 1; min-width: 0; }
+.pdh { display: flex; align-items: baseline; gap: 8px; font-size: 15px; }
+.ptoday { font-size: 12px; font-weight: 700; color: var(--ox); text-transform: uppercase; letter-spacing: 0.04em; }
+.pch { display: flex; flex-wrap: wrap; gap: 2px 4px; margin-top: 2px; }
+.pc { border: 0; background: transparent; color: var(--ox); font: inherit; font-size: 15px; padding: 6px 4px; min-height: 36px; cursor: pointer; text-align: start; }
+.pc:hover:not(:disabled) { text-decoration: underline; }
+.pc:disabled { color: var(--mu); opacity: 0.55; cursor: default; }
+.pchk { flex: none; width: 24px; height: 24px; margin: 0 8px; accent-color: var(--ox); cursor: pointer; }

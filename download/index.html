@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hexapla — Bible in 30 Languages / Библия на 30 языках</title>
+<meta name="description" content="The Bible in 30 languages, side by side — offline, free, complete. No ads, no accounts, no data collection.">
+<link rel="icon" type="image/png" href="/icon.png">
+<link rel="apple-touch-icon" href="/icon.png">
+<meta name="theme-color" content="#faf3e3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12100c" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Hexapla · Гексапла">
+<meta property="og:description" content="The Bible in 30 languages, side by side — offline, free, complete. No ads, no accounts, no data collection.">
+<meta property="og:image" content="https://hexaplabible.com/icon.png">
+<meta property="og:url" content="https://hexaplabible.com/download/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<!-- No web fonts, no scripts, no third-party requests: nothing here can see a
+     visitor (the app's own rule). The palette is the reader's (web/src/styles.css). -->
+<style>
+  :root {
+    --bg: #faf3e3; --card: #fffaf0; --ink: #2b2114; --soft: #6f6353;
+    --ox: #6d2a2a; --on: #faf3e3; --line: #e3d6bc; --shadow: rgba(60, 40, 20, .14);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12100c; --card: #1d1a14; --ink: #e6dcc8; --soft: #a59a86;
+      --ox: #d9a05b; --on: #12100c; --line: #332d23; --shadow: rgba(0, 0, 0, .5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+         line-height: 1.5; -webkit-text-size-adjust: 100%; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 56px 16px 40px; text-align: center; }
+  .icon { width: 104px; height: 104px; border-radius: 24px; display: block; margin: 0 auto;
+          box-shadow: 0 10px 30px var(--shadow); }
+  h1 { font-size: 2.3rem; margin: 20px 0 6px; letter-spacing: .01em; font-weight: 700; }
+  h1 span { color: var(--soft); font-weight: 400; }
+  .tag { font-size: 1.15rem; margin: 0 0 4px; }
+  .tag.ru { color: var(--soft); font-size: 1rem; }
+  .rule { width: 56px; height: 2px; background: var(--ox); border: 0; margin: 28px auto; opacity: .7; }
+  .btn { display: flex; align-items: center; gap: 14px; text-align: left; margin: 12px auto;
+         padding: 14px 18px; max-width: 400px; min-height: 64px; border-radius: 16px;
+         text-decoration: none; color: var(--ink); background: var(--card);
+         border: 1px solid var(--line); transition: transform .12s ease, box-shadow .12s ease; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px var(--shadow); }
+  .btn:focus-visible { outline: 2px solid var(--ox); outline-offset: 3px; }
+  .btn svg { flex: none; width: 26px; height: 26px; }
+  .btn b { display: block; font-size: 1.05rem; }
+  .btn small { display: block; color: var(--soft); font-size: .88rem; }
+  .btn.primary { background: var(--ox); color: var(--on); border-color: var(--ox); }
+  .btn.primary small { color: var(--on); opacity: .8; }
+  .btn.soon { opacity: .5; pointer-events: none; }
+  .feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 36px 0 8px; }
+  .feat { padding: 14px 8px; border-radius: 14px; background: var(--card); border: 1px solid var(--line);
+          font-size: .9rem; }
+  .feat b { display: block; font-size: 1.35rem; color: var(--ox); }
+  .feat span { color: var(--soft); }
+  .foot { color: var(--soft); font-size: .88rem; margin-top: 36px; }
+  .foot a { color: var(--ox); }
+  @media (max-width: 420px) {
+    .wrap { padding-top: 40px; }
+    h1 { font-size: 1.9rem; }
+    .feats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <img class="icon" src="/icon.png" width="104" height="104" alt="Hexapla app icon — an open scroll">
+  <h1>Hexapla <span>·</span> Гексапла</h1>
+  <p class="tag">The Bible in 30 languages — offline, free, complete.</p>
+  <p class="tag ru">Библия на 30 языках — офлайн, бесплатно, полностью.</p>
+
+  <hr class="rule">
+
+  <a class="btn primary" href="/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C4.5 4 8.5 4 12 6.5c3.5-2.5 7.5-2.5 10-1V19c-2.5-1.5-6.5-1.5-10 1-3.5-2.5-7.5-2.5-10-1z"/><path d="M12 6.5V20"/></svg>
+    <span><b>Read online</b><small>In your browser, nothing to install · Читать онлайн в браузере</small></span>
+  </a>
+  <a class="btn" href="https://github.com/aleksandrr-dev/Hexapla/releases/latest">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+    <span><b>Android app — direct APK</b><small>Offline, with narration · Прямое скачивание APK</small></span>
+  </a>
+  <a class="btn" href="https://www.rustore.ru/catalog/app/com.aleks.hexapla">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span><b>Get it on RuStore</b><small>Скачать из RuStore</small></span>
+  </a>
+  <a class="btn soon" href="https://play.google.com/store/apps/details?id=com.aleks.hexapla" aria-disabled="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5v17l14-8.5z"/></svg>
+    <span><b>Google Play — coming soon</b><small>Скоро в Google Play</small></span>
+  </a>
+
+  <div class="feats">
+    <div class="feat"><b>36</b><span>translations, side by side</span></div>
+    <div class="feat"><b>30</b><span>languages</span></div>
+    <div class="feat"><b>0</b><span>ads, accounts or tracking</span></div>
+  </div>
+
+  <p class="foot">
+    <a href="/PRIVACY.html">Privacy policy / Политика конфиденциальности</a> ·
+    <a href="https://github.com/aleksandrr-dev/Hexapla">Source code / Исходный код</a>
+  </p>
+</main>
+</body>
+</html>

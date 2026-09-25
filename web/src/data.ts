@@ -3,7 +3,7 @@
 // (WEB_APP_PLAN.md § 3) and do not belong in the scaffold.
 //
 // All URLs are relative to `import.meta.env.BASE_URL`, which Vite fills in
-// from `base` in vite.config.ts ("/app/"). Hard-coding a path here
+// from `base` in vite.config.ts ("/"). Hard-coding a path here
 // instead would work under `npm run dev` and 404 on Pages.
 
 import type { Book, BooksIndex, Manifest } from "./types";

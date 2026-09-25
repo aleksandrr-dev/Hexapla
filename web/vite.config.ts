@@ -4,7 +4,7 @@ import { defineConfig, type Plugin, type PreviewServer, type ViteDevServer } fro
 import preact from "@preact/preset-vite";
 
 // Dev and preview: serve a built data tree at /data/, where Pages serves it
-// (a SIBLING of /app/ — see src/data.ts). The tree is ~200 MB and
+// (beside the app at the site root — see src/data.ts). The tree is ~200 MB and
 // must live OUTSIDE the repo (tools/build_web_data.py refuses otherwise):
 //
 //     python tools/build_web_data.py --out <dir>          (+ --aux, same --out)
@@ -39,12 +39,13 @@ function devData(): Plugin {
 }
 
 // Published under the landing page's domain, as a subdirectory — see
-// WEB_APP_PLAN.md § 0. Since 2026-09-25 that domain is hexaplabible.com at
-// its root (the github.io project path /Hexapla/ redirects there).
+// WEB_APP_PLAN.md § 0. Since 2026-09-25 that domain is hexaplabible.com and
+// the reader IS its root page; the old landing page is /download/ and /app/
+// redirects here (.github/workflows/pages.yml).
 // `base` must match the Pages path exactly, or
 // every emitted asset URL 404s while `npm run dev` still looks fine.
 export default defineConfig({
-  base: "/app/",
+  base: "/",
   plugins: [preact(), devData()],
   build: {
     outDir: "dist",

@@ -2,7 +2,7 @@
 //
 // Offline for anything already read, by caching as it is used - there is NO
 // big precache: the book art and the music are ~20 MB and most readers never
-// touch most of it. Registered from src/main.tsx with scope /app/; a
+// touch most of it. Registered from src/main.tsx with scope /; a
 // service worker sees every fetch its pages make, so the data tree at
 // /data/ (a sibling of the scope) is served from here too.
 //
@@ -65,6 +65,11 @@ self.addEventListener("fetch", (e) => {
   if (req.mode === "navigate") {
     // One cached page for the whole app: the route lives in the hash.
     const key = self.registration.scope;
+    // ONLY the app's own page. With the scope at the site root this worker
+    // also sees /download/ and /PRIVACY.html; caching those under `key` would
+    // replace the app, and the reader opened offline would show them.
+    const root = new URL(key).pathname;
+    if (u.pathname !== root && u.pathname !== root + "index.html") return;
     e.respondWith(fetch(req).then((r) => put(SHELL, key, r)).catch(async () =>
       (await caches.match(key)) ?? Response.error()));
     return;

@@ -107,12 +107,23 @@ jobs:
           npm ci
           npm run build
 
-      # vite.config.ts sets base "/app/" (hexaplabible.com, 2026-09-25), so web/dist is the whole
-      # app and it belongs at <site>/app/.
+      # vite.config.ts sets base "/" (2026-09-25): the reader IS the site's
+      # front page, and the old landing page lives at download/index.html.
+      # /app/ held the reader until then; shared links to it keep working
+      # through a redirect that carries the hash (the route) along.
       - name: Overlay the web app into the site
         run: |
+          cp -R web/dist/. _site/
           mkdir -p _site/app
-          cp -R web/dist/. _site/app/
+          printf '%s\n' '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Hexapla</title><meta http-equiv="refresh" content="0; url=/"><link rel="canonical" href="https://hexaplabible.com/"><script>location.replace("/" + location.search + location.hash);</script></head><body><p><a href="/">Hexapla</a></p></body></html>' > _site/app/index.html
+
+      # A check that cannot run did not pass: the front page must be the
+      # reader, and the download page must have survived the overlay.
+      - name: Assert the reader is the front page
+        run: |
+          grep -q 'id="app"' _site/index.html
+          test -f _site/download/index.html
+          test -f _site/app/index.html
 
       - name: Upload the site artifact
         uses: actions/upload-pages-artifact@v3

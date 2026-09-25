@@ -205,6 +205,10 @@
     <string name="share_app_link">Nosūtīt saiti</string>
     <string name="music_title">Fona mūzika klausīšanās laikā</string>
     <string name="music_volume">Mūzikas skaļums</string>
+    <string name="bed_kind">Kas skan fonā</string>
+    <string name="bed_kind_music">Mūzika</string>
+    <string name="bed_kind_fireside">Kamīns</string>
+    <string name="bed_kind_fireside_note">Sprakšķoša uguns mūzikas vietā. Arī tā apklust vietās, kur paredzēts klusums.</string>
     <string name="audio_stream">Straumēšana bez saglabāšanas</string>
     <string name="audio_stream_note">Atskaņo audio ielādes laikā, nevis lejupielādē to iepriekš. Izmanto mazāk vietas, bet katru reizi nepieciešams savienojums; jau lejupielādētās nodaļas joprojām atskaņojas bezsaistē.</string>
     <string name="music_pack">Lejupielādēt mūzikas paketi</string>

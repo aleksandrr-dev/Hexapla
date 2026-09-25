@@ -205,6 +205,10 @@
     <string name="share_app_link">Skicka länk</string>
     <string name="music_title">Bakgrundsmusik under lyssning</string>
     <string name="music_volume">Musikvolym</string>
+    <string name="bed_kind">Vad som spelas under</string>
+    <string name="bed_kind_music">Musik</string>
+    <string name="bed_kind_fireside">Brasa</string>
+    <string name="bed_kind_fireside_note">En sprakande brasa i stället för musik. Den tystnar också vid de ställen där tystnad är avsedd.</string>
     <string name="audio_stream">Streaming utan att spara</string>
     <string name="audio_stream_note">Spelar upp ljud medan det laddas i stället för att ladda ner det. Använder mindre utrymme men kräver anslutning varje gång; kapitel du redan har laddat ner spelas fortfarande upp offline.</string>
     <string name="music_pack">Ladda ner musikpaket</string>

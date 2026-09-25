@@ -205,6 +205,10 @@
     <string name="share_app_link">Invia il link</string>
     <string name="music_title">Musica di sottofondo durante l\'ascolto</string>
     <string name="music_volume">Volume della musica</string>
+    <string name="bed_kind">Cosa suona in sottofondo</string>
+    <string name="bed_kind_music">Musica</string>
+    <string name="bed_kind_fireside">Caminetto</string>
+    <string name="bed_kind_fireside_note">Il crepitio del fuoco al posto della musica. Anche lui tace nei passi in cui il silenzio è voluto.</string>
     <string name="audio_stream">Streaming senza salvare</string>
     <string name="audio_stream_note">Riproduce l\'audio durante il caricamento invece di scaricarlo. Usa meno spazio di archiviazione ma richiede una connessione ogni volta; i capitoli già scaricati continuano a essere riproducibili offline.</string>
     <string name="music_pack">Scarica il pacchetto musicale</string>

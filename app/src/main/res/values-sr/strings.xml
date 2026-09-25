@@ -205,6 +205,10 @@
     <string name="share_app_link">Pošalji link</string>
     <string name="music_title">Muzika u pozadini tokom slušanja</string>
     <string name="music_volume">Jačina muzike</string>
+    <string name="bed_kind">Šta svira u pozadini</string>
+    <string name="bed_kind_music">Muzika</string>
+    <string name="bed_kind_fireside">Kamin</string>
+    <string name="bed_kind_fireside_note">Pucketanje vatre umesto muzike. I ono utihne na mestima gde je tišina namerna.</string>
     <string name="audio_stream">Strimovanje bez čuvanja</string>
     <string name="audio_stream_note">Zvuk se pušta dok se učitava, umesto da se preuzima. Zauzima manje prostora, ali svaki put zahteva vezu sa mrežom; već preuzeta poglavlja i dalje se puštaju van mreže.</string>
     <string name="music_pack">Preuzmi muzički paket</string>

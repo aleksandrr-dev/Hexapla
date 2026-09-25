@@ -205,6 +205,10 @@
     <string name="share_app_link">שלח קישור</string>
     <string name="music_title">מוזיקת רקע בזמן ההאזנה</string>
     <string name="music_volume">עוצמת המוזיקה</string>
+    <string name="bed_kind">מה מתנגן ברקע</string>
+    <string name="bed_kind_music">מוזיקה</string>
+    <string name="bed_kind_fireside">אח בוערת</string>
+    <string name="bed_kind_fireside_note">פצפוץ אש במקום מוזיקה. גם הוא נאלם בקטעים שבהם השקט מכוון.</string>
     <string name="audio_stream">הזרמה בלי לשמור</string>
     <string name="audio_stream_note">מנגן את השמע תוך כדי טעינה במקום להוריד אותו. צורך פחות אחסון אך דורש חיבור בכל פעם; פרקים שכבר הורדתם ימשיכו להתנגן גם במצב לא מקוון.</string>
     <string name="music_pack">הורד חבילת מוזיקה</string>

@@ -204,6 +204,10 @@
     <string name="share_app_link">இணைப்பை அனுப்பு</string>
     <string name="music_title">கேட்கும்போது பின்னணி இசை</string>
     <string name="music_volume">இசை ஒலியளவு</string>
+    <string name="bed_kind">பின்னணியில் ஒலிப்பது</string>
+    <string name="bed_kind_music">இசை</string>
+    <string name="bed_kind_fireside">நெருப்பிடம்</string>
+    <string name="bed_kind_fireside_note">இசைக்குப் பதிலாக நெருப்பின் சடசடப்பு. அமைதி நோக்கமாக உள்ள பகுதிகளில் இதுவும் நின்றுவிடும்.</string>
     <string name="audio_stream">சேமிக்காமல் ஸ்ட்ரீமிங்</string>
     <string name="audio_stream_note">பதிவிறக்காமல், ஏற்றும்போதே ஒலியை இயக்கும். குறைவான இடத்தைப் பயன்படுத்தும், ஆனால் ஒவ்வொரு முறையும் இணைய இணைப்பு தேவை; ஏற்கெனவே பதிவிறக்கிய அதிகாரங்கள் தொடர்ந்து ஆஃப்லைனில் இயங்கும்.</string>
     <string name="music_pack">இசைத் தொகுப்பைப் பதிவிறக்கு</string>

@@ -205,6 +205,10 @@
     <string name="share_app_link">إرسال الرابط</string>
     <string name="music_title">موسيقى خلفية أثناء الاستماع</string>
     <string name="music_volume">مستوى صوت الموسيقى</string>
+    <string name="bed_kind">ما يُسمع في الخلفية</string>
+    <string name="bed_kind_music">موسيقى</string>
+    <string name="bed_kind_fireside">مدفأة</string>
+    <string name="bed_kind_fireside_note">طقطقة نار بدلًا من الموسيقى. وتصمت هي أيضًا عند المقاطع التي يُقصد فيها الصمت.</string>
     <string name="audio_stream">البث دون حفظ</string>
     <string name="audio_stream_note">يُشغَّل الصوت فور تحميله بدلاً من تنزيله بالكامل أولاً. يستخدم مساحة أقل، لكنه يحتاج اتصالاً بالإنترنت في كل مرة؛ الأصحاحات المنزَّلة من قبل تبقى تعمل دون إنترنت.</string>
     <string name="music_pack">تنزيل حزمة الموسيقى</string>

@@ -205,6 +205,10 @@
     <string name="share_app_link">Enviar link</string>
     <string name="music_title">Música de fundo durante a escuta</string>
     <string name="music_volume">Volume da música</string>
+    <string name="bed_kind">O que toca por baixo</string>
+    <string name="bed_kind_music">Música</string>
+    <string name="bed_kind_fireside">Lareira</string>
+    <string name="bed_kind_fireside_note">O crepitar do fogo em vez de música. Também se cala nas passagens em que o silêncio é intencional.</string>
     <string name="audio_stream">Transmitir sem salvar</string>
     <string name="audio_stream_note">Reproduz o áudio à medida que carrega, em vez de baixá-lo. Usa menos armazenamento, mas exige conexão toda vez; os capítulos já baixados continuam disponíveis offline.</string>
     <string name="music_pack">Baixar pacote de música</string>

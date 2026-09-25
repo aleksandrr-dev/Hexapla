@@ -197,6 +197,10 @@
     <string name="share_app_link">Link senden</string>
     <string name="music_title">Hintergrundmusik beim Anhören</string>
     <string name="music_volume">Musiklautstärke</string>
+    <string name="bed_kind">Was darunter spielt</string>
+    <string name="bed_kind_music">Musik</string>
+    <string name="bed_kind_fireside">Kaminfeuer</string>
+    <string name="bed_kind_fireside_note">Knisterndes Feuer statt Musik. Auch es verstummt an den Stellen, an denen Stille gewollt ist.</string>
     <string name="audio_stream">Streaming ohne Speichern</string>
     <string name="audio_stream_note">Spielt Audio beim Laden ab, statt es herunterzuladen. Braucht weniger Speicherplatz, benötigt aber jedes Mal eine Verbindung; bereits heruntergeladene Kapitel werden weiterhin offline abgespielt.</string>
     <string name="music_pack">Musikpaket herunterladen</string>

@@ -205,6 +205,10 @@
     <string name="share_app_link">Odeslat odkaz</string>
     <string name="music_title">Hudba na pozadí během poslechu</string>
     <string name="music_volume">Hlasitost hudby</string>
+    <string name="bed_kind">Co hraje v pozadí</string>
+    <string name="bed_kind_music">Hudba</string>
+    <string name="bed_kind_fireside">Krb</string>
+    <string name="bed_kind_fireside_note">Praskání ohně místo hudby. I ono utichá v místech, kde je zamýšleno ticho.</string>
     <string name="audio_stream">Streamování bez ukládání</string>
     <string name="audio_stream_note">Zvuk se přehrává při načítání místo stahování. Zabírá méně místa, ale pokaždé je potřeba připojení k internetu; už stažené kapitoly se stále přehrávají offline.</string>
     <string name="music_pack">Stáhnout hudební balíček</string>

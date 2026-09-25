@@ -205,6 +205,10 @@
     <string name="share_app_link">リンクを送る</string>
     <string name="music_title">朗読中の背景音楽</string>
     <string name="music_volume">音楽の音量</string>
+    <string name="bed_kind">背景に流れる音</string>
+    <string name="bed_kind_music">音楽</string>
+    <string name="bed_kind_fireside">暖炉</string>
+    <string name="bed_kind_fireside_note">音楽の代わりに、ぱちぱちと燃える火の音。静けさが意図された箇所では、これも鳴りやみます。</string>
     <string name="audio_stream">保存せずにストリーミング再生</string>
     <string name="audio_stream_note">音声をダウンロードせず、読み込みながら再生します。容量は少なくて済みますが、そのつど通信が必要です。すでにダウンロード済みの章はオフラインのまま再生できます。</string>
     <string name="music_pack">音楽パックをダウンロード</string>

@@ -205,6 +205,10 @@
     <string name="share_app_link">Αποστολή συνδέσμου</string>
     <string name="music_title">Μουσική υπόκρουση κατά την ακρόαση</string>
     <string name="music_volume">Ένταση μουσικής</string>
+    <string name="bed_kind">Τι παίζει από κάτω</string>
+    <string name="bed_kind_music">Μουσική</string>
+    <string name="bed_kind_fireside">Τζάκι</string>
+    <string name="bed_kind_fireside_note">Τριζοβόλημα φωτιάς αντί για μουσική. Σωπαίνει κι αυτό στα σημεία όπου η σιωπή είναι σκόπιμη.</string>
     <string name="audio_stream">Ροή χωρίς αποθήκευση</string>
     <string name="audio_stream_note">Αναπαράγει τον ήχο καθώς φορτώνει αντί να τον κατεβάζει. Χρησιμοποιεί λιγότερο χώρο αποθήκευσης αλλά απαιτεί σύνδεση κάθε φορά· τα κεφάλαια που έχετε ήδη κατεβάσει εξακολουθούν να αναπαράγονται εκτός σύνδεσης.</string>
     <string name="music_pack">Λήψη πακέτου μουσικής</string>

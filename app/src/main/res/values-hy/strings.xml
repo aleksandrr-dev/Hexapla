@@ -205,6 +205,10 @@
     <string name="share_app_link">Ղրկել յղումը</string>
     <string name="music_title">Ետին երաժշտութիւն լսումին ընթացքին</string>
     <string name="music_volume">Երաժշտութեան ձայնի բարձրութիւն</string>
+    <string name="bed_kind">Ինչ է հնչում ֆոնին</string>
+    <string name="bed_kind_music">Երաժշտություն</string>
+    <string name="bed_kind_fireside">Բուխարի</string>
+    <string name="bed_kind_fireside_note">Կրակի ճարճատյուն երաժշտության փոխարեն։ Այն նույնպես լռում է այն հատվածներում, որտեղ լռությունն է նախատեսված։</string>
     <string name="audio_stream">Հոսք՝ առանց պահելու</string>
     <string name="audio_stream_note">Ձայնը կը նուագուի բեռնաւորման ընթացքին, փոխանակ ամբողջովին բեռնաւորելու։ Կը գործածէ աւելի քիչ տեղ, սակայն ամէն անգամ կապ կը պահանջէ։ Արդէն բեռնաւորուած գլուխները կը շարունակեն նուագել անցանց։</string>
     <string name="music_pack">Բեռնաւորել երաժշտութեան փաթեթը</string>

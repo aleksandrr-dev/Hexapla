@@ -205,6 +205,10 @@
     <string name="share_app_link">Send link</string>
     <string name="music_title">Baggrundsmusik under lytning</string>
     <string name="music_volume">Lydstyrke for musik</string>
+    <string name="bed_kind">Hvad der spiller nedenunder</string>
+    <string name="bed_kind_music">Musik</string>
+    <string name="bed_kind_fireside">Pejs</string>
+    <string name="bed_kind_fireside_note">Et knitrende bål i stedet for musik. Det tier også ved de steder, hvor der skal være stilhed.</string>
     <string name="audio_stream">Streaming uden at gemme</string>
     <string name="audio_stream_note">Afspiller lyd, mens den indlæses, i stedet for at downloade den. Bruger mindre plads, men kræver forbindelse hver gang; kapitler du allerede har downloadet, afspilles stadig offline.</string>
     <string name="music_pack">Download musikpakke</string>

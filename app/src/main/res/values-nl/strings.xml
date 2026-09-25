@@ -205,6 +205,10 @@
     <string name="share_app_link">Link versturen</string>
     <string name="music_title">Achtergrondmuziek tijdens het luisteren</string>
     <string name="music_volume">Muziekvolume</string>
+    <string name="bed_kind">Wat eronder speelt</string>
+    <string name="bed_kind_music">Muziek</string>
+    <string name="bed_kind_fireside">Haardvuur</string>
+    <string name="bed_kind_fireside_note">Knisperend vuur in plaats van muziek. Ook dat valt stil bij de passages waar stilte bedoeld is.</string>
     <string name="audio_stream">Streamen zonder opslaan</string>
     <string name="audio_stream_note">Speelt audio af terwijl die laadt, in plaats van deze te downloaden. Gebruikt minder ruimte, maar heeft elke keer een verbinding nodig; hoofdstukken die je al hebt gedownload, spelen nog steeds offline af.</string>
     <string name="music_pack">Muziekpakket downloaden</string>

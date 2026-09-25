@@ -205,6 +205,10 @@
     <string name="share_app_link">发送链接</string>
     <string name="music_title">收听时的背景音乐</string>
     <string name="music_volume">音乐音量</string>
+    <string name="bed_kind">背景播放</string>
+    <string name="bed_kind_music">音乐</string>
+    <string name="bed_kind_fireside">壁炉</string>
+    <string name="bed_kind_fireside_note">用炉火的噼啪声代替音乐。在有意保持安静的段落，它同样会停下。</string>
     <string name="audio_stream">流式播放，不保存</string>
     <string name="audio_stream_note">播放时即时加载，而非先下载。占用空间更少，但每次都需要联网。已下载的章节仍可离线播放。</string>
     <string name="music_pack">下载音乐包</string>

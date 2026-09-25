@@ -205,6 +205,10 @@
     <string name="share_app_link">Lähetä linkki</string>
     <string name="music_title">Taustamusiikki kuunnellessa</string>
     <string name="music_volume">Musiikin voimakkuus</string>
+    <string name="bed_kind">Mitä taustalla soi</string>
+    <string name="bed_kind_music">Musiikki</string>
+    <string name="bed_kind_fireside">Takkatuli</string>
+    <string name="bed_kind_fireside_note">Rätisevä tuli musiikin sijaan. Sekin vaikenee kohdissa, joissa hiljaisuus on tarkoitettu.</string>
     <string name="audio_stream">Suoratoisto ilman tallentamista</string>
     <string name="audio_stream_note">Toistaa ääntä sen latautuessa lataamisen sijaan. Käyttää vähemmän tilaa mutta vaatii yhteyden joka kerta; jo ladatut luvut toistuvat silti offline-tilassa.</string>
     <string name="music_pack">Lataa musiikkipaketti</string>

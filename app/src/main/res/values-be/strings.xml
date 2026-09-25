@@ -205,6 +205,10 @@
     <string name="share_app_link">Даслаць спасылку</string>
     <string name="music_title">Фонавая музыка падчас праслухоўваньня</string>
     <string name="music_volume">Гучнасьць музыкі</string>
+    <string name="bed_kind">Што гучыць фонам</string>
+    <string name="bed_kind_music">Музыка</string>
+    <string name="bed_kind_fireside">Камін</string>
+    <string name="bed_kind_fireside_note">Трэск агню замест музыкі. Ён таксама сціхае там, дзе задуманая цішыня.</string>
     <string name="audio_stream">Слухаць без захоўваньня</string>
     <string name="audio_stream_note">Аўдыё прайграецца падчас загрузкі замест захоўваньня на прыладзе. Займае менш месца, але кожны раз патрабуе злучэньня з інтэрнэтам; ужо спампаваныя разьдзелы па-ранейшаму прайграюцца афлайн.</string>
     <string name="music_pack">Спампаваць музычны набор</string>

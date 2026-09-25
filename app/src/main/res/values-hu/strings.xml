@@ -205,6 +205,10 @@
     <string name="share_app_link">Link küldése</string>
     <string name="music_title">Háttérzene hallgatás közben</string>
     <string name="music_volume">Zene hangereje</string>
+    <string name="bed_kind">Mi szól a háttérben</string>
+    <string name="bed_kind_music">Zene</string>
+    <string name="bed_kind_fireside">Kandalló</string>
+    <string name="bed_kind_fireside_note">Pattogó tűz zene helyett. Az is elhallgat azoknál a részeknél, ahol csend a cél.</string>
     <string name="audio_stream">Streamelés mentés nélkül</string>
     <string name="audio_stream_note">A hang lejátszásra kerül betöltés közben, letöltés helyett. Kevesebb tárhelyet használ, de minden alkalommal internetkapcsolatot igényel; a már letöltött fejezetek továbbra is offline lejátszhatók.</string>
     <string name="music_pack">Zenecsomag letöltése</string>

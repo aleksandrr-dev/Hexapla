@@ -194,6 +194,10 @@
     <string name="share_app_link">ბმულის გაგზავნა</string>
     <string name="music_title">ფონური მუსიკა მოსმენისას</string>
     <string name="music_volume">მუსიკის ხმის სიმაღლე</string>
+    <string name="bed_kind">რა ჟღერს ფონად</string>
+    <string name="bed_kind_music">მუსიკა</string>
+    <string name="bed_kind_fireside">ბუხარი</string>
+    <string name="bed_kind_fireside_note">ცეცხლის ტკაცუნი მუსიკის ნაცვლად. ისიც ჩუმდება იქ, სადაც სიჩუმეა ჩაფიქრებული.</string>
     <string name="music_pack">მუსიკის პაკეტის ჩამოტვირთვა</string>
     <string name="music_pack_partial">ჩამოტვირთულია %2$d ტრეკიდან %1$d — შეეხეთ დანარჩენის მისაღებად</string>
     <string name="music_pack_note">%1$d ტრეკი, დაახლოებით %2$d მბ. აპში ჩაშენებულ მუსიკაზე მეტი მრავალფეროვნება; ჩაშენებული მუსიკა ორივე შემთხვევაში ინტერნეტის გარეშე მუშაობს.</string>

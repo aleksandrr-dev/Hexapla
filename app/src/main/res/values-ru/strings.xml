@@ -199,6 +199,10 @@
     <string name="share_app_link">Отправить ссылку</string>
     <string name="music_title">Фоновая музыка при прослушивании</string>
     <string name="music_volume">Громкость музыки</string>
+    <string name="bed_kind">Что звучит фоном</string>
+    <string name="bed_kind_music">Музыка</string>
+    <string name="bed_kind_fireside">Камин</string>
+    <string name="bed_kind_fireside_note">Треск огня вместо музыки. Он тоже стихает там, где задумана тишина.</string>
     <string name="audio_stream">Слушать без сохранения</string>
     <string name="audio_stream_note">Аудио воспроизводится по мере загрузки, а не сохраняется на устройстве. Занимает меньше места, но каждый раз требуется подключение к интернету; уже загруженные главы по-прежнему воспроизводятся офлайн.</string>
     <string name="music_pack">Загрузить музыкальный набор</string>

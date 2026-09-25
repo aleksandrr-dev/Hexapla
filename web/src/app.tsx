@@ -2112,7 +2112,7 @@ function PlansSheet(p: {
   return (
     <Sheet title={t("plans_title")} onClose={p.onClose}>
       {p.st.streak > 1 && <p class="pstreak">{t("streak", p.st.streak)}</p>}
-      <div class="modes chips" role="group" aria-label={t("plans_title")}>
+      <div class="modes chips wrap" role="group" aria-label={t("plans_title")}>
         {plans.map((x) => (
           <button type="button" key={x.id} class={"seg" + (x.id === plan.id ? " sel" : "")} aria-pressed={x.id === plan.id} onClick={() => p.onChange((s) => ({ ...s, last: x.id }))}>
             <span class="ell">{planTitle(x.id)}</span>
@@ -2355,7 +2355,7 @@ function TopicsSheet(p: {
 
   return (
     <Sheet title={t("topics_title")} onClose={p.onClose}>
-      <div class="modes chips" role="group" aria-label={t("topics_title")}>
+      <div class="modes chips wrap" role="group" aria-label={t("topics_title")}>
         {tabs.map(([name], i) => (
           <button type="button" key={i} class={"seg" + (i === tab ? " sel" : "")} aria-pressed={i === tab} onClick={() => setTab(i)}>
             <span class="ell">{name}</span>

@@ -193,14 +193,14 @@ object BibleRepo {
      *
      * kie: OsmKelam's permission (2026-09-25) is conditional on their link
      * heading the column of Ottoman texts, with an explanation that the
-     * originals may be compared there. The link is always visible; the
-     * explanation is one tap away (owner reported their OK for web AND app,
-     * 2026-09-25).
+     * originals may be compared there. A © heads the column on every chapter;
+     * the link and explanation are one tap away (owner: OsmKelam OK for web AND app,
+     * «the symbol per chapter», 2026-09-25).
      */
     data class ColumnCredit(val short: String, val text: String, val url: String)
 
     private val osmKelam = ColumnCredit(
-        short = "© osmanlicakelam.net/osm/metinler",
+        short = "©",
         text = "Osmanlıca metinlerin Latin harfli transkripsiyonu: © Osmanlıca Kelâm. " +
             "Orijinal metinler aşağıdaki bağlantıda karşılaştırılabilir.",
         url = "https://osmanlicakelam.net/osm/metinler"

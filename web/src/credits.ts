@@ -4,8 +4,9 @@
 //
 // kie: OsmKelam's permission (2026-09-25) is conditional on their link heading
 // the column of Ottoman texts, «with explanation that the originals may be
-// compared here». The link itself is always visible; the explanation is one tap
-// away (owner reported their OK for web and app, 2026-09-25).
+// compared here». A © heads the column on every chapter; the link and the
+// explanation are one tap
+// away (owner: OsmKelam OK for web and app; «the symbol per chapter», 2026-09-25).
 
 export interface ColumnCredit {
   /** Always visible at the head of the column. */
@@ -17,7 +18,7 @@ export interface ColumnCredit {
 }
 
 const OSMKELAM: ColumnCredit = {
-  short: "© osmanlicakelam.net/osm/metinler",
+  short: "©",
   text: "Osmanlıca metinlerin Latin harfli transkripsiyonu: © Osmanlıca Kelâm. Orijinal metinler aşağıdaki bağlantıda karşılaştırılabilir.",
   url: "https://osmanlicakelam.net/osm/metinler",
   lang: "tr",

@@ -43,6 +43,7 @@ const DOWNLOAD = "/download/";
 import { locale, setLocale, t } from "./i18n";
 import { columnCredit, type ColumnCredit } from "./credits";
 import { LOCALES, defaultTranslation, uiTag } from "./locale";
+import { groupTranslations } from "./tgroups";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 import { buildPlans, bumped, loadPlanState, nextDay, reset as resetPlan, savePlanState, toggled, type Plan, type PlanState } from "./plans";
 import { TOPICS, label as topicLabel, resolve as resolveTopic, type Topic, type TopicRef } from "./topics";
@@ -1373,9 +1374,14 @@ export function App() {
     sheetEl = (
       <Sheet title={adding ? t("w_read_alongside") : t("w_translation")} onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
         <div class="list">
-          {list
-            .filter((t) => !adding || (t.id !== route.translation && !parIds.includes(t.id)))
-            .map((t) => {
+          {groupTranslations(
+            list.filter((t) => !adding || (t.id !== route.translation && !parIds.includes(t.id))),
+            locale(),
+          ).map((g) => [
+            <div key={"lh-" + g.lang} class="lh" lang={g.lang} dir="auto">
+              {g.name}
+            </div>,
+            ...g.items.map((t) => {
               const cur = !adding && t.id === route.translation;
               return (
                 <button
@@ -1400,7 +1406,8 @@ export function App() {
                   {t.label}
                 </button>
               );
-            })}
+            }),
+          ])}
         </div>
       </Sheet>
     );

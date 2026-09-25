@@ -307,6 +307,9 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 }
 .li:hover { background: var(--sv); }
 .li.cur { background: var(--sv); box-shadow: inset 3px 0 0 var(--ox); font-weight: 600; }
+/* Language heading in the translation picker (tgroups.ts); not a button. */
+.lh { padding: 14px 14px 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--mu); }
+.lh:first-child { padding-top: 4px; }
 .list.books { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px; }
 .field { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
 /* A long one-word label (de «Sprechgeschwindigkeit») must wrap, and the range

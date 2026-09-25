@@ -53,6 +53,27 @@ export function pickLocale(langs: readonly string[]): string {
   return "en";
 }
 
+/** Bible.kt defaultPrimaryId(): the system language picks the first text a
+ *  new reader sees (a Russian browser opens the Synodal, not the KJV). The
+ *  browser's first language with an entry wins; "en" is an entry, so an
+ *  English-first browser stays on the KJV. Keep in step with Bible.kt. */
+const PRIMARY: Record<string, string> = {
+  en: "kjv", ru: "syn", fr: "mar", de: "lut", es: "rv", pt: "alm", it: "dio", sv: "kxii",
+  da: "da19", nb: "da19", nn: "da19", no: "da19", nl: "svv", ar: "vd", fi: "fi76", pl: "gda",
+  sr: "srb", bs: "srb", hr: "srb", hu: "kar", cs: "bkr", sk: "bkr", hy: "arm", ka: "bak",
+  lv: "glk", el: "vam", ja: "mei", ta: "ta", la: "vul", be: "dzm", fa: "mrt", prs: "mrt", tg: "mrt",
+};
+
+export function defaultTranslation(langs: readonly string[]): string {
+  for (const raw of langs) {
+    const l = raw.toLowerCase();
+    const base = l.split("-")[0];
+    if (base === "zh") return /hant|-tw|-hk|-mo/.test(l) ? "cuv" : "cus";
+    if (PRIMARY[base]) return PRIMARY[base];
+  }
+  return "kjv";
+}
+
 /** The stored preference ("auto" or a tag) -> the tag to show. */
 export function uiTag(pref: string, langs: readonly string[]): string {
   return pref !== "auto" && TAGS.has(pref) ? pref : pickLocale(langs);

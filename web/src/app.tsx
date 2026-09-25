@@ -41,7 +41,7 @@ import { APP_KEY, currentEnv, loadDismissed, saveDismissed, shouldAppHint, shoul
 /** The landing page: store links and the APK (the reader is the site root). */
 const DOWNLOAD = "/download/";
 import { locale, setLocale, t } from "./i18n";
-import { LOCALES, uiTag } from "./locale";
+import { LOCALES, defaultTranslation, uiTag } from "./locale";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 import { buildPlans, bumped, loadPlanState, nextDay, reset as resetPlan, savePlanState, toggled, type Plan, type PlanState } from "./plans";
 import { TOPICS, label as topicLabel, resolve as resolveTopic, type Topic, type TopicRef } from "./topics";
@@ -57,7 +57,10 @@ const START: Route = { translation: "kjv", book: 42, chapter: 0, verse: null };
 const COL_MIN = 250;
 
 function initialRoute(prefs: Prefs): Route {
-  return parseRoute(window.location.hash) ?? (prefs.last !== null ? parseRoute(prefs.last) : null) ?? START;
+  return (
+    parseRoute(window.location.hash) ??
+    (prefs.last !== null ? parseRoute(prefs.last) : null) ?? { ...START, translation: defaultTranslation(navigator.languages ?? [navigator.language]) }
+  );
 }
 
 /** The label without its trailing «(EN)» language tag. */

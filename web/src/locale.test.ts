@@ -3,7 +3,7 @@
 // Covers locale.ts and the strings.xml converter (scripts/strings.ts),
 // including that the committed src/i18n/*.json are what it writes today.
 import { readFileSync } from "node:fs";
-import { LOCALES, format, isRtl, pickLocale, uiTag } from "./locale.ts";
+import { LOCALES, defaultTranslation, format, isRtl, pickLocale, uiTag } from "./locale.ts";
 import { build, parse, readWeb, serialise, tagOf, unescape, usedKeys } from "../scripts/strings.ts";
 
 const BAD = process.env.HEXAPLA_LOCALE_BAD === "1";
@@ -23,6 +23,34 @@ eq("zh-Hant-HK -> Traditional", pickLocale(["zh-Hant-HK"]), "zh-Hant");
 eq("zh-CN -> Simplified", pickLocale(["zh-CN"]), "zh");
 eq("sr-Cyrl -> the Latin file we have", pickLocale(["sr-Cyrl-RS"]), "sr-Latn");
 eq("old iw -> he", pickLocale(["iw"]), "he");
+// ---- first translation (Bible.kt defaultPrimaryId) ----
+eq("ru-RU opens the Synodal", defaultTranslation(["ru-RU", "en"]), BAD ? "kjv" : "syn");
+eq("en-US first stays KJV", defaultTranslation(["en-US", "ru"]), "kjv");
+eq("unmapped then de -> Luther", defaultTranslation(["xx", "de-AT"]), "lut");
+eq("nothing mapped -> KJV", defaultTranslation(["xx"]), "kjv");
+eq("no languages -> KJV", defaultTranslation([]), "kjv");
+eq("zh-TW -> CUV", defaultTranslation(["zh-TW"]), "cuv");
+eq("zh-Hant -> CUV", defaultTranslation(["zh-Hant"]), "cuv");
+eq("zh-CN -> CUS", defaultTranslation(["zh-CN"]), "cus");
+eq("nb -> Danish 1819", defaultTranslation(["nb-NO"]), "da19");
+eq("sk -> Kralicka", defaultTranslation(["sk"]), "bkr");
+eq("tg -> Persian", defaultTranslation(["tg"]), "mrt");
+{
+  // Parity with Bible.kt: every language in its `when` maps to the same id here.
+  const kt = readFileSync(new URL("../../app/src/main/java/com/aleks/hexapla/Bible.kt", import.meta.url), "utf8");
+  const body = kt.slice(kt.indexOf("fun defaultPrimaryId"), kt.indexOf("fun defaultSecondaryId"));
+  const diffs: string[] = [];
+  let n = 0;
+  for (const m of body.matchAll(/^\s*((?:"[a-z]+",?\s*)+)->\s*"([a-z0-9]+)"/gm)) {
+    for (const lang of m[1].match(/[a-z]+/g) ?? []) {
+      n++;
+      const got = defaultTranslation([lang]);
+      if (got !== m[2]) diffs.push(lang + ": web " + got + ", Android " + m[2]);
+    }
+  }
+  eq("Bible.kt languages read (sanity)", n >= 30, true);
+  eq("every Bible.kt language maps the same", diffs, []);
+}
 eq("pref overrides browser", uiTag("fa", ["en-US"]), "fa");
 eq("auto follows browser", uiTag("auto", ["ja-JP"]), "ja");
 eq("unknown pref -> browser", uiTag("klingon", ["it"]), "it");

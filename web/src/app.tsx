@@ -363,6 +363,10 @@ export function App() {
   // gives no storage: marks still work until the page closes, and it says so.
   const [marks, setMarks] = useState<Marks>(EMPTY);
   const marksRef = useRef<Marks>(EMPTY);
+  // The note box itself: Save reads it at the tap. The last input event (iOS
+  // autocorrect or dictation committing a word) can land in the same task as
+  // the tap, before the re-render that would put it in noteEdit.
+  const noteBox = useRef<HTMLTextAreaElement>(null);
   const [stored, setStored] = useState(true);
   // The versemap for every mark (63 KB, the same cached fetch the parallel
   // view uses): a note's key is the KJV position, whatever is being read.
@@ -1341,6 +1345,7 @@ export function App() {
     sheetEl = (
       <Sheet title={t("note") + " · " + noteEdit.label} onClose={() => (setNoteEdit(null), done())}>
         <textarea
+          ref={noteBox}
           class="ntext"
           dir="auto"
           rows={6}
@@ -1350,7 +1355,7 @@ export function App() {
         />
         <p class="hint">{t("w_note_hint")}</p>
         <div class="pact">
-          <button type="button" class="btn pri" onClick={() => save(noteEdit.text)}>
+          <button type="button" class="btn pri" onClick={() => save(noteBox.current?.value ?? noteEdit.text)}>
             {t("save")}
           </button>
           {had && (

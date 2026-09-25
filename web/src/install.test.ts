@@ -1,6 +1,6 @@
 // node --experimental-strip-types src/install.test.ts
 // Known-bad control: HEXAPLA_INSTALL_BAD=1 must FAIL.
-import { isIos, isIosSafari, shouldHint, type Env } from "./install.ts";
+import { isAndroid, isIos, isIosSafari, shouldAppHint, shouldHint, type Env } from "./install.ts";
 
 const BAD = process.env.HEXAPLA_INSTALL_BAD === "1";
 let bad = 0;
@@ -30,6 +30,19 @@ eq("Firefox on iOS: no", isIosSafari(env(FXIOS)), false);
 eq("in-app web view: no", isIosSafari(env(WEBVIEW)), false);
 eq("Chrome on iOS is still iOS", isIos(env(CRIOS)), true);
 eq("Android: no", shouldHint(env(ANDROID, "Linux armv8l"), false), false);
+
+// The «Android app» strip (owner, 2026-09-25): Android browsers only, never
+// once installed as a PWA, never again once closed.
+const FIREFOX_ANDROID = "Mozilla/5.0 (Android 14; Mobile; rv:125.0) Gecko/125.0 Firefox/125.0";
+const ANDROID_TABLET = "Mozilla/5.0 (Linux; Android 13; SM-X700) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+eq("Android Chrome: app strip", shouldAppHint(env(ANDROID, "Linux armv8l"), false), true);
+eq("Android Firefox: app strip", shouldAppHint(env(FIREFOX_ANDROID, "Linux armv8l"), false), true);
+eq("Android tablet: app strip", shouldAppHint(env(ANDROID_TABLET, "Linux armv8l"), false), true);
+eq("Android PWA on the home screen: no", shouldAppHint(env(ANDROID, "Linux armv8l", 5, true), false), false);
+eq("Android closed once: no", shouldAppHint(env(ANDROID, "Linux armv8l"), true), false);
+eq("iPhone: no app strip", shouldAppHint(env(IPHONE), false), false);
+eq("desktop: no app strip", shouldAppHint(env(BAD ? ANDROID : MAC, "MacIntel", 0), false), false);
+eq("isAndroid on a Windows UA: no", isAndroid(env("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36", "Win32", 0)), false);
 
 console.log(bad ? bad + " FAILED" : "all passed");
 process.exit(bad ? 1 : 0);

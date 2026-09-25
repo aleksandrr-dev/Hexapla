@@ -35,7 +35,10 @@ import { EMPTY, HL_COUNT, bookmarkKey, bookmarksAt, canonKey, fromBackup, parseC
 import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
 import { xrefsFor, type XrefData } from "./xrefs";
 import { lookup as lookupWebster, paragraphs as websterParagraphs, wordSpanAt } from "./webster";
-import { currentEnv, loadDismissed, saveDismissed, shouldHint } from "./install";
+import { APP_KEY, currentEnv, loadDismissed, saveDismissed, shouldAppHint, shouldHint } from "./install";
+
+/** The landing page: store links and the APK (the reader is the site root). */
+const DOWNLOAD = "/download/";
 import { locale, setLocale, t } from "./i18n";
 import { LOCALES, uiTag } from "./locale";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
@@ -357,6 +360,7 @@ export function App() {
   // The shown UI locale; changing it re-renders every t() call.
   const [ui, setUi] = useState<string>(locale);
   const [a2hs, setA2hs] = useState<boolean>(() => shouldHint(currentEnv(), loadDismissed()));
+  const [appHint, setAppHint] = useState<boolean>(() => shouldAppHint(currentEnv(), loadDismissed(APP_KEY)));
   const [wide, setWide] = useState<boolean>(() => window.matchMedia("(min-width: 960px)").matches);
   const [vw, setVw] = useState<number>(() => window.innerWidth);
   const scrollTo = useRef<number | null>(route.verse);
@@ -1641,6 +1645,15 @@ export function App() {
         )}
         <h3 class="sec">{t("backup_title")}</h3>
         {backupRows(stored, saveBackup, () => fileIn.current?.click())}
+        {/* The way to the Android app from any browser (owner, 2026-09-25). */}
+        <h3 class="sec">{t("w_android_app")}</h3>
+        <a class="srow" href={DOWNLOAD}>
+          <div class="st">
+            <span>{t("w_android_get")}</span>
+            <span class="sn">{t("w_android_note")}</span>
+          </div>
+          <Icon d={I.chev} size={20} />
+        </a>
         {/* The sources_text credit is a licence obligation: verbatim, at the
             foot of Settings as on Android, never on every chapter (owner,
             2026-09-24: a footnote here, not in the Aa sheet). */}
@@ -1665,7 +1678,7 @@ export function App() {
               </details>
             )}
             <p>
-              {linked(t("w_free"), "Hexapla", "../")} <a href="../PRIVACY.html">{t("w_privacy")}</a>
+              {linked(t("w_free"), "Hexapla", DOWNLOAD)} <a href="/PRIVACY.html">{t("w_privacy")}</a>
             </p>
           </footer>
         )}
@@ -1810,6 +1823,34 @@ export function App() {
             onClick={() => {
               saveDismissed();
               setA2hs(false);
+            }}
+          >
+            <Icon d={I.close} size={20} />
+          </button>
+        </div>
+      )}
+      {/* Android browsers: once, the way to the app (owner, 2026-09-25). Opening
+          the page counts as seen, as closing does. */}
+      {appHint && chap !== null && ps.status === "idle" && sheet === null && selected === null && noteEdit === null && (
+        <div class="a2hs apphint" role="note">
+          <span>{t("w_android_hint")}</span>
+          <a
+            class="btn pri"
+            href={DOWNLOAD}
+            onClick={() => {
+              saveDismissed(APP_KEY);
+              setAppHint(false);
+            }}
+          >
+            {t("w_android_open")}
+          </a>
+          <button
+            type="button"
+            class="ib"
+            aria-label={t("w_close")}
+            onClick={() => {
+              saveDismissed(APP_KEY);
+              setAppHint(false);
             }}
           >
             <Icon d={I.close} size={20} />

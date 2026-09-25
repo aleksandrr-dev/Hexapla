@@ -432,3 +432,6 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .pc:hover:not(:disabled) { text-decoration: underline; }
 .pc:disabled { color: var(--mu); opacity: 0.55; cursor: default; }
 .pchk { flex: none; width: 24px; height: 24px; margin: 0 8px; accent-color: var(--ox); cursor: pointer; }
+/* The «Android app» strip and Settings row are links: no underline. */
+a.srow, .apphint .btn { text-decoration: none; box-sizing: border-box; }
+.apphint .btn { flex: none; min-height: 36px; padding: 0 14px; font-size: 14px; }

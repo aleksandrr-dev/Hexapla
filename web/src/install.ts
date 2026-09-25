@@ -1,4 +1,5 @@
-// The one-time «Add to Home Screen» hint for iPhone and iPad (P4,
+// The one-time «Add to Home Screen» hint for iPhone and iPad, and (APP_KEY)
+// the one-time «Android app» strip on Android browsers. The first: (P4,
 // WEB_APP_PLAN.md: iOS never shows an install prompt). Shown only in Safari
 // itself - the one iOS browser whose share sheet is certain to carry the entry -
 // never once the app runs from the home screen, and never again once closed.
@@ -7,6 +8,8 @@
 // under node.
 
 const KEY = "hexapla.a2hs.v1";
+/** The «Android app» strip's own key: closing one hint never closes the other. */
+export const APP_KEY = "hexapla.apphint.v1";
 
 export interface Env {
   ua: string;
@@ -34,6 +37,17 @@ export function shouldHint(e: Env, dismissed: boolean): boolean {
   return !dismissed && !e.standalone && isIosSafari(e);
 }
 
+/** Any Android browser (Chrome, Firefox, Samsung, tablets without «Mobile»). */
+export function isAndroid(e: Env): boolean {
+  return /Android/.test(e.ua);
+}
+
+/** The one-time strip pointing Android readers at the app (/download/; owner,
+ *  2026-09-25). Not in an installed PWA: whoever installed the web app chose it. */
+export function shouldAppHint(e: Env, dismissed: boolean): boolean {
+  return !dismissed && !e.standalone && isAndroid(e);
+}
+
 export function currentEnv(): Env {
   const nav = navigator as Navigator & { standalone?: boolean };
   return {
@@ -44,18 +58,18 @@ export function currentEnv(): Env {
   };
 }
 
-export function loadDismissed(): boolean {
+export function loadDismissed(key: string = KEY): boolean {
   try {
-    return localStorage.getItem(KEY) === "1";
+    return localStorage.getItem(key) === "1";
   } catch {
     // No storage: showing it every visit would nag, so treat it as closed.
     return true;
   }
 }
 
-export function saveDismissed(): void {
+export function saveDismissed(key: string = KEY): void {
   try {
-    localStorage.setItem(KEY, "1");
+    localStorage.setItem(key, "1");
   } catch {
     // Nothing to do; the hint is gone for this visit either way.
   }

@@ -81,7 +81,14 @@ object BibleRepo {
         // label names both. The OT was transcribed page by page from the 1856
         // scan by this project (23,137 verses); the id stays "mrt" because it
         // is persisted in DataStore and on every bookmark.
-        Translation("mrt", "bibles/fa_martyn.json", "کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)", Locale.forLanguageTag("fa"))
+        Translation("mrt", "bibles/fa_martyn.json", "کتاب مقدس — عهد عتیق: ولیم گلن، ۱۸۵۶؛ عهد جدید: هنری مارتین، ۱۸۷۶ (FA)", Locale.forLanguageTag("fa")),
+        // Ottoman Turkish, J.D. Kieffer's 1827 revision of Ali Bey Bobowski's
+        // 1665 translation, in OsmKelam's Latin-script transcription (permission
+        // 2026-09-25, on condition their link heads the column). Built by
+        // tools/build_tr_kieffer.py; the site had already re-addressed it onto
+        // the KJV grid, the converter moves the five seams the print numbers
+        // differently.
+        Translation("kie", "bibles/tr_kieffer.json", "Kitâb-ı Mukaddes — Kieffer, 1827 (TR)", Locale.forLanguageTag("tr"))
     )
 
     fun translation(id: String): Translation =
@@ -122,6 +129,7 @@ object BibleRepo {
         "be" -> "dzm"
         // Dari and Tajik readers share the classical Persian scripture.
         "fa", "prs", "tg" -> "mrt"
+        "tr" -> "kie"
         "zh" -> Locale.getDefault().let {
             if (it.script == "Hant" || it.country in setOf("TW", "HK", "MO")) "cuv" else "cus"
         }
@@ -177,6 +185,31 @@ object BibleRepo {
      *  empty map before that or when the asset has none. */
     fun notes(id: String): Map<String, List<String>> =
         notesByAsset[translation(id).assetFile] ?: emptyMap()
+
+    /**
+     * A credit a licence REQUIRES at the head of a translation's column (not
+     * the courtesy credits in sources_text). The web reader shows the same
+     * line from web/src/credits.ts; keep the two in step.
+     *
+     * kie: OsmKelam's permission (2026-09-25) is conditional on their link
+     * heading the column of Ottoman texts, with an explanation that the
+     * originals may be compared there. The link is always visible; the
+     * explanation is one tap away (owner reported their OK for web AND app,
+     * 2026-09-25).
+     */
+    data class ColumnCredit(val short: String, val text: String, val url: String)
+
+    private val osmKelam = ColumnCredit(
+        short = "© osmanlicakelam.net/osm/metinler",
+        text = "Osmanlıca metinlerin Latin harfli transkripsiyonu: © Osmanlıca Kelâm. " +
+            "Orijinal metinler aşağıdaki bağlantıda karşılaştırılabilir.",
+        url = "https://osmanlicakelam.net/osm/metinler"
+    )
+
+    fun columnCredit(id: String): ColumnCredit? = when (id) {
+        "kie" -> osmKelam
+        else -> null
+    }
 
     internal fun parseAsset(context: Context, assetFile: String): List<Book> {
         val text = context.assets.open(assetFile).readBytes()

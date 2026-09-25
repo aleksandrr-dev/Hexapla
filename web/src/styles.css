@@ -139,6 +139,13 @@ a:hover { color: var(--lea); }
 .cname { font-size: 28px; font-weight: 600; font-style: italic; line-height: 1.15; padding-bottom: 4px; min-width: 0; overflow-wrap: break-word; }
 .cname:lang(ja), .cname:lang(zh-Hans), .cname:lang(zh-Hant), .cname:lang(fa), .cname:lang(ar), .cname:lang(he) { font-style: normal; }
 .wide .cname { font-size: 40px; }
+/* A licence credit at the head of a column (credits.ts). */
+.credits { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 6px; }
+.credit {
+  font: inherit; font-size: 13px; color: var(--mu); background: none; border: 0;
+  padding: 6px 0; min-height: 32px; cursor: pointer; text-align: start; overflow-wrap: anywhere;
+}
+.credit:hover { color: var(--ox); text-decoration: underline; }
 
 .modes {
   display: flex; gap: 2px; padding: 3px; margin: 14px 0 6px; max-width: 100%; width: max-content;

@@ -62,6 +62,7 @@ const PRIMARY: Record<string, string> = {
   da: "da19", nb: "da19", nn: "da19", no: "da19", nl: "svv", ar: "vd", fi: "fi76", pl: "gda",
   sr: "srb", bs: "srb", hr: "srb", hu: "kar", cs: "bkr", sk: "bkr", hy: "arm", ka: "bak",
   lv: "glk", el: "vam", ja: "mei", ta: "ta", la: "vul", be: "dzm", fa: "mrt", prs: "mrt", tg: "mrt",
+  tr: "kie",
 };
 
 export function defaultTranslation(langs: readonly string[]): string {

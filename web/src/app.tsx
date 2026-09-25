@@ -41,6 +41,7 @@ import { APP_KEY, currentEnv, loadDismissed, saveDismissed, shouldAppHint, shoul
 /** The landing page: store links and the APK (the reader is the site root). */
 const DOWNLOAD = "/download/";
 import { locale, setLocale, t } from "./i18n";
+import { columnCredit, type ColumnCredit } from "./credits";
 import { LOCALES, defaultTranslation, uiTag } from "./locale";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 import { buildPlans, bumped, loadPlanState, nextDay, reset as resetPlan, savePlanState, toggled, type Plan, type PlanState } from "./plans";
@@ -387,7 +388,8 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans" | "topics" | "inter";
+// "credit" is a column's licence credit (credits.ts), opened from its © line.
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans" | "topics" | "inter" | "credit";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -443,6 +445,7 @@ export function App() {
   // The row whose cross-references are open: its KJV keys, as marks use.
   const [xref, setXref] = useState<{ keys: string[]; label: string } | null>(null);
   const [margin, setMargin] = useState<{ label: string; notes: string[]; lang: string } | null>(null);
+  const [credit, setCredit] = useState<{ name: string; credit: ColumnCredit } | null>(null);
   // Strong's: the tagged KJV book on screen, and the number tapped.
   const [sBook, setSBook] = useState<{ book: number; chapters: string[][] } | null>(null);
   const [strongsId, setStrongsId] = useState<string | null>(null);
@@ -1086,6 +1089,28 @@ export function App() {
         ])}
       </div>
     );
+    // A licence credit heads its column's text. It lives under the chapter
+    // heading, not in .colheads, which narrow layouts hide.
+    const credited = shown.flatMap((c) => {
+      const cr = columnCredit(c.id);
+      return cr === undefined ? [] : [{ c, cr }];
+    });
+    const credits = credited.length > 0 && (
+      <div class="credits">
+        {credited.map(({ c, cr }) => (
+          <button
+            type="button"
+            key={c.id}
+            class="credit"
+            lang={cr.lang}
+            data-col={c.id}
+            onClick={() => (setCredit({ name: c.name, credit: cr }), openFrom("credit", null))}
+          >
+            {credited.length > 1 || shown.length > 1 ? c.tiny + " · " + cr.short : cr.short}
+          </button>
+        ))}
+      </div>
+    );
     const missing = chap.missing.map((id) => shortLabel(find(id), id));
     const verses = (
       <div class={"verses" + (side ? " cols" : "")} style={scrollW}>
@@ -1272,6 +1297,7 @@ export function App() {
     body = (
       <>
         {heading}
+        {credits}
         {multi && showBar(t("w_text_shown"))}
         {missing.length > 0 && (
           <p class="note">
@@ -1479,6 +1505,19 @@ export function App() {
               {t}
             </p>
           ))}
+        </div>
+      </Sheet>
+    );
+  } else if (sheet === "credit" && credit !== null) {
+    sheetEl = (
+      <Sheet title={credit.name} onClose={() => (setCredit(null), done())}>
+        <div class="mnotes" lang={credit.credit.lang}>
+          <p>{credit.credit.text}</p>
+          <p>
+            <a href={credit.credit.url} target="_blank" rel="noopener">
+              © {credit.credit.url}
+            </a>
+          </p>
         </div>
       </Sheet>
     );

@@ -94,6 +94,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -456,6 +457,8 @@ fun ReaderScreen(settings: AppSettings) {
     // The translator's margin notes on show: (title, notes). Opened from the
     // verse actions or from a verse's † marker, primary or secondary.
     var marginShown by remember { mutableStateOf<Pair<String, List<String>>?>(null) }
+    // A column's licence credit on show: (translation label, credit).
+    var creditShown by remember { mutableStateOf<Pair<String, BibleRepo.ColumnCredit>?>(null) }
     var dragTotal by remember { mutableFloatStateOf(0f) }
     val layoutDirection = LocalLayoutDirection.current
 
@@ -565,7 +568,9 @@ fun ReaderScreen(settings: AppSettings) {
                     // Names the translation(s) above verse 1, then scrolls
                     // away with the text. Drawn INSIDE this item and never as
                     // an item of its own — see ChapterTranslationHead.
-                    if (i == 0) ChapterTranslationHead(settings, secondaryAligned != null)
+                    if (i == 0) ChapterTranslationHead(settings, secondaryAligned != null) { label, c ->
+                        creditShown = label to c
+                    }
                     // Empty verses (135 of them in the Zohrab Armenian OT,
                     // e.g. Ezra 2:26-27) are holes in the data — but on the
                     // owner's device pass a bare verse number with nothing
@@ -934,6 +939,33 @@ fun ReaderScreen(settings: AppSettings) {
         )
     }
 
+    creditShown?.let { (label, c) ->
+        val uriHandler = LocalUriHandler.current
+        AlertDialog(
+            onDismissRequest = { creditShown = null },
+            title = { Text(label) },
+            text = {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                        Text(c.text, style = MaterialTheme.typography.bodyMedium)
+                        Spacer(Modifier.height(10.dp))
+                        Text(
+                            "© " + c.url,
+                            modifier = Modifier
+                                .clickable { runCatching { uriHandler.openUri(c.url) } }
+                                .padding(vertical = 6.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { creditShown = null }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+
     xrefVerse?.let { v ->
         XrefsDialog(
             primaryId = settings.primaryId,
@@ -1117,10 +1149,18 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendWords(
  * change BOTH.
  */
 @Composable
-private fun ChapterTranslationHead(settings: AppSettings, hasSecondary: Boolean) {
+private fun ChapterTranslationHead(
+    settings: AppSettings,
+    hasSecondary: Boolean,
+    onCredit: (String, BibleRepo.ColumnCredit) -> Unit
+) {
     val primary = BibleRepo.translation(settings.primaryId).label
     val secondary = if (settings.splitEnabled && hasSecondary)
         BibleRepo.translation(settings.secondaryId).label else null
+    // A licence credit (BibleRepo.columnCredit) heads its own column, under
+    // that column's label.
+    val primaryCredit = BibleRepo.columnCredit(settings.primaryId)
+    val secondaryCredit = if (secondary != null) BibleRepo.columnCredit(settings.secondaryId) else null
 
     Column(
         Modifier
@@ -1133,18 +1173,44 @@ private fun ChapterTranslationHead(settings: AppSettings, hasSecondary: Boolean)
             // weights and 12.dp gutter exactly, or the heads won't line up
             // with the text they name.
             Row(Modifier.fillMaxWidth()) {
-                ChapterHeadLabel(primary, Modifier.weight(1f))
+                Column(Modifier.weight(1f)) {
+                    ChapterHeadLabel(primary, Modifier.fillMaxWidth())
+                    primaryCredit?.let { ColumnCreditLine(it) { onCredit(primary, it) } }
+                }
                 Spacer(Modifier.width(12.dp))
-                ChapterHeadLabel(secondary, Modifier.weight(1f))
+                Column(Modifier.weight(1f)) {
+                    ChapterHeadLabel(secondary, Modifier.fillMaxWidth())
+                    secondaryCredit?.let { ColumnCreditLine(it) { onCredit(secondary, it) } }
+                }
             }
         } else {
             // Stacked: primary then secondary, the same order the verses
             // themselves use — position is the cue, so no extra marker.
             ChapterHeadLabel(primary, Modifier.fillMaxWidth())
-            if (secondary != null) ChapterHeadLabel(secondary, Modifier.fillMaxWidth())
+            primaryCredit?.let { ColumnCreditLine(it) { onCredit(primary, it) } }
+            if (secondary != null) {
+                ChapterHeadLabel(secondary, Modifier.fillMaxWidth())
+                secondaryCredit?.let { ColumnCreditLine(it) { onCredit(secondary, it) } }
+            }
         }
         Spacer(Modifier.height(6.dp))
         HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f))
+    }
+}
+
+@Composable
+private fun ColumnCreditLine(credit: BibleRepo.ColumnCredit, onClick: () -> Unit) {
+    // The credit is Latin-script Turkish whatever the UI direction.
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Text(
+            credit.short,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(vertical = 6.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 

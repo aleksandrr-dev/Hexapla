@@ -43,6 +43,7 @@ import { locale, setLocale, t } from "./i18n";
 import { LOCALES, uiTag } from "./locale";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 import { buildPlans, bumped, loadPlanState, nextDay, reset as resetPlan, savePlanState, toggled, type Plan, type PlanState } from "./plans";
+import { TOPICS, label as topicLabel, resolve as resolveTopic, type Topic, type TopicRef } from "./topics";
 // The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
 // Refs tap only, then kept for the page's life.
 import xrefsUrl from "../../app/src/main/assets/xrefs.json?url";
@@ -148,6 +149,12 @@ const I = {
   bookmarked: <path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z" fill="currentColor" />,
   note: <path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" />,
   xref: <path d="M4 8h13l-3-3M20 16H7l3 3" />,
+  topics: (
+    <>
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z" />
+      <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z" />
+    </>
+  ),
   plans: (
     <>
       <rect x="4" y="5" width="16" height="15" rx="2" />
@@ -333,7 +340,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans" | "topics";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -922,6 +929,11 @@ export function App() {
           <Icon d={I.plans} size={21} />
         </button>
       )}
+      {(wide || vw >= 480) && (
+        <button type="button" class="ib" aria-label={t("topics_title")} onClick={() => openFrom("topics", null)}>
+          <Icon d={I.topics} size={21} />
+        </button>
+      )}
       <button type="button" class="ib" aria-label={t("w_text_theme")} onClick={() => openFrom("text", null)}>
         <Icon d={I.aa} size={24} />
       </button>
@@ -1442,6 +1454,17 @@ export function App() {
         onPick={(b, c) => (setStack([]), setSheet(null), go({ translation: route.translation, book: b, chapter: c, verse: null }))}
       />
     );
+  } else if (sheet === "topics") {
+    sheetEl = (
+      <TopicsSheet
+        vm={vmAll}
+        tr={route.translation}
+        lang={aLang}
+        onClose={done}
+        onShare={(title, text) => (canShare ? void navigator.share({ title, text }).catch(() => undefined) : void copy(text, t("copied")))}
+        onPick={(b, c, v) => (setStack([]), setSheet(null), go({ translation: route.translation, book: b, chapter: c, verse: v }))}
+      />
+    );
   } else if (sheet === "marks") {
     sheetEl = (
       <MarksSheet
@@ -1546,6 +1569,13 @@ export function App() {
           <div class="st">
             <span>{t("plans_title")}</span>
             <span class="sn">{planSummary(planSt)}</span>
+          </div>
+          <Icon d={I.chev} size={18} />
+        </button>
+        <button type="button" class="srow" onClick={() => openFrom("topics", "prefs")}>
+          <div class="st">
+            <span>{t("topics_title")}</span>
+            <span class="sn">{t("topics_gospel") + " · " + t("topics_study") + " · " + t("topics_help")}</span>
           </div>
           <Icon d={I.chev} size={18} />
         </button>
@@ -2111,6 +2141,158 @@ function linked(text: string, word: string, href: string): preact.ComponentChild
 /** Bookmarks, highlights and notes, in Bible order, read in the current
  *  translation (BookmarksScreen.kt): a mark on a verse this translation lacks
  *  is dimmed and keeps its own reference. */
+/** Study & Help (TopicsScreen.kt): three tabs of topics, each a card that
+ *  opens on tap to its verses in the reading translation. A verse that
+ *  translation lacks (an NT-only text, a partial Tyndale) is shown from the
+ *  KJV - the web's own starting text, as Android uses its default - dimmed
+ *  and not a link, since the reader cannot open it there. */
+const TOPIC_FALLBACK = "kjv";
+type TopicRow = { ref: TopicRef; at: { chapter: number; from: number } | null; label: string; text: string };
+
+function TopicsSheet(p: {
+  vm: VerseMapData | null;
+  tr: string;
+  lang: string;
+  onClose: () => void;
+  onShare: (title: string, text: string) => void;
+  onPick: (b: number, c: number, v: number) => void;
+}) {
+  const [tab, setTab] = useState(0);
+  const [open, setOpen] = useState<Set<string>>(new Set());
+  // "id:book" -> the book, or null when that translation lacks it.
+  const [books, setBooks] = useState<Map<string, Book | null>>(new Map());
+  const vm = p.vm ?? {};
+  const tabs: [string, Topic[]][] = [
+    [t("topics_gospel"), TOPICS.gospel],
+    [t("topics_study"), TOPICS.study],
+    [t("topics_help"), TOPICS.help],
+  ];
+  const topics = tabs[tab][1];
+
+  const fetchBooks = (keys: string[]): Promise<Map<string, Book | null>> =>
+    Promise.all(
+      keys.map((k) => {
+        const [id, b] = k.split(":");
+        return loadBook(id, Number(b)).then(
+          (x) => [k, x] as const,
+          () => [k, null] as const,
+        );
+      }),
+    ).then((got) => {
+      // Two loads can be in flight (a card and Share): merge, never replace.
+      setBooks((old) => {
+        const n = new Map(old);
+        for (const [k, x] of got) n.set(k, x);
+        return n;
+      });
+      const m = new Map(books);
+      for (const [k, x] of got) m.set(k, x);
+      return m;
+    });
+
+  const rowsFor = (tp: Topic, m: Map<string, Book | null>): TopicRow[] | null => {
+    const out: TopicRow[] = [];
+    for (const ref of tp.refs) {
+      const own = m.get(p.tr + ":" + String(ref[0]));
+      const fb = m.get(TOPIC_FALLBACK + ":" + String(ref[0]));
+      if (own === undefined || (p.tr !== TOPIC_FALLBACK && fb === undefined)) return null; // still loading
+      const r = resolveTopic(vm, p.tr, ref, own ?? undefined);
+      if (r !== null && own !== null) {
+        out.push({ ref, at: { chapter: r.chapter, from: r.from }, label: topicLabel(own.name, r), text: r.text });
+        continue;
+      }
+      const f = fb === undefined || fb === null ? null : resolveTopic(vm, TOPIC_FALLBACK, ref, fb);
+      if (f !== null && fb) out.push({ ref, at: null, label: topicLabel(fb.name, f), text: f.text });
+    }
+    return out;
+  };
+
+  const needFor = (tps: Topic[]): string[] => {
+    const ids = p.tr === TOPIC_FALLBACK ? [p.tr] : [p.tr, TOPIC_FALLBACK];
+    const keys = new Set<string>();
+    for (const tp of tps) for (const r of tp.refs) for (const id of ids) keys.add(id + ":" + String(r[0]));
+    return [...keys].filter((k) => !books.has(k));
+  };
+
+  const need = needFor(topics.filter((tp) => open.has(tp.title(t)))).join(",");
+  useEffect(() => {
+    if (need !== "") void fetchBooks(need.split(","));
+  }, [need, p.tr]);
+
+  const share = async () => {
+    const m = await fetchBooks(needFor(TOPICS.gospel));
+    // The step titles carry their own numbers ("1 · All have sinned").
+    const parts = TOPICS.gospel.map((tp) => tp.title(t) + "\n" + (rowsFor(tp, m) ?? []).map((r) => r.text + " (" + r.label + ")").join("\n"));
+    p.onShare(t("topics_gospel"), t("topics_gospel") + "\n\n" + parts.join("\n\n") + "\n\nhttps://hexaplabible.com/");
+  };
+
+  return (
+    <Sheet title={t("topics_title")} onClose={p.onClose}>
+      <div class="modes chips" role="group" aria-label={t("topics_title")}>
+        {tabs.map(([name], i) => (
+          <button type="button" key={i} class={"seg" + (i === tab ? " sel" : "")} aria-pressed={i === tab} onClick={() => setTab(i)}>
+            <span class="ell">{name}</span>
+          </button>
+        ))}
+      </div>
+      {tab === 0 && (
+        <>
+          <p class="hint">{t("gospel_intro")}</p>
+          <p>
+            <button type="button" class="btn" onClick={() => void share()}>
+              {t("gospel_share")}
+            </button>
+          </p>
+        </>
+      )}
+      <div class="list topics">
+        {topics.map((tp) => {
+          const title = tp.title(t);
+          const isOpen = open.has(title);
+          const rows = isOpen ? rowsFor(tp, books) : null;
+          return (
+            <div class="topic" key={title}>
+              <button
+                type="button"
+                class="li thead"
+                aria-expanded={isOpen}
+                onClick={() =>
+                  setOpen((o) => {
+                    const n = new Set(o);
+                    if (n.has(title)) n.delete(title);
+                    else n.add(title);
+                    return n;
+                  })
+                }
+              >
+                <span class="ell">{title}</span>
+                <Icon d={isOpen ? I.up : I.down} size={20} />
+              </button>
+              {isOpen && rows === null && <p class="hint">{t("w_loading")}</p>}
+              {rows?.map((r) => (
+                <button
+                  type="button"
+                  key={r.ref.join(":")}
+                  class={"li hit" + (r.at === null ? " dim" : "")}
+                  disabled={r.at === null}
+                  onClick={() => r.at !== null && p.onPick(r.ref[0], r.at.chapter, r.at.from)}
+                >
+                  <span class="href" lang={r.at === null ? "en" : p.lang} dir={directionOf(r.label) ?? undefined}>
+                    {r.label}
+                  </span>
+                  <span class="htx" lang={r.at === null ? "en" : p.lang} dir={directionOf(r.text) ?? undefined}>
+                    {r.text}
+                  </span>
+                </button>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </Sheet>
+  );
+}
+
 function MarksSheet(p: {
   marks: Marks;
   vm: VerseMapData | null;

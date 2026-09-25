@@ -435,3 +435,9 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 /* The «Android app» strip and Settings row are links: no underline. */
 a.srow, .apphint .btn { text-decoration: none; box-sizing: border-box; }
 .apphint .btn { flex: none; min-height: 36px; padding: 0 14px; font-size: 14px; }
+/* Study & Help: a card per topic, its verses in full (not clamped). */
+.topic { border-bottom: 1px solid var(--sv); }
+.li.thead { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.li.thead .ell { flex: 1; min-width: 0; }
+.li.thead svg { flex: none; color: var(--mu); }
+.topics .htx { display: block; -webkit-line-clamp: unset; overflow: visible; }

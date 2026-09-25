@@ -2219,7 +2219,9 @@ function Sheet({ title, onClose, children, back }: { title: string; onClose: () 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    ref.current?.focus();
+    // Effects run after paint: a box inside the sheet may already have focus,
+    // and taking it away sent what was being typed nowhere (a note saved empty).
+    if (!ref.current?.contains(document.activeElement)) ref.current?.focus();
     return () => window.removeEventListener("keydown", onKey);
   }, []);
   return (

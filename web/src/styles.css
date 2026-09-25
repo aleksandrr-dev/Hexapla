@@ -299,7 +299,10 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .li.cur { background: var(--sv); box-shadow: inset 3px 0 0 var(--ox); font-weight: 600; }
 .list.books { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px; }
 .field { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
-.field input { flex: 1; accent-color: var(--ox); height: 44px; }
+/* A long one-word label (de «Sprechgeschwindigkeit») must wrap, and the range
+   gives up its intrinsic width, or the value runs off a 360 px screen. */
+.field > span:first-child { min-width: 0; hyphens: auto; overflow-wrap: anywhere; }
+.field input { flex: 1; min-width: 0; accent-color: var(--ox); height: 44px; }
 .field .val { width: 2.2em; text-align: end; font-variant-numeric: tabular-nums; }
 .preview { margin: 4px 0 12px; line-height: 1.5; }
 .sq {

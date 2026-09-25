@@ -7,6 +7,8 @@
 //
 // Pure apart from loadPrefs/savePrefs: `prefs.test.ts` runs the rest under node.
 
+import { isTag } from "./locale.ts";
+
 export type Theme = "auto" | "light" | "dark";
 /** Split layout, as Android's «Split layout»; auto = side by side when the
  *  columns fit, stacked otherwise. */
@@ -44,6 +46,8 @@ export interface Prefs {
   strongs: boolean;
   /** Tap a word in an English column for Webster's 1828 definition. */
   dictionary: boolean;
+  /** Interface language: "auto" (the browser's) or a locale.ts tag. */
+  uiLang: string;
 }
 
 const KEY = "hexapla.prefs.v1";
@@ -71,6 +75,7 @@ export const DEFAULTS: Prefs = {
   uniformBed: false,
   strongs: false,
   dictionary: false,
+  uiLang: "auto",
 };
 
 /** A stored number inside [lo, hi], or the default when it is not a number. */
@@ -133,6 +138,7 @@ export function migrate(p: Record<string, unknown>): Prefs {
     uniformBed: bool(p.uniformBed, DEFAULTS.uniformBed),
     strongs: bool(p.strongs, DEFAULTS.strongs),
     dictionary: bool(p.dictionary, DEFAULTS.dictionary),
+    uiLang: typeof p.uiLang === "string" && isTag(p.uiLang) ? p.uiLang : DEFAULTS.uiLang,
   };
 }
 

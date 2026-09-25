@@ -35,6 +35,8 @@ import { loadMarks, onOtherTab, saveMarks } from "./marksdb";
 import { xrefsFor, type XrefData } from "./xrefs";
 import { lookup as lookupWebster, paragraphs as websterParagraphs, wordSpanAt } from "./webster";
 import { currentEnv, loadDismissed, saveDismissed, shouldHint } from "./install";
+import { locale, setLocale, t } from "./i18n";
+import { LOCALES, uiTag } from "./locale";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
 // The Android asset as is (2.2 MB, ~630 KB gzipped): fetched on the first
 // Refs tap only, then kept for the page's life.
@@ -144,7 +146,7 @@ const I = {
 };
 
 /** Android's HighlightColors (ReaderScreen.kt), same order: the index is stored. */
-const HL_NAMES = ["Amber", "Green", "Blue", "Pink"];
+const hlName = (c: number): string => [t("w_hl_amber"), t("w_hl_green"), t("w_hl_blue"), t("w_hl_pink")][c] ?? "";
 
 function audioPrefs(p: Prefs): AudioPrefs {
   return { rate: p.rate, autoNext: p.autoNext, bed: p.bed, bedKind: p.bedKind, bedVolume: p.bedVolume, uniformBed: p.uniformBed };
@@ -282,9 +284,9 @@ interface StrongsFn {
 function Gap({ name, other }: { name: string; other: string | null }) {
   return (
     <div class="gap">
-      <div class="gap-h">Not in this translation</div>
+      <div class="gap-h">{t("w_not_here")}</div>
       <div class="gap-b">
-        {name} has no verse here{other !== null ? ". " + other + " reads it alongside." : "."}
+        {other !== null ? t("w_gap_other", name, other) : t("w_gap", name)}
       </div>
     </div>
   );
@@ -344,6 +346,8 @@ export function App() {
   const done = () => (setSheet(stack.length > 0 ? stack[stack.length - 1] : null), setStack(stack.slice(0, -1)));
   const [selected, setSelected] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // The shown UI locale; changing it re-renders every t() call.
+  const [ui, setUi] = useState<string>(locale);
   const [a2hs, setA2hs] = useState<boolean>(() => shouldHint(currentEnv(), loadDismissed()));
   const [wide, setWide] = useState<boolean>(() => window.matchMedia("(min-width: 960px)").matches);
   const [vw, setVw] = useState<number>(() => window.innerWidth);
@@ -431,7 +435,7 @@ export function App() {
     saveMarks(before, after).then(
       () => setStored(true),
       () => {
-        if (stored) flash("Not kept: this browser is not saving site data");
+        if (stored) flash(t("w_not_kept"));
         setStored(false);
       },
     );
@@ -461,15 +465,15 @@ export function App() {
     setError(null);
     void (async () => {
       try {
-        if (aT === undefined) throw new Error("There is no translation called «" + route.translation + "».");
-        if (route.book >= aT.bookCount) throw new Error(shortLabel(aT, aT.id) + " does not contain book " + String(route.book + 1) + ".");
+        if (aT === undefined) throw new Error(t("w_err_translation", route.translation));
+        if (route.book >= aT.bookCount) throw new Error(t("w_err_book", shortLabel(aT, aT.id), route.book + 1));
         const has = parIds.filter((id) => route.book < (find(id)?.bookCount ?? 0));
         const [a, vm, ...books] = await Promise.all([
           loadBook(route.translation, route.book),
           has.length > 0 ? loadVersemap() : Promise.resolve(null),
           ...has.map((id) => loadBook(id, route.book)),
         ]);
-        if (route.chapter >= a.chapters.length) throw new Error(a.name + " has " + String(a.chapters.length) + " chapters.");
+        if (route.chapter >= a.chapters.length) throw new Error(t("w_err_chapter", a.name, route.chapter + 1));
         if (live) {
           setChap({
             aId: route.translation,
@@ -497,7 +501,7 @@ export function App() {
     let live = true;
     loadStrongsBook(route.book).then(
       (chapters) => live && setSBook({ book: route.book, chapters }),
-      () => live && flash("Strong's numbers could not be loaded"),
+      () => live && flash(t("w_strongs_failed")),
     );
     return () => {
       live = false;
@@ -768,7 +772,7 @@ export function App() {
       await navigator.clipboard.writeText(s);
       flash(done);
     } catch {
-      flash("Copying is blocked in this browser");
+      flash(t("w_copy_blocked"));
     }
   };
 
@@ -789,11 +793,11 @@ export function App() {
     if (l === null) return;
     if (selBms.length > 0) {
       mutate((m) => selBms.reduce((acc, k) => withBookmark(acc, k, false), m));
-      flash("Bookmark removed");
+      flash(t("bookmark_removed"));
     } else {
       const x = l.refs[0];
       mutate((m) => withBookmark(m, bookmarkKey({ id: l.c.id, book: route.book, chapter: x.c - 1, verse: x.v - 1 }), true));
-      flash("Bookmarked");
+      flash(t("bookmark_added"));
     }
   };
 
@@ -811,10 +815,10 @@ export function App() {
   };
   const restoreBackup = async (f: File) => {
     const r = fromBackup(await f.text(), marksRef.current);
-    if (r === null) return flash("That file is not a Hexapla backup");
+    if (r === null) return flash(t("w_not_backup"));
     mutate(() => r.marks);
     const n = r.read;
-    flash("Restored " + String(n.bookmarks) + " bookmarks, " + String(n.highlights) + " highlights, " + String(n.notes) + " notes");
+    flash(t("w_restored", n.bookmarks, n.highlights, n.notes));
   };
 
   // ---- layout -------------------------------------------------------------------
@@ -833,7 +837,7 @@ export function App() {
   const chapNo = route.chapter + 1;
   const tint = (i: number) => ({ "--tc": "var(--c" + String(i) + ")" }) as JSX.CSSProperties;
   const parLabel = (() => {
-    if (parIds.length === 0) return "+ Parallel";
+    if (parIds.length === 0) return t("w_parallel_add");
     const first = wide ? shortLabel(find(parIds[0]), parIds[0]) : tinyLabel(find(parIds[0]), parIds[0]);
     return parIds.length === 1 ? first : first + " +" + String(parIds.length - 1);
   })();
@@ -846,14 +850,14 @@ export function App() {
         </a>
       )}
       <div class="tr">
-        <button type="button" class="btn tbtn" onClick={() => openFrom("a", null)} aria-label={"Translation: " + aName}>
+        <button type="button" class="btn tbtn" onClick={() => openFrom("a", null)} aria-label={t("w_translation_is", aName)}>
           <span class="ell">{wide ? aName : tinyLabel(aT, route.translation)}</span>
         </button>
         {parIds.length === 1 && (
           <button
             type="button"
             class="ib"
-            aria-label="Swap translations"
+            aria-label={t("swap_translations")}
             onClick={() => {
               update({ parallel: [route.translation] });
               go({ ...route, translation: parIds[0], verse: null });
@@ -866,24 +870,24 @@ export function App() {
           type="button"
           class={"btn tbtn" + (parIds.length === 0 ? " add" : "")}
           onClick={() => openFrom(parIds.length === 0 ? "add" : "par", null)}
-          aria-label={parIds.length === 0 ? "Add a parallel translation" : "Parallel translations: " + parIds.map((id) => shortLabel(find(id), id)).join(", ")}
+          aria-label={parIds.length === 0 ? t("w_add_parallel") : t("w_parallel_is", parIds.map((id) => shortLabel(find(id), id)).join(", "))}
         >
           <span class="ell">{parLabel}</span>
         </button>
       </div>
-      <button type="button" class="ib" aria-label="Search" onClick={() => openFrom("search", null)}>
+      <button type="button" class="ib" aria-label={t("search")} onClick={() => openFrom("search", null)}>
         <Icon d={I.search} size={22} />
       </button>
       {/* A narrow phone keeps three icons; the list is in Settings there too. */}
       {(wide || vw >= 400) && (
-        <button type="button" class="ib" aria-label="Bookmarks, highlights and notes" onClick={() => openFrom("marks", null)}>
+        <button type="button" class="ib" aria-label={t("w_marks")} onClick={() => openFrom("marks", null)}>
           <Icon d={I.bookmark} size={21} />
         </button>
       )}
-      <button type="button" class="ib" aria-label="Text size and theme" onClick={() => openFrom("text", null)}>
+      <button type="button" class="ib" aria-label={t("w_text_theme")} onClick={() => openFrom("text", null)}>
         <Icon d={I.aa} size={24} />
       </button>
-      <button type="button" class="ib" aria-label="Settings" onClick={() => openFrom("prefs", null)}>
+      <button type="button" class="ib" aria-label={t("nav_settings")} onClick={() => openFrom("prefs", null)}>
         <Icon d={I.gear} size={22} />
       </button>
     </header>
@@ -891,13 +895,13 @@ export function App() {
 
   const nav = (
     <div class="nav">
-      <button type="button" class="ib" aria-label="Previous chapter" disabled={prev === null} onClick={() => prev !== null && go(prev)}>
+      <button type="button" class="ib" aria-label={t("prev_chapter")} disabled={prev === null} onClick={() => prev !== null && go(prev)}>
         <Icon d={I.prev} />
       </button>
       <button type="button" class="btn title" onClick={() => setSheet("book")} lang={aLang} dir={directionOf(bookName) ?? undefined}>
         {bookName} {chapNo}
       </button>
-      <button type="button" class="ib" aria-label="Next chapter" disabled={next === null} onClick={() => next !== null && go(next)}>
+      <button type="button" class="ib" aria-label={t("next_chapter")} disabled={next === null} onClick={() => next !== null && go(next)}>
         <Icon d={I.next} />
       </button>
     </div>
@@ -916,7 +920,7 @@ export function App() {
   // The Show bar: «All» and one chip per translation, to read one alone.
   const showBar = (label: string) => (
     <div class="modes chips" role="group" aria-label={label}>
-      {[["all", "All"] as [string, string], ...cols.map((c) => [c.id, c.tiny] as [string, string])].map(([id, l]) => {
+      {[["all", t("w_all")] as [string, string], ...cols.map((c) => [c.id, c.tiny] as [string, string])].map(([id, l]) => {
         const on = id === "all" ? alone < 0 : cols[alone]?.id === id;
         return (
           <button type="button" key={id} class={"seg" + (on ? " sel" : "")} aria-pressed={on} onClick={() => update({ show: id })}>
@@ -934,14 +938,14 @@ export function App() {
         <p>{error}</p>
         <p>
           <a href={buildHash(START)} onClick={(e) => (e.preventDefault(), go(START))}>
-            Open John 1
+            {t("w_open_john")}
           </a>
         </p>
       </div>
     );
   } else if (!ready || chap === null) {
     body = (
-      <div class="loading" aria-busy="true" aria-label="Loading the chapter">
+      <div class="loading" aria-busy="true" aria-label={t("w_loading_chapter")}>
         {[92, 100, 84, 97, 70, 88, 95, 60].map((w, i) => (
           <div key={i} class="sk" style={{ width: String(w) + "%" }} />
         ))}
@@ -958,11 +962,11 @@ export function App() {
           <button
             type="button"
             class="btn listen"
-            aria-label={onAir && ps.status === "playing" ? "Pause" : "Listen to this chapter"}
+            aria-label={onAir && ps.status === "playing" ? t("pause_audio") : t("play_audio")}
             onClick={() => (onAir && ps.status !== "error" && ps.status !== "loading" ? player.toggle() : listen(0))}
           >
             <Icon d={onAir && ps.status === "playing" ? I.pause : I.listen} size={20} />
-            <span>{onAir && ps.status === "playing" ? "Pause" : "Listen"}</span>
+            <span>{onAir && ps.status === "playing" ? t("pause_audio") : t("w_listen")}</span>
           </button>
         )}
       </div>
@@ -1027,7 +1031,7 @@ export function App() {
           const numCell = (cls: string) => (
             <div class={cls}>
               {bm && (
-                <span class="bmk" role="img" aria-label="Bookmarked">
+                <span class="bmk" role="img" aria-label={t("w_bookmarked")}>
                   <Icon d={I.bookmarked} size={13} />
                 </span>
               )}
@@ -1043,7 +1047,7 @@ export function App() {
                     key={k}
                     class="rn"
                     dir="auto"
-                    aria-label="Edit note"
+                    aria-label={t("w_edit_note")}
                     onClick={(e) => {
                       e.stopPropagation();
                       openNote(k, lead.book.name + " " + refLabel(leadSide.refs, -1));
@@ -1069,7 +1073,7 @@ export function App() {
                 <button
                   type="button"
                   class="mn"
-                  aria-label={"Translator's note, " + label}
+                  aria-label={t("w_margin_note", label)}
                   onClick={(e) => {
                     e.stopPropagation();
                     setMargin({ label, notes: list, lang: c.lang });
@@ -1099,7 +1103,7 @@ export function App() {
           const cell = (c: Col, secondary: boolean) => {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
-            if (s.kind === "gap") return labelled ? <div class="gap1">Not in {c.tiny}</div> : <Gap name={c.name} other={nameOfText} />;
+            if (s.kind === "gap") return labelled ? <div class="gap1">{t("w_not_in", c.tiny)}</div> : <Gap name={c.name} other={nameOfText} />;
             return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} />;
           };
           if (n === 1) {
@@ -1166,10 +1170,10 @@ export function App() {
     body = (
       <>
         {heading}
-        {multi && showBar("Text shown")}
+        {multi && showBar(t("w_text_shown"))}
         {missing.length > 0 && (
           <p class="note">
-            {missing.join(", ")} {missing.length === 1 ? "does" : "do"} not contain {chap.a.name}.
+            {missing.length === 1 ? t("w_missing_one", missing[0], chap.a.name) : t("w_missing_many", missing.join(", "), chap.a.name)}
           </p>
         )}
         {scroll ? (
@@ -1186,12 +1190,12 @@ export function App() {
         <div class="endnav">
           {prev !== null && (
             <button type="button" class="btn" onClick={() => go(prev)}>
-              <Icon d={I.prev} size={18} /> Previous
+              <Icon d={I.prev} size={18} /> {t("w_previous")}
             </button>
           )}
           {next !== null && (
             <button type="button" class="btn" onClick={() => go(next)}>
-              Next <Icon d={I.next} size={18} />
+              {t("w_next")} <Icon d={I.next} size={18} />
             </button>
           )}
         </div>
@@ -1203,19 +1207,19 @@ export function App() {
   const textControls = (
     <>
       <label class="field">
-        <span>Text size</span>
+        <span>{t("font_size")}</span>
         <input type="range" min={FONT_MIN} max={FONT_MAX} step={1} value={prefs.fontSize} onInput={(e) => update({ fontSize: Number((e.target as HTMLInputElement).value) })} />
         <span class="val">{prefs.fontSize}</span>
       </label>
       <p class="preview" style={{ fontSize: String(prefs.fontSize) + "px" }}>
-        In the beginning was the Word.
+        {t("w_preview")}
       </p>
-      <div class="modes" role="group" aria-label="Theme">
+      <div class="modes" role="group" aria-label={t("theme")}>
         {(
           [
-            ["auto", "Device"],
-            ["light", "Light"],
-            ["dark", "Dark"],
+            ["auto", t("theme_system")],
+            ["light", t("theme_light")],
+            ["dark", t("theme_dark")],
           ] as [Theme, string][]
         ).map(([t, l]) => (
           <button type="button" key={t} class={"seg" + (prefs.theme === t ? " sel" : "")} aria-pressed={prefs.theme === t} onClick={() => update({ theme: t })}>
@@ -1233,7 +1237,7 @@ export function App() {
     const adding = sheet === "add";
     const list = manifest?.translations ?? [];
     sheetEl = (
-      <Sheet title={adding ? "Read alongside" : "Translation"} onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
+      <Sheet title={adding ? t("w_read_alongside") : t("w_translation")} onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
         <div class="list">
           {list
             .filter((t) => !adding || (t.id !== route.translation && !parIds.includes(t.id)))
@@ -1268,15 +1272,15 @@ export function App() {
     );
   } else if (sheet === "offline") {
     sheetEl = (
-      <Sheet title="Keep offline" onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
+      <Sheet title={t("w_keep_offline")} onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
         <OfflineKeep list={manifest?.translations ?? []} />
       </Sheet>
     );
   } else if (sheet === "par") {
     sheetEl = (
-      <Sheet title="Parallel translations" onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
+      <Sheet title={t("w_parallel")} onClose={done} back={stack.length > 0 && stack[stack.length - 1] !== null ? done : undefined}>
         <p class="hint">
-          Up to six translations at once, verse by verse. {aName} leads; the others follow in this order.
+          {t("w_parallel_hint", aName)}
         </p>
         <div class="list">
           <div class="li plain" lang={aLang}>
@@ -1288,13 +1292,13 @@ export function App() {
               <span class="ell" lang={find(id)?.lang}>
                 {shortLabel(find(id), id)}
               </span>
-              <button type="button" class="ib" aria-label="Move up" disabled={i === 0} onClick={() => update({ parallel: moved(parIds, i, -1) })}>
+              <button type="button" class="ib" aria-label={t("w_move_up")} disabled={i === 0} onClick={() => update({ parallel: moved(parIds, i, -1) })}>
                 <Icon d={I.up} size={20} />
               </button>
-              <button type="button" class="ib" aria-label="Move down" disabled={i === parIds.length - 1} onClick={() => update({ parallel: moved(parIds, i, 1) })}>
+              <button type="button" class="ib" aria-label={t("w_move_down")} disabled={i === parIds.length - 1} onClick={() => update({ parallel: moved(parIds, i, 1) })}>
                 <Icon d={I.down} size={20} />
               </button>
-              <button type="button" class="ib" aria-label={"Remove " + shortLabel(find(id), id)} onClick={() => update({ parallel: parIds.filter((x) => x !== id) })}>
+              <button type="button" class="ib" aria-label={t("w_remove_x", shortLabel(find(id), id))} onClick={() => update({ parallel: parIds.filter((x) => x !== id) })}>
                 <Icon d={I.close} size={20} />
               </button>
             </div>
@@ -1302,11 +1306,11 @@ export function App() {
         </div>
         <div class="pact">
           <button type="button" class="btn" disabled={full} onClick={() => openFrom("add", "par")}>
-            <Icon d={I.plus} size={18} /> {full ? "Six is the most" : "Add a translation"}
+            <Icon d={I.plus} size={18} /> {full ? t("w_six_most") : t("w_add_translation")}
           </button>
           {parIds.length > 0 && (
             <button type="button" class="btn" onClick={() => (update({ parallel: [] }), done())}>
-              One translation only
+              {t("w_one_only")}
             </button>
           )}
         </div>
@@ -1335,23 +1339,23 @@ export function App() {
       done();
     };
     sheetEl = (
-      <Sheet title={"Note · " + noteEdit.label} onClose={() => (setNoteEdit(null), done())}>
+      <Sheet title={t("note") + " · " + noteEdit.label} onClose={() => (setNoteEdit(null), done())}>
         <textarea
           class="ntext"
           dir="auto"
           rows={6}
-          aria-label="Note"
+          aria-label={t("note")}
           value={noteEdit.text}
           onInput={(e) => setNoteEdit({ ...noteEdit, text: (e.target as HTMLTextAreaElement).value })}
         />
-        <p class="hint">Kept in this browser only. The note stays with the verse in every translation.</p>
+        <p class="hint">{t("w_note_hint")}</p>
         <div class="pact">
           <button type="button" class="btn pri" onClick={() => save(noteEdit.text)}>
-            Save
+            {t("save")}
           </button>
           {had && (
             <button type="button" class="btn" onClick={() => save("")}>
-              Delete note
+              {t("delete")}
             </button>
           )}
         </div>
@@ -1359,7 +1363,7 @@ export function App() {
     );
   } else if (sheet === "margin" && margin !== null) {
     sheetEl = (
-      <Sheet title={"Translator's notes · " + margin.label} onClose={() => (setMargin(null), done())}>
+      <Sheet title={t("verse_notes") + " · " + margin.label} onClose={() => (setMargin(null), done())}>
         <div class="mnotes">
           {margin.notes.map((t, i) => (
             <p key={i} lang={margin.lang} dir="auto">
@@ -1404,7 +1408,7 @@ export function App() {
     );
   } else if (sheet === "text") {
     sheetEl = (
-      <Sheet title="Text" onClose={done}>
+      <Sheet title={t("w_text_sheet")} onClose={done}>
         {textControls}
       </Sheet>
     );
@@ -1427,7 +1431,7 @@ export function App() {
           <span>{title}</span>
           <span class="sn">{note}</span>
         </div>
-        <span class="badge">Coming</span>
+        <span class="badge">{t("w_coming")}</span>
       </div>
     );
     const toggle = (title: string, note: string, on: boolean, flip: () => void) => (
@@ -1440,19 +1444,19 @@ export function App() {
       </button>
     );
     sheetEl = (
-      <Sheet title="Settings" onClose={done}>
-        <h3 class="sec">Reading</h3>
+      <Sheet title={t("nav_settings")} onClose={done}>
+        <h3 class="sec">{t("settings_reading")}</h3>
         <button type="button" class="srow" onClick={() => openFrom("a", "prefs")}>
           <div class="st">
-            <span>Translation</span>
+            <span>{t("primary_translation")}</span>
             <span class="sn" lang={aLang}>{aName}</span>
           </div>
           <Icon d={I.chev} size={18} />
         </button>
         <button type="button" class="srow" role="switch" aria-checked={split} onClick={() => (split ? update({ parallel: [] }) : openFrom("add", "prefs"))}>
           <div class="st">
-            <span>Split view</span>
-            <span class="sn">Translations side by side, verse by verse</span>
+            <span>{t("split_view")}</span>
+            <span class="sn">{t("w_split_note")}</span>
           </div>
           <span class={"sw" + (split ? " on" : "")} aria-hidden="true" />
         </button>
@@ -1460,54 +1464,72 @@ export function App() {
           <>
             <button type="button" class="srow" onClick={() => openFrom("par", "prefs")}>
               <div class="st">
-                <span>Parallel translations</span>
+                <span>{t("w_parallel")}</span>
                 <span class="sn">{parIds.map((id) => tinyLabel(find(id), id)).join(" · ")}</span>
               </div>
               <Icon d={I.chev} size={18} />
             </button>
             {multi && (
               <div class="sfield">
-                <span>Show</span>
-                {showBar("Text shown")}
+                <span>{t("w_show")}</span>
+                {showBar(t("w_text_shown"))}
               </div>
             )}
             <div class="sfield">
-              <span>Split layout</span>
-              {seg<Layout>("Split layout", prefs.layout, [["auto", "Auto"], ["side", "Side by side"], ["stacked", "Stacked"]], (l) => update({ layout: l }))}
+              <span>{t("split_orientation")}</span>
+              {seg<Layout>(t("split_orientation"), prefs.layout, [["auto", t("w_auto")], ["side", t("w_side")], ["stacked", t("w_stacked")]], (l) => update({ layout: l }))}
             </div>
           </>
         )}
         <button type="button" class="srow" onClick={() => openFrom("marks", "prefs")}>
           <div class="st">
-            <span>Bookmarks, highlights and notes</span>
+            <span>{t("w_marks")}</span>
             <span class="sn">{markCount(marks)}</span>
           </div>
           <Icon d={I.chev} size={18} />
         </button>
-        <h3 class="sec">Appearance</h3>
+        <h3 class="sec">{t("settings_appearance")}</h3>
         {textControls}
-        <h3 class="sec">Study</h3>
+        <label class="sfield lang">
+          <span>{t("w_language")}</span>
+          <select
+            value={prefs.uiLang}
+            onChange={(e) => {
+              const v = (e.target as HTMLSelectElement).value;
+              update({ uiLang: v });
+              void setLocale(uiTag(v, navigator.languages)).then(() => setUi(locale()));
+            }}
+          >
+            <option value="auto">{t("w_auto") + " · " + (LOCALES.find(([x]) => x === uiTag("auto", navigator.languages))?.[1] ?? "English")}</option>
+            {LOCALES.map(([tag, name]) => (
+              <option key={tag} value={tag} lang={tag}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <h3 class="sec">{t("w_study")}</h3>
         {toggle(
-          "Strong's numbers (KJV)",
-          route.translation === "kjv" ? "Tap a number for the Hebrew or Greek word and its definition." : "Shown when the King James Version is the main translation.",
+          t("strongs_title"),
+          route.translation === "kjv" ? t("w_strongs_note") : t("w_strongs_off"),
           prefs.strongs,
           () => update({ strongs: !prefs.strongs }),
         )}
         {toggle(
-          "Webster's 1828 Dictionary",
-          "Tap any word in an English translation to see what it meant in the era of the classic Bibles — Noah Webster's American Dictionary of the English Language, 1828.",
+          t("dict_title"),
+          t("dict_note"),
           prefs.dictionary,
           () => update({ dictionary: !prefs.dictionary }),
         )}
-        <h3 class="sec">Listening</h3>
-        {!player.opus && <p class="hint">This browser cannot play the generated narration (Ogg Opus). The King James Version's LibriVox readings still play.</p>}
+        <h3 class="sec">{t("w_listening")}</h3>
+        {!player.opus && <p class="hint">{t("w_no_opus")}</p>}
         <label class="field">
-          <span>Reading speed</span>
+          <span>{t("speech_rate")}</span>
           <input type="range" min={RATE_MIN} max={RATE_MAX} step={0.05} value={prefs.rate} onInput={(e) => update({ rate: Number((e.target as HTMLInputElement).value) })} />
           <span class="val wide">{prefs.rate.toFixed(2)}×</span>
         </label>
-        {toggle("Continue to the next chapter", "When a chapter ends, go on to the next one.", prefs.autoNext, () => update({ autoNext: !prefs.autoNext }))}
-        {toggle("Background while listening", "Music or a fireside underneath the narration.", prefs.bed, () => {
+        {toggle(t("auto_continue"), t("w_auto_next_note"), prefs.autoNext, () => update({ autoNext: !prefs.autoNext }))}
+        {toggle(t("w_bed"), t("w_bed_note"), prefs.bed, () => {
           // iOS lets the bed start later only if this tap has played it.
           if (!prefs.bed) player.unlockBed();
           update({ bed: !prefs.bed });
@@ -1515,30 +1537,30 @@ export function App() {
         {prefs.bed && (
           <>
             <div class="sfield">
-              <span>Background</span>
-              {seg<BedKind>("Background", prefs.bedKind, [["music", "Music"], ["fireside", "Fireside"]], (k) => (player.unlockBed(), update({ bedKind: k })))}
+              <span>{t("w_bed_kind")}</span>
+              {seg<BedKind>(t("w_bed_kind"), prefs.bedKind, [["music", t("bed_kind_music")], ["fireside", t("bed_kind_fireside")]], (k) => (player.unlockBed(), update({ bedKind: k })))}
             </div>
             <label class="field">
-              <span>Volume</span>
+              <span>{t("music_volume")}</span>
               <input type="range" min={VOL_MIN} max={1} step={0.05} value={prefs.bedVolume} onInput={(e) => update({ bedVolume: Number((e.target as HTMLInputElement).value) })} />
               <span class="val">{Math.round(prefs.bedVolume * 100)}</span>
             </label>
-            {prefs.bedKind === "music" && toggle("Same music throughout", "One calm track after another, instead of music matched to the passage.", prefs.uniformBed, () => update({ uniformBed: !prefs.uniformBed }))}
+            {prefs.bedKind === "music" && toggle(t("music_uniform"), t("w_uniform_note"), prefs.uniformBed, () => update({ uniformBed: !prefs.uniformBed }))}
           </>
         )}
         {offlineSupported() && (
           <>
-            <h3 class="sec">Offline</h3>
+            <h3 class="sec">{t("w_offline")}</h3>
             <button type="button" class="srow" onClick={() => openFrom("offline", "prefs")}>
               <div class="st">
-                <span>Keep offline</span>
-                <span class="sn">Chapters you open are saved as you read. Keep a whole translation to read any of it without a connection.</span>
+                <span>{t("w_keep_offline")}</span>
+                <span class="sn">{t("w_keep_offline_note")}</span>
               </div>
               <Icon d={I.chev} size={18} />
             </button>
           </>
         )}
-        <h3 class="sec">Backup</h3>
+        <h3 class="sec">{t("backup_title")}</h3>
         {backupRows(stored, saveBackup, () => fileIn.current?.click())}
         {/* The sources_text credit is a licence obligation: verbatim, at the
             foot of Settings as on Android, never on every chapter (owner,
@@ -1548,23 +1570,23 @@ export function App() {
             {/* Collapsed to its title; the credit opens on tap (owner,
                 2026-09-24: the full text on show was too messy). */}
             <details class="src">
-              <summary>Text sources</summary>
+              <summary>{t("sources_title")}</summary>
               <p>{manifest.credits}</p>
               <p>
-                Chinese and Japanese search matches character variants using Unihan (Unicode License v3) and OpenCC (Apache-2.0):{" "}
-                <a href={cjkFoldNotice} target="_blank" rel="noopener">licences</a>.
+                {t("w_cjk_notice")}{" "}
+                <a href={cjkFoldNotice} target="_blank" rel="noopener">{t("w_licences")}</a>
               </p>
             </details>
             {/* CC BY: the music pack's credits must be shown (Scott Buckley
                 is not in sources_text). */}
             {credits.length > 0 && (
               <details class="src">
-                <summary>Music</summary>
+                <summary>{t("bed_kind_music")}</summary>
                 <p>{credits.join("\n")}</p>
               </details>
             )}
             <p>
-              <a href="../">Hexapla</a> is free and collects no data. <a href="../PRIVACY.html">Privacy</a>
+              {linked(t("w_free"), "Hexapla", "../")} <a href="../PRIVACY.html">{t("w_privacy")}</a>
             </p>
           </footer>
         )}
@@ -1573,14 +1595,14 @@ export function App() {
   }
 
   const mini = (
-    <div class="mini" role="region" aria-label="Audio player">
-      <button type="button" class="ib" aria-label="Previous chapter" onClick={() => player.skip(-1)}>
+    <div class="mini" role="region" aria-label={t("w_audio_player")}>
+      <button type="button" class="ib" aria-label={t("prev_chapter")} onClick={() => player.skip(-1)}>
         <Icon d={I.skipPrev} size={20} />
       </button>
       <button
         type="button"
         class="ib pp"
-        aria-label={ps.status === "playing" ? "Pause" : "Play"}
+        aria-label={ps.status === "playing" ? t("pause_audio") : t("w_play")}
         disabled={ps.status === "loading"}
         onClick={() => (ps.status === "error" ? player.play(ps.translation, ps.label, ps.book, ps.chapter, 0) : player.toggle())}
       >
@@ -1593,18 +1615,18 @@ export function App() {
       >
         <span class="ell mt">{ps.bookName !== "" ? ps.bookName + " " + String(ps.chapter + 1) : " "}</span>
         <span class={"ell ms" + (ps.status === "error" ? " err" : "")} role={ps.status === "error" ? "alert" : undefined}>
-          {ps.status === "error" ? ps.message : ps.status === "loading" ? "Loading…" : ps.label}
+          {ps.status === "error" ? ps.message : ps.status === "loading" ? t("w_loading") : ps.label}
         </span>
       </button>
-      <button type="button" class="ib" aria-label="Next chapter" onClick={() => player.skip(1)}>
+      <button type="button" class="ib" aria-label={t("next_chapter")} onClick={() => player.skip(1)}>
         <Icon d={I.skipNext} size={20} />
       </button>
       {docPip !== undefined && pip === null && (
-        <button type="button" class="ib" aria-label="Pop out the player" title="Keep the player on top of other windows" onClick={() => void popOut()}>
+        <button type="button" class="ib" aria-label={t("w_popout")} title={t("w_popout_title")} onClick={() => void popOut()}>
           <Icon d={I.pip} size={20} />
         </button>
       )}
-      <button type="button" class="ib" aria-label="Stop" onClick={() => player.stop()}>
+      <button type="button" class="ib" aria-label={t("stop_audio")} onClick={() => player.stop()}>
         <Icon d={I.close} size={20} />
       </button>
     </div>
@@ -1615,7 +1637,7 @@ export function App() {
       {header}
       <div class="main">
         {wide && index !== null && (
-          <nav class="side" aria-label={"Chapters of " + bookName}>
+          <nav class="side" aria-label={t("w_chapters_of", bookName)}>
             <button type="button" class="btn bookbtn" lang={aLang} onClick={() => setSheet("book")}>
               {bookName}
             </button>
@@ -1628,7 +1650,7 @@ export function App() {
         </main>
       </div>
       {selRow !== null && (
-        <div class="actions" role="toolbar" aria-label={"Verse " + selRef}>
+        <div class="actions" role="toolbar" aria-label={t("w_verse_x", selRef)}>
           {/* Highlight colours as on Android: tap one to mark, the lit one to clear. */}
           <div class="arow amarks">
             {Array.from({ length: HL_COUNT }, (_, c) => (
@@ -1636,7 +1658,7 @@ export function App() {
                 type="button"
                 key={c}
                 class={"hdot hd" + String(c) + (selHl === c ? " on" : "")}
-                aria-label={"Highlight " + HL_NAMES[c]}
+                aria-label={t("w_highlight_x", hlName(c))}
                 aria-pressed={selHl === c}
                 disabled={selKeys.length === 0}
                 onClick={() => setSelHl(selHl === c ? null : c)}
@@ -1645,11 +1667,11 @@ export function App() {
             <span class="asp" />
             <button type="button" class="ab" aria-pressed={selBms.length > 0} disabled={selKeys.length === 0} onClick={toggleSelBm}>
               <Icon d={selBms.length > 0 ? I.bookmarked : I.bookmark} size={20} />
-              <span>{selBms.length > 0 ? "Saved" : "Bookmark"}</span>
+              <span>{selBms.length > 0 ? t("w_saved") : t("w_bookmark")}</span>
             </button>
             <button type="button" class="ab" disabled={selKeys.length === 0} onClick={() => openNote(selKeys[0], selRef)}>
               <Icon d={I.note} size={20} />
-              <span>Note</span>
+              <span>{t("note")}</span>
             </button>
           </div>
           <div class="arow">
@@ -1657,28 +1679,28 @@ export function App() {
           {canListen && selVerse !== null && (
             <button type="button" class="ab" onClick={() => (listen(selVerse), setSelected(null))}>
               <Icon d={I.listen} size={20} />
-              <span>Listen</span>
+              <span>{t("w_listen")}</span>
             </button>
           )}
           <button type="button" class="ab" disabled={selKeys.length === 0} onClick={() => (setXref({ keys: selKeys, label: selRef }), openFrom("xref", null))}>
             <Icon d={I.xref} size={20} />
-            <span>Refs</span>
+            <span>{t("w_refs")}</span>
           </button>
-          <button type="button" class="ab" onClick={() => void copy(selLink, "Link copied")}>
+          <button type="button" class="ab" onClick={() => void copy(selLink, t("copied"))}>
             <Icon d={I.link} size={20} />
-            <span>Link</span>
+            <span>{t("w_link")}</span>
           </button>
-          <button type="button" class="ab" onClick={() => void copy(selText(), "Text copied")}>
+          <button type="button" class="ab" onClick={() => void copy(selText(), t("copied"))}>
             <Icon d={I.copy} size={20} />
-            <span>Text</span>
+            <span>{t("w_copy_text")}</span>
           </button>
           {canShare && (
             <button type="button" class="ab" onClick={() => void navigator.share({ title: selRef, text: selText() }).catch(() => undefined)}>
               <Icon d={I.share} size={20} />
-              <span>Share</span>
+              <span>{t("share")}</span>
             </button>
           )}
-          <button type="button" class="ib" aria-label="Close" onClick={() => setSelected(null)}>
+          <button type="button" class="ib" aria-label={t("w_close")} onClick={() => setSelected(null)}>
             <Icon d={I.close} size={20} />
           </button>
           </div>
@@ -1700,12 +1722,12 @@ export function App() {
       {a2hs && chap !== null && ps.status === "idle" && sheet === null && selected === null && noteEdit === null && (
         <div class="a2hs" role="note">
           <span>
-            Install Hexapla: tap <Icon d={I.share} size={18} /> Share, then «Add to Home Screen». It then opens full screen, like an app.
+            {t("w_a2hs_1")} <Icon d={I.share} size={18} /> {t("w_a2hs_2")}
           </span>
           <button
             type="button"
             class="ib"
-            aria-label="Close"
+            aria-label={t("w_close")}
             onClick={() => {
               saveDismissed();
               setA2hs(false);
@@ -1729,8 +1751,8 @@ function markCount(m: Marks): string {
   const b = m.bookmarks.length;
   const h = Object.keys(m.highlights).length;
   const n = Object.keys(m.notes).length;
-  if (b + h + n === 0) return "None yet. Tap a verse to mark it.";
-  return String(b) + " bookmarks · " + String(h) + " highlights · " + String(n) + " notes";
+  if (b + h + n === 0) return t("w_marks_none");
+  return t("w_marks_count", b, h, n);
 }
 
 /** Settings › Backup, as on Android: the same file, so it moves both ways. */
@@ -1744,49 +1766,49 @@ function OfflineKeep({ list }: { list: Translation[] }) {
   useEffect(() => {
     let live = true;
     void cachedUrls().then((have) => {
-      if (live) setSt(Object.fromEntries(list.map((t) => [t.id, stateIn(have, t.id, t.bookCount)])));
+      if (live) setSt(Object.fromEntries(list.map((tl) => [tl.id, stateIn(have, tl.id, tl.bookCount)])));
     }, () => undefined);
     return () => {
       live = false;
     };
   }, [list]);
-  const toggle = async (t: Translation, kept: boolean) => {
+  const toggle = async (tl: Translation, kept: boolean) => {
     setErr(null);
-    setBusy(t.id);
+    setBusy(tl.id);
     try {
-      if (kept) await unkeep(t.id, t.bookCount);
-      else await keep(t.id, t.bookCount, (s) => set(t.id, s));
+      if (kept) await unkeep(tl.id, tl.bookCount);
+      else await keep(tl.id, tl.bookCount, (s) => set(tl.id, s));
     } catch (e) {
-      setErr("Could not save " + t.label + " (" + String(e instanceof Error ? e.message : e) + "). Check the connection and try again; what was saved stays.");
+      setErr(t("w_keep_failed", tl.label, String(e instanceof Error ? e.message : e)));
     } finally {
-      set(t.id, await keepState(t.id, t.bookCount).catch(() => ({ have: 0, total: 1 })));
+      set(tl.id, await keepState(tl.id, tl.bookCount).catch(() => ({ have: 0, total: 1 })));
       setBusy(null);
     }
   };
   return (
     <>
-      <p class="hint">Chapters you open are saved on this device as you read. Keep a whole translation to read any of it without a connection.</p>
-      <p class="hint">In Safari on iPhone and iPad, saved data may be deleted after seven days without a visit. Adding Hexapla to the Home Screen avoids that limit.</p>
+      <p class="hint">{t("w_offline_hint")}</p>
+      <p class="hint">{t("w_safari_hint")}</p>
       {err !== null && <p class="hint err" role="alert">{err}</p>}
-      {list.map((t) => {
-        const s = st[t.id];
+      {list.map((tl) => {
+        const s = st[tl.id];
         const kept = s !== undefined && s.have === s.total;
-        const saving = busy === t.id && s !== undefined;
+        const saving = busy === tl.id && s !== undefined;
         const note = saving
-          ? "Saving… " + String(Math.round((100 * s.have) / s.total)) + "%"
+          ? t("w_saving", Math.round((100 * s.have) / s.total))
           : kept
-            ? "Saved on this device"
+            ? t("w_saved_device")
             : s !== undefined && s.have > 3
-              ? "Partly saved: " + String(s.have - 3) + " of " + String(s.total - 3) + " books"
+              ? t("w_partly", s.have - 3, s.total - 3)
               : "";
         return (
-          <div class="srow off kr" key={t.id} data-id={t.id}>
+          <div class="srow off kr" key={tl.id} data-id={tl.id}>
             <div class="st">
-              <span lang={t.lang} dir={directionOf(t.label) ?? undefined}>{t.label}</span>
+              <span lang={tl.lang} dir={directionOf(tl.label) ?? undefined}>{tl.label}</span>
               {note !== "" && <span class="sn">{note}</span>}
             </div>
-            <button type="button" class={"kbtn" + (kept ? " on" : "")} disabled={busy !== null || s === undefined} onClick={() => void toggle(t, kept)}>
-              {kept ? "Remove" : "Keep"}
+            <button type="button" class={"kbtn" + (kept ? " on" : "")} disabled={busy !== null || s === undefined} onClick={() => void toggle(tl, kept)}>
+              {kept ? t("w_remove") : t("w_keep")}
             </button>
           </div>
         );
@@ -1798,17 +1820,17 @@ function OfflineKeep({ list }: { list: Translation[] }) {
 function backupRows(stored: boolean, onSave: () => void, onRestore: () => void): JSX.Element {
   return (
     <>
-      {!stored && <p class="hint">This browser is not keeping site data, so marks last only until the page closes. Save a backup to keep them.</p>}
+      {!stored && <p class="hint">{t("w_not_stored")}</p>}
       <button type="button" class="srow" onClick={onSave}>
         <div class="st">
-          <span>Save backup…</span>
-          <span class="sn">Bookmarks, highlights and notes as hexapla-backup.json — the Android app restores it too.</span>
+          <span>{t("backup_export")}</span>
+          <span class="sn">{t("w_backup_export_note")}</span>
         </div>
       </button>
       <button type="button" class="srow" onClick={onRestore}>
         <div class="st">
-          <span>Restore backup…</span>
-          <span class="sn">From this app or the Android app. Adds to what is here; nothing is lost.</span>
+          <span>{t("backup_import")}</span>
+          <span class="sn">{t("w_backup_import_note")}</span>
         </div>
       </button>
     </>
@@ -1816,6 +1838,21 @@ function backupRows(stored: boolean, onSave: () => void, onRestore: () => void):
 }
 
 type MarkTab = "bookmarks" | "highlights" | "notes";
+const tabName = (k: MarkTab): string => (k === "bookmarks" ? t("nav_bookmarks") : k === "highlights" ? t("w_highlights") : t("w_notes"));
+
+/** `text` with its first `word` as a link: a sentence whose word order a
+ *  translation sets, around a name that stays a link. */
+function linked(text: string, word: string, href: string): preact.ComponentChildren {
+  const i = text.indexOf(word);
+  if (i < 0) return text;
+  return (
+    <>
+      {text.slice(0, i)}
+      <a href={href}>{word}</a>
+      {text.slice(i + word.length)}
+    </>
+  );
+}
 
 /** Bookmarks, highlights and notes, in Bible order, read in the current
  *  translation (BookmarksScreen.kt): a mark on a verse this translation lacks
@@ -1884,18 +1921,18 @@ function MarksSheet(p: {
 
   const counts: Record<MarkTab, number> = { bookmarks: p.marks.bookmarks.length, highlights: Object.keys(p.marks.highlights).length, notes: Object.keys(p.marks.notes).length };
   return (
-    <Sheet title="Your marks" onClose={p.onClose}>
-      <div class="modes" role="group" aria-label="Show">
+    <Sheet title={t("w_your_marks")} onClose={p.onClose}>
+      <div class="modes" role="group" aria-label={t("w_show")}>
         {(["bookmarks", "highlights", "notes"] as MarkTab[]).map((k) => (
           <button type="button" key={k} class={"seg" + (tab === k ? " sel" : "")} aria-pressed={tab === k} onClick={() => setTab(k)}>
-            <span class="ell">{k[0].toUpperCase() + k.slice(1) + " " + String(counts[k])}</span>
+            <span class="ell">{tabName(k) + " " + String(counts[k])}</span>
           </button>
         ))}
       </div>
-      {items.length === 0 && <p class="hint">{tab === "bookmarks" ? "No bookmarks yet. Tap a verse, then Bookmark." : tab === "highlights" ? "No highlights yet. Tap a verse, then a colour." : "No notes yet. Tap a verse, then Note."}</p>}
+      {items.length === 0 && <p class="hint">{tab === "bookmarks" ? t("w_no_bookmarks") : tab === "highlights" ? t("w_no_highlights") : t("w_no_notes")}</p>}
       <div class="list">
         {items.map((x) => {
-          const name = p.index?.[x.book]?.name ?? "Book " + String(x.book + 1);
+          const name = p.index?.[x.book]?.name ?? t("w_book_n", x.book + 1);
           const text = x.at === null ? "" : (books.get(x.book)?.chapters[x.at.chapter]?.[x.at.verse] ?? "");
           const ref = name + " " + (x.at === null ? x.fallback : String(x.at.chapter + 1) + ":" + String(x.at.verse + 1));
           const at = x.at;
@@ -1916,16 +1953,16 @@ function MarksSheet(p: {
                     {text}
                   </span>
                 )}
-                {at === null && <span class="sn">Not in this translation</span>}
+                {at === null && <span class="sn">{t("w_not_here")}</span>}
               </button>
-              <button type="button" class="ib" aria-label={"Remove " + ref} onClick={() => p.onChange(x.remove)}>
+              <button type="button" class="ib" aria-label={t("w_remove_x", ref)} onClick={() => p.onChange(x.remove)}>
                 <Icon d={I.close} size={18} />
               </button>
             </div>
           );
         })}
       </div>
-      <h3 class="sec">Backup</h3>
+      <h3 class="sec">{t("backup_title")}</h3>
       {backupRows(p.stored, p.onSave, p.onRestore)}
     </Sheet>
   );
@@ -1963,11 +2000,11 @@ function StrongsSheet(p: { id: string; onClose: () => void }) {
     <Sheet title={e !== undefined && e.word !== "" ? p.id + " · " + e.word : p.id} onClose={p.onClose}>
       <div class="strongs">
         {err ? (
-          <p class="hint">The dictionary could not be loaded.</p>
+          <p class="hint">{t("w_dict_failed")}</p>
         ) : lex === null ? (
-          <p class="hint">Loading…</p>
+          <p class="hint">{t("w_loading")}</p>
         ) : e === undefined ? (
-          <p class="hint">No entry for {p.id}.</p>
+          <p class="hint">{t("w_no_entry", p.id)}</p>
         ) : (
           <>
             {subline(e) !== "" && <p class="ssub">{subline(e)}</p>}
@@ -2027,13 +2064,13 @@ function WebsterSheet(p: { word: string; onClose: () => void }) {
   return (
     <Sheet title={hit ? hit[0] : p.word} onClose={p.onClose}>
       <div class="strongs">
-        <p class="ssub">Webster's American Dictionary, 1828</p>
+        <p class="ssub">{t("dict_source")}</p>
         {err ? (
-          <p class="hint">The dictionary could not be loaded.</p>
+          <p class="hint">{t("w_dict_failed")}</p>
         ) : hit === undefined ? (
-          <p class="hint">Loading…</p>
+          <p class="hint">{t("w_loading")}</p>
         ) : hit === null ? (
-          <p class="hint">Not in the 1828 dictionary — likely a proper name.</p>
+          <p class="hint">{t("dict_not_found")}</p>
         ) : (
           websterParagraphs(hit[1]).map((t, i) => (
             <p key={i} class="sdef" lang="en">
@@ -2106,14 +2143,14 @@ function XrefSheet(p: {
   }, [need, p.t]);
 
   return (
-    <Sheet title={"Cross-references · " + p.label} onClose={p.onClose}>
-      {err !== null && <p class="hint">Could not load the cross-references: {err}</p>}
-      {items === null && err === null && <p class="hint">Loading…</p>}
-      {items !== null && items.length === 0 && <p class="hint">No cross-references for this verse.</p>}
+    <Sheet title={t("xrefs") + " · " + p.label} onClose={p.onClose}>
+      {err !== null && <p class="hint">{t("w_xref_failed", err)}</p>}
+      {items === null && err === null && <p class="hint">{t("w_loading")}</p>}
+      {items !== null && items.length === 0 && <p class="hint">{t("w_no_xrefs")}</p>}
       {items !== null && items.length > 0 && (
         <div class="list">
           {items.map((x) => {
-            const name = p.index?.[x.book]?.name ?? "Book " + String(x.book + 1);
+            const name = p.index?.[x.book]?.name ?? t("w_book_n", x.book + 1);
             const at = x.at;
             const ref = name + " " + (at === null ? String(x.kjv.chapter + 1) + ":" + String(x.kjv.verse + 1) + " (KJV)" : String(at.chapter + 1) + ":" + String(at.verse + 1));
             const text = at === null ? "" : (books.get(x.book)?.chapters[at.chapter]?.[at.verse] ?? "");
@@ -2127,13 +2164,13 @@ function XrefSheet(p: {
                     {text}
                   </span>
                 )}
-                {at === null && <span class="sn">Not in this translation</span>}
+                {at === null && <span class="sn">{t("w_not_here")}</span>}
               </button>
             );
           })}
         </div>
       )}
-      <p class="hint">The most-voted references at openbible.info (CC BY).</p>
+      <p class="hint">{t("w_xref_source")}</p>
     </Sheet>
   );
 }
@@ -2185,14 +2222,14 @@ function Sheet({ title, onClose, children, back }: { title: string; onClose: () 
       <div class="sheet" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}>
         <div class="sh">
           {back !== undefined ? (
-            <button type="button" class="ib" aria-label="Back" onClick={back}>
+            <button type="button" class="ib" aria-label={t("w_back")} onClick={back}>
               <Icon d={I.back} />
             </button>
           ) : (
             <span />
           )}
           <h2>{title}</h2>
-          <button type="button" class="ib" aria-label="Close" onClick={onClose}>
+          <button type="button" class="ib" aria-label={t("w_close")} onClick={onClose}>
             <Icon d={I.close} />
           </button>
         </div>
@@ -2256,7 +2293,7 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
 
   const name = (b: number) => p.index?.[b]?.name ?? "?";
   return (
-    <Sheet title="Search" onClose={p.onClose}>
+    <Sheet title={t("search")} onClose={p.onClose}>
       <input
         ref={input}
         class="sq"
@@ -2264,8 +2301,8 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
         enterkeyhint="search"
         autoComplete="off"
         spellcheck={false}
-        placeholder={"Search " + p.name}
-        aria-label={"Search " + p.name}
+        placeholder={t("search_hint")}
+        aria-label={t("w_search_in", p.name)}
         value={p.query}
         onInput={(e) => p.setQuery(e.currentTarget.value)}
         lang={p.lang}
@@ -2278,12 +2315,12 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
           </span>
         </div>
       )}
-      {err !== null && <p class="hint">Search failed: {err}</p>}
-      {hits !== null && hits.length === 0 && load === null && <p class="hint">No results</p>}
-      {hits !== null && hits.length >= SEARCH_CAP && <p class="hint">The first {SEARCH_CAP} verses. Add a word to narrow it.</p>}
+      {err !== null && <p class="hint">{t("w_search_failed", err)}</p>}
+      {hits !== null && hits.length === 0 && load === null && <p class="hint">{t("no_results")}</p>}
+      {hits !== null && hits.length >= SEARCH_CAP && <p class="hint">{t("w_search_cap", SEARCH_CAP)}</p>}
       {hits === null && load === null && err === null && (
         <p class="hint">
-          Finds a phrase in {p.name}, then verses with every word in any order. Searching all translations at once is not on the web yet (it would download about 200 MB).
+          {t("w_search_about", p.name)}
         </p>
       )}
       {hits !== null && hits.length > 0 && (
@@ -2314,7 +2351,7 @@ function BookSheet(p: { index: BooksIndex | null; lang: string; current: Route; 
     );
   }
   return (
-    <Sheet title="Books" onClose={p.onClose}>
+    <Sheet title={t("select_book")} onClose={p.onClose}>
       <div class="list books">
         {(p.index ?? []).map((b, i) => (
           <button

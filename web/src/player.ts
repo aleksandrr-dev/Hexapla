@@ -18,6 +18,7 @@
 
 import { artDay, bundledFor, moodFor, packUrl, parseWords, pick, plateFor, sectionFor, sectionsFor, SILENCE, startMs, verseAt, followWord, wordsUrl, type Bed, type MoodMapData, type MusicIndex, type Section, type Words } from "./audio";
 import { loadBooksIndex, loadGenIndex, loadLibriVoxIndex, loadVersemap } from "./data";
+import { t } from "./i18n";
 import type { Prefs } from "./prefs";
 import type { BooksIndex } from "./types";
 import type { VerseMapData } from "./versemap";
@@ -252,7 +253,7 @@ export class Player {
       if (this.el.src === "" || this.el.src === SILENT || this.sec === null) return;
       this.stopTimer();
       this.bed.pause();
-      this.set({ status: "error", message: "The recording could not be loaded. Check the connection and try again." });
+      this.set({ status: "error", message: t("w_rec_failed") });
     });
     this.el.addEventListener("pause", () => {
       if (this.st.status === "playing" && !this.el.ended) {
@@ -357,13 +358,13 @@ export class Player {
       if (sec === null) {
         this.el.pause();
         this.bed.stop();
-        this.set({ status: "error", message: "There is no recording of " + bookName + " " + String(chapter + 1) + " in this translation yet." });
+        this.set({ status: "error", message: t("w_no_recording", bookName + " " + String(chapter + 1)) });
         return;
       }
       if (sec.generated && !this.opus) {
         this.el.pause();
         this.bed.stop();
-        this.set({ status: "error", message: "This browser cannot play these recordings (Ogg Opus audio). Try a current Chrome, Firefox or Safari." });
+        this.set({ status: "error", message: t("w_rec_opus") });
         return;
       }
       this.sec = sec;
@@ -402,7 +403,7 @@ export class Player {
       if (token !== this.token) return;
       const blocked = e instanceof DOMException && e.name === "NotAllowedError";
       this.bed.stop();
-      this.set({ status: blocked ? "paused" : "error", message: blocked ? null : "The recording could not be loaded. Check the connection and try again." });
+      this.set({ status: blocked ? "paused" : "error", message: blocked ? null : t("w_rec_failed") });
     }
   }
 

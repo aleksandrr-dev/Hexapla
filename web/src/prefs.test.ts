@@ -35,6 +35,7 @@ eq("old keeps the rest", migrate({ last: "#/kjv/43/3", second: "syn", mode: "bot
   uniformBed: false,
   strongs: false,
   dictionary: false,
+  uiLang: "auto",
 });
 
 // The current shape.
@@ -68,6 +69,9 @@ eq("?with= junk dropped", parseWith("?with=mei,%3Cb%3E,,syn"), ["mei", "syn"]);
 eq("?with= capped", parseWith("?with=a,b,c,d,e,f,g")?.length, MAX_PARALLEL);
 eq("no ?with", parseWith(""), null);
 eq("?with= empty", parseWith("?with="), null);
+
+eq("uiLang: a known tag is kept", migrate({ uiLang: "fa" }).uiLang, "fa");
+eq("uiLang: an unknown one is auto", migrate({ uiLang: "xx" }).uiLang, "auto");
 
 // Control: HEXAPLA_PREFS_BAD=1 asserts something false; the run must FAIL.
 if (process.env.HEXAPLA_PREFS_BAD === "1") eq("control (must fail)", migrate({ second: "mei", mode: "b" }).show, "all");

@@ -28,6 +28,7 @@ eq("old keeps the rest", migrate({ last: "#/kjv/43/3", second: "syn", mode: "bot
   serif: true,
   theme: "dark",
   layout: "side",
+  rail: true,
   rate: 1,
   autoNext: true,
   bed: false,
@@ -58,6 +59,8 @@ eq("serif off round trip", migrate({ ...DEFAULTS, serif: false }).serif, false);
 eq("serif junk -> on", migrate({ serif: "no" }).serif, true);
 eq("dictionary defaults off", migrate({ theme: "dark" }).dictionary, false);
 eq("dictionary round trip", migrate({ ...DEFAULTS, dictionary: true }).dictionary, true);
+eq("rail folded round trip", migrate({ ...DEFAULTS, rail: false }).rail, false);
+eq("rail junk -> shown", migrate({ rail: "no" }).rail, true);
 eq("dictionary junk -> off", migrate({ dictionary: 1 }).dictionary, false);
 eq("audio round trip", migrate({ ...DEFAULTS, ...au }), { ...DEFAULTS, ...au });
 eq("rate clamped high", migrate({ rate: 9 }).rate, RATE_MAX);

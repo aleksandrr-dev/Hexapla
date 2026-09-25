@@ -33,6 +33,8 @@ export interface Prefs {
   serif: boolean;
   theme: Theme;
   layout: Layout;
+  /** The chapter rail on a wide screen; off = the text takes the width. */
+  rail: boolean;
   // ---- Listening: the Android `Store.kt` defaults (player.ts AudioPrefs) ----
   /** Reading speed, RATE_MIN-RATE_MAX. */
   rate: number;
@@ -74,6 +76,7 @@ export const DEFAULTS: Prefs = {
   serif: true,
   theme: "auto",
   layout: "auto",
+  rail: true,
   rate: 1,
   autoNext: true,
   bed: false,
@@ -150,6 +153,7 @@ export function migrate(p: Record<string, unknown>): Prefs {
     serif: bool(p.serif, DEFAULTS.serif),
     theme: p.theme === "light" || p.theme === "dark" || p.theme === "auto" ? p.theme : DEFAULTS.theme,
     layout: p.layout === "side" || p.layout === "stacked" || p.layout === "auto" ? p.layout : DEFAULTS.layout,
+    rail: bool(p.rail, DEFAULTS.rail),
     rate: num(p.rate, RATE_MIN, RATE_MAX, DEFAULTS.rate),
     autoNext: bool(p.autoNext, DEFAULTS.autoNext),
     bed: bool(p.bed, DEFAULTS.bed),

@@ -133,6 +133,12 @@ const I = {
     </>
   ),
   up: <path d="M6 15l6-6 6 6" />,
+  rail: (
+    <>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" />
+      <path d="M9 5v14" />
+    </>
+  ),
   down: <path d="M6 9l6 6 6-6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   play: <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />,
@@ -917,9 +923,11 @@ export function App() {
   const style = { "--fs": String(prefs.fontSize) + "px" } as JSX.CSSProperties;
   const n = shown.length;
   // Room for the text column: the page minus its padding (and the chapter
-  // rail on a wide screen). Two columns keep the design's centre gutter.
+  // rail on a wide screen, unless it is folded away). Two columns keep the
+  // design's centre gutter.
+  const rail = wide && prefs.rail;
   const gutter = n === 2 ? 56 : 40;
-  const room = wide ? vw - 264 - 112 : vw - 40;
+  const room = wide ? vw - (rail ? 264 : 0) - 112 : vw - 40;
   const fits = n * COL_MIN + gutter <= room;
   const side = n > 1 && (prefs.layout === "side" || (prefs.layout === "auto" && wide && fits));
   // An explicit «Side by side» that does not fit scrolls sideways.
@@ -936,6 +944,19 @@ export function App() {
 
   const header = (
     <header class="bar">
+      {wide && (
+        <button
+          type="button"
+          class="ib railbtn"
+          aria-label={t("w_chapters_of", bookName)}
+          title={t("w_chapters_of", bookName)}
+          aria-expanded={rail}
+          aria-controls="rail"
+          onClick={() => update({ rail: !prefs.rail })}
+        >
+          <Icon d={I.rail} size={22} />
+        </button>
+      )}
       {wide && (
         <a class="mark" href="../">
           Hexapla
@@ -1864,8 +1885,8 @@ export function App() {
     <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "") + (selRow !== null ? " selecting" : "") + (prefs.serif ? "" : " sans")} style={style}>
       {header}
       <div class="main">
-        {wide && index !== null && (
-          <nav class="side" aria-label={t("w_chapters_of", bookName)}>
+        {rail && index !== null && (
+          <nav class="side" id="rail" aria-label={t("w_chapters_of", bookName)}>
             <button type="button" class="btn bookbtn" lang={aLang} onClick={() => setSheet("book")}>
               {bookName}
             </button>

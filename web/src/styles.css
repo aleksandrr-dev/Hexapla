@@ -105,6 +105,9 @@ a:hover { color: var(--lea); }
 }
 .wide .bar { height: 76px; padding: 0 28px; gap: 20px; border-bottom-color: var(--ol); }
 .mark { font-size: 24px; font-weight: 700; color: var(--ox); text-decoration: none; width: 208px; flex-shrink: 0; }
+/* The rail toggle and the mark together keep the rail's 264 px edge. */
+.railbtn { flex-shrink: 0; margin-inline-start: -10px; }
+.railbtn + .mark { width: 154px; }
 .tr { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
 .tbtn { font-size: 14px; max-width: 46%; min-width: 0; }
 .wide .tbtn { font-size: 15px; max-width: 320px; }

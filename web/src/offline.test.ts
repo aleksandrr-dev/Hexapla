@@ -13,6 +13,7 @@ const eq = (label: string, got: unknown, want: unknown): void => {
 
 // data/ is a SIBLING of the app base, as data.ts resolves it.
 eq("data root beside the app", dataRoot("/Hexapla/app/", "https://x.io"), "https://x.io/Hexapla/data/");
+eq("data root at a domain root", dataRoot("/app/", "https://hexaplabible.com"), "https://hexaplabible.com/data/");
 eq("data root, base without slash", dataRoot("/Hexapla/app", "https://x.io"), "https://x.io/Hexapla/data/");
 
 const urls = keepUrls("R/", "kjv", BAD ? 82 : 83);

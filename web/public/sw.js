@@ -2,9 +2,9 @@
 //
 // Offline for anything already read, by caching as it is used - there is NO
 // big precache: the book art and the music are ~20 MB and most readers never
-// touch most of it. Registered from src/main.tsx with scope /Hexapla/app/; a
+// touch most of it. Registered from src/main.tsx with scope /app/; a
 // service worker sees every fetch its pages make, so the data tree at
-// /Hexapla/data/ (a sibling of the scope) is served from here too.
+// /data/ (a sibling of the scope) is served from here too.
 //
 //   navigation        network first, the cached page when offline
 //   .../data/...      cache first, refreshed in the background (a repaired

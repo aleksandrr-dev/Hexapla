@@ -3,8 +3,8 @@ import { join, normalize, resolve } from "node:path";
 import { defineConfig, type Plugin, type PreviewServer, type ViteDevServer } from "vite";
 import preact from "@preact/preset-vite";
 
-// Dev and preview: serve a built data tree at /Hexapla/data/, where Pages serves it
-// (a SIBLING of /Hexapla/app/ — see src/data.ts). The tree is ~200 MB and
+// Dev and preview: serve a built data tree at /data/, where Pages serves it
+// (a SIBLING of /app/ — see src/data.ts). The tree is ~200 MB and
 // must live OUTSIDE the repo (tools/build_web_data.py refuses otherwise):
 //
 //     python tools/build_web_data.py --out <dir>          (+ --aux, same --out)
@@ -28,7 +28,7 @@ function devData(): Plugin {
       return;
     }
     const base = resolve(root);
-    server.middlewares.use("/Hexapla/data", (req, res, next) => {
+    server.middlewares.use("/data", (req, res, next) => {
       const rel = decodeURIComponent((req.url ?? "/").split("?")[0]);
       const file = normalize(join(base, rel));
       if (!file.startsWith(base) || !existsSync(file) || !statSync(file).isFile()) return next();
@@ -39,10 +39,12 @@ function devData(): Plugin {
 }
 
 // Published under the landing page's domain, as a subdirectory — see
-// WEB_APP_PLAN.md § 0. `base` must match the GitHub Pages path exactly, or
+// WEB_APP_PLAN.md § 0. Since 2026-09-25 that domain is hexaplabible.com at
+// its root (the github.io project path /Hexapla/ redirects there).
+// `base` must match the Pages path exactly, or
 // every emitted asset URL 404s while `npm run dev` still looks fine.
 export default defineConfig({
-  base: "/Hexapla/app/",
+  base: "/app/",
   plugins: [preact(), devData()],
   build: {
     outDir: "dist",

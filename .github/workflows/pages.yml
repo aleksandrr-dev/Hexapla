@@ -107,7 +107,7 @@ jobs:
           npm ci
           npm run build
 
-      # vite.config.ts sets base "/Hexapla/app/", so web/dist is the whole
+      # vite.config.ts sets base "/app/" (hexaplabible.com, 2026-09-25), so web/dist is the whole
       # app and it belongs at <site>/app/.
       - name: Overlay the web app into the site
         run: |

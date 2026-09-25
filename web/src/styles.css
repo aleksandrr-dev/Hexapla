@@ -468,3 +468,27 @@ a.srow, .apphint .btn { text-decoration: none; box-sizing: border-box; }
 .li.thead .ell { flex: 1; min-width: 0; }
 .li.thead svg { flex: none; color: var(--mu); }
 .topics .htx { display: block; -webkit-line-clamp: unset; overflow: visible; }
+/* ---- wide-screen masthead (crest.tsx) -------------------------------------
+   Above the sticky bar, scrolls away; phones never render it. Parchment from
+   the owner's design canvas; the dark theme drops the texture. */
+.crest {
+  --pc: #eeddb8; --gd: #a57b2c;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 0 10px;
+  background: var(--pc) url("./img/parchment.png"); border-top: 3px solid var(--ox); border-bottom: 5px double var(--ox);
+}
+:root[data-theme="dark"] .crest { --pc: #211a11; --gd: #e8c07a; background-image: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .crest { --pc: #211a11; --gd: #e8c07a; background-image: none; }
+}
+.crest-mark { display: inline-flex; align-items: flex-end; gap: 3px; text-decoration: none; }
+.init {
+  position: relative; display: grid; place-items: center; width: 58px; height: 62px;
+  background: var(--ox); color: var(--on); box-shadow: inset 0 0 0 3px var(--ox), inset 0 0 0 4px var(--gd);
+}
+.init-studs { position: absolute; inset: 0; fill: var(--gd); }
+.rest { color: var(--ox); margin-bottom: 2px; }
+.crest-gloss { display: flex; align-items: center; gap: 8px; font-size: 12px; font-variant: small-caps; letter-spacing: 0.18em; color: var(--mu); }
+.vn-s { fill: none; stroke: var(--ox); stroke-width: 1; }
+.vn-l { fill: var(--ox); }
+.vn-b { fill: var(--pc); }
+.vn-p { fill: var(--gd); }

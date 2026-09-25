@@ -42,6 +42,7 @@ import { APP_KEY, currentEnv, loadDismissed, saveDismissed, shouldAppHint, shoul
 const DOWNLOAD = "/download/";
 import { locale, setLocale, t } from "./i18n";
 import { columnCredit, type ColumnCredit } from "./credits";
+import { Crest } from "./crest";
 import { LOCALES, defaultTranslation, uiTag } from "./locale";
 import { groupTranslations } from "./tgroups";
 import { cachedUrls, keep, keepState, offlineSupported, stateIn, unkeep, type KeepState } from "./offline";
@@ -426,6 +427,17 @@ export function App() {
   const [appHint, setAppHint] = useState<boolean>(() => shouldAppHint(currentEnv(), loadDismissed(APP_KEY)));
   const [wide, setWide] = useState<boolean>(() => window.matchMedia("(min-width: 960px)").matches);
   const [vw, setVw] = useState<number>(() => window.innerWidth);
+  // The wide-screen masthead scrolls away above the sticky bar; while any of
+  // it is on screen the bar's own «Hexapla» mark would repeat it, so the mark
+  // hides (visibility only - it keeps its width and the rail's edge).
+  const [crestEl, setCrestEl] = useState<HTMLElement | null>(null);
+  const [crestOn, setCrestOn] = useState(false);
+  useEffect(() => {
+    if (crestEl === null) return setCrestOn(false);
+    const io = new IntersectionObserver((es) => setCrestOn(es[es.length - 1].isIntersecting));
+    io.observe(crestEl);
+    return () => io.disconnect();
+  }, [crestEl]);
   const scrollTo = useRef<number | null>(route.verse);
   // ONE player for the page's life; the reader follows its state.
   const [player] = useState(() => new Player(audioPrefs(prefs)));
@@ -958,7 +970,7 @@ export function App() {
         </button>
       )}
       {wide && (
-        <a class="mark" href="../">
+        <a class="mark" href="../" style={crestOn ? { visibility: "hidden" } : undefined} aria-hidden={crestOn || undefined} tabIndex={crestOn ? -1 : undefined}>
           Hexapla
         </a>
       )}
@@ -1883,6 +1895,7 @@ export function App() {
 
   return (
     <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "") + (selRow !== null ? " selecting" : "") + (prefs.serif ? "" : " sans")} style={style}>
+      {wide && <Crest href="../" innerRef={setCrestEl} />}
       {header}
       <div class="main">
         {rail && index !== null && (

@@ -25,6 +25,7 @@ eq("old keeps the rest", migrate({ last: "#/kjv/43/3", second: "syn", mode: "bot
   parallel: ["syn"],
   show: "all",
   fontSize: 22,
+  serif: true,
   theme: "dark",
   layout: "side",
   rate: 1,
@@ -52,6 +53,9 @@ eq("no audio keys -> Store.kt defaults", migrate({ theme: "dark" }).bedVolume, 0
 const au = { rate: 1.5, autoNext: false, bed: true, bedKind: "fireside", bedVolume: 0.3, uniformBed: true };
 eq("strongs round trip", migrate({ ...DEFAULTS, strongs: true }).strongs, true);
 eq("strongs junk -> off", migrate({ strongs: "yes" }).strongs, false);
+eq("serif defaults on", migrate({ theme: "dark" }).serif, true);
+eq("serif off round trip", migrate({ ...DEFAULTS, serif: false }).serif, false);
+eq("serif junk -> on", migrate({ serif: "no" }).serif, true);
 eq("dictionary defaults off", migrate({ theme: "dark" }).dictionary, false);
 eq("dictionary round trip", migrate({ ...DEFAULTS, dictionary: true }).dictionary, true);
 eq("dictionary junk -> off", migrate({ dictionary: 1 }).dictionary, false);

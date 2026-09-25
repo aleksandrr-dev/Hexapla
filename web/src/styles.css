@@ -402,6 +402,10 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .sg button:hover { text-decoration: underline; }
 .strongs .ssub { margin: 0 4px 8px; font-size: 14px; font-weight: 600; color: var(--ox); }
 .strongs .sdef { margin: 0 4px 10px; line-height: 1.5; white-space: pre-line; }
+.strongs .shead { margin: 0 4px 6px; font-weight: 600; }
+.iw { cursor: pointer; }
+/* «Serif font» off: the device sans for the reading text, every script (ReadingFont.kt). */
+.hx.sans .vt, .hx.sans .dropcap, .preview.sans { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif; }
 
 /* «Keep offline» rows (P4): the row itself is not a button; its Keep/Remove is. */
 .srow.kr { cursor: default; }

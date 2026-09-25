@@ -118,6 +118,16 @@ if (main) {
   const outDir = join(web, "src", "i18n");
   const check = process.argv.includes("--check");
   const all = build(res, usedKeys(join(web, "src")), readWeb(join(web, "strings")));
+  // A key a locale lacks shows in English under that locale's menus (the
+  // Russian Settings read «Music»: bed_kind_music was translated into Farsi
+  // only). Named here, and --check fails on it.
+  const enKeys = Object.keys(all.get("en") ?? {});
+  let untranslated = 0;
+  for (const [tag, o] of all) {
+    const miss = enKeys.filter((k) => !(k in o));
+    untranslated += miss.length;
+    if (miss.length > 0) console.log("UNTRANSLATED " + tag + ": " + miss.join(", "));
+  }
   mkdirSync(outDir, { recursive: true });
   let stale = 0;
   for (const [tag, o] of all) {
@@ -135,5 +145,5 @@ if (main) {
     else writeFileSync(f, want);
   }
   console.log(String(all.size) + " locales, " + String(Object.keys(all.get("en") ?? {}).length) + " keys" + (check ? ", " + String(stale) + " stale" : ", " + String(stale) + " written"));
-  process.exit(check && stale > 0 ? 1 : 0);
+  process.exit(check && (stale > 0 || untranslated > 0) ? 1 : 0);
 }

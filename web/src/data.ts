@@ -98,6 +98,18 @@ export async function loadStrongsBook(bookIndex: number): Promise<string[][]> {
   return chapters;
 }
 
+/** `data/interlinear/<he|gr>/<bookIndex>.json` — one tag list per verse, in
+ *  the grc/wlc text's own numbering, as `{"<bookIndex>": chapters}`
+ *  (interlinear.ts). */
+export async function loadInterlinear(lang: "he" | "gr", bookIndex: number): Promise<string[][]> {
+  const k = String(bookIndex);
+  const path = "data/interlinear/" + lang + "/" + k + ".json";
+  const o = await fetchJson<Record<string, string[][]>>(path);
+  const chapters = o[k];
+  if (!Array.isArray(chapters)) throw new DataError(url(path), 200, "interlinear " + lang + " " + k + ": no chapters");
+  return chapters;
+}
+
 /** `data/strongs_lexicon.json`, or `strongs_lexicon_<lang>.json` for a
  *  translated gloss (strongs.ts TRANSLATED). About 2 MB each: fetched only
  *  when a number is tapped. */

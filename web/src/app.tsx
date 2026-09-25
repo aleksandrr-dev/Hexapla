@@ -17,7 +17,8 @@
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { loadBook, loadBooksIndex, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster } from "./data";
+import { loadBook, loadBooksIndex, loadInterlinear, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster } from "./data";
+import { dataLang, decode as decodeMorph, isOriginal, tokens as interTokens, word as interWord } from "./interlinear";
 import { afterCap, lexiconLang, mergeLexicon, shown as shownSegs, shownNumber, shownText, subline, type Lexicon, type Seg } from "./strongs";
 import { chapterRows, type Row, type Side } from "./parallel";
 import { Player, type AudioPrefs, type PlayState } from "./player";
@@ -219,7 +220,36 @@ function tagged(segs: Seg[], onId: (id: string) => void): preact.ComponentChildr
   );
 }
 
-function VerseText({ text, lang, cap, cls, word = null, after = null, segs = null, onId }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null; segs?: Seg[] | null; onId?: (id: string) => void }) {
+/** `text` from `from` on with each interlinear word a tap target reporting
+ *  its word index (ReaderScreen.kt appendWordsIndexed). A word the drop cap
+ *  cut keeps its index for the part after it. */
+function interWords(text: string, from: number, onWord: (i: number, w: string) => void): preact.ComponentChildren {
+  const out: preact.ComponentChildren[] = [];
+  let pos = from;
+  for (const k of interTokens(text)) {
+    if (k.e <= from) continue;
+    const s = Math.max(k.s, from);
+    if (s > pos) out.push(text.slice(pos, s));
+    const w = text.slice(k.s, k.e);
+    out.push(
+      <span
+        key={k.i}
+        class="iw"
+        onClick={(e) => {
+          e.stopPropagation();
+          onWord(k.i, w);
+        }}
+      >
+        {text.slice(s, k.e)}
+      </span>,
+    );
+    pos = k.e;
+  }
+  if (pos < text.length) out.push(text.slice(pos));
+  return out;
+}
+
+function VerseText({ text, lang, cap, cls, word = null, after = null, segs = null, onId, inter }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null; segs?: Seg[] | null; onId?: (id: string) => void; inter?: (i: number, w: string) => void }) {
   if (segs !== null && onId !== undefined) {
     // Word ranges index the plain text; the tagged text shows none (Android).
     const plain = shownText(segs);
@@ -243,10 +273,12 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
   const dir = directionOf(text) ?? undefined;
   const end = cap ? dropCapEnd(text) : -1;
   const c = cls + (isCjk(lang) ? " cjk" : "");
+  // A sounding word wins: the verse being read shows its highlight, not taps.
+  const body = (from: number) => (inter !== undefined && word === null ? interWords(text, from, inter) : marked(text, from, word));
   if (end < 0) {
     return (
       <div class={c} lang={lang} dir={dir}>
-        {marked(text, 0, word)}
+        {body(0)}
         {after}
       </div>
     );
@@ -257,7 +289,7 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
         {text.slice(0, end)}
       </span>
       <span class="sr">{text.slice(0, end)}</span>
-      {marked(text, end, word)}
+      {body(end)}
       {after}
     </div>
   );
@@ -270,7 +302,7 @@ interface Sounding {
   word: [number, number] | null;
 }
 
-function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn }) {
+function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs, inter }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn; inter?: InterFn }) {
   if (side.kind === "gap") return null;
   return (
     <>
@@ -281,7 +313,7 @@ function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null,
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
             {showNum && !cap && <span class="inum">{refLabel([r], chapter)}</span>}
-            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} segs={strongs === undefined ? null : strongs.at(r)} onId={strongs?.open} />
+            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} segs={strongs === undefined ? null : strongs.at(r)} onId={strongs?.open} inter={inter === undefined ? undefined : (w, word) => inter(r, w, word)} />
           </div>
         );
       })}
@@ -297,6 +329,18 @@ type MarginFn = (r: Ref) => JSX.Element | null;
 interface StrongsFn {
   at: (r: Ref) => Seg[] | null;
   open: (id: string) => void;
+}
+
+/** A tapped word of a grc/wlc column: its verse in that text's OWN numbering
+ *  (the interlinear data is keyed to it), word index and the word. */
+type InterFn = (r: Ref, index: number, word: string) => void;
+
+interface InterTap {
+  book: number;
+  c: number; // 1-based, the original's own
+  v: number;
+  index: number;
+  word: string;
 }
 
 function Gap({ name, other }: { name: string; other: string | null }) {
@@ -340,7 +384,7 @@ interface Col {
 // translations read alongside; "add" picks one more for it.
 // "note" edits the selected verse's note; "marks" lists bookmarks, highlights
 // and notes.
-type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans" | "topics";
+type Sheet = null | "a" | "add" | "par" | "book" | "text" | "prefs" | "search" | "note" | "marks" | "xref" | "margin" | "strongs" | "webster" | "offline" | "plans" | "topics" | "inter";
 
 /** `?with=a,b,c` in a shared link opens the reader with those translations
  *  beside the first — what the sender was looking at. */
@@ -400,6 +444,7 @@ export function App() {
   const [sBook, setSBook] = useState<{ book: number; chapters: string[][] } | null>(null);
   const [strongsId, setStrongsId] = useState<string | null>(null);
   const [dictWord, setDictWord] = useState<string | null>(null);
+  const [interTap, setInterTap] = useState<InterTap | null>(null);
   // Reading plans (plans.ts): ticked days and the daily streak, which counts
   // this opening once, as Android's Store.touchStreak on app start.
   const [planSt, setPlanSt] = useState<PlanState>(() => {
@@ -1147,6 +1192,10 @@ export function App() {
                   },
                   open: (id: string) => (setStrongsId(id), openFrom("strongs", null)),
                 };
+          // Interlinear: always live on the original-language texts, in any
+          // column (ReaderScreen.kt interPrimary / interSecondary).
+          const interOf = (c: Col): InterFn | undefined =>
+            !isOriginal(c.id) ? undefined : (x: Ref, index: number, word: string) => (setInterTap({ book: route.book, c: x.c, v: x.v, index, word }), openFrom("inter", null));
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
           const base = numOf.kind === "text" ? numOf.refs : [];
@@ -1154,7 +1203,7 @@ export function App() {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
             if (s.kind === "gap") return labelled ? <div class="gap1">{t("w_not_in", c.tiny)}</div> : <Gap name={c.name} other={nameOfText} />;
-            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} />;
           };
           if (n === 1) {
             const c = shown[0];
@@ -1164,7 +1213,7 @@ export function App() {
               <div {...common} class={common.class + " single"}>
                 {numCell("num")}
                 <div class="txt">
-                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} />
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} />
                 </div>
                 {noteEl}
               </div>
@@ -1261,9 +1310,15 @@ export function App() {
         <input type="range" min={FONT_MIN} max={FONT_MAX} step={1} value={prefs.fontSize} onInput={(e) => update({ fontSize: Number((e.target as HTMLInputElement).value) })} />
         <span class="val">{prefs.fontSize}</span>
       </label>
-      <p class="preview" style={{ fontSize: String(prefs.fontSize) + "px" }}>
+      <p class={"preview" + (prefs.serif ? "" : " sans")} style={{ fontSize: String(prefs.fontSize) + "px" }}>
         {t("w_preview")}
       </p>
+      <button type="button" class="srow" role="switch" aria-checked={prefs.serif} onClick={() => update({ serif: !prefs.serif })}>
+        <div class="st">
+          <span>{t("font_serif")}</span>
+        </div>
+        <span class={"sw" + (prefs.serif ? " on" : "")} aria-hidden="true" />
+      </button>
       <div class="modes" role="group" aria-label={t("theme")}>
         {(
           [
@@ -1426,6 +1481,8 @@ export function App() {
     );
   } else if (sheet === "strongs" && strongsId !== null) {
     sheetEl = <StrongsSheet id={strongsId} onClose={() => (setStrongsId(null), done())} />;
+  } else if (sheet === "inter" && interTap !== null) {
+    sheetEl = <InterlinearSheet tap={interTap} onClose={() => (setInterTap(null), done())} />;
   } else if (sheet === "webster" && dictWord !== null) {
     sheetEl = <WebsterSheet word={dictWord} onClose={() => (setDictWord(null), done())} />;
   } else if (sheet === "xref" && xref !== null) {
@@ -1755,7 +1812,7 @@ export function App() {
   );
 
   return (
-    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "") + (selRow !== null ? " selecting" : "")} style={style}>
+    <div class={"hx" + (wide ? " wide" : "") + (side && n > 2 ? " many" : "") + (ps.status !== "idle" ? " playing" : "") + (selRow !== null ? " selecting" : "") + (prefs.serif ? "" : " sans")} style={style}>
       {header}
       <div class="main">
         {wide && index !== null && (
@@ -2447,6 +2504,67 @@ function StrongsSheet(p: { id: string; onClose: () => void }) {
             <p class="sdef" dir="auto">
               {e.def}
             </p>
+          </>
+        )}
+      </div>
+    </Sheet>
+  );
+}
+
+// One book of interlinear tags at a time: taps within a chapter reuse it.
+let interBook: { key: string; p: Promise<string[][]> } | null = null;
+function loadInterBook(book: number): Promise<string[][]> {
+  const key = dataLang(book) + "/" + String(book);
+  if (interBook === null || interBook.key !== key) {
+    const p = loadInterlinear(dataLang(book), book);
+    p.catch(() => (interBook = null));
+    interBook = { key, p };
+  }
+  return interBook.p;
+}
+
+/** One tapped grc/wlc word: its decoded parse, then Strong's number · word ·
+ *  transliteration and the definition (ReaderScreen.kt InterlinearWordDialog). */
+function InterlinearSheet(p: { tap: InterTap; onClose: () => void }) {
+  const { book, c, v, index, word } = p.tap;
+  const [got, setGot] = useState<{ tag: [string, string] | null; lex: Lexicon | null } | null>(null);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    let live = true;
+    setGot(null);
+    loadInterBook(book)
+      .then(async (chapters) => {
+        const tag = interWord(chapters[c - 1]?.[v - 1], index);
+        return { tag, lex: tag === null ? null : await loadLexicon() };
+      })
+      .then(
+        (g) => live && setGot(g),
+        () => live && setErr(true),
+      );
+    return () => {
+      live = false;
+    };
+  }, [book, c, v, index]);
+  const tag = got?.tag ?? null;
+  const e = tag === null ? undefined : got?.lex?.[tag[0]];
+  return (
+    <Sheet title={word} onClose={p.onClose}>
+      <div class="strongs inter">
+        {err ? (
+          <p class="hint">{t("w_dict_failed")}</p>
+        ) : got === null ? (
+          <p class="hint">{t("w_loading")}</p>
+        ) : tag === null ? (
+          <p class="hint">{t("interlinear_none")}</p>
+        ) : (
+          <>
+            <p class="ssub">{decodeMorph(t, book, tag[1])}</p>
+            <p class="shead">{[tag[0], e?.word ?? "", e?.translit ?? ""].filter((x) => x.trim() !== "").join(" · ")}</p>
+            {e !== undefined && (
+              <p class="sdef" dir="auto">
+                {e.def}
+              </p>
+            )}
           </>
         )}
       </div>

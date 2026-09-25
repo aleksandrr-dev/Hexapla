@@ -28,6 +28,9 @@ export interface Prefs {
   /** "all", or the one translation id read alone (the Show bar). */
   show: string;
   fontSize: number;
+  /** Literata (or the script's own serif) for the reading text; off = the
+   *  device's sans-serif (Android's «Serif font», ReadingFont.kt). */
+  serif: boolean;
   theme: Theme;
   layout: Layout;
   // ---- Listening: the Android `Store.kt` defaults (player.ts AudioPrefs) ----
@@ -68,6 +71,7 @@ export const DEFAULTS: Prefs = {
   parallel: [],
   show: "all",
   fontSize: 19,
+  serif: true,
   theme: "auto",
   layout: "auto",
   rate: 1,
@@ -143,6 +147,7 @@ export function migrate(p: Record<string, unknown>): Prefs {
     parallel,
     show,
     fontSize: size,
+    serif: bool(p.serif, DEFAULTS.serif),
     theme: p.theme === "light" || p.theme === "dark" || p.theme === "auto" ? p.theme : DEFAULTS.theme,
     layout: p.layout === "side" || p.layout === "stacked" || p.layout === "auto" ? p.layout : DEFAULTS.layout,
     rate: num(p.rate, RATE_MIN, RATE_MAX, DEFAULTS.rate),

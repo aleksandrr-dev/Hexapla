@@ -643,13 +643,35 @@ fun ReaderScreen(settings: AppSettings) {
                         // render as a small label above their verse.
                         if (rubricsReady)
                             Rubrics.labels(settings.primaryId, book, chapter + 1, i + 1)?.let { r ->
-                                Text(
-                                    r.joinToString("   "),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontStyle = FontStyle.Italic,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(bottom = 2.dp)
-                                )
+                                if (r.none { it.length > Rubrics.LONG })
+                                    Text(
+                                        r.joinToString("   "),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontStyle = FontStyle.Italic,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.padding(bottom = 2.dp)
+                                    )
+                                // Front matter (the KJV's two Sirach prologues):
+                                // short rows are headings, long rows are prose
+                                // set in the reading font, one block each.
+                                else r.forEach { t ->
+                                    if (t.length > Rubrics.LONG)
+                                        Text(
+                                            t,
+                                            fontFamily = fontFamily,
+                                            fontSize = settings.fontSize.sp,
+                                            lineHeight = (settings.fontSize * 1.45f).sp,
+                                            modifier = Modifier.padding(bottom = 12.dp)
+                                        )
+                                    else
+                                        Text(
+                                            t,
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontStyle = FontStyle.Italic,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.padding(bottom = 4.dp)
+                                        )
+                                }
                             }
                         if (settings.splitEnabled && secondaryAligned != null) {
                             val (second, secondPos, secondMargin) = secondaryAligned.getOrNull(i)
@@ -685,6 +707,18 @@ fun ReaderScreen(settings: AppSettings) {
                         } else {
                             VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                         }
+                        // Rubrics the print sets after a verse (the Bakar's
+                        // lection marks, a book's closing colophon).
+                        if (rubricsReady)
+                            Rubrics.after(settings.primaryId, book, chapter + 1, i + 1, i == verses.lastIndex)?.forEach { t ->
+                                Text(
+                                    t,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontStyle = FontStyle.Italic,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
                         if (noteText != null) {
                             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(

@@ -17,7 +17,7 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 
 | Feature | Where |
 |---|---|
-| 35 texts — 33 translations across 29 languages, plus the Hebrew and Greek originals (see table below) | Settings → Primary translation |
+| 37 translations in 31 languages, counting the Hebrew and Greek originals (see table below) | Settings → Primary translation |
 | Split view, two translations verse-locked | Settings → Split view (side-by-side or stacked) |
 | Verse comparison across all translations at once | Long-press verse → Compare translations (set in Settings) |
 | Strong's numbers with Hebrew/Greek lexicon (KJV) | Settings → Strong's numbers; tap a number in the text |
@@ -41,7 +41,7 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 
 ## Included texts (all public domain)
 
-**35 texts — 33 translations across 29 languages, plus the Hebrew and Greek originals.** Coverage below is derived from the shipped assets, not claimed.
+**37 translations in 31 languages, counting the Hebrew and Greek originals (the two Chinese Union scripts count once).** Coverage below is derived from the shipped assets, not claimed.
 
 ### Original languages
 | Text | Language | Coverage |
@@ -86,8 +86,11 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 | الكتاب المقدس — Van Dyck, 1865 | Arabic | Full |
 | பரிசுத்த வேதாகமம் — IRV, 2019 | Tamil | Full |
 | सत्यवेदः — Sanskrit NT, 1851 | Sanskrit | NT |
-| Նոր Կտակարան, 1853 | Western Armenian | NT |
-| عهد جدید — Henry Martyn, 1876 | Persian | NT |
+| Աստուածաշունչ — Zohrab OT 1805 + Western Armenian NT 1853 | Armenian | Full + deuterocanonical |
+| Աստուածաշունչ — Զոհրապեան, 1805 | Classical Armenian | Full + deuterocanonical |
+| ბიბლია — Bakar edition, 1743 | Georgian | Full + deuterocanonical |
+| Kitâb-ı Mukaddes — Kieffer, 1827 (OsmKelam transcription) | Turkish | Full |
+| کتاب مقدس — Glen OT 1856 + Martyn NT 1876 | Persian | Full |
 | Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 | Belarusian | NT + Psalms |
 
 All translations follow the Textus Receptus / Masoretic tradition — deliberately no Critical Text editions. Each candidate is checked against a seven-verse deity litmus (1 Tim 3:16, the Johannine Comma, Acts 8:37, Rom 16:24, Luke 2:33, Acts 20:28, John 3:13) before it ships; texts that fail are rejected regardless of how good the digitization is.

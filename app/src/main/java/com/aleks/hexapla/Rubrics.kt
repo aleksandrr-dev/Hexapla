@@ -41,6 +41,9 @@ object Rubrics {
         // KJV 1611 front matter: the two unnumbered Sirach prologues above
         // Sir 1:1 (owner 2026-09-26), from tools/build_kjv_rubrics.py.
         "kjv" to "rubrics_kjv.json",
+        // Ali Bey 1665 (Kadir Akın's transliteration) in the Turkish column:
+        // Sirach's two prologues above Sir 1:1, from tools/wire_alibey_apoc.py.
+        "kie" to "rubrics_kie.json",
     )
 
     /** A label longer than this is prose (a prologue), not a rubric label. */

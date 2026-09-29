@@ -17,7 +17,7 @@
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { loadBook, loadBooksIndex, loadInterlinear, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster } from "./data";
+import { loadBook, loadBooksIndex, loadInterlinear, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster, loadInitials, type InitialsData } from "./data";
 import { dataLang, decode as decodeMorph, isOriginal, tokens as interTokens, word as interWord } from "./interlinear";
 import { afterCap, lexiconLang, mergeLexicon, shown as shownSegs, shownNumber, shownText, subline, type Lexicon, type Seg } from "./strongs";
 import { chapterRows, type Row, type Side } from "./parallel";
@@ -325,17 +325,21 @@ interface Sounding {
   word: [number, number] | null;
 }
 
-function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs, inter }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn; inter?: InterFn }) {
+function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs, inter, initial }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn; inter?: InterFn; initial?: (r: Ref) => boolean }) {
   if (side.kind === "gap") return null;
   return (
     <>
       {side.texts.map((t, i) => {
         const r = side.refs[i];
-        const cap = !noCap && opensChapter(r, chapter) && i === 0;
+        const opens = !noCap && opensChapter(r, chapter) && i === 0;
+        // A MID-chapter printed initial keeps its verse number, as the print
+        // does (Karl XII 1703); a column's own verse 1 elsewhere never caps.
+        const mid = !noCap && !opens && r.v !== 1 && initial !== undefined && initial(r);
+        const cap = opens || mid;
         const word = hl !== null && hl.c === r.c && hl.v === r.v ? hl.word : null;
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
-            {showNum && !cap && <span class="inum">{refLabel([r], chapter)}</span>}
+            {showNum && !opens && <span class="inum">{refLabel([r], chapter)}</span>}
             <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} segs={strongs === undefined ? null : strongs.at(r)} onId={strongs?.open} inter={inter === undefined ? undefined : (w, word) => inter(r, w, word)} />
           </div>
         );
@@ -471,6 +475,7 @@ export function App() {
   // The versemap for every mark (63 KB, the same cached fetch the parallel
   // view uses): a note's key is the KJV position, whatever is being read.
   const [vmAll, setVmAll] = useState<VerseMapData | null>(null);
+  const [initials, setInitials] = useState<InitialsData | null>(null);
   const [noteEdit, setNoteEdit] = useState<{ key: string; label: string; text: string } | null>(null);
   // The row whose cross-references are open: its KJV keys, as marks use.
   const [xref, setXref] = useState<{ keys: string[]; label: string } | null>(null);
@@ -535,6 +540,7 @@ export function App() {
   useEffect(() => {
     loadManifest().then(setManifest, (e) => setError(String(e)));
     loadVersemap().then(setVmAll, () => undefined);
+    loadInitials().then(setInitials, () => undefined);
     const reload = () =>
       void loadMarks().then((m) => {
         if (m === null) return setStored(false);
@@ -1269,6 +1275,11 @@ export function App() {
           // column (ReaderScreen.kt interPrimary / interSecondary).
           const interOf = (c: Col): InterFn | undefined =>
             !isOriginal(c.id) ? undefined : (x: Ref, index: number, word: string) => (setInterTap({ book: route.book, c: x.c, v: x.v, index, word }), openFrom("inter", null));
+          // Printed initials in the column's own versification (data.ts).
+          const initialOf = (c: Col): ((x: Ref) => boolean) | undefined => {
+            const chs = initials?.[c.id]?.[String(route.book)];
+            return chs === undefined ? undefined : (x: Ref) => chs[x.c - 1]?.includes(x.v - 1) === true;
+          };
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
           const base = numOf.kind === "text" ? numOf.refs : [];
@@ -1276,7 +1287,7 @@ export function App() {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
             if (s.kind === "gap") return labelled ? <div class="gap1">{t("w_not_in", c.tiny)}</div> : <Gap name={c.name} other={nameOfText} />;
-            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} initial={initialOf(c)} />;
           };
           if (n === 1) {
             const c = shown[0];
@@ -1286,7 +1297,7 @@ export function App() {
               <div {...common} class={common.class + " single"}>
                 {numCell("num")}
                 <div class="txt">
-                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} />
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} initial={initialOf(c)} />
                 </div>
                 {noteEl}
               </div>

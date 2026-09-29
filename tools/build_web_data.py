@@ -78,6 +78,7 @@ AUX_WHOLE_COPIES = (
     "strongs_lexicon_ru.json",
     "audio_index.json",
     "audio_index_gen.json",
+    "initials.json",
 )
 
 # Splits keyed by an integer book index threaded through the same 0-based

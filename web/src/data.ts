@@ -78,6 +78,14 @@ export function loadVersemap(): Promise<VerseMapData> {
   return fetchJson<VerseMapData>("data/versemap.json");
 }
 
+/** `data/initials.json` — printed initials, `{id: {"<book>": [[0-based
+ *  verses] per chapter]}}` in each translation's OWN versification
+ *  (tools/harvest_initials.py; Android `Initials`). */
+export type InitialsData = Record<string, Record<string, number[][]>>;
+export function loadInitials(): Promise<InitialsData> {
+  return fetchJson<InitialsData>("data/initials.json");
+}
+
 /** `data/audio_index.json` — LibriVox sections (audio.ts LibriVoxIndex). */
 export function loadLibriVoxIndex(): Promise<LibriVoxIndex> {
   return fetchJson<LibriVoxIndex>("data/audio_index.json");

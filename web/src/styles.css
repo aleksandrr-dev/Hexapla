@@ -187,7 +187,12 @@ a:hover { color: var(--lea); }
 .vt.cjk { text-align: justify; line-break: strict; line-height: 1.8; text-spacing-trim: space-all; }
 .vpart + .vpart { margin-top: 4px; }
 .inum { float: inline-start; font-size: 11px; font-weight: 700; color: var(--ox); margin-inline-end: 6px; padding-top: calc(var(--fs) * 0.3); font-family: Literata, Georgia, serif; }
-.dropcap { float: inline-start; font-size: calc(var(--fs) * 3.1); line-height: 0.86; font-weight: 700; color: var(--ox); padding-block-start: 4px; padding-inline-end: 8px; font-style: normal; }
+/* A true two-line initial: cap height = line 1's cap top to line 2's baseline
+   (Literata cap 0.73 em, body line-height 1.6 -> 3.19x; line-height 0.91
+   seats its baseline on line 2's). All in em, so it holds at every font size.
+   A one-line verse raises it instead (.one, set by dropcap.ts). */
+.dropcap { float: inline-start; font-size: calc(var(--fs) * 3.19); line-height: 0.91; font-weight: 700; color: var(--ox); padding-inline-end: 8px; font-style: normal; }
+.dropcap.one { float: none; line-height: 1; padding-inline-end: 4px; }
 
 .gap { border: 1.5px dashed var(--ol); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
 .gap-h { font-size: 13.5px; font-weight: 600; color: var(--ox); }

@@ -26,6 +26,7 @@ import { voiceKey } from "./speech";
 import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
 import { directionOf, dropCapEnd, isCjk, opensChapter } from "./text";
+import { fitCap } from "./dropcap";
 import { SEARCH_CAP, SEARCH_MIN, type SearchHit } from "./search";
 import type { SearchMsg, SearchReq } from "./search.worker";
 // Unicode License v3 + Apache-2.0: the fold table's notice travels with it.
@@ -262,13 +263,23 @@ function interWords(text: string, from: number, onWord: (i: number, w: string) =
 }
 
 function VerseText({ text, lang, cap, cls, word = null, after = null, segs = null, onId, inter }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null; segs?: Seg[] | null; onId?: (id: string) => void; inter?: (i: number, w: string) => void }) {
+  // A one-line verse 1 raises its cap (dropcap.ts); re-fit on every reflow.
+  const capRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const vt = capRef.current;
+    if (vt === null || !cap) return;
+    fitCap(vt);
+    const ro = new ResizeObserver(() => fitCap(vt));
+    ro.observe(vt);
+    return () => ro.disconnect();
+  }, [cap, text, segs, word]);
   if (segs !== null && onId !== undefined) {
     // Word ranges index the plain text; the tagged text shows none (Android).
     const plain = shownText(segs);
     const dir = directionOf(plain) ?? undefined;
     const end = cap ? dropCapEnd(plain) : -1;
     return (
-      <div class={cls} lang={lang} dir={dir}>
+      <div ref={capRef} class={cls} lang={lang} dir={dir}>
         {end >= 0 && (
           <>
             <span class="dropcap" aria-hidden="true">
@@ -296,7 +307,7 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
     );
   }
   return (
-    <div class={c} lang={lang} dir={dir}>
+    <div ref={capRef} class={c} lang={lang} dir={dir}>
       <span class="dropcap" aria-hidden="true">
         {text.slice(0, end)}
       </span>

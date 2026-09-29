@@ -86,6 +86,18 @@ export function loadInitials(): Promise<InitialsData> {
   return fetchJson<InitialsData>("data/initials.json");
 }
 
+/** `data/woodcuts.json` — the print's own initials cut from the scans
+ *  (tools/build_woodcut_assets.py), `{id: {"<book>": ["c:v", ...]}}`, 1-based,
+ *  in the translation's own versification; each key has an image at
+ *  {@link woodcutUrl}. Android reads the same files from assets/woodcuts/. */
+export type WoodcutData = Record<string, Record<string, string[]>>;
+export function loadWoodcuts(): Promise<WoodcutData> {
+  return fetchJson<WoodcutData>("data/woodcuts.json");
+}
+export function woodcutUrl(id: string, book: number, c: number, v: number): string {
+  return url("data/woodcuts/" + id + "/" + String(book) + "_" + String(c) + "_" + String(v) + ".png");
+}
+
 /** `data/audio_index.json` — LibriVox sections (audio.ts LibriVoxIndex). */
 export function loadLibriVoxIndex(): Promise<LibriVoxIndex> {
   return fetchJson<LibriVoxIndex>("data/audio_index.json");

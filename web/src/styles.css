@@ -193,6 +193,15 @@ a:hover { color: var(--lea); }
    A one-line verse raises it instead (.one, set by dropcap.ts). */
 .dropcap { float: inline-start; font-size: calc(var(--fs) * 3.19); line-height: 0.91; font-weight: 700; color: var(--ox); padding-inline-end: 8px; font-style: normal; }
 .dropcap.one { float: none; line-height: 1; padding-inline-end: 4px; }
+/* The print's own woodcut (data/woodcuts/): the image fills the letter's
+   two-line box (0.91em of the cap's size); black ink on alpha, inverted in
+   the dark theme. */
+.dropcap.wc img { display: inline-block; height: 0.91em; width: auto; vertical-align: top; }
+.dropcap.wc.one img { vertical-align: baseline; }
+:root[data-theme="dark"] .dropcap.wc img { filter: invert(0.88); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dropcap.wc img { filter: invert(0.88); }
+}
 
 .gap { border: 1.5px dashed var(--ol); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
 .gap-h { font-size: 13.5px; font-weight: 600; color: var(--ox); }

@@ -17,7 +17,7 @@
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { loadBook, loadBooksIndex, loadInterlinear, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster, loadInitials, type InitialsData } from "./data";
+import { loadBook, loadBooksIndex, loadInterlinear, loadManifest, loadStrongsBook, loadStrongsLexicon, loadVersemap, loadWebster, loadInitials, loadWoodcuts, woodcutUrl, type InitialsData, type WoodcutData } from "./data";
 import { dataLang, decode as decodeMorph, isOriginal, tokens as interTokens, word as interWord } from "./interlinear";
 import { afterCap, lexiconLang, mergeLexicon, shown as shownSegs, shownNumber, shownText, subline, type Lexicon, type Seg } from "./strongs";
 import { chapterRows, type Row, type Side } from "./parallel";
@@ -262,7 +262,11 @@ function interWords(text: string, from: number, onWord: (i: number, w: string) =
   return out;
 }
 
-function VerseText({ text, lang, cap, cls, word = null, after = null, segs = null, onId, inter }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null; segs?: Seg[] | null; onId?: (id: string) => void; inter?: (i: number, w: string) => void }) {
+function VerseText({ text, lang, cap, cls, word = null, after = null, segs = null, onId, inter, img = null }: { text: string; lang: string; cap: boolean; cls: string; word?: [number, number] | null; after?: JSX.Element | null; segs?: Seg[] | null; onId?: (id: string) => void; inter?: (i: number, w: string) => void; img?: string | null }) {
+  // A woodcut drop cap (the print's own initial, cut from the scan) draws
+  // the image in place of the letter; the letter stays for screen readers.
+  const capBody = (s: string) => (img !== null ? <img src={img} alt="" /> : s);
+  const capCls = img !== null ? "dropcap wc" : "dropcap";
   // A one-line verse 1 raises its cap (dropcap.ts); re-fit on every reflow.
   const capRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -282,8 +286,8 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
       <div ref={capRef} class={cls} lang={lang} dir={dir}>
         {end >= 0 && (
           <>
-            <span class="dropcap" aria-hidden="true">
-              {plain.slice(0, end)}
+            <span class={capCls} aria-hidden="true">
+              {capBody(plain.slice(0, end))}
             </span>
             <span class="sr">{plain.slice(0, end)}</span>
           </>
@@ -308,8 +312,8 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
   }
   return (
     <div ref={capRef} class={c} lang={lang} dir={dir}>
-      <span class="dropcap" aria-hidden="true">
-        {text.slice(0, end)}
+      <span class={capCls} aria-hidden="true">
+        {capBody(text.slice(0, end))}
       </span>
       <span class="sr">{text.slice(0, end)}</span>
       {body(end)}
@@ -325,7 +329,7 @@ interface Sounding {
   word: [number, number] | null;
 }
 
-function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs, inter, initial }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn; inter?: InterFn; initial?: (r: Ref) => boolean }) {
+function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null, margin, strongs, inter, initial, woodcut }: { side: Side; lang: string; cls: string; chapter: number; showNum: boolean; noCap?: boolean; hl?: Sounding | null; margin?: MarginFn; strongs?: StrongsFn; inter?: InterFn; initial?: (r: Ref) => boolean; woodcut?: (r: Ref) => string | null }) {
   if (side.kind === "gap") return null;
   return (
     <>
@@ -336,11 +340,12 @@ function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null,
         // does (Karl XII 1703); a column's own verse 1 elsewhere never caps.
         const mid = !noCap && !opens && r.v !== 1 && initial !== undefined && initial(r);
         const cap = opens || mid;
+        const img = cap && woodcut !== undefined ? woodcut(r) : null;
         const word = hl !== null && hl.c === r.c && hl.v === r.v ? hl.word : null;
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
             {showNum && !opens && <span class="inum">{refLabel([r], chapter)}</span>}
-            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} segs={strongs === undefined ? null : strongs.at(r)} onId={strongs?.open} inter={inter === undefined ? undefined : (w, word) => inter(r, w, word)} />
+            <VerseText text={t} lang={lang} cap={cap} cls={cls} word={word} after={margin === undefined ? null : margin(r)} segs={strongs === undefined ? null : strongs.at(r)} onId={strongs?.open} inter={inter === undefined ? undefined : (w, word) => inter(r, w, word)} img={img} />
           </div>
         );
       })}
@@ -476,6 +481,7 @@ export function App() {
   // view uses): a note's key is the KJV position, whatever is being read.
   const [vmAll, setVmAll] = useState<VerseMapData | null>(null);
   const [initials, setInitials] = useState<InitialsData | null>(null);
+  const [woodcuts, setWoodcuts] = useState<WoodcutData | null>(null);
   const [noteEdit, setNoteEdit] = useState<{ key: string; label: string; text: string } | null>(null);
   // The row whose cross-references are open: its KJV keys, as marks use.
   const [xref, setXref] = useState<{ keys: string[]; label: string } | null>(null);
@@ -541,6 +547,7 @@ export function App() {
     loadManifest().then(setManifest, (e) => setError(String(e)));
     loadVersemap().then(setVmAll, () => undefined);
     loadInitials().then(setInitials, () => undefined);
+    loadWoodcuts().then(setWoodcuts, () => undefined);
     const reload = () =>
       void loadMarks().then((m) => {
         if (m === null) return setStored(false);
@@ -1276,9 +1283,16 @@ export function App() {
           const interOf = (c: Col): InterFn | undefined =>
             !isOriginal(c.id) ? undefined : (x: Ref, index: number, word: string) => (setInterTap({ book: route.book, c: x.c, v: x.v, index, word }), openFrom("inter", null));
           // Printed initials in the column's own versification (data.ts).
+          // A woodcut cut from the scan is itself a record of a printed initial.
           const initialOf = (c: Col): ((x: Ref) => boolean) | undefined => {
             const chs = initials?.[c.id]?.[String(route.book)];
-            return chs === undefined ? undefined : (x: Ref) => chs[x.c - 1]?.includes(x.v - 1) === true;
+            const wc = woodcuts?.[c.id]?.[String(route.book)];
+            if (chs === undefined && wc === undefined) return undefined;
+            return (x: Ref) => chs?.[x.c - 1]?.includes(x.v - 1) === true || wc?.includes(String(x.c) + ":" + String(x.v)) === true;
+          };
+          const woodcutOf = (c: Col): ((x: Ref) => string | null) | undefined => {
+            const wc = woodcuts?.[c.id]?.[String(route.book)];
+            return wc === undefined ? undefined : (x: Ref) => (wc.includes(String(x.c) + ":" + String(x.v)) ? woodcutUrl(c.id, route.book, x.c, x.v) : null);
           };
           // A verse number inside a cell only where that column's verses
           // differ from the row's own numbering.
@@ -1287,7 +1301,7 @@ export function App() {
             const s = c.side(r);
             const nameOfText = shown.find((x) => x !== c && x.side(r).kind === "text")?.name ?? null;
             if (s.kind === "gap") return labelled ? <div class="gap1">{t("w_not_in", c.tiny)}</div> : <Gap name={c.name} other={nameOfText} />;
-            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} initial={initialOf(c)} />;
+            return <SideText side={s} lang={c.lang} cls={secondary && !side ? "vt b" : "vt"} chapter={chapNo} showNum={s.refs.length > 1 || (secondary && !sameRefs(s.refs, base))} noCap={labelled && secondary && !side} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} initial={initialOf(c)} woodcut={woodcutOf(c)} />;
           };
           if (n === 1) {
             const c = shown[0];
@@ -1297,7 +1311,7 @@ export function App() {
               <div {...common} class={common.class + " single"}>
                 {numCell("num")}
                 <div class="txt">
-                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} initial={initialOf(c)} />
+                  <SideText side={s} lang={c.lang} cls="vt" chapter={chapNo} showNum={s.refs.length > 1} hl={c === cols[0] && sChapters === null ? sounding : null} margin={marginOf(c)} strongs={strongsOf(c)} inter={interOf(c)} initial={initialOf(c)} woodcut={woodcutOf(c)} />
                 </div>
                 {noteEl}
               </div>

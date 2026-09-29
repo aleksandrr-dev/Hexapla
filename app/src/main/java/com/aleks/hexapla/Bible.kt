@@ -7,6 +7,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.util.Locale
+import androidx.compose.ui.graphics.asImageBitmap
 
 data class Translation(
     val id: String,
@@ -578,6 +579,101 @@ object RedLetters {
             }
             m
         }.also { cache = it }
+    }
+}
+
+/* ---------------- Printed initials ----------------
+   Where a print sets a woodcut initial, in the translation's OWN
+   versification (tools/harvest_initials.py). Includes MID-chapter initials,
+   which no rule on verse 1 can reproduce (Karl XII 1703, 1 Macc 6:5). */
+
+object Initials {
+    private var cache: Map<String, Map<Int, List<Set<Int>>>>? = null
+    private val initMutex = Mutex()
+
+    /** Translation id → book index → per-chapter sets of 0-based verse indexes. */
+    suspend fun load(context: Context): Map<String, Map<Int, List<Set<Int>>>> = initMutex.withLock {
+        cache ?: withContext(Dispatchers.IO) {
+            val o = org.json.JSONObject(
+                context.assets.open("initials.json").readBytes().toString(Charsets.UTF_8)
+            )
+            val out = HashMap<String, Map<Int, List<Set<Int>>>>()
+            for (id in o.keys()) {
+                val books = o.getJSONObject(id)
+                val m = HashMap<Int, List<Set<Int>>>()
+                for (k in books.keys()) {
+                    val arr = books.getJSONArray(k)
+                    m[k.toInt()] = (0 until arr.length()).map { c ->
+                        val vs = arr.getJSONArray(c)
+                        (0 until vs.length()).map { vs.getInt(it) }.toSet()
+                    }
+                }
+                out[id] = m
+            }
+            out
+        }.also { cache = it }
+    }
+
+    /** True when the print opens (chapter, verse), both 0-based, with an initial. */
+    fun has(all: Map<String, Map<Int, List<Set<Int>>>>?, id: String, book: Int, chapter: Int, verse: Int) =
+        all?.get(id)?.get(book)?.getOrNull(chapter)?.contains(verse) == true
+}
+
+/* ---------------- Woodcut initials ----------------
+   The print's own initials cut from the scans (tools/build_woodcut_assets.py):
+   assets/woodcuts.json {id: {"<book>": ["c:v", ...]}} (1-based, the column's
+   own versification) and assets/woodcuts/<id>/<book>_<c>_<v>.png, black ink
+   on alpha - tinted to the text colour when drawn. Same files as the web. */
+
+object Woodcuts {
+    private var cache: Map<String, Map<Int, Set<String>>>? = null
+    private val initMutex = Mutex()
+    private val bitmaps = HashMap<String, androidx.compose.ui.graphics.ImageBitmap?>()
+
+    suspend fun load(context: Context): Map<String, Map<Int, Set<String>>> = initMutex.withLock {
+        cache ?: withContext(Dispatchers.IO) {
+            val out = HashMap<String, Map<Int, Set<String>>>()
+            val o = try {
+                org.json.JSONObject(context.assets.open("woodcuts.json").readBytes().toString(Charsets.UTF_8))
+            } catch (e: java.io.IOException) {
+                null
+            }
+            if (o != null) for (id in o.keys()) {
+                val books = o.getJSONObject(id)
+                val m = HashMap<Int, Set<String>>()
+                for (k in books.keys()) {
+                    val arr = books.getJSONArray(k)
+                    m[k.toInt()] = (0 until arr.length()).map { arr.getString(it) }.toSet()
+                }
+                out[id] = m
+            }
+            out
+        }.also { cache = it }
+    }
+
+    /** True when (chapter, verse), both 0-based, has a woodcut. */
+    fun has(all: Map<String, Map<Int, Set<String>>>?, id: String, book: Int, chapter: Int, verse: Int) =
+        all?.get(id)?.get(book)?.contains("${chapter + 1}:${verse + 1}") == true
+
+    /** The woodcut for (chapter, verse), both 0-based, or null. A few KB each,
+     *  decoded once and kept. */
+    fun bitmap(
+        context: Context, all: Map<String, Map<Int, Set<String>>>?,
+        id: String, book: Int, chapter: Int, verse: Int
+    ): androidx.compose.ui.graphics.ImageBitmap? {
+        if (!has(all, id, book, chapter, verse)) return null
+        val path = "woodcuts/$id/${book}_${chapter + 1}_${verse + 1}.png"
+        return synchronized(bitmaps) {
+            bitmaps.getOrPut(path) {
+                try {
+                    context.assets.open(path).use {
+                        android.graphics.BitmapFactory.decodeStream(it)
+                    }?.asImageBitmap()
+                } catch (e: java.io.IOException) {
+                    null
+                }
+            }
+        }
     }
 }
 

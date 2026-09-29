@@ -136,6 +136,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextLayoutResult
+import kotlin.math.roundToInt
 
 
 /** Shown in place of a verse the edition genuinely lacks, in SPLIT view only —
@@ -302,6 +308,12 @@ fun ReaderScreen(settings: AppSettings) {
     LaunchedEffect(settings.redLetters) {
         redLetters = if (settings.redLetters) RedLetters.load(context) else null
     }
+    // Printed initials, including the print's MID-chapter ones.
+    var initials by remember { mutableStateOf<Map<String, Map<Int, List<Set<Int>>>>?>(null) }
+    LaunchedEffect(Unit) { initials = Initials.load(context) }
+    // The print's own initials, cut from the scans (Karl XII 1703).
+    var woodcuts by remember { mutableStateOf<Map<String, Map<Int, Set<String>>>?>(null) }
+    LaunchedEffect(Unit) { woodcuts = Woodcuts.load(context) }
 
     // Strong's overlay: tagged KJV text used for display only.
     var strongsBooks by remember { mutableStateOf<List<Book>?>(null) }
@@ -606,6 +618,12 @@ fun ReaderScreen(settings: AppSettings) {
                     val red = redLetters?.get(book)?.let { chs ->
                         chs.getOrNull(kc - 1)?.contains(kv - 1)
                     } == true
+                    // A MID-chapter printed initial (verse 1 already gets one).
+                    val primaryInitial = i != 0 &&
+                        (Initials.has(initials, settings.primaryId, book, chapter, i) ||
+                            Woodcuts.has(woodcuts, settings.primaryId, book, chapter, i))
+                    // The woodcut itself, drawn in place of the letter.
+                    val primaryWoodcut = Woodcuts.bitmap(context, woodcuts, settings.primaryId, book, chapter, i)
                     val tagged = strongsBooks?.getOrNull(book)?.chapters
                         ?.getOrNull(chapter)?.getOrNull(i)
                     // Word ranges refer to the plain text; skip them when the
@@ -685,27 +703,34 @@ fun ReaderScreen(settings: AppSettings) {
                             val secondTap = if (interSecondary && secondPos.first == chapter + 1)
                                 ({ w: Int, t: String -> interTap = Triple(secondPos.second - 1, w, t) })
                             else null
+                            // A printed initial on the secondary's own verse;
+                            // its verse 1 opens a cap only on row 0 (as on web).
+                            val secondInitial = i != 0 && secondPos.second != 1 &&
+                                (Initials.has(initials, settings.secondaryId, book, secondPos.first - 1, secondPos.second - 1) ||
+                                    Woodcuts.has(woodcuts, settings.secondaryId, book, secondPos.first - 1, secondPos.second - 1))
+                            val secondWoodcut = Woodcuts.bitmap(context, woodcuts, settings.secondaryId, book, secondPos.first - 1, secondPos.second - 1)
                             if (settings.splitHorizontal) {
                                 Row(Modifier.fillMaxWidth()) {
-                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
+                                    VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0 || primaryInitial, keepNumber = primaryInitial, woodcut = primaryWoodcut, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                                     Spacer(Modifier.width(12.dp))
-                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onSecondMargin)
+                                    VerseText(i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.weight(1f), onWord = if (dictSecondary) ({ dictWord = it }) else null, onWordIndexed = secondTap, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0 || secondInitial, keepNumber = secondInitial, woodcut = secondWoodcut, onLongPress = { actionVerse = i }, onMargin = onSecondMargin)
                                 }
                             } else {
-                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
+                                VerseText(i + 1, verse.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0 || primaryInitial, keepNumber = primaryInitial, woodcut = primaryWoodcut, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                                 Spacer(Modifier.height(4.dp))
                                 VerseText(
                                     i + 1, second.ifBlank { EMPTY_VERSE }, settings.fontSize, fontFamily,
                                     Modifier.fillMaxWidth(), secondary = true,
                                     onWord = if (dictSecondary) ({ dictWord = it }) else null,
                                     onWordIndexed = secondTap,
-                                    red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0,
+                                    red = red, showNumber = !settings.hideVerseNumbers,
+                                    dropCap = i == 0 || secondInitial, keepNumber = secondInitial, woodcut = secondWoodcut,
                                     onLongPress = { actionVerse = i },
                                     onMargin = onSecondMargin
                                 )
                             }
                         } else {
-                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
+                            VerseText(i + 1, verse, settings.fontSize, fontFamily, Modifier.fillMaxWidth(), spokenRange = spoken, taggedText = tagged, onStrongs = { strongsId = it }, onWord = if (dictPrimary) ({ dictWord = it }) else null, onWordIndexed = if (interPrimary) ({ w, t -> interTap = Triple(i, w, t) }) else null, red = red, showNumber = !settings.hideVerseNumbers, dropCap = i == 0 || primaryInitial, keepNumber = primaryInitial, woodcut = primaryWoodcut, onLongPress = { actionVerse = i }, onMargin = onPrimaryMargin)
                         }
                         // Rubrics the print sets after a verse (the Bakar's
                         // lection marks, a book's closing colophon).
@@ -1296,6 +1321,8 @@ private fun VerseText(
     red: Boolean = false,
     showNumber: Boolean = true,
     dropCap: Boolean = false,
+    keepNumber: Boolean = false,
+    woodcut: ImageBitmap? = null,
     onLongPress: (() -> Unit)? = null,
     onMargin: (() -> Unit)? = null
 ) {
@@ -1403,16 +1430,25 @@ private fun VerseText(
     }
     val capEnd = if (dropCap) dropCapEnd(annotated.text) else -1
     if (capEnd > 0) {
-        // The initial stands in for the verse number, as in print.
-        DropCapText(
-            annotated, capEnd,
-            TextStyle(
-                fontSize = fontSize.sp, lineHeight = (fontSize * 1.45f).sp,
-                fontFamily = fontFamily, color = textColor
-            ),
-            capColor = if (red) redColor else MaterialTheme.colorScheme.primary,
-            modifier = rowModifier
+        val capStyle = TextStyle(
+            fontSize = fontSize.sp, lineHeight = (fontSize * 1.45f).sp,
+            fontFamily = fontFamily, color = textColor
         )
+        val capColor = if (red) redColor else MaterialTheme.colorScheme.primary
+        // A chapter's initial stands in for the verse number, as in print; a
+        // MID-chapter one keeps its number beside it (Karl XII 1703 does).
+        if (keepNumber && showNumber) {
+            Row(rowModifier) {
+                Text(
+                    localDigits("$number"),
+                    fontSize = (fontSize * 0.65f).sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(end = 6.dp, top = 2.dp)
+                )
+                DropCapText(annotated, capEnd, capStyle, capColor, Modifier.weight(1f), image = woodcut)
+            }
+        } else DropCapText(annotated, capEnd, capStyle, capColor, modifier = rowModifier, image = woodcut)
         return
     }
     // A verse is laid out in its OWN direction, not the UI's: a Persian verse
@@ -1512,10 +1548,15 @@ private fun DropCapText(
     capEnd: Int,
     style: TextStyle,
     capColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    image: ImageBitmap? = null
 ) {
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
+    if (image != null) {
+        WoodcutDropCap(annotated.subSequence(capEnd, annotated.length), image, style, modifier)
+        return
+    }
     val capStyle = style.copy(
         fontSize = style.fontSize * 2.9f, lineHeight = style.fontSize * 2.9f,
         fontWeight = FontWeight.Bold, fontStyle = FontStyle.Normal, color = capColor
@@ -1557,6 +1598,56 @@ private fun DropCapText(
                         start = with(density) { (capLayout.size.width + gap).toDp() },
                         top = with(density) { bodyTop.toDp() }
                     )
+                )
+                if (split < body.length) Text(body.subSequence(split, body.length), style = style)
+            }
+        }
+    }
+}
+
+/** The print's own woodcut initial in place of the first letter (it stands
+ *  for that letter, which is dropped). Two lines deep - the first line's top
+ *  to the second's baseline - or one for a verse that fits on one line, as
+ *  the web reader sets it; the width follows the block. The crop is grey +
+ *  alpha, so tinting it the text colour keeps it legible in the dark theme. */
+@Composable
+private fun WoodcutDropCap(
+    body: AnnotatedString,
+    image: ImageBitmap,
+    style: TextStyle,
+    modifier: Modifier = Modifier
+) {
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    BoxWithConstraints(modifier) {
+        val gap = with(density) { 6.dp.roundToPx() }
+        val maxW = constraints.maxWidth
+        val fit = remember(body, style, image, maxW) {
+            val aspect = image.width.toFloat() / image.height.coerceAtLeast(1)
+            val lineH = with(density) { style.lineHeight.toPx() }
+            val base0 = measurer.measure(body, style).getLineBaseline(0)
+            fun at(h: Float): Triple<Float, Int, TextLayoutResult> {
+                val w = (h * aspect).roundToInt().coerceAtMost(maxW / 3)
+                val narrow = (maxW - w - gap).coerceAtLeast(1)
+                return Triple(h, w, measurer.measure(body, style, constraints = Constraints(maxWidth = narrow)))
+            }
+            at(base0 + lineH).let { if (it.third.lineCount > 1) it else at(base0) }
+        }
+        val (capH, capW, bodyLayout) = fit
+        var beside = 1
+        while (beside < bodyLayout.lineCount && bodyLayout.getLineTop(beside) < capH) beside++
+        val split = bodyLayout.getLineEnd(beside - 1)
+        Box(Modifier.heightIn(min = with(density) { capH.toDp() })) {
+            Image(
+                image, contentDescription = null,
+                modifier = Modifier.size(with(density) { capW.toDp() }, with(density) { capH.toDp() }),
+                contentScale = ContentScale.FillBounds,
+                colorFilter = ColorFilter.tint(style.color)
+            )
+            Column {
+                Text(
+                    body.subSequence(0, split), style = style,
+                    modifier = Modifier.padding(start = with(density) { (capW + gap).toDp() })
                 )
                 if (split < body.length) Text(body.subSequence(split, body.length), style = style)
             }

@@ -79,6 +79,13 @@ AUX_WHOLE_COPIES = (
     "audio_index.json",
     "audio_index_gen.json",
     "initials.json",
+    "woodcuts.json",
+)
+
+# Whole directories of binary assets, copied file by file with the same MD5
+# control: the print's woodcut initials (tools/build_woodcut_assets.py).
+AUX_DIR_COPIES = (
+    "woodcuts",
 )
 
 # Splits keyed by an integer book index threaded through the same 0-based
@@ -587,6 +594,19 @@ def build_aux(out_dir):
                 )
             )
         checked += 1
+
+    for name in AUX_DIR_COPIES:
+        src_dir = ASSETS / name
+        files = sorted(p for p in src_dir.rglob("*") if p.is_file())
+        if not files:
+            raise BuildError("{}: no files under {}".format(name, src_dir))
+        for src in files:
+            dst = out_root / "data" / src.relative_to(ASSETS)
+            n_bytes, src_md5 = copy_whole(src, dst)
+            if src_md5 != md5_file(dst):
+                raise BuildError("MD5 control FAILED for {}".format(src))
+            checked += 1
+        print("copy {}/: {} files, md5 each == source".format(name, len(files)))
 
     print("aux total: {} entries reassembled/copied".format(checked))
     return checked

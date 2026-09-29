@@ -206,8 +206,11 @@ object BibleRepo {
         url = "https://osmanlicakelam.net/osm/metinler"
     )
 
-    fun columnCredit(id: String): ColumnCredit? = when (id) {
-        "kie" -> osmKelam
+    // kie's apocrypha (book >= 66) are Ali Bey 1665 in Kadir Akın's
+    // transliteration, not OsmKelam's: their © heads the canon only (owner,
+    // 2026-09-29). Akın's credit is in sources_text.
+    fun columnCredit(id: String, book: Int): ColumnCredit? = when (id) {
+        "kie" -> if (book < 66) osmKelam else null
         else -> null
     }
 

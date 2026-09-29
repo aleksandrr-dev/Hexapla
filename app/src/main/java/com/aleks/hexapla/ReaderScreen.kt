@@ -568,7 +568,7 @@ fun ReaderScreen(settings: AppSettings) {
                     // Names the translation(s) above verse 1, then scrolls
                     // away with the text. Drawn INSIDE this item and never as
                     // an item of its own — see ChapterTranslationHead.
-                    if (i == 0) ChapterTranslationHead(settings, secondaryAligned != null) { label, c ->
+                    if (i == 0) ChapterTranslationHead(settings, book, secondaryAligned != null) { label, c ->
                         creditShown = label to c
                     }
                     // Empty verses (135 of them in the Zohrab Armenian OT,
@@ -1185,6 +1185,7 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendWords(
 @Composable
 private fun ChapterTranslationHead(
     settings: AppSettings,
+    book: Int,
     hasSecondary: Boolean,
     onCredit: (String, BibleRepo.ColumnCredit) -> Unit
 ) {
@@ -1193,8 +1194,8 @@ private fun ChapterTranslationHead(
         BibleRepo.translation(settings.secondaryId).label else null
     // A licence credit (BibleRepo.columnCredit) heads its own column, to the
     // right of that column's label (owner, 2026-09-25: beside «(TR)», not under).
-    val primaryCredit = BibleRepo.columnCredit(settings.primaryId)
-    val secondaryCredit = if (secondary != null) BibleRepo.columnCredit(settings.secondaryId) else null
+    val primaryCredit = BibleRepo.columnCredit(settings.primaryId, book)
+    val secondaryCredit = if (secondary != null) BibleRepo.columnCredit(settings.secondaryId, book) else null
 
     Column(
         Modifier

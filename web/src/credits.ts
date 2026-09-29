@@ -26,6 +26,9 @@ const OSMKELAM: ColumnCredit = {
 
 const CREDITS: Record<string, ColumnCredit> = { kie: OSMKELAM };
 
-export function columnCredit(id: string): ColumnCredit | undefined {
+// kie's apocrypha (book >= 66) are Ali Bey 1665 in Kadir Akın's transliteration,
+// not OsmKelam's: their © heads the canon only (owner, 2026-09-29).
+export function columnCredit(id: string, book: number): ColumnCredit | undefined {
+  if (id === "kie" && book >= 66) return undefined;
   return CREDITS[id];
 }

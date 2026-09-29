@@ -1126,7 +1126,7 @@ export function App() {
     // A licence credit heads its column's text. It lives under the chapter
     // heading, not in .colheads, which narrow layouts hide.
     const credited = shown.flatMap((c) => {
-      const cr = columnCredit(c.id);
+      const cr = columnCredit(c.id, route.book);
       return cr === undefined ? [] : [{ c, cr }];
     });
     const credits = credited.length > 0 && (

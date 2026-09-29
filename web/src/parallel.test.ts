@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { chapterRows, type Row } from "./parallel.ts";
 import { chapterRows2 } from "./parallel_legacy.test-ref.ts";
 import { fromKjv, toKjv, type VerseMapData } from "./versemap.ts";
-import { directionOf, dropCapEnd } from "./text.ts";
+import { directionOf, dropCapEnd, opensChapter } from "./text.ts";
 
 const ASSETS = new URL("../../app/src/main/assets/", import.meta.url);
 const vm = JSON.parse(readFileSync(new URL("versemap.json", ASSETS), "utf8")) as VerseMapData;
@@ -78,6 +78,19 @@ eq("dropcap quote", dropCapEnd("“And"), 2);
 eq("dropcap cjk none", dropCapEnd("太初に"), -1);
 eq("dropcap one letter none", dropCapEnd("O"), -1);
 eq("dropcap combining", dropCapEnd("Ábc"), 2);
+
+// A drop cap opens the chapter ON SCREEN (owner 2026-09-29: a capital on
+// Jonah 1:17 beside the Synodal). Synodal Jonah 2:1 = KJV 1:17 sits on row 17
+// of KJV Jonah 1; its own verse number 1 used to be enough for a cap.
+const JONAH = 31;
+const jonahRows = chapterRows(vm, JONAH, "kjv", 1, book("en_kjv.json", JONAH), [{ id: "syn", book: book("ru_synodal.json", JONAH) }]);
+function capsIn(rows: Row[], rule: (r: { c: number; v: number }) => boolean): number {
+  let n = 0;
+  for (const row of rows) for (const s of [row.a, ...row.others]) if (s.kind === "text" && s.refs.length > 0 && rule(s.refs[0])) n += 1;
+  return n;
+}
+eq("control: old rule (own v1) caps Jonah 1 three times", capsIn(jonahRows, (r) => r.v === 1), 3);
+eq("Jonah 1 beside Synodal: caps only on row 1 (both columns)", capsIn(jonahRows, (r) => opensChapter(r, 1)), 2);
 
 // ---- N columns ------------------------------------------------------------
 // With ONE other translation the N-column rows must be exactly the rows the

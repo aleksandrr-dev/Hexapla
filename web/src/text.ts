@@ -52,6 +52,14 @@ export function dropCapEnd(text: string): number {
   return i < text.length ? i : -1;
 }
 
+/** Whether a column's verse opens the chapter on screen, and so takes the drop
+ *  cap. Its own verse 1 is not enough: a translation numbered differently can
+ *  start its NEXT chapter mid-page (Synodal Jonah 2:1 = KJV 1:17 sits on row 17
+ *  of Jonah 1). */
+export function opensChapter(r: { c: number; v: number }, chapter: number): boolean {
+  return r.v === 1 && r.c === chapter;
+}
+
 /** Chinese and Japanese: set justified on a character grid with strict
  *  line-breaking, as they are printed, never ragged-right. */
 export function isCjk(lang: string): boolean {

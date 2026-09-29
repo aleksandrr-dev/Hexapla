@@ -25,7 +25,7 @@ import { Player, type AudioPrefs, type PlayState } from "./player";
 import { voiceKey } from "./speech";
 import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
-import { directionOf, dropCapEnd, isCjk } from "./text";
+import { directionOf, dropCapEnd, isCjk, opensChapter } from "./text";
 import { SEARCH_CAP, SEARCH_MIN, type SearchHit } from "./search";
 import type { SearchMsg, SearchReq } from "./search.worker";
 // Unicode License v3 + Apache-2.0: the fold table's notice travels with it.
@@ -320,7 +320,7 @@ function SideText({ side, lang, cls, chapter, showNum, noCap = false, hl = null,
     <>
       {side.texts.map((t, i) => {
         const r = side.refs[i];
-        const cap = !noCap && r.v === 1 && i === 0;
+        const cap = !noCap && opensChapter(r, chapter) && i === 0;
         const word = hl !== null && hl.c === r.c && hl.v === r.v ? hl.word : null;
         return (
           <div class="vpart" key={String(r.c) + ":" + String(r.v)}>
@@ -1163,7 +1163,7 @@ export function App() {
           // The row's number is the first shown column's; the number gutter
           // sits on that verse's own reading side.
           const numOf = shown[0].side(r);
-          const num = numOf.kind === "text" ? (numOf.refs[0].v === 1 ? "" : refLabel(numOf.refs, chapNo)) : "";
+          const num = numOf.kind === "text" ? (opensChapter(numOf.refs[0], chapNo) ? "" : refLabel(numOf.refs, chapNo)) : "";
           const rowDir = directionOf(leadSide.texts[0]) ?? undefined;
           // The narration reads the primary translation, so its refs decide.
           const play = sounding !== null && r.a.kind === "text" && r.a.refs.some((x) => x.c === sounding.c && x.v === sounding.v);

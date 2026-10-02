@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apócrifos / Deuterocanónicos",
  "auto_continue": "Continuar con el siguiente capítulo",
  "backup_export": "Guardar copia…",
  "backup_import": "Restaurar…",
@@ -197,9 +198,11 @@
  "music_volume": "Volumen de la música",
  "nav_bookmarks": "Marcadores",
  "nav_settings": "Ajustes",
+ "new_testament": "Nuevo Testamento",
  "next_chapter": "Capítulo siguiente",
  "no_results": "Sin resultados",
  "note": "Nota",
+ "old_testament": "Antiguo Testamento",
  "pause_audio": "Pausa",
  "plan_chrono": "Biblia cronológica en 1 año",
  "plan_chrono_desc": "La Biblia en el orden de los acontecimientos: Job junto al Génesis, los Salmos con David, los profetas con los Reyes, las epístolas a lo largo de Hechos",

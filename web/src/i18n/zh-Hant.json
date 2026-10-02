@@ -1,4 +1,5 @@
 {
+ "apocrypha": "次經／第二正典",
  "auto_continue": "自動播放下一章",
  "backup_export": "儲存備份…",
  "backup_import": "還原備份…",
@@ -197,9 +198,11 @@
  "music_volume": "音樂音量",
  "nav_bookmarks": "書籤",
  "nav_settings": "設定",
+ "new_testament": "新約",
  "next_chapter": "下一章",
  "no_results": "沒有結果",
  "note": "筆記",
+ "old_testament": "舊約",
  "pause_audio": "暫停",
  "plan_chrono": "按時間順序一年讀完聖經",
  "plan_chrono_desc": "按事件發生的順序讀聖經：約伯記伴隨創世記，詩篇伴隨大衛的生平，先知書對應列王紀，書信穿插於使徒行傳",

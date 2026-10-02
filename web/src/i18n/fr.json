@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apocryphes / Deutérocanoniques",
  "auto_continue": "Continuer au chapitre suivant",
  "backup_export": "Enregistrer une sauvegarde…",
  "backup_import": "Restaurer…",
@@ -197,9 +198,11 @@
  "music_volume": "Volume de la musique",
  "nav_bookmarks": "Signets",
  "nav_settings": "Réglages",
+ "new_testament": "Nouveau Testament",
  "next_chapter": "Chapitre suivant",
  "no_results": "Aucun résultat",
  "note": "Note",
+ "old_testament": "Ancien Testament",
  "pause_audio": "Pause",
  "plan_chrono": "Bible chronologique en 1 an",
  "plan_chrono_desc": "La Bible dans l'ordre des événements : Job près de la Genèse, les Psaumes avec David, les prophètes avec les Rois, les épîtres au fil des Actes",

@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokryfit / deuterokanoniset kirjat",
  "auto_continue": "Jatka seuraavaan lukuun",
  "backup_export": "Tallenna varmuuskopio…",
  "backup_import": "Palauta varmuuskopio…",
@@ -197,9 +198,11 @@
  "music_volume": "Musiikin voimakkuus",
  "nav_bookmarks": "Kirjanmerkit",
  "nav_settings": "Asetukset",
+ "new_testament": "Uusi testamentti",
  "next_chapter": "Seuraava luku",
  "no_results": "Ei tuloksia",
  "note": "Muistiinpano",
+ "old_testament": "Vanha testamentti",
  "pause_audio": "Keskeytä",
  "plan_chrono": "Kronologinen Raamattu 1 vuodessa",
  "plan_chrono_desc": "Raamattu tapahtumien järjestyksessä: Jobin kirja Ensimmäisen Mooseksen kirjan rinnalla, psalmit Daavidin ajan rinnalla, profeetat kuningaskertomusten rinnalla, kirjeet Apostolien tekojen rinnalla",

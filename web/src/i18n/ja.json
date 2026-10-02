@@ -1,4 +1,5 @@
 {
+ "apocrypha": "外典・第二正典",
  "auto_continue": "次の章へ自動的に進む",
  "backup_export": "バックアップを保存…",
  "backup_import": "バックアップを復元…",
@@ -197,9 +198,11 @@
  "music_volume": "音楽の音量",
  "nav_bookmarks": "しおり",
  "nav_settings": "設定",
+ "new_testament": "新約聖書",
  "next_chapter": "次の章",
  "no_results": "結果なし",
  "note": "メモ",
+ "old_testament": "旧約聖書",
  "pause_audio": "一時停止",
  "plan_chrono": "聖書を年代順に1年で",
  "plan_chrono_desc": "出来事が起こった順に読む聖書。ヨブ記は創世記のそばに、詩篇はダビデと共に、預言者は列王記と共に、書簡は使徒行伝に沿って",

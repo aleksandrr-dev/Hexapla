@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokryphen / Deuterokanonische Bücher",
  "auto_continue": "Mit nächstem Kapitel fortfahren",
  "backup_export": "Sicherung speichern…",
  "backup_import": "Wiederherstellen…",
@@ -197,9 +198,11 @@
  "music_volume": "Musiklautstärke",
  "nav_bookmarks": "Lesezeichen",
  "nav_settings": "Einstellungen",
+ "new_testament": "Neues Testament",
  "next_chapter": "Nächstes Kapitel",
  "no_results": "Keine Treffer",
  "note": "Notiz",
+ "old_testament": "Altes Testament",
  "pause_audio": "Pause",
  "plan_chrono": "Chronologische Bibel in 1 Jahr",
  "plan_chrono_desc": "Die Bibel in der Reihenfolge der Ereignisse: Hiob neben der Genesis, Psalmen bei David, Propheten bei den Königen, Briefe entlang der Apostelgeschichte",

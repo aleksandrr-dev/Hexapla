@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokrifi / deiterokanoniskās grāmatas",
  "auto_continue": "Turpināt ar nākamo nodaļu",
  "backup_export": "Saglabāt rezerves kopiju…",
  "backup_import": "Atjaunot no rezerves kopijas…",
@@ -197,9 +198,11 @@
  "music_volume": "Mūzikas skaļums",
  "nav_bookmarks": "Grāmatzīmes",
  "nav_settings": "Iestatījumi",
+ "new_testament": "Jaunā Derība",
  "next_chapter": "Nākamā nodaļa",
  "no_results": "Nav rezultātu",
  "note": "Piezīme",
+ "old_testament": "Vecā Derība",
  "pause_audio": "Pauzēt",
  "plan_chrono": "Hronoloģiskā Bībele 1 gadā",
  "plan_chrono_desc": "Bībele notikumu norises secībā: Ījabs līdzās 1. Mozus grāmatai, psalmi ar Dāvidu, pravieši ar ķēniņiem, vēstules līdzās Apustuļu darbiem",

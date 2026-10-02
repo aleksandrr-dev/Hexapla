@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apocrypha / Deuterocanon",
  "auto_continue": "Continue to next chapter",
  "backup_export": "Save backup…",
  "backup_import": "Restore backup…",
@@ -197,9 +198,11 @@
  "music_volume": "Music volume",
  "nav_bookmarks": "Bookmarks",
  "nav_settings": "Settings",
+ "new_testament": "New Testament",
  "next_chapter": "Next chapter",
  "no_results": "No results",
  "note": "Note",
+ "old_testament": "Old Testament",
  "pause_audio": "Pause",
  "plan_chrono": "Chronological Bible in 1 year",
  "plan_chrono_desc": "The Bible in the order events happened: Job beside Genesis, Psalms with David, prophets with the Kings, epistles along Acts",

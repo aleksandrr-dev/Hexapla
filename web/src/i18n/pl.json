@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokryfy / Księgi deuterokanoniczne",
  "auto_continue": "Przejdź do następnego rozdziału",
  "backup_export": "Zapisz kopię zapasową…",
  "backup_import": "Przywróć kopię zapasową…",
@@ -197,9 +198,11 @@
  "music_volume": "Głośność muzyki",
  "nav_bookmarks": "Zakładki",
  "nav_settings": "Ustawienia",
+ "new_testament": "Nowy Testament",
  "next_chapter": "Następny rozdział",
  "no_results": "Brak wyników",
  "note": "Notatka",
+ "old_testament": "Stary Testament",
  "pause_audio": "Wstrzymaj",
  "plan_chrono": "Biblia chronologiczna w 1 rok",
  "plan_chrono_desc": "Biblia w kolejności wydarzeń: Hiob obok Księgi Rodzaju, Psalmy z Dawidem, prorocy z królami, listy wzdłuż Dziejów Apostolskich",

@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokryferna / deuterokanoniska böcker",
  "auto_continue": "Fortsätt till nästa kapitel",
  "backup_export": "Spara säkerhetskopia…",
  "backup_import": "Återställ säkerhetskopia…",
@@ -197,9 +198,11 @@
  "music_volume": "Musikvolym",
  "nav_bookmarks": "Bokmärken",
  "nav_settings": "Inställningar",
+ "new_testament": "Nya testamentet",
  "next_chapter": "Nästa kapitel",
  "no_results": "Inga resultat",
  "note": "Anteckning",
+ "old_testament": "Gamla testamentet",
  "pause_audio": "Pausa",
  "plan_chrono": "Kronologisk bibel på 1 år",
  "plan_chrono_desc": "Bibeln i den ordning händelserna skedde: Job bredvid Första Moseboken, Psaltaren med David, profeterna med kungarna, breven jämsides med Apostlagärningarna",

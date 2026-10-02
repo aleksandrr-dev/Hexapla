@@ -328,6 +328,28 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
 .lh { padding: 14px 14px 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--mu); }
 .lh:first-child { padding-top: 4px; }
 .list.books { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px; }
+/* Book picker section headings (OT / NT / Apocrypha): the Android picker's
+   olive / brick red / muted stone accents, each over a 12 % tinted band that
+   spans the whole grid row. Explicit colours, as in the app: --ox is already
+   the current-book mark. */
+.bsec {
+  grid-column: 1 / -1; padding: 10px 14px; margin: 10px 0 4px; border-radius: 10px;
+  font-size: 15px; font-weight: 700; color: var(--sec);
+  background: color-mix(in srgb, var(--sec) 12%, transparent);
+  border-inline-start: 4px solid var(--sec);
+}
+.bsec:first-child { margin-top: 0; }
+.bsec.ot { --sec: #4e6b34; }
+.bsec.nt { --sec: #a5210f; }
+.bsec.ap { --sec: #7a6a50; }
+:root[data-theme="dark"] .bsec.ot { --sec: #9db36b; }
+:root[data-theme="dark"] .bsec.nt { --sec: #e8452a; }
+:root[data-theme="dark"] .bsec.ap { --sec: #aa9c80; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bsec.ot { --sec: #9db36b; }
+  :root:not([data-theme="light"]) .bsec.nt { --sec: #e8452a; }
+  :root:not([data-theme="light"]) .bsec.ap { --sec: #aa9c80; }
+}
 .field { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
 /* A long one-word label (de «Sprechgeschwindigkeit») must wrap, and the range
    gives up its intrinsic width, or the value runs off a 360 px screen. */

@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokryfer / deuterokanoniske bøger",
  "auto_continue": "Fortsæt til næste kapitel",
  "backup_export": "Gem sikkerhedskopi…",
  "backup_import": "Gendan sikkerhedskopi…",
@@ -197,9 +198,11 @@
  "music_volume": "Lydstyrke for musik",
  "nav_bookmarks": "Bogmærker",
  "nav_settings": "Indstillinger",
+ "new_testament": "Det Nye Testamente",
  "next_chapter": "Næste kapitel",
  "no_results": "Ingen resultater",
  "note": "Notat",
+ "old_testament": "Det Gamle Testamente",
  "pause_audio": "Pause",
  "plan_chrono": "Kronologisk bibel på 1 år",
  "plan_chrono_desc": "Bibelen i den rækkefølge, begivenhederne skete: Job ved siden af Første Mosebog, Salmerne sammen med David, profeterne med Kongebøgerne, brevene langs Apostlenes Gerninger",

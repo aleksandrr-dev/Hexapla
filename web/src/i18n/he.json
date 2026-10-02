@@ -1,4 +1,5 @@
 {
+ "apocrypha": "ספרים חיצוניים / דויטרוקנוניים",
  "auto_continue": "המשך לפרק הבא",
  "backup_export": "שמור גיבוי…",
  "backup_import": "שחזר גיבוי…",
@@ -197,9 +198,11 @@
  "music_volume": "עוצמת המוזיקה",
  "nav_bookmarks": "סימניות",
  "nav_settings": "הגדרות",
+ "new_testament": "הברית החדשה",
  "next_chapter": "הפרק הבא",
  "no_results": "אין תוצאות",
  "note": "הערה",
+ "old_testament": "הברית הישנה",
  "pause_audio": "השהה",
  "plan_chrono": "תנ״ך כרונולוגי בשנה אחת",
  "plan_chrono_desc": "התנ״ך לפי סדר האירועים: איוב לצד בראשית, תהלים עם דוד, הנביאים עם המלכים, האיגרות לאורך מעשי השליחים",

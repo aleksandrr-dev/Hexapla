@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apócrifos / Deuterocanônicos",
  "auto_continue": "Continuar para o próximo capítulo",
  "backup_export": "Salvar backup…",
  "backup_import": "Restaurar backup…",
@@ -197,9 +198,11 @@
  "music_volume": "Volume da música",
  "nav_bookmarks": "Marcadores",
  "nav_settings": "Ajustes",
+ "new_testament": "Novo Testamento",
  "next_chapter": "Próximo capítulo",
  "no_results": "Nenhum resultado",
  "note": "Nota",
+ "old_testament": "Antigo Testamento",
  "pause_audio": "Pausar",
  "plan_chrono": "Bíblia cronológica em 1 ano",
  "plan_chrono_desc": "A Bíblia na ordem em que os eventos aconteceram: Jó ao lado de Gênesis, os Salmos com Davi, os profetas com os Reis, as epístolas ao longo de Atos",

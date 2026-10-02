@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apocrifi / Deuterocanonici",
  "auto_continue": "Continua al capitolo successivo",
  "backup_export": "Salva backup…",
  "backup_import": "Ripristina backup…",
@@ -197,9 +198,11 @@
  "music_volume": "Volume della musica",
  "nav_bookmarks": "Segnalibri",
  "nav_settings": "Impostazioni",
+ "new_testament": "Nuovo Testamento",
  "next_chapter": "Capitolo successivo",
  "no_results": "Nessun risultato",
  "note": "Nota",
+ "old_testament": "Antico Testamento",
  "pause_audio": "Pausa",
  "plan_chrono": "Bibbia cronologica in 1 anno",
  "plan_chrono_desc": "La Bibbia nell'ordine in cui accaddero gli eventi: Giobbe accanto alla Genesi, i Salmi con Davide, i profeti con i Re, le epistole lungo gli Atti",

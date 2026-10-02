@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apocriefen / Deuterocanonieke boeken",
  "auto_continue": "Doorgaan naar het volgende hoofdstuk",
  "backup_export": "Back-up opslaan…",
  "backup_import": "Back-up herstellen…",
@@ -197,9 +198,11 @@
  "music_volume": "Muziekvolume",
  "nav_bookmarks": "Bladwijzers",
  "nav_settings": "Instellingen",
+ "new_testament": "Nieuwe Testament",
  "next_chapter": "Volgend hoofdstuk",
  "no_results": "Geen resultaten",
  "note": "Notitie",
+ "old_testament": "Oude Testament",
  "pause_audio": "Pauzeren",
  "plan_chrono": "Chronologische Bijbel in 1 jaar",
  "plan_chrono_desc": "De Bijbel in de volgorde waarin de gebeurtenissen plaatsvonden: Job naast Genesis, de Psalmen bij David, de profeten bij de koningen, de brieven naast Handelingen",

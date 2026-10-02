@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokrifek / deuterokanonikus könyvek",
  "auto_continue": "Folytatás a következő fejezettel",
  "backup_export": "Mentés készítése…",
  "backup_import": "Mentés visszaállítása…",
@@ -197,9 +198,11 @@
  "music_volume": "Zene hangereje",
  "nav_bookmarks": "Könyvjelzők",
  "nav_settings": "Beállítások",
+ "new_testament": "Újszövetség",
  "next_chapter": "Következő fejezet",
  "no_results": "Nincs találat",
  "note": "Jegyzet",
+ "old_testament": "Ószövetség",
  "pause_audio": "Szünet",
  "plan_chrono": "Kronológiai Biblia 1 év alatt",
  "plan_chrono_desc": "A Biblia az események időrendjében: Jób Mózes első könyve mellett, a Zsoltárok Dáviddal, a próféták a királyokkal, a levelek az Apostolok cselekedeteivel párhuzamosan",

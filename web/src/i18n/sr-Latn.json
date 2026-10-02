@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokrifi / Devterokanonske knjige",
  "auto_continue": "Nastavi na sledeću glavu",
  "backup_export": "Sačuvaj rezervnu kopiju…",
  "backup_import": "Vrati rezervnu kopiju…",
@@ -197,9 +198,11 @@
  "music_volume": "Jačina muzike",
  "nav_bookmarks": "Obeleživači",
  "nav_settings": "Podešavanja",
+ "new_testament": "Novi zavet",
  "next_chapter": "Sledeća glava",
  "no_results": "Nema rezultata",
  "note": "Beleška",
+ "old_testament": "Stari zavet",
  "pause_audio": "Pauziraj",
  "plan_chrono": "Hronološka Biblija za 1 godinu",
  "plan_chrono_desc": "Biblija po redosledu kojim su se događaji zbili: Jov pored Postanja, Psalmi sa Davidom, proroci sa carevima, poslanice uz Dela apostolska",

@@ -1,4 +1,5 @@
 {
+ "apocrypha": "Apokryfy / Deuterokanonické knihy",
  "auto_continue": "Pokračovat další kapitolou",
  "backup_export": "Uložit zálohu…",
  "backup_import": "Obnovit zálohu…",
@@ -197,9 +198,11 @@
  "music_volume": "Hlasitost hudby",
  "nav_bookmarks": "Záložky",
  "nav_settings": "Nastavení",
+ "new_testament": "Nový zákon",
  "next_chapter": "Další kapitola",
  "no_results": "Žádné výsledky",
  "note": "Poznámka",
+ "old_testament": "Starý zákon",
  "pause_audio": "Pozastavit",
  "plan_chrono": "Chronologická Bible za 1 rok",
  "plan_chrono_desc": "Bible v pořadí, v jakém se odehrály události: Job vedle Genesis, Žalmy s Davidem, proroci s Královskými knihami, epištoly podél Skutků",

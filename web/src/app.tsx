@@ -14,6 +14,7 @@
 // Offline (P4): chapters read are cached by public/sw.js; «Keep offline» in
 // Settings saves a whole translation (offline.ts). UI locales are still to come.
 
+import { Fragment } from "preact";
 import type { JSX } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
@@ -3017,6 +3018,15 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
   );
 }
 
+// Section headings in the book picker, at the same slots as the Android
+// picker (ReaderScreen.kt): each section has its own accent and a tinted band
+// spanning the grid, so the New Testament and Apocrypha starts are findable.
+const SECTION_AT: Record<number, [string, "old_testament" | "new_testament" | "apocrypha"]> = {
+  0: ["ot", "old_testament"],
+  39: ["nt", "new_testament"],
+  66: ["ap", "apocrypha"],
+};
+
 function BookSheet(p: { index: BooksIndex | null; lang: string; current: Route; grid: (b: number, onPick: (c: number) => void) => JSX.Element; onClose: () => void; onPick: (b: number, c: number) => void }) {
   const [book, setBook] = useState<number | null>(null);
   if (book !== null && p.index !== null) {
@@ -3030,16 +3040,18 @@ function BookSheet(p: { index: BooksIndex | null; lang: string; current: Route; 
     <Sheet title={t("select_book")} onClose={p.onClose}>
       <div class="list books">
         {(p.index ?? []).map((b, i) => (
-          <button
-            type="button"
-            key={i}
-            class={"li" + (i === p.current.book ? " cur" : "")}
-            lang={p.lang}
-            dir={directionOf(b.name) ?? undefined}
-            onClick={() => (b.chapters.length === 1 ? p.onPick(i, 0) : setBook(i))}
-          >
-            {b.name}
-          </button>
+          <Fragment key={i}>
+            {SECTION_AT[i] && <div class={"bsec " + SECTION_AT[i][0]}>{t(SECTION_AT[i][1])}</div>}
+            <button
+              type="button"
+              class={"li" + (i === p.current.book ? " cur" : "")}
+              lang={p.lang}
+              dir={directionOf(b.name) ?? undefined}
+              onClick={() => (b.chapters.length === 1 ? p.onPick(i, 0) : setBook(i))}
+            >
+              {b.name}
+            </button>
+          </Fragment>
         ))}
       </div>
     </Sheet>

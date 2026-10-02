@@ -1,4 +1,5 @@
 {
+ "apocrypha": "次经／第二正典",
  "auto_continue": "自动播放下一章",
  "backup_export": "保存备份…",
  "backup_import": "恢复备份…",
@@ -197,9 +198,11 @@
  "music_volume": "音乐音量",
  "nav_bookmarks": "书签",
  "nav_settings": "设置",
+ "new_testament": "新约",
  "next_chapter": "下一章",
  "no_results": "没有结果",
  "note": "笔记",
+ "old_testament": "旧约",
  "pause_audio": "暂停",
  "plan_chrono": "按时间顺序一年读完圣经",
  "plan_chrono_desc": "按事件发生的顺序读圣经：约伯记伴随创世记，诗篇伴随大卫的生平，先知书对应列王纪，书信穿插于使徒行传",

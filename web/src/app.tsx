@@ -1025,7 +1025,7 @@ export function App() {
           <span class="ell">{parLabel}</span>
         </button>
       </div>
-      <button type="button" class="ib" aria-label={t("search")} onClick={() => openFrom("search", null)}>
+      <button type="button" class="ib" aria-label={t("search")} onPointerDown={() => warmSearch(route.translation)} onClick={() => openFrom("search", null)}>
         <Icon d={I.search} size={22} />
       </button>
       {/* A narrow phone keeps three icons; the list is in Settings there too. */}
@@ -2926,6 +2926,12 @@ function worker(): Worker {
   return searchWorker;
 }
 
+/** Start loading a translation's search corpus as the search button is
+ *  pressed, so the file is on its way before the sheet has opened. */
+function warmSearch(t: string): void {
+  worker().postMessage({ id: ++searchSeq, t, q: "" } satisfies SearchReq);
+}
+
 /** Android's debounce: a scan per keystroke would redo the work per letter. */
 const DEBOUNCE_MS = 300;
 
@@ -2986,10 +2992,12 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
       />
       {load !== null && (
         <div class="sload" role="status">
-          <progress max={load[1]} value={load[0]} />
-          <span>
-            {load[0]} / {load[1]}
-          </span>
+          {load[1] > 1 ? <progress max={load[1]} value={load[0]} /> : <progress />}
+          {load[1] > 1 && (
+            <span>
+              {load[0]} / {load[1]}
+            </span>
+          )}
         </div>
       )}
       {err !== null && <p class="hint">{t("w_search_failed", err)}</p>}

@@ -326,6 +326,19 @@ def build_one(tr, out_root):
             )
 
     write_bytes(tr_dir / "books.json", json_bytes(books_index))
+
+    # all.json: every book's chapters in ONE file, for the search worker (one
+    # request instead of one per book - measured 83 requests x ~1.5 s on a
+    # slow link). The reader keeps using the per-book files. Control: its
+    # verse sum and per-chapter counts must equal books.json.
+    all_chapters = [book["chapters"] for book in books]
+    blob = json_bytes(all_chapters)
+    back = json.loads(blob.decode("utf-8"))
+    if [[len(c) for c in b] for b in back] != [b["chapters"] for b in books_index]:
+        raise BuildError("{}: all.json control FAILED - chapter counts differ from books.json".format(tr["id"]))
+    if sum(len(c) for b in back for c in b) != src_verse_total:
+        raise BuildError("{}: all.json control FAILED - verse sum differs from the source".format(tr["id"]))
+    write_bytes(tr_dir / "all.json", blob)
     return {
         "id": tr["id"],
         "lang": tr["lang"],

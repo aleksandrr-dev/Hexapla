@@ -7,7 +7,7 @@
 //                 { id, kind: "error", message }
 // The page keeps the newest id and drops anything older.
 
-import { loadBook, loadBooksIndex } from "./data";
+import { loadAllChapters, loadBook, loadBooksIndex } from "./data";
 import { search, setFold, toCorpus, type Corpus, type SearchHit } from "./search";
 import cjkFold from "../../app/src/main/assets/cjk_fold.json";
 
@@ -33,6 +33,20 @@ function corpus(t: string): Promise<Corpus> {
     return hit;
   }
   const pending = (async () => {
+    // One file first (all.json); the per-book loop below is the fallback for a
+    // deploy or an offline kept-set without it. total 1 = indeterminate.
+    const t0 = performance.now();
+    try {
+      progress.get(t)?.(0, 1);
+      const all = await loadAllChapters(t);
+      const t1 = performance.now();
+      const corpus = toCorpus(all);
+      console.info("[search] " + t + " all.json fetch+parse " + Math.round(t1 - t0) + " ms, normalise " + Math.round(performance.now() - t1) + " ms");
+      progress.get(t)?.(1, 1);
+      return corpus;
+    } catch (e) {
+      console.info("[search] " + t + " all.json unavailable, loading per book: " + String(e));
+    }
     const idx = await loadBooksIndex(t);
     const total = idx.length;
     const books: (string[][] | null)[] = new Array(total).fill(null);

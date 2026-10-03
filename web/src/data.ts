@@ -73,6 +73,15 @@ export function loadBook(translation: string, bookIndex: number): Promise<Book> 
   return fetchJson<Book>("data/" + translation + "/" + String(bookIndex) + ".json");
 }
 
+/** `data/<id>/all.json` - every book's chapters in one file, for search only
+ *  (tools/build_web_data.py). Not memoised: the caller keeps the one copy. */
+export async function loadAllChapters(translation: string): Promise<string[][][]> {
+  const href = url("data/" + translation + "/all.json");
+  const res = await fetch(href);
+  if (!res.ok) throw new DataError(href, res.status, "fetch " + href + " failed: HTTP " + String(res.status));
+  return (await res.json()) as string[][][];
+}
+
 /** `data/versemap.json` — the versification map (versemap.ts). */
 export function loadVersemap(): Promise<VerseMapData> {
   return fetchJson<VerseMapData>("data/versemap.json");

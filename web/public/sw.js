@@ -78,6 +78,19 @@ self.addEventListener("fetch", (e) => {
     // ⚠ waitUntil/respondWith SYNCHRONOUSLY, in the event's own dispatch:
     // WebKit throws on a waitUntil made after an await, which failed every
     // data read offline there (Chromium tolerates it; 2026-09-24).
+    // all.json (search's one-file corpus, ~2 MB) is refreshed at most daily,
+    // not on every hit: it would otherwise re-download each session.
+    if (u.pathname.endsWith("/all.json")) {
+      e.respondWith(caches.open(DATA).then(async (c) => {
+        const hit = await c.match(req);
+        const age = hit ? Date.now() - new Date(hit.headers.get("date") || 0).getTime() : Infinity;
+        if (hit && age < 86400000) return hit;
+        const refresh = fetch(req).then((r) => put(DATA, req, r));
+        e.waitUntil(refresh.catch(() => undefined));
+        return hit ?? refresh;
+      }));
+      return;
+    }
     const fresh = fetch(req).then((r) => put(DATA, req, r));
     e.waitUntil(fresh.catch(() => undefined));
     e.respondWith(caches.open(DATA).then((c) => c.match(req)).then((hit) => hit ?? fresh));

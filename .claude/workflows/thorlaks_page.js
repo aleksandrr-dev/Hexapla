@@ -14,6 +14,12 @@ export const meta = {
   ],
 }
 
+// ⛔⛔ 2026-09-26, owner: «maximize efficiency and speed». This workflow spent
+// ~17 agents / ~2.3M tokens a page (Luke p76-p78: 6.95M for 3 pages); its
+// Plan/Gate/Stitch/Merge phases are scripts wrapped in agents. The LEAN path in
+// docs/TRANSCRIPTION.md § «EFFICIENCY RULES» (main runs scripts, <=3 vision
+// agents a page on composites, turn budget) overrides this file. Do not launch
+// it until it is rewritten to that shape.
 // ---------------------------------------------------------------------------
 // WHY THIS EXISTS
 // ---------------------------------------------------------------------------
@@ -189,6 +195,13 @@ with EXACTLY these sections and nothing else:
 
     ## HN
     lineNN | <the word> | flourish: <what you can see> | written: [HN]
+
+    ## INITIALS
+    lineNN | <the printed initial letter, or none> | <lines deep, or -> | <decorated|plain, or ->
+    (one row for every inline \`[ornate initial: X]\` tag, on ITS line, same letter;
+    one row for every \`[chapter heading ...]\` line, on the line the chapter's
+    initial sits on - \`lineNN | none | - | -\` when it opens without one.
+    Leave the section EMPTY when the chunk has neither. The gate checks it.)
 
     ## NOTES
     - <anything you hedged, and why>

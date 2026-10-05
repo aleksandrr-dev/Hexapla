@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hexapla icon candidates</title>
+<style>
+  body { margin: 0; padding: 24px; font: 14px/1.4 system-ui, sans-serif; background: #e9e6df; color: #222; }
+  h1 { font-size: 18px; margin: 0 0 16px; }
+  .row { display: flex; align-items: center; gap: 22px; padding: 14px 16px; margin-bottom: 12px; background: #fff; border-radius: 10px; flex-wrap: wrap; }
+  .row.dark { background: #1c1b1f; color: #eee; }
+  .name { width: 150px; font-weight: 600; }
+  .name small { display: block; font-weight: 400; opacity: .7; }
+  .ic { overflow: hidden; flex: none; }
+  .ic svg { display: block; width: 100%; height: 100%; }
+  .sq { border-radius: 22%; }
+  .ci { border-radius: 50%; }
+  .s192 { width: 192px; height: 192px; } .s96 { width: 96px; height: 96px; }
+  .s48 { width: 48px; height: 48px; } .s32 { width: 32px; height: 32px; }
+</style>
+</head>
+<body>
+<h1>Hexapla icon, round 3: the bound book refined (192 / 96 / 48 / 32 px, squircle and circle masks)</h1>
+<div id="defs"></div>
+<script>
+  const H = "M4.6 180.9Q3 179.1 4.9 177Q18.4 163.4 28.8 158.8Q39.2 154.1 53.4 170Q62 179.4 68.5 182.2Q74.9 185.1 81.1 179Q88.5 171.6 81.2 160.5Q73.9 149.4 54 124.5Q31.4 96.1 31.2 78.5Q31.2 61 59.5 37.5Q101.6 2.6 119.2 28.1Q123.4 34.1 129.2 37.6Q135 41.1 137.5 39.5Q140.2 37.5 142 39.2Q143.6 41.1 141 43.8Q128.6 55 118.2 58Q107.8 61.1 95.8 46.6Q87.4 36.5 79.9 35Q72.4 33.4 63 41.9Q51.9 51.9 56.5 66.2Q61.2 80.6 80.8 103.5Q82 104.9 83.5 103.9L136.4 69.2Q138 68.2 138.8 68.6Q139.6 69 139.9 70.1Q140.2 73.8 148.5 80.6Q162 92.1 172.2 108.8Q182.6 125.4 181.5 147.1Q179.6 179.4 152.2 204.5Q124.9 229.5 91 235.1Q87.1 235.9 86.8 233.2Q86.4 230.6 89.8 229.9Q135.8 218.6 148 181.2Q160.4 144 131.8 111.5Q123.2 102.1 114.5 100Q105.8 98 92.2 106.6L88.2 109Q86.4 110.2 87.8 112Q102.9 131.5 104.9 147Q106.9 162.6 86.9 181.5Q66.6 200.6 56.4 203.4Q46.1 206.1 30.9 190.2Q27 186.4 21 181.4Q15 176.4 8.6 181Q6.4 182.5 4.6 180.9Z";
+  // the H centred on (cx, cy) at scale s; the glyph's own centre is (92.5, 129)
+  const h = (cx, cy, s, fill) => `<path fill="${fill}" transform="translate(${cx - 92.5 * s} ${cy - 129 * s}) scale(${s})" d="${H}"/>`;
+  const GD = "#d2a850", CR = "#f3e6c4";
+
+  // The bound book, bbox 118..402 x 76..442 (centre 260,259), ribbon to 470.
+  // cross: the web header's diamond-and-cross under the H.
+  function book({ cross = false, corners = false } = {}) {
+    const hy = cross ? 228 : 248, hs = cross ? 0.84 : 0.88;
+    return `
+    <ellipse cx="262" cy="452" rx="150" ry="14" fill="#000" opacity=".45" filter="url(#blur)"/>
+    <rect x="124" y="82" width="278" height="360" rx="11" fill="#451212"/>
+    <rect x="130" y="88" width="264" height="346" rx="5" fill="${CR}"/>
+    <path d="M385 96v330M390 96v330M138 424h250M138 430h250" stroke="#cdb682" stroke-width="2" fill="none"/>
+    <path d="M316 432h26v38l-13-11-13 11z" fill="#b5352f"/>
+    <rect x="118" y="76" width="264" height="344" rx="10" fill="url(#cover)"/>
+    <path d="M128 76h22v344h-22a10 10 0 0 1-10-10V86a10 10 0 0 1 10-10z" fill="#561616"/>
+    <rect x="150" y="76" width="3" height="344" fill="#3c0f0f" opacity=".7"/>
+    <path d="M118 118h32M118 129h32M118 367h32M118 378h32" stroke="${GD}" stroke-width="4"/>
+    <rect x="172" y="98" width="190" height="300" fill="none" stroke="${GD}" stroke-width="6"/>
+    <rect x="184" y="110" width="166" height="276" fill="none" stroke="${GD}" stroke-width="2"/>
+    ${corners
+      ? `<g fill="${GD}"><path d="M172 98h40l-40 40zM362 98h-40l40 40zM172 398h40l-40-40zM362 398h-40l40-40z"/></g>`
+      : `<g fill="${GD}"><rect x="192" y="118" width="10" height="10"/><rect x="332" y="118" width="10" height="10"/><rect x="192" y="368" width="10" height="10"/><rect x="332" y="368" width="10" height="10"/></g>`}
+    ${cross
+      ? `<g transform="translate(267 346)"><path d="M0-26l26 26-26 26-26-26z" fill="${GD}"/><path d="M0-17l17 17-17 17-17-17z" fill="#6e1f1f"/><path d="M-3-11h6v7h7v6h-7v9h-6v-9h-7v-6h7z" fill="${GD}"/></g>
+         <path d="M267 114l7 7-7 7-7-7z" fill="${GD}"/>`
+      : `<path d="M267 114l8 8-8 8-8-8zM267 366l8 8-8 8-8-8z" fill="${GD}"/>`}
+    ${h(267, hy, hs, CR)}`;
+  }
+
+  document.getElementById("defs").innerHTML = `
+<svg width="0" height="0" style="position:absolute"><defs>
+  <filter id="blur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="9"/></filter>
+  <radialGradient id="bgDeep" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#4a1a1a"/><stop offset="1" stop-color="#170707"/></radialGradient>
+  <radialGradient id="bgParch" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#f6ecd0"/><stop offset="1" stop-color="#d6bf8b"/></radialGradient>
+  <linearGradient id="cover" x1="0" x2="1"><stop offset="0" stop-color="#7a2323"/><stop offset=".18" stop-color="#8f2c2c"/><stop offset="1" stop-color="#701f1f"/></linearGradient>
+
+  <symbol id="s1" viewBox="0 0 512 512"><rect width="512" height="512" fill="url(#bgDeep)"/>${book()}</symbol>
+  <symbol id="s2" viewBox="0 0 512 512"><rect width="512" height="512" fill="url(#bgParch)"/>${book()}</symbol>
+  <symbol id="s3" viewBox="0 0 512 512"><rect width="512" height="512" fill="url(#bgDeep)"/>${book({ cross: true, corners: true })}</symbol>
+  <symbol id="s4" viewBox="0 0 512 512"><rect width="512" height="512" fill="url(#bgParch)"/>${book({ cross: true, corners: true })}</symbol>
+</defs></svg>`;
+
+  const items = [
+    ["s1", "D1 - dark field", "book centred, brighter cover, shadow"],
+    ["s2", "D2 - parchment field", "same book on the header's parchment"],
+    ["s3", "D3 - cross, dark", "header's diamond-and-cross under the H, gold corners"],
+    ["s4", "D4 - cross, parchment", "D3 on parchment"],
+  ];
+  const sizes = [["s192","sq"],["s96","sq"],["s48","sq"],["s32","sq"],["s96","ci"],["s48","ci"]];
+  for (const dark of [false, true]) for (const [id, n, sub] of items) {
+    const r = document.createElement("div");
+    r.className = "row" + (dark ? " dark" : "");
+    r.innerHTML = `<div class="name">${n}<small>${sub}</small></div>` +
+      sizes.map(([s, m]) => `<div class="ic ${s} ${m}"><svg><use href="#${id}"/></svg></div>`).join("");
+    document.body.appendChild(r);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1024" height="1024">
+<defs>
+  <filter id="blur" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="9"/></filter>
+  <radialGradient id="bg" gradientUnits="userSpaceOnUse" cx="256" cy="230" r="358"><stop offset="0" stop-color="#f6ecd0"/><stop offset="1" stop-color="#d6bf8b"/></radialGradient>
+  <linearGradient id="cover" x1="0" x2="1"><stop offset="0" stop-color="#7a2323"/><stop offset=".18" stop-color="#8f2c2c"/><stop offset="1" stop-color="#701f1f"/></linearGradient>
+  <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".10"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>
+  <linearGradient id="gd" gradientUnits="userSpaceOnUse" x1="118" y1="76" x2="402" y2="442"><stop offset="0" stop-color="#ecc874"/><stop offset=".5" stop-color="#c79840"/><stop offset="1" stop-color="#e2ba5e"/></linearGradient>
+  <linearGradient id="pages" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6ecd0"/><stop offset="1" stop-color="#e6d4a6"/></linearGradient>
+</defs>
+<rect x="-128" y="-128" width="768" height="768" fill="url(#bg)"/>
+<g transform="translate(256 256) scale(0.9) translate(-260 -266)">
+  <ellipse cx="262" cy="452" rx="150" ry="14" fill="#2a1505" opacity=".5" filter="url(#blur)"/>
+  <rect x="124" y="82" width="278" height="360" rx="11" fill="#451212"/>
+  <rect x="130" y="88" width="264" height="346" rx="5" fill="url(#pages)"/>
+  <path d="M385 96v330M390 96v330M138 424h250M138 430h250" stroke="#c9b17c" stroke-width="2" fill="none"/>
+  <path d="M316 432h26v38l-13-11-13 11z" fill="#b5352f"/>
+  <path d="M316 432h13v27l-13 11z" fill="#8f2622"/>
+  <rect x="118" y="76" width="264" height="344" rx="10" fill="url(#cover)"/>
+  <rect x="118" y="76" width="264" height="344" rx="10" fill="url(#sheen)"/>
+  <path d="M128 76h22v344h-22a10 10 0 0 1-10-10V86a10 10 0 0 1 10-10z" fill="#561616"/>
+  <rect x="150" y="76" width="3" height="344" fill="#3c0f0f" opacity=".7"/>
+  <g fill="url(#gd)"><rect x="118" y="116" width="32" height="4"/><rect x="118" y="127" width="32" height="4"/><rect x="118" y="365" width="32" height="4"/><rect x="118" y="376" width="32" height="4"/></g>
+  <rect x="172" y="98" width="190" height="300" fill="#671b1b" stroke="url(#gd)" stroke-width="6"/>
+  <rect x="184" y="110" width="166" height="276" fill="none" stroke="url(#gd)" stroke-width="2"/>
+  <path d="M175 101h34l-34 34zM359 101h-34l34 34zM175 395h34l-34-34zM359 395h-34l34-34z" fill="url(#gd)"/>
+  <path d="M267 113l7 7-7 7-7-7z" fill="url(#gd)"/>
+  <g transform="translate(267 346)">
+    <path d="M0-27l27 27-27 27-27-27z" fill="url(#gd)"/>
+    <path d="M0-18l18 18-18 18-18-18z" fill="#671b1b"/>
+    <path d="M-3-12h6v8h7v6h-7v10h-6v-10h-7v-6h7z" fill="#ecc874"/>
+  </g>
+  <path fill="#3a0e0e" opacity=".55" transform="translate(2.5 3.5) translate(189.30 119.64) scale(0.84)" d="M4.6 180.9Q3 179.1 4.9 177Q18.4 163.4 28.8 158.8Q39.2 154.1 53.4 170Q62 179.4 68.5 182.2Q74.9 185.1 81.1 179Q88.5 171.6 81.2 160.5Q73.9 149.4 54 124.5Q31.4 96.1 31.2 78.5Q31.2 61 59.5 37.5Q101.6 2.6 119.2 28.1Q123.4 34.1 129.2 37.6Q135 41.1 137.5 39.5Q140.2 37.5 142 39.2Q143.6 41.1 141 43.8Q128.6 55 118.2 58Q107.8 61.1 95.8 46.6Q87.4 36.5 79.9 35Q72.4 33.4 63 41.9Q51.9 51.9 56.5 66.2Q61.2 80.6 80.8 103.5Q82 104.9 83.5 103.9L136.4 69.2Q138 68.2 138.8 68.6Q139.6 69 139.9 70.1Q140.2 73.8 148.5 80.6Q162 92.1 172.2 108.8Q182.6 125.4 181.5 147.1Q179.6 179.4 152.2 204.5Q124.9 229.5 91 235.1Q87.1 235.9 86.8 233.2Q86.4 230.6 89.8 229.9Q135.8 218.6 148 181.2Q160.4 144 131.8 111.5Q123.2 102.1 114.5 100Q105.8 98 92.2 106.6L88.2 109Q86.4 110.2 87.8 112Q102.9 131.5 104.9 147Q106.9 162.6 86.9 181.5Q66.6 200.6 56.4 203.4Q46.1 206.1 30.9 190.2Q27 186.4 21 181.4Q15 176.4 8.6 181Q6.4 182.5 4.6 180.9Z"/>
+  <path fill="#f6ead0" transform="translate(189.30 119.64) scale(0.84)" d="M4.6 180.9Q3 179.1 4.9 177Q18.4 163.4 28.8 158.8Q39.2 154.1 53.4 170Q62 179.4 68.5 182.2Q74.9 185.1 81.1 179Q88.5 171.6 81.2 160.5Q73.9 149.4 54 124.5Q31.4 96.1 31.2 78.5Q31.2 61 59.5 37.5Q101.6 2.6 119.2 28.1Q123.4 34.1 129.2 37.6Q135 41.1 137.5 39.5Q140.2 37.5 142 39.2Q143.6 41.1 141 43.8Q128.6 55 118.2 58Q107.8 61.1 95.8 46.6Q87.4 36.5 79.9 35Q72.4 33.4 63 41.9Q51.9 51.9 56.5 66.2Q61.2 80.6 80.8 103.5Q82 104.9 83.5 103.9L136.4 69.2Q138 68.2 138.8 68.6Q139.6 69 139.9 70.1Q140.2 73.8 148.5 80.6Q162 92.1 172.2 108.8Q182.6 125.4 181.5 147.1Q179.6 179.4 152.2 204.5Q124.9 229.5 91 235.1Q87.1 235.9 86.8 233.2Q86.4 230.6 89.8 229.9Q135.8 218.6 148 181.2Q160.4 144 131.8 111.5Q123.2 102.1 114.5 100Q105.8 98 92.2 106.6L88.2 109Q86.4 110.2 87.8 112Q102.9 131.5 104.9 147Q106.9 162.6 86.9 181.5Q66.6 200.6 56.4 203.4Q46.1 206.1 30.9 190.2Q27 186.4 21 181.4Q15 176.4 8.6 181Q6.4 182.5 4.6 180.9Z"/>
+</g>
+</svg>

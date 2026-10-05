@@ -121,7 +121,7 @@ _CLUSTERS = [
     ("sch", "ʃ"), ("ssh", "ʃ"), ("sh", "ʃ"),
     ("tch", "tʃ"), ("ch", "tʃ"),
     ("th", "θ"),
-    ("qu", "kw"), ("wh", "hw"),
+    ("qu", "kw"), ("q", "k"), ("wh", "hw"),
     ("gh", "x"), ("3", "j"), ("y3", "ix"),
     ("ck", "k"), ("cc", "k"),
     ("ynge", "ɪŋgə"), ("yng", "ɪŋg"), ("inge", "ɪŋgə"), ("ing", "ɪŋg"),
@@ -135,7 +135,13 @@ _VOWELS = [
     ("ai", "ɛi"), ("ay", "ɛi"), ("ei", "ɛi"), ("ey", "ɛi"),
     ("au", "au"), ("aw", "au"), ("eu", "ɛu"), ("ew", "ɛu"),
     ("ii", "iː"), ("ij", "iː"), ("yy", "iː"), ("uu", "uː"),
+    # 2026-10-05: «fruyt», «distruye», «suynge» — French ü, as fruyt already
+    # is in WORDS. Without it «distruye» came out dɪstrʊɪɛ.
+    ("uy", "yː"),
 ]
+# "aw"/"ew" are diphthongs only when no vowel follows: «awey» is a-wey, not
+# au-ɛ (2026-10-05 probe).
+_W_DIGRAPHS = {"aw", "ew"}
 
 _SINGLE = {"a": "a", "e": "ɛ", "i": "ɪ", "o": "ɔ", "u": "ʊ", "y": "ɪ"}
 
@@ -147,7 +153,12 @@ _CONS = {
 
 _WORD = re.compile(r"[A-Za-z3]+")
 # Magic-e: vowel + single consonant + final e  ->  the vowel is LONG.
-_MAGIC_E = re.compile(r"([aeiouy])([bcdfgklmnprstvwz])e$")
+# Not after a second vowel: «deeme» is ee+m+e, and the old pattern lengthened
+# the second e of the digraph too (deːːmə).
+_MAGIC_E = re.compile(r"(?<![aeiouy])([aeiouy])([bcdfgklmnprstvwz])e$")
+# Placeholder for consonantal y (/j/), so the letter loop cannot read it as a
+# vowel or as <j> = /dʒ/.
+_JAY = "ȷ"
 _LONG = {"a": "aː", "e": "eː", "i": "iː", "o": "oː", "u": "uː", "y": "iː"}
 
 # ⚠ <gh> IS ALLOPHONIC IN MIDDLE ENGLISH, and kokoro can express both halves
@@ -157,7 +168,10 @@ _LONG = {"a": "aː", "e": "eː", "i": "iː", "o": "oː", "u": "uː", "y": "iː"}
 # Emitting /x/ everywhere, as the first version did, is wrong for exactly the
 # words a listener notices most — "light", "night", "might".
 _FRONT = "iey"
-_GH = re.compile(r"([aeiouy])(?:gh|y)(?=[td]|$)")
+# <y> stands for yogh only after i, o, u («riyt», «niy», «nouyt», «thouy»);
+# after a/e it is the second half of a diphthong («awey», «dai»), and the old
+# pattern turned «awey» into a(w)eç.
+_GH = re.compile(r"([aeiouy])gh(?=[td]|$)|([iou])y(?=[td]|$)")
 
 # ME still had real geminates: "alle" /alːə/, "hadde" /hadːə/. Modern English
 # lost them, so a G2P would never produce this — it is one of the clearest
@@ -167,7 +181,11 @@ _GEMINATE = re.compile(r"([bcdfgklmnprstvz])\1")
 
 def _gh_rule(w):
     def sub(m):
-        v = m.group(1)
+        v = m.group(1) or m.group(2)
+        if v in "iy":
+            # The vowel before a palatal yogh is long: «riyt» riːçt, «niy»
+            # niːç. "ii" is the long-i digraph in _VOWELS.
+            return "iiç"
         return v + ("ç" if v in _FRONT else "x")
     return _GH.sub(sub, w)
 
@@ -183,20 +201,44 @@ def _uv(word):
     return word
 
 
+_PASS = "ːəɛɪɔʊʃθðŋxdʒç"   # IPA already emitted by an earlier rule
+_DROPPED = []               # (word, char) the letter loop could not place
+
+
 def word_to_ipa(word):
     low = word.lower()
     if low in WORDS:
         return WORDS[low]
     w = _uv(low)
+    # Soft c before a front vowel, judged on the LETTERS before final -e
+    # becomes a schwa: «merci» mɛrsiː, «abstynence» ...ɛnsə (was mɛrkɪ, ɛnkə).
+    w = re.sub(r"c(?=[eiy])", "s", w)
+    # Consonantal y before a vowel at the start: «yatis» jatɪs (was ɪatɪs).
+    w = re.sub(r"^y(?=[aeo])", _JAY, w)
+    # Homorganic lengthening: i/y before -nd/-ld/-mb is long, as «kynde»
+    # already is in WORDS: «mynde» miːndə, «blynde» bliːndə (were short).
+    w = re.sub(r"(?<![aeiouy])[iy](?=(?:nd|ld|mb)(?:e|is|es)?$)", "ii", w)
     w = _gh_rule(w)                     # before vowels, so it sees the letters
     w = _GEMINATE.sub(r"\1ː", w)        # alle -> alːe, hadde -> hadːe
     m = _MAGIC_E.search(w)
     if m:
         w = w[:m.start()] + _LONG[m.group(1)] + m.group(2) + "ə"
+    elif re.fullmatch(r"[^aeiouy]+e", w):
+        # A monosyllable whose only vowel is the final e has a long e:
+        # «sle» sleː, «tre» treː (was slɛ).
+        w = w[:-1] + "ee"               # "ee" is the eː digraph below
     elif len(w) > 3 and w.endswith("e") and (w[-2] in "ːbcdfgklmnprstvwz"):
         # Final -e is a schwa even after a geminate ("fulle" -> fʊlːə), which
         # the magic-e rule cannot see because "lː" is not a single consonant.
         w = w[:-1] + "ə"
+    elif len(w) > 3 and w[-1] in "iy" and w[-2] in "bcdfgklmnprstvz":
+        # Final -i/-y of a polysyllable is long: «merci», «oneli», «greetli».
+        w = w[:-1] + "ii"
+    # Hebrew/Greek <ch> is /k/ at the end of a name: «Amalech», «Balaach»
+    # (was amalɛtʃ). Lower-case words keep /tʃ/; «Which», «Sich» etc. are in
+    # WORDS and never reach here.
+    if word[:1].isupper() and w.endswith("ch"):
+        w = w[:-2] + "k"
     out = []
     i = 0
     while i < len(w):
@@ -205,7 +247,9 @@ def word_to_ipa(word):
                 out.append(dst); i += len(src); break
         else:
             for src, dst in _VOWELS:
-                if w.startswith(src, i):
+                if (w.startswith(src, i) and not
+                        (src in _W_DIGRAPHS and i + 2 < len(w)
+                         and w[i + 2] in "aeiouy")):
                     out.append(dst); i += len(src); break
             else:
                 c = w[i]
@@ -213,20 +257,74 @@ def word_to_ipa(word):
                     out.append(_SINGLE[c])
                 elif c in _CONS:
                     out.append(_CONS[c])
-                elif c in "ːəɛɪɔʊʃθðŋxdʒ":
+                elif c == _JAY:
+                    out.append("j")
+                elif c in _PASS:
                     out.append(c)
+                else:
+                    # Never silently: the old loop dropped /ç/ here, so
+                    # «riyt» was read «rit». screen_corpus() counts these.
+                    _DROPPED.append((word, c))
                 i += 1
     return "".join(out)
 
 
+def screen_corpus(path):
+    """0-token check over EVERY verse: words whose letters the loop dropped.
+
+    Returns (n_tokens, Counter of (word, char)). A non-empty counter is a
+    finding. Known-bad control: with "ç" removed from _PASS, «riyt» must
+    appear here.
+    """
+    import json
+    from collections import Counter
+    with open(path, encoding="utf-8") as f:
+        bible = json.load(f)
+    del _DROPPED[:]
+    n = 0
+
+    def walk(x):
+        nonlocal n
+        if isinstance(x, str):
+            for m in _WORD.finditer(x.replace("`", "")):
+                n += 1
+                word_to_ipa(m.group(0))
+        elif isinstance(x, list):
+            for y in x:
+                walk(y)
+        elif isinstance(x, dict):
+            for y in x.values():
+                walk(y)
+    walk(bible)
+    return n, Counter(_DROPPED)
+
+
 def to_ipa(text):
     """Verse text -> IPA for Kokoro. Punctuation is kept: it drives prosody."""
-    return _WORD.sub(lambda m: word_to_ipa(m.group(0)), text)
+    # ⚠⚠ KOKORO'S /g/ IS «ɡ» (U+0261), NOT ASCII «g» — the vocab has no
+    #   ASCII g, so the model DROPS it: «God» would be said «od». Every rule
+    #   and WORDS entry here writes ASCII g, so convert once, at the boundary.
+    #   Found 2026-10-05 by diffing the emitted symbols against the model's
+    #   config.json vocab (49,010 g's over the asset) — the IPA path had never
+    #   actually run, so no ear had heard it. A hyphen is not in the vocab
+    #   either; between two words it becomes a space, not a glue.
+    ipa = _WORD.sub(lambda m: word_to_ipa(m.group(0)), text.replace("-", " "))
+    return ipa.replace("g", "ɡ")
 
 
 if __name__ == "__main__":
     import sys
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if sys.argv[1:2] == ["--screen"]:
+        # python tools/me_phonemes.py --screen [asset]   rc 1 = letters dropped
+        p = (sys.argv[2] if len(sys.argv) > 2 else
+             "C:/Projects/Hexapla/app/src/main/assets/bibles/enm_wycliffe.json")
+        n, bad = screen_corpus(p)
+        print(f"tokens {n}  dropped-letter tokens {sum(bad.values())}  "
+              f"distinct {len(bad)}")
+        for (w, c), k in bad.most_common(30):
+            print(f"  {k:6}  {w!r}  char {c!r}")
+        sys.exit(1 if bad else 0)
     for t in sys.argv[1:] or [
         "In the bigynnyng God made of nouyt heuene and erthe.",
         "And God seide, The erthe brynge forth a lyuynge soul in his kynde, "

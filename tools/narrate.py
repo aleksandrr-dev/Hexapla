@@ -337,7 +337,9 @@ LANG_CONFIG = {
         "ipa": "middle_english",   # -> me_phonemes.to_ipa, bypasses G2P
         "strip_notes": False,
         "default_books": None,
-        "normalizer": "wycliffe",
+        # 2026-10-05: "wycliffe" (modernizing) -> "wycliffe_ipa" (backtick +
+        # hyphen only); see normalize_text.
+        "normalizer": "wycliffe_ipa",
     },
     # ★ SWITCHED TO THE OWNER'S VOICE 2026-08-21, on his pick from the round-2
     # ear test ("the voice at ref_K_dfneq_long sounds great, we can use that").
@@ -813,6 +815,15 @@ def normalize_text(text, normalizer_name):
         # tools/audit_ru_stress.py. Do not use until the table is rebuilt.
         import ru_stress
         return strip_ru_variant_numbers(ru_stress.apply_stress(text))
+    if normalizer_name == "wycliffe_ipa":
+        # ★ For the IPA path the spelling must reach me_phonemes AS PRINTED:
+        #   the modernizing "wycliffe" normalizer turned «feith» into «faeth»
+        #   and «ayens» into «against» before the phonemizer saw them. Only
+        #   the supplied-word backtick and typesetting hyphens go.
+        import archaic_english
+        text = text.replace("`", "")
+        return archaic_english._JOIN_HYPHEN.sub(
+            lambda m: m.group(1) + m.group(2), text)
     if normalizer_name in ("geneva", "tyndale", "wycliffe", "ylt"):
         import archaic_english
         return archaic_english.normalize(text, normalizer_name)
@@ -890,8 +901,16 @@ def _kokoro_request(text, voice, output_wav, timeout=180, ipa=None):
     """
     import threading
     proc = _kokoro_worker()
-    proc.stdin.write(json.dumps({"text": text, "voice": voice,
-                                 "out": str(output_wav)}) + "\n")
+    # ⚠⚠ "ipa" MUST BE IN THE REQUEST. Until 2026-10-05 it was accepted here
+    #   and never sent, so the worker's phoneme branch was dead and ALL 1,345
+    #   wyc chapters were read by kokoro's MODERN G2P from Middle English
+    #   spelling: «Y» as «why», «worldis» as «world-ees», «disseyue» as
+    #   «dis-aye-you» (owner's ear kit, _work/wyc_ear_VERDICTS_2026-10-05.md).
+    #   Control: tools/test_kokoro_ipa_request.py.
+    req = {"text": text, "voice": voice, "out": str(output_wav)}
+    if ipa:
+        req["ipa"] = ipa
+    proc.stdin.write(json.dumps(req) + "\n")
     proc.stdin.flush()
 
     box = {}
@@ -2197,8 +2216,12 @@ def synthesize_verse(text, lang, temp_dir, verse_idx, book_idx=None):
         # and bypass grapheme-to-phoneme. Wycliffe uses this for reconstructed
         # Middle English; every other kokoro set passes ipa=None and is
         # unaffected.
+        # ⚠ Verses only. A negative verse_idx is the chapter HEADER («Psalms,
+        #   Chapter 23»), modern English with digits: through me_phonemes the
+        #   digits are not in kokoro's vocab (the number goes SILENT) and «3»
+        #   is read as yogh («2j»). Headers keep the modern G2P they always had.
         _ipa = None
-        if cfg.get("ipa") == "middle_english":
+        if cfg.get("ipa") == "middle_english" and verse_idx >= 0:
             from me_phonemes import to_ipa as _to_ipa
             _ipa = _to_ipa(text)
         ok = synthesize_kokoro(text, cfg["voice"], str(wav_path), ipa=_ipa)

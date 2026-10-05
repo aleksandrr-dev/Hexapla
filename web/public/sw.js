@@ -91,6 +91,14 @@ self.addEventListener("fetch", (e) => {
       }));
       return;
     }
+    // The audio indexes go NETWORK-first (cache only offline): served stale,
+    // a set wired since the last visit plays the device voice instead of its
+    // recording (tyn, 2026-10-05). They are small; the books stay cache-first.
+    if (/\/audio_index(_gen)?\.json$/.test(u.pathname)) {
+      e.respondWith(fetch(req).then((r) => put(DATA, req, r)).catch(async () =>
+        (await caches.match(req)) ?? Response.error()));
+      return;
+    }
     const fresh = fetch(req).then((r) => put(DATA, req, r));
     e.waitUntil(fresh.catch(() => undefined));
     e.respondWith(caches.open(DATA).then((c) => c.match(req)).then((hit) => hit ?? fresh));

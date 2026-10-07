@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { chapterRows, type Row } from "./parallel.ts";
 import { chapterRows2 } from "./parallel_legacy.test-ref.ts";
 import { fromKjv, toKjv, type VerseMapData } from "./versemap.ts";
-import { directionOf, dropCapEnd, opensChapter } from "./text.ts";
+import { directionOf, dropCapEnd, opensChapter, woodcutCapEnd } from "./text.ts";
 
 const ASSETS = new URL("../../app/src/main/assets/", import.meta.url);
 const vm = JSON.parse(readFileSync(new URL("versemap.json", ASSETS), "utf8")) as VerseMapData;
@@ -78,6 +78,11 @@ eq("dropcap quote", dropCapEnd("“And"), 2);
 eq("dropcap cjk none", dropCapEnd("太初に"), -1);
 eq("dropcap one letter none", dropCapEnd("O"), -1);
 eq("dropcap combining", dropCapEnd("Ábc"), 2);
+eq("woodcut unread initial", woodcutCapEnd("·Ar var"), 1);
+eq("woodcut unread initial word", woodcutCapEnd("· þm̄ Dogū"), 2);
+eq("woodcut two unread", woodcutCapEnd("··n Paull"), 1);
+eq("woodcut letter", woodcutCapEnd("Nu þa"), 1);
+eq("woodcut dot only none", woodcutCapEnd("· "), -1);
 
 // A drop cap opens the chapter ON SCREEN (owner 2026-09-29: a capital on
 // Jonah 1:17 beside the Synodal). Synodal Jonah 2:1 = KJV 1:17 sits on row 17

@@ -26,7 +26,7 @@ import { Player, type AudioPrefs, type PlayState } from "./player";
 import { voiceKey } from "./speech";
 import { FONT_MAX, FONT_MIN, MAX_PARALLEL, RATE_MAX, RATE_MIN, VOL_MIN, loadPrefs, parseWith, savePrefs, type BedKind, type Layout, type Prefs, type Theme } from "./prefs";
 import { buildHash, parseRoute, type Route } from "./route";
-import { directionOf, dropCapEnd, isCjk, opensChapter } from "./text";
+import { directionOf, dropCapEnd, isCjk, opensChapter, woodcutCapEnd } from "./text";
 import { fitCap } from "./dropcap";
 import { SEARCH_CAP, SEARCH_MIN, type SearchHit } from "./search";
 import type { SearchMsg, SearchReq } from "./search.worker";
@@ -282,7 +282,7 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
     // Word ranges index the plain text; the tagged text shows none (Android).
     const plain = shownText(segs);
     const dir = directionOf(plain) ?? undefined;
-    const end = cap ? dropCapEnd(plain) : -1;
+    const end = cap ? (img !== null ? woodcutCapEnd(plain) : dropCapEnd(plain)) : -1;
     return (
       <div ref={capRef} class={cls} lang={lang} dir={dir}>
         {end >= 0 && (
@@ -299,7 +299,7 @@ function VerseText({ text, lang, cap, cls, word = null, after = null, segs = nul
     );
   }
   const dir = directionOf(text) ?? undefined;
-  const end = cap ? dropCapEnd(text) : -1;
+  const end = cap ? (img !== null ? woodcutCapEnd(text) : dropCapEnd(text)) : -1;
   const c = cls + (isCjk(lang) ? " cjk" : "");
   // A sounding word wins: the verse being read shows its highlight, not taps.
   const body = (from: number) => (inter !== undefined && word === null ? interWords(text, from, inter) : marked(text, from, word));

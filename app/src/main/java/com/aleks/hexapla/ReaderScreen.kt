@@ -1428,7 +1428,7 @@ private fun VerseText(
         secondary -> MaterialTheme.colorScheme.onSurfaceVariant
         else -> MaterialTheme.colorScheme.onBackground
     }
-    val capEnd = if (dropCap) dropCapEnd(annotated.text) else -1
+    val capEnd = if (!dropCap) -1 else if (woodcut != null) woodcutCapEnd(annotated.text) else dropCapEnd(annotated.text)
     if (capEnd > 0) {
         val capStyle = TextStyle(
             fontSize = fontSize.sp, lineHeight = (fontSize * 1.45f).sp,
@@ -1534,6 +1534,18 @@ private fun dropCapEnd(text: String): Int {
         i += Character.charCount(text.codePointAt(i))
     }
     // A one-letter verse would leave the body empty.
+    return if (i < text.length) i else -1
+}
+
+/** Drop-cap end when a woodcut is drawn. A verse whose initial the
+ *  transcription could not read opens with U+00B7 (Þorláksbiblía): the
+ *  woodcut IS that letter, so it replaces the dot and the spaces after it,
+ *  never the letter that follows. Otherwise [dropCapEnd]. Same rule as
+ *  `woodcutCapEnd` in web/src/text.ts. */
+private fun woodcutCapEnd(text: String): Int {
+    if (!text.startsWith('\u00B7')) return dropCapEnd(text)
+    var i = 1
+    while (i < text.length && text[i].isWhitespace()) i++
     return if (i < text.length) i else -1
 }
 

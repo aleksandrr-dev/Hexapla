@@ -52,6 +52,18 @@ export function dropCapEnd(text: string): number {
   return i < text.length ? i : -1;
 }
 
+/** Drop-cap end when a woodcut is drawn. A verse whose initial the
+ *  transcription could not read opens with U+00B7 (Þorláksbiblía): the
+ *  woodcut IS that letter, so it replaces the dot and the spaces after it,
+ *  never the letter that follows. Otherwise `dropCapEnd`. Same rule as
+ *  `woodcutCapEnd` in ReaderScreen.kt. */
+export function woodcutCapEnd(text: string): number {
+  if (!text.startsWith("\u00B7")) return dropCapEnd(text);
+  let i = 1;
+  while (i < text.length && SPACE.test(text[i])) i += 1;
+  return i < text.length ? i : -1;
+}
+
 /** Whether a column's verse opens the chapter on screen, and so takes the drop
  *  cap. Its own verse 1 is not enough: a translation numbered differently can
  *  start its NEXT chapter mid-page (Synodal Jonah 2:1 = KJV 1:17 sits on row 17

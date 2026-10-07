@@ -37,6 +37,9 @@ object BibleRepo {
         Translation("gda", "bibles/pl_gdanska.json", "Biblia Gdańska, 1632 (PL)", Locale.forLanguageTag("pl")),
         Translation("srb", "bibles/sr_karadzic.json", "Sveto pismo — Karadžić/Daničić, 1847/1865 (SR)", Locale.forLanguageTag("sr")),
         Translation("da19", "bibles/da_1819.json", "Dansk Bibel, 1819/1871 (DA)", Locale.forLanguageTag("da")),
+        // Transcribed by this project from the Landsbókasafn Íslands scans
+        // (BibliaTHaderllHe000036976v3); NT only; PD by age.
+        Translation("thl", "bibles/is_thorlaks.json", "Þorláksbiblía, 1644 — Nýja testamentið (IS)", Locale.forLanguageTag("is")),
         Translation("svv", "bibles/nl_staten.json", "Statenvertaling, 1637/1888 (NL)", Locale.forLanguageTag("nl")),
         Translation("rv", "bibles/es_rv.json", "Reina-Valera, 1909 (ES)", Locale.forLanguageTag("es")),
         Translation("alm", "bibles/pt_almeida.json", "Almeida — Bíblia Livre TR (PT)", Locale.forLanguageTag("pt")),
@@ -111,6 +114,7 @@ object BibleRepo {
         "it" -> "dio"
         "sv" -> "kxii"
         "da", "nb", "nn", "no" -> "da19"  // Norway's classical scripture was the Danish Bible
+        "is" -> "thl"
         "nl" -> "svv"
         "ar" -> "vd"
         "fi" -> "fi76"

@@ -433,6 +433,8 @@ export function App() {
   const [route, setRoute] = useState<Route>(() => initialRoute(prefs));
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [index, setIndex] = useState<BooksIndex | null>(null);
+  // Which translation `index` belongs to (it lags route.translation by a load).
+  const [indexId, setIndexId] = useState<string | null>(null);
   const [chap, setChap] = useState<Chapter | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sheet, setSheet] = useState<Sheet>(null);
@@ -583,14 +585,33 @@ export function App() {
   useEffect(() => {
     let live = true;
     setIndex(null);
+    setIndexId(null);
     loadBooksIndex(route.translation).then(
-      (x) => live && setIndex(x),
+      (x) => {
+        if (!live) return;
+        setIndex(x);
+        setIndexId(route.translation);
+      },
       (e) => live && setError(String(e)),
     );
     return () => {
       live = false;
     };
   }, [route.translation]);
+
+  // A route into a book this translation has no text for (a saved position or
+  // deep link from another translation; the OT of an NT-only one) opens the
+  // first book that has text, as Android does (ReaderScreen.kt).
+  useEffect(() => {
+    if (index === null || indexId !== route.translation) return;
+    if (route.book >= index.length || index[route.book].chapters.length > 0) return;
+    const first = index.findIndex((b) => b.chapters.length > 0);
+    if (first < 0) return;
+    const r: Route = { translation: route.translation, book: first, chapter: 0, verse: null };
+    scrollTo.current = null;
+    setRoute(r);
+    history.replaceState(null, "", buildHash(r));
+  }, [index, indexId, route.translation, route.book]);
 
   useEffect(() => {
     if (manifest === null) return;
@@ -812,12 +833,15 @@ export function App() {
     if (index === null) return null;
     let b = route.book;
     let c = route.chapter + delta;
+    // Books with no text in this translation are skipped (as on Android).
     if (c < 0) {
       b -= 1;
+      while (b >= 0 && index[b].chapters.length === 0) b -= 1;
       if (b < 0) return null;
       c = index[b].chapters.length - 1;
     } else if (c >= (index[b]?.chapters.length ?? 0)) {
       b += 1;
+      while (b < index.length && index[b].chapters.length === 0) b += 1;
       c = 0;
       if (b >= index.length) return null;
     }
@@ -3052,10 +3076,11 @@ function BookSheet(p: { index: BooksIndex | null; lang: string; current: Route; 
             {SECTION_AT[i] && <div class={"bsec " + SECTION_AT[i][0]}>{t(SECTION_AT[i][1])}</div>}
             <button
               type="button"
-              class={"li" + (i === p.current.book ? " cur" : "")}
+              class={"li" + (i === p.current.book ? " cur" : "") + (b.chapters.length === 0 ? " na" : "")}
               lang={p.lang}
               dir={directionOf(b.name) ?? undefined}
-              onClick={() => (b.chapters.length === 1 ? p.onPick(i, 0) : setBook(i))}
+              aria-disabled={b.chapters.length === 0 ? "true" : undefined}
+              onClick={() => b.chapters.length > 0 && (b.chapters.length === 1 ? p.onPick(i, 0) : setBook(i))}
             >
               {b.name}
             </button>

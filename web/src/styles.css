@@ -9,6 +9,16 @@
   font-display: swap;
 }
 
+/* Junicode (SIL OFL 1.1) Latin subset: the rare sorts of the Icelandic
+   Thorlaksbiblia 1644 (U+A7xx, combining marks, superscripts) that Literata lacks. */
+@font-face {
+  font-family: "Junicode";
+  src: url("../../app/src/main/res/font/junicode_thl.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #faf3e3;
   --ink: #2b2114;
@@ -75,6 +85,9 @@ a:hover { color: var(--lea); }
 :focus-visible { outline: 2px solid var(--ox); outline-offset: 2px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+
+/* Icelandic: Junicode first, for the sorts Literata lacks (ReadingFont.kt). */
+:lang(is) { font-family: Junicode, Literata, Georgia, serif; }
 
 /* Script-specific faces. Literata has no CJK, Arabic, Hebrew, Devanagari,
    Tamil, Armenian or Georgian; each falls to the device's own serif for its
@@ -323,6 +336,8 @@ mark.word { background: color-mix(in srgb, var(--ox) 24%, transparent); color: i
   background: transparent; color: var(--ink); cursor: pointer; font-size: 16px; line-height: 1.35;
 }
 .li:hover { background: var(--sv); }
+.li.na { opacity: 0.4; cursor: default; }
+.li.na:hover { background: transparent; }
 .li.cur { background: var(--sv); box-shadow: inset 3px 0 0 var(--ox); font-weight: 600; }
 /* Language heading in the translation picker (tgroups.ts); not a button. */
 .lh { padding: 14px 14px 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; color: var(--mu); }

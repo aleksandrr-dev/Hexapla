@@ -25,6 +25,14 @@ import androidx.compose.ui.text.font.FontFamily
 object ReadingFont {
     val literata = FontFamily(Font(R.font.literata))
 
+    /**
+     * Junicode 2 (SIL OFL 1.1, Peter S. Baker), Latin subset, for Icelandic.
+     * The Þorláksbiblía 1644 text carries early-print sorts Literata lacks
+     * (ꝥ ꝑ ⁊ ʒ ꝰ ꝛ ꜳ ꝺ, combining marks, modifier superscripts); the whole
+     * face switches for lang "is" so no line mixes two typefaces' metrics.
+     */
+    val junicode = FontFamily(Font(R.font.junicode_thl))
+
     /** Languages Literata covers (Latin, Greek, Cyrillic). */
     private val COVERED = setOf(
         "en", "enm", "de", "fr", "es", "pt", "it", "nl", "da", "sv", "fi",
@@ -38,6 +46,7 @@ object ReadingFont {
      */
     fun forLanguage(serif: Boolean, lang: String): FontFamily = when {
         !serif -> FontFamily.SansSerif
+        lang == "is" -> junicode      // rare sorts Literata cannot render
         lang in COVERED -> literata
         else -> FontFamily.Serif      // scripts Literata cannot render
     }

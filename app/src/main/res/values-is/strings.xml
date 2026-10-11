@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Icelandic (is) UI locale. Glossary fixed BEFORE translating; every string
+    below follows it. Biblical vocabulary in the register of the Icelandic
+    Bible Society's Biblían (2007).
+
+      verse ............... vers (n., pl. vers)
+      chapter ............. kafli (pl. kaflar)
+      Old Testament ....... Gamla testamentið
+      New Testament ....... Nýja testamentið
+      Apocrypha ........... Apókrýfar bækur
+      Gospel (a book) ..... guðspjall (pl. guðspjöllin)
+      the Good News ....... Fagnaðarerindið
+      apostle ............. postuli
+      Acts ................ Postulasagan
+      epistles ............ bréfin (postulabréfin)
+      Psalms / Psalter .... Sálmarnir / Saltarinn
+      Proverbs ............ Orðskviðirnir
+      prophets ............ spámennirnir
+      Scripture ........... Ritningin
+      salvation ........... hjálpræði
+      words of Christ ..... orð Krists
+      Holy Spirit ......... Heilagur andi
+      Strong's numbers .... Strong-númer
+      concordance ......... samhljóðun
+      cross-references .... millivísanir
+      translation ......... þýðing
+      reading plan ........ lestraráætlun
+      bookmark ............ bókamerki
+      note ................ athugasemd
+      highlight ........... áherslulitur
+      side by side ........ hlið við hlið (samhliða)
+      narration ........... upplestur
+      text-to-speech ...... talgervill
+      speech engine ....... talgervill
+      sleep timer ......... svefnteljari
+      widget .............. græja
+      offline ............. án nettengingar
+      download ............ sækja / niðurhal
+      backup .............. öryggisafrit
+      settings ............ stillingar
+      grammar terms ....... native Icelandic school grammar where one exists
+                            (nafnorð, sögn, nútíð, germynd, framsöguháttur,
+                            nefnifall ...); Hebrew-specific categories keep
+                            their Latin names as in the other locales
+                            (status constructus, qal, niphal ...).
+    Product names stay as is: Hexapla, KJV, Strong, Webster, Literata, Junicode.
+-->
+<resources>
+
+    <string name="nav_read">Lesa</string>
+    <string name="nav_plans">Áætlanir</string>
+    <string name="nav_topics">Efni</string>
+    <string name="nav_bookmarks">Bókamerki</string>
+    <string name="nav_settings">Stillingar</string>
+
+    <string name="select_book">Veldu bók</string>
+    <string name="select_chapter">Veldu kafla</string>
+    <string name="chapter">%1$d. kafli</string>
+    <string name="old_testament">Gamla testamentið</string>
+    <string name="new_testament">Nýja testamentið</string>
+    <string name="apocrypha">Apókrýfar bækur</string>
+    <string name="prev_chapter">Fyrri kafli</string>
+    <string name="next_chapter">Næsti kafli</string>
+    <string name="play_audio">Hlusta á kaflann</string>
+    <string name="stop_audio">Stöðva hljóð</string>
+    <string name="bookmark_added">Bókamerki bætt við</string>
+    <string name="bookmark_removed">Bókamerki fjarlægt</string>
+    <string name="tts_unavailable">Enginn talgervill tiltækur fyrir þetta tungumál</string>
+
+    <string name="split_view">Tvískiptur skjár (tvær þýðingar)</string>
+    <string name="split_orientation">Uppsetning skiptingar</string>
+    <string name="split_horizontal">Hlið við hlið (lárétt)</string>
+    <string name="split_vertical">Hvor undir annarri (lóðrétt)</string>
+    <string name="primary_translation">Aðalþýðing</string>
+    <string name="swap_translations">Víxla þýðingunum tveimur</string>
+    <string name="secondary_translation">Önnur þýðing</string>
+    <string name="show_apocrypha">Sýna apókrýfar bækur</string>
+    <string name="show_apocrypha_note">Bækur utan 66 bóka ritsafnsins, sýndar í sérstökum hluta</string>
+
+    <string name="settings_appearance">Útlit</string>
+    <string name="theme">Þema</string>
+    <string name="theme_system">Kerfi</string>
+    <string name="theme_light">Ljóst</string>
+    <string name="theme_dark">Dökkt</string>
+    <string name="font_size">Leturstærð</string>
+    <string name="font_serif">Letur með þverendum</string>
+    <string name="settings_reading">Lestur</string>
+    <string name="settings_reminder">Dagleg áminning</string>
+    <string name="reminder_enable">Minna mig á að lesa</string>
+    <string name="reminder_time">Tími áminningar</string>
+    <string name="reminder_hour">Klukkustund</string>
+    <string name="reminder_minute">Mínúta</string>
+    <string name="notification_title">Tími til að lesa Biblíuna</string>
+    <string name="notification_text">Opnaðu lestur dagsins og haltu áætluninni áfram.</string>
+    <string name="notification_channel">Lestraráminningar</string>
+    <string name="notification_permission_needed">Leyfðu tilkynningar til að fá áminningar</string>
+
+    <string name="plans_title">Lestraráætlanir</string>
+    <string name="plan_year">Biblían á einu ári</string>
+    <string name="plan_year_desc">Öll Biblían á 365 dögum, 3–4 kaflar á dag</string>
+    <string name="plan_chrono">Biblían í tímaröð á einu ári</string>
+    <string name="plan_chrono_desc">Biblían í þeirri röð sem atburðirnir gerðust: Jobsbók við hlið Fyrstu Mósebókar, Sálmarnir með Davíð, spámennirnir með konungunum, bréfin samhliða Postulasögunni</string>
+    <string name="interlinear_none">Engin orðagögn fyrir þetta vers.</string>
+    <string name="dict_title">Orðabók Websters frá 1828</string>
+    <string name="dict_note">Ýttu á hvaða orð sem er í enskri þýðingu til að sjá hvað það merkti á tíma klassísku biblíuþýðinganna — American Dictionary of the English Language eftir Noah Webster, 1828.</string>
+    <string name="dict_source">American Dictionary eftir Webster, 1828</string>
+    <string name="dict_not_found">Ekki í orðabókinni frá 1828 — líklega sérnafn.</string>
+    <string name="era_beginning">Upphafið</string>
+    <string name="era_patriarchs">Ættfeðurnir</string>
+    <string name="era_exodus">Egyptaland og brottförin</string>
+    <string name="era_wilderness">Eyðimörkin</string>
+    <string name="era_conquest">Landnámið í Kanaan</string>
+    <string name="era_judges">Dagar dómaranna</string>
+    <string name="era_saul">Samúel og Sál</string>
+    <string name="era_david">Ríki Davíðs</string>
+    <string name="era_solomon">Salómon og musterið</string>
+    <string name="era_divided">Ríkið klofnar</string>
+    <string name="era_isaiah">Dagar Jesaja</string>
+    <string name="era_last_kings">Síðustu konungar Júda</string>
+    <string name="era_fall">Fall Jerúsalem</string>
+    <string name="era_exile">Við fljót Babýlonar</string>
+    <string name="era_return">Heimkoman til Síonar</string>
+    <string name="era_christ">Ævi Krists</string>
+    <string name="era_church">Kirkjan og bréfin</string>
+    <string name="era_revelation">Opinberunarbókin</string>
+    <string name="plan_nt90">Nýja testamentið á 90 dögum</string>
+    <string name="plan_nt90_desc">Allir 260 kaflar Nýja testamentisins á 3 mánuðum</string>
+    <string name="day_n">%1$d. dagur</string>
+    <string name="days_done">%1$d af %2$d dögum lokið</string>
+    <string name="mark_done">Merkja sem lesið</string>
+    <string name="reset_plan">Endurstilla framvindu</string>
+    <string name="today">Í dag</string>
+
+    <string name="topics_title">Biblíunám og hjálp</string>
+    <string name="topics_study">Námsefni</string>
+    <string name="topics_help">Ritningarstaðir við aðstæður lífsins</string>
+    <string name="topic_salvation">Hjálpræði</string>
+    <string name="topic_prayer">Bæn</string>
+    <string name="topic_faith">Trú</string>
+    <string name="topic_love">Kærleikur</string>
+    <string name="topic_forgiveness">Fyrirgefning</string>
+    <string name="topic_holy_spirit">Heilagur andi</string>
+    <string name="topic_wisdom">Viska</string>
+    <string name="topic_hope">Von</string>
+    <string name="help_anxiety">Kvíði og áhyggjur</string>
+    <string name="help_fear">Ótti</string>
+    <string name="help_grief">Sorg og missir</string>
+    <string name="help_loneliness">Einmanaleiki</string>
+    <string name="help_anger">Reiði</string>
+    <string name="help_temptation">Freisting</string>
+    <string name="help_illness">Veikindi</string>
+    <string name="help_finances">Fjárhagserfiðleikar</string>
+    <string name="help_despair">Örvænting og þunglyndi</string>
+    <string name="help_guidance">Þörf fyrir leiðsögn</string>
+    <string name="help_marriage">Hjónaband og fjölskylda</string>
+    <string name="help_guilt">Sektarkennd og skömm</string>
+
+    <string name="support_title">Styðja forritarann</string>
+    <string name="support_note">Forritið er ókeypis og fullbúið. Ekkert opnast við að gefa framlag — þetta er aðeins fyrir þá sem vilja segja takk.</string>
+    <string name="bookmarks_title">Bókamerki</string>
+    <string name="no_bookmarks">Engin bókamerki enn. Haltu fingri á versi við lestur til að vista það.</string>
+    <string name="delete">Eyða</string>
+    <string name="search">Leita</string>
+    <string name="search_hint">Leita í textanum…</string>
+    <string name="no_results">Engar niðurstöður</string>
+    <string name="copy">Afrita</string>
+    <string name="copied">Afritað</string>
+    <string name="share">Deila</string>
+    <string name="note">Athugasemd</string>
+    <string name="save">Vista</string>
+    <string name="cancel">Hætta við</string>
+    <string name="keep_screen_on">Halda skjánum kveiktum við lestur</string>
+    <string name="verse_actions">Vers</string>
+    <string name="add_bookmark">Bæta við bókamerki</string>
+    <string name="xrefs">Millivísanir</string>
+    <string name="remove_bookmark">Fjarlægja bókamerki</string>
+    <string name="sources_title">Heimildir textanna</string>
+    <string name="sources_text">Leturgerð lesmáls: Literata frá argentínsku letursmiðjunni Huerta Tipográfica, SIL Open Font License 1.1. Leturgerð íslenska textans (Þorláksbiblía): Junicode eftir Peter S. Baker, SIL Open Font License 1.1. Allir biblíutextarnir eru í almenningseigu, nema: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); stafræn útgáfa Nýja testamentisins á sanskrít © SanskritBible.in, CC BY-SA 4.0. Lettneskur texti Glücks 1685/1689 © Háskóli Lettlands, SENIE/CLARIN-LV málheildin, CC BY-SA 4.0. Tyrkneskar apókrýfar bækur Ali Bey Bobowskis frá 1665: umritun með latnesku letri © Kadir Akın, notuð með leyfi. Orðabók Strong-samhljóðunarinnar (1890/1894) © Open Scriptures, CC-BY-SA. Hebresk orðhlutagreining © Open Scriptures (CC-BY). Millivísanir © openbible.info, CC-BY. Latneskur texti: The Clementine Vulgate Project (M. Tweedale o.fl.), í almenningseigu. Kirkjuslavneskar fyrirsagnir Sálmanna frá Ponomar Project (ponomar.net). Fornarmenskir og georgískir textar frá TITUS, Goethe-háskólanum í Frankfurt (J. Gippert). Bakgrunnstónlist: Kevin MacLeod (incompetech.com), CC BY 4.0. Rússneskar skýringar við Strong-númer: BibleQuote-einingin (BibleQuote-Modules).</string>
+    <string name="voice_title">Upplestrarrödd</string>
+    <string name="voice_default">Sjálfgefið í kerfinu</string>
+    <string name="voice_note">Tiltækar raddir fara eftir talgervlinum sem er settur upp í tækinu (t.d. Google Speech Services, Samsung TTS). Ýttu á rödd til að heyra hana.</string>
+    <string name="voice_online">á netinu</string>
+    <string name="voice_female">Kvenrödd</string>
+    <string name="voice_male">Karlrödd</string>
+    <string name="backup_title">Öryggisafrit</string>
+    <string name="backup_export">Vista öryggisafrit…</string>
+    <string name="backup_import">Endurheimta öryggisafrit…</string>
+    <string name="backup_saved">Öryggisafrit vistað</string>
+    <string name="restore_done">Öryggisafrit endurheimt</string>
+    <string name="backup_failed">Eitthvað fór úrskeiðis</string>
+    <string name="compare">Bera saman þýðingar</string>
+    <string name="playback_channel">Upplestur</string>
+    <string name="playback_verse">%1$d. vers</string>
+    <string name="pause_audio">Gera hlé</string>
+    <string name="speech_rate">Lestrarhraði</string>
+    <string name="auto_continue">Halda áfram í næsta kafla</string>
+    <string name="sleep_timer">Svefnteljari</string>
+    <string name="sleep_off">Slökkt</string>
+    <string name="sleep_end_of_chapter">Í lok kaflans</string>
+    <string name="sleep_minutes">%1$d mín.</string>
+    <string name="listen_from_here">Hlusta héðan</string>
+    <string name="share_image">Deila sem mynd</string>
+    <string name="verse_original">Frumtexti</string>
+    <string name="verse_notes">Athugasemdir þýðanda</string>
+    <string name="streak">🔥 %1$d dagar</string>
+    <string name="topics_gospel">Fagnaðarerindið</string>
+    <string name="gospel_intro">Hvað á ég að gera til þess að verða hólpinn? Þessi vers leiða þig skref fyrir skref í gegnum hjálpræðisáform Guðs, beint úr Ritningunni. Ýttu á vers til að opna það í Biblíunni.</string>
+    <string name="gospel_step1">1 · Allir hafa syndgað</string>
+    <string name="gospel_step2">2 · Laun syndarinnar</string>
+    <string name="gospel_step3">3 · Kristur greiddi allt</string>
+    <string name="gospel_step4">4 · Ókeypis gjöf — ekki af verkum</string>
+    <string name="gospel_step5">5 · Trú þú á Drottin Jesú Krist</string>
+    <string name="gospel_step6">6 · Eilíft merkir eilíft</string>
+    <string name="gospel_step7">7 · Ákalla þú Drottin</string>
+    <string name="widget_description">Vers dagsins og fljótleg leið aftur þangað sem þú varst að lesa</string>
+    <string name="widget_continue">Halda áfram að lesa: %1$s →</string>
+    <string name="compare_note">Veldu hvaða þýðingar birtast í samanburði versa.</string>
+    <string name="audio_title">Upplestur</string>
+    <string name="audio_note">Kaflarnir eru lesnir upphátt — með hljóðrituðum upplestri þar sem hann er til, annars með talgervli tækisins. Hljóðið er vistað til hlustunar án nettengingar, eða kveiktu á streymi hér fyrir neðan til að spara pláss.</string>
+    <string name="audio_stream">Streyma án þess að vista</string>
+    <string name="audio_stream_note">Spila hljóðið um leið og það hleðst í stað þess að sækja það. Tekur minna geymslupláss en þarf nettengingu í hvert sinn; kaflar sem þú hefur þegar sótt spilast áfram án nettengingar.</string>
+    <string name="audio_downloading">Sæki hljóð… %1$d%%</string>
+    <string name="audio_narrated">Upplestur</string>
+    <string name="audio_storage">Niðurhalaður upplestur: %1$d MB</string>
+    <string name="audio_clear">Hreinsa</string>
+    <string name="strongs_title">Strong-númer (KJV)</string>
+    <string name="strongs_note">Sýnir númer Strong-samhljóðunarinnar í texta KJV. Ýttu á númer til að sjá hebreska eða gríska frumorðið og merkingu þess.</string>
+    <string name="red_letters_title">Rauðir stafir (orð Krists)</string>
+    <string name="immersive_title">Fela versanúmer</string>
+    <string name="plan_gospels">Guðspjöllin á 30 dögum</string>
+    <string name="plan_gospels_desc">Matteus, Markús, Lúkas og Jóhannes á einum mánuði</string>
+    <string name="plan_proverbs">Orðskviðirnir á einum mánuði</string>
+    <string name="plan_proverbs_desc">Einn kafli Orðskviðanna á dag í 31 dag</string>
+    <string name="plan_psalms">Sálmarnir á 75 dögum</string>
+    <string name="plan_psalms_desc">Tveir sálmar á dag gegnum allan Saltarann</string>
+    <string name="gospel_share">Deila Fagnaðarerindinu →</string>
+    <string name="search_all">Leita í öllum þýðingum</string>
+    <string name="welcome_tagline">Biblían á þrjátíu og tveimur tungumálum — án nettengingar, ókeypis, í heild sinni.</string>
+    <string name="welcome_gospel">Nýr lesandi Biblíunnar? Byrjaðu hér</string>
+    <string name="welcome_plan">Komdu þér upp daglegum lestrarvana</string>
+    <string name="welcome_read">Byrjaðu bara að lesa</string>
+    <string name="welcome_read_note">Opnar Jóhannesarguðspjall — frásögn sjónarvotts af Jesú. Þaðan geturðu farið hvert sem er.</string>
+    <string name="share_app_title">Deila forritinu</string>
+    <string name="share_app_note">Gefðu einhverjum Biblíuna: sýndu QR-kóðann til að skanna eða sendu tengilinn. Þar eru allar leiðir til að fá Hexapla — ókeypis, að eilífu.</string>
+    <string name="share_app_qr">Sýna QR-kóða</string>
+    <string name="share_app_link">Senda tengil</string>
+    <string name="music_title">Bakgrunnstónlist við hlustun</string>
+    <string name="music_volume">Hljóðstyrkur tónlistar</string>
+    <string name="music_pack">Sækja tónlistarpakka</string>
+    <string name="music_pack_partial">%1$d af %2$d lögum sótt — ýttu til að sækja restina</string>
+    <string name="music_pack_note">%1$d lög, um %2$d MB. Meiri fjölbreytni en tónlistin sem fylgir forritinu, sem virkar áfram án nettengingar hvort sem er.</string>
+    <string name="music_pack_have">Tónlistarpakki sóttur: %1$d lög, %2$d MB</string>
+    <string name="music_pack_delete">Eyða sóttri tónlist</string>
+    <string name="music_pack_progress">Sæki %1$d af %2$d…</string>
+    <string name="bed_kind">Hvað hljómar undir</string>
+    <string name="bed_kind_music">Tónlist</string>
+    <string name="bed_kind_fireside">Arineldur</string>
+    <string name="bed_kind_fireside_note">Snarkandi eldur í stað tónlistar. Hann þagnar samt á þeim köflum þar sem þögn á við.</string>
+    <string name="music_uniform">Sama tónlist allan tímann</string>
+    <string name="music_uniform_note">Slökkt sjálfgefið: tónlistin breytist eftir því sem lesið er og þagnar á nokkrum stöðum þar sem betra er að hafa enga tónlist.</string>
+
+    <string name="morph_noun">nafnorð</string>
+    <string name="morph_adjective">lýsingarorð</string>
+    <string name="morph_article">greinir</string>
+    <string name="morph_verb">sögn</string>
+    <string name="morph_particle">ögn</string>
+    <string name="morph_preposition">forsetning</string>
+    <string name="morph_conjunction">samtenging</string>
+    <string name="morph_adverb">atviksorð</string>
+    <string name="morph_interjection">upphrópun</string>
+    <string name="morph_pronoun">fornafn</string>
+    <string name="morph_pron_personal">persónufornafn</string>
+    <string name="morph_pron_relative">tilvísunarfornafn</string>
+    <string name="morph_pron_reciprocal">gagnverkandi fornafn</string>
+    <string name="morph_pron_demonstrative">ábendingarfornafn</string>
+    <string name="morph_pron_reflexive">afturbeygt fornafn</string>
+    <string name="morph_pron_interrogative">spurnarfornafn</string>
+    <string name="morph_pron_indefinite">óákveðið fornafn</string>
+    <string name="morph_pron_correlative">fylgifornafn</string>
+    <string name="morph_pron_possessive">eignarfornafn</string>
+    <string name="morph_cond_particle">skilyrðisögn</string>
+    <string name="morph_aramaic_word">arameískt orð</string>
+    <string name="morph_hebrew_word">hebreskt orð</string>
+    <string name="morph_masculine">karlkyn</string>
+    <string name="morph_feminine">kvenkyn</string>
+    <string name="morph_neuter">hvorugkyn</string>
+    <string name="morph_common">samkyn</string>
+    <string name="morph_singular">eintala</string>
+    <string name="morph_plural">fleirtala</string>
+    <string name="morph_dual">tvítala</string>
+    <string name="morph_person_1">1. persóna</string>
+    <string name="morph_person_2">2. persóna</string>
+    <string name="morph_person_3">3. persóna</string>
+    <string name="morph_tense_present">nútíð</string>
+    <string name="morph_tense_imperfect">imperfekt</string>
+    <string name="morph_tense_future">framtíð</string>
+    <string name="morph_tense_aorist">aóristos</string>
+    <string name="morph_tense_perfect">núliðin tíð</string>
+    <string name="morph_tense_pluperfect">þáliðin tíð</string>
+    <string name="morph_second">"2. "</string>
+    <string name="morph_voice_active">germynd</string>
+    <string name="morph_voice_middle">miðmynd</string>
+    <string name="morph_voice_passive">þolmynd</string>
+    <string name="morph_voice_midpass">miðmynd/þolmynd</string>
+    <string name="morph_voice_mid_deponent">miðmynd (deponens)</string>
+    <string name="morph_voice_pass_deponent">þolmynd (deponens)</string>
+    <string name="morph_voice_midpass_deponent">miðmynd/þolmynd (deponens)</string>
+    <string name="morph_voice_impersonal">ópersónuleg germynd</string>
+    <string name="morph_mood_indicative">framsöguháttur</string>
+    <string name="morph_mood_subjunctive">viðtengingarháttur</string>
+    <string name="morph_mood_optative">óskháttur</string>
+    <string name="morph_mood_imperative">boðháttur</string>
+    <string name="morph_mood_infinitive">nafnháttur</string>
+    <string name="morph_mood_participle">lýsingarháttur</string>
+    <string name="morph_case_nominative">nefnifall</string>
+    <string name="morph_case_genitive">eignarfall</string>
+    <string name="morph_case_dative">þágufall</string>
+    <string name="morph_case_accusative">þolfall</string>
+    <string name="morph_case_vocative">ávarpsfall</string>
+    <string name="morph_q_pri">óbeygjanlegt sérnafn</string>
+    <string name="morph_q_nui">óbeygjanlegt töluorð</string>
+    <string name="morph_q_li">óbeygjanlegur bókstafur</string>
+    <string name="morph_q_oi">annað óbeygjanlegt orð</string>
+    <string name="morph_q_negative">neitandi</string>
+    <string name="morph_q_interrogative">spyrjandi</string>
+    <string name="morph_q_crasis">krasis</string>
+    <string name="morph_q_superlative">efsta stig</string>
+    <string name="morph_q_comparative">miðstig</string>
+    <string name="morph_q_att">attísk mynd</string>
+    <string name="morph_q_abb">stytt mynd</string>
+    <string name="morph_q_attached">með áfastri ögn</string>
+    <string name="morph_stem_qal">qal</string>
+    <string name="morph_stem_niphal">niphal</string>
+    <string name="morph_stem_piel">piel</string>
+    <string name="morph_stem_pual">pual</string>
+    <string name="morph_stem_hiphil">hiphil</string>
+    <string name="morph_stem_hophal">hophal</string>
+    <string name="morph_stem_hithpael">hithpael</string>
+    <string name="morph_stem_polel">polel</string>
+    <string name="morph_stem_polal">polal</string>
+    <string name="morph_stem_hithpolel">hithpolel</string>
+    <string name="morph_stem_poel">poel</string>
+    <string name="morph_stem_poal">poal</string>
+    <string name="morph_stem_palel">palel</string>
+    <string name="morph_stem_pulal">pulal</string>
+    <string name="morph_stem_qal_passive">qal þolmynd</string>
+    <string name="morph_stem_pilpel">pilpel</string>
+    <string name="morph_stem_polpal">polpal</string>
+    <string name="morph_stem_hithpalpel">hithpalpel</string>
+    <string name="morph_stem_nithpael">nithpael</string>
+    <string name="morph_stem_pealal">pealal</string>
+    <string name="morph_stem_pilel">pilel</string>
+    <string name="morph_stem_hothpaal">hothpaal</string>
+    <string name="morph_stem_tiphil">tiphil</string>
+    <string name="morph_stem_hishtaphel">hishtaphel</string>
+    <string name="morph_stem_nithpalel">nithpalel</string>
+    <string name="morph_stem_nithpoel">nithpoel</string>
+    <string name="morph_stem_hithpoel">hithpoel</string>
+    <string name="morph_stem_peal">peal</string>
+    <string name="morph_stem_peil">peil</string>
+    <string name="morph_stem_hithpeel">hithpeel</string>
+    <string name="morph_stem_saphel">saphel</string>
+    <string name="morph_stem_pael">pael</string>
+    <string name="morph_stem_ithpaal">ithpaal</string>
+    <string name="morph_stem_ithpeel">ithpeel</string>
+    <string name="morph_hconj_perfect">perfekt</string>
+    <string name="morph_hconj_seq_perfect">perfectum consecutivum</string>
+    <string name="morph_hconj_imperfect">imperfekt</string>
+    <string name="morph_hconj_seq_imperfect">imperfectum consecutivum</string>
+    <string name="morph_hconj_cohortative">kohortatív</string>
+    <string name="morph_hconj_jussive">jussív</string>
+    <string name="morph_hconj_imperative">boðháttur</string>
+    <string name="morph_hconj_participle">lýsingarháttur</string>
+    <string name="morph_hconj_passive_participle">lýsingarháttur þolmyndar</string>
+    <string name="morph_hconj_inf_absolute">infinitivus absolutus</string>
+    <string name="morph_hconj_inf_construct">infinitivus constructus</string>
+    <string name="morph_state_absolute">status absolutus</string>
+    <string name="morph_state_construct">status constructus</string>
+    <string name="morph_state_determined">ákveðið</string>
+    <string name="morph_prep_article">forsetning + greinir</string>
+    <string name="morph_affirmation">staðfesting</string>
+    <string name="morph_exhortation">hvatning</string>
+    <string name="morph_int_particle">spurnarögn</string>
+    <string name="morph_neg_particle">neitunarögn</string>
+    <string name="morph_obj_marker">andlagsmerki</string>
+    <string name="morph_rel_particle">tilvísunarögn</string>
+    <string name="morph_proper_noun">sérnafn</string>
+    <string name="morph_gentilic_noun">þjóðarheiti</string>
+    <string name="morph_cardinal">frumtala</string>
+    <string name="morph_ordinal">raðtala</string>
+    <string name="morph_gentilic_adj">þjóðarlýsingarorð</string>
+    <string name="morph_suffix">viðskeyti</string>
+    <string name="morph_suffix_pron">fornafnsviðskeyti</string>
+    <string name="morph_suffix_dir">stefnuviðskeyti</string>
+    <string name="morph_paragogic_he">paragógískt he</string>
+    <string name="morph_paragogic_nun">paragógískt nún</string>
+    <string name="morph_aramaic_prefix">"arameíska: "</string>
+</resources>

@@ -43,7 +43,7 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 
 /** Landing page listing every way to get the app; QR codes never go stale. */
-private const val APP_LINK = "https://aleksandrr-dev.github.io/Hexapla/"
+private const val APP_LINK = "https://hexaplabible.com/download/"
 
 private fun qrBitmap(text: String, size: Int): android.graphics.Bitmap? = try {
     val matrix = com.google.zxing.qrcode.QRCodeWriter()

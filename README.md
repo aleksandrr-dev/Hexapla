@@ -17,7 +17,7 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 
 | Feature | Where |
 |---|---|
-| 37 translations in 31 languages, counting the Hebrew and Greek originals (see table below) | Settings → Primary translation |
+| 38 translations in 32 languages, counting the Hebrew and Greek originals (see table below) | Settings → Primary translation |
 | Split view, two translations verse-locked | Settings → Split view (side-by-side or stacked) |
 | Verse comparison across all translations at once | Long-press verse → Compare translations (set in Settings) |
 | Strong's numbers with Hebrew/Greek lexicon (KJV) | Settings → Strong's numbers; tap a number in the text |
@@ -41,7 +41,7 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 
 ## Included texts (all public domain)
 
-**37 translations in 31 languages, counting the Hebrew and Greek originals (the two Chinese Union scripts count once).** Coverage below is derived from the shipped assets, not claimed.
+**38 translations in 32 languages, counting the Hebrew and Greek originals (the two Chinese Union scripts count once).** Coverage below is derived from the shipped assets, not claimed.
 
 ### Original languages
 | Text | Language | Coverage |
@@ -89,7 +89,8 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 | Աստուածաշունչ — Zohrab OT 1805 + Western Armenian NT 1853 | Armenian | Full + deuterocanonical |
 | Աստուածաշունչ — Զոհրապեան, 1805 | Classical Armenian | Full + deuterocanonical |
 | ბიბლია — Bakar edition, 1743 | Georgian | Full + deuterocanonical |
-| Kitâb-ı Mukaddes — Kieffer, 1827 (OsmKelam transcription) | Turkish | Full |
+| Kitâb-ı Mukaddes — Kieffer, 1827 (OsmKelam transcription) | Turkish | Full + 15 Apocrypha (Ali Bey, 1665) |
+| Þorláksbiblía, 1644 — transcribed for Hexapla from the Landsbókasafn scans | Icelandic | NT |
 | کتاب مقدس — Glen OT 1856 + Martyn NT 1876 | Persian | Full |
 | Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 | Belarusian | NT + Psalms |
 

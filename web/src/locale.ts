@@ -1,4 +1,4 @@
-// UI language: which of the 27 Android locales to show, and Android's
+// UI language: which of the 28 Android locales to show, and Android's
 // `%1$d` placeholders. Pure - `locale.test.ts` runs it under node; the
 // tables themselves are loaded by i18n.ts.
 
@@ -19,6 +19,7 @@ export const LOCALES: [string, string, boolean][] = [
   ["he", "עברית", true],
   ["hu", "Magyar", false],
   ["hy", "Հայերեն", false],
+  ["is", "Íslenska", false],
   ["it", "Italiano", false],
   ["ja", "日本語", false],
   ["ka", "ქართული", false],

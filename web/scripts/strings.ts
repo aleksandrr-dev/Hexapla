@@ -1,4 +1,4 @@
-// Android `strings.xml` (27 locale folders) -> web/src/i18n/<tag>.json (P4 (e),
+// Android `strings.xml` (28 locale folders) -> web/src/i18n/<tag>.json (P4 (e),
 // WEB_APP_PLAN.md). Only the keys the web source asks for - `t("key")` in
 // web/src - are written, so an unused Android string never ships and a key the
 // web uses but the default strings.xml lacks is an error, not a blank label.

@@ -3053,10 +3053,12 @@ function SearchSheet(p: { t: string; name: string; lang: string; index: BooksInd
 // Section headings in the book picker, at the same slots as the Android
 // picker (ReaderScreen.kt): each section has its own accent and a tinted band
 // spanning the grid, so the New Testament and Apocrypha starts are findable.
-const SECTION_AT: Record<number, [string, "old_testament" | "new_testament" | "apocrypha"]> = {
-  0: ["ot", "old_testament"],
-  39: ["nt", "new_testament"],
-  66: ["ap", "apocrypha"],
+// The labels are literal t("...") calls on purpose: scripts/strings.ts only
+// ships keys it finds written that way, so t(variable) would drop them.
+const SECTION_AT: Record<number, [string, () => string]> = {
+  0: ["ot", () => t("old_testament")],
+  39: ["nt", () => t("new_testament")],
+  66: ["ap", () => t("apocrypha")],
 };
 
 function BookSheet(p: { index: BooksIndex | null; lang: string; current: Route; grid: (b: number, onPick: (c: number) => void) => JSX.Element; onClose: () => void; onPick: (b: number, c: number) => void }) {
@@ -3073,7 +3075,7 @@ function BookSheet(p: { index: BooksIndex | null; lang: string; current: Route; 
       <div class="list books">
         {(p.index ?? []).map((b, i) => (
           <Fragment key={i}>
-            {SECTION_AT[i] && <div class={"bsec " + SECTION_AT[i][0]}>{t(SECTION_AT[i][1])}</div>}
+            {SECTION_AT[i] && <div class={"bsec " + SECTION_AT[i][0]}>{SECTION_AT[i][1]()}</div>}
             <button
               type="button"
               class={"li" + (i === p.current.book ? " cur" : "") + (b.chapters.length === 0 ? " na" : "")}

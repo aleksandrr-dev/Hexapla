@@ -55,7 +55,7 @@ eq("pref overrides browser", uiTag("fa", ["en-US"]), "fa");
 eq("auto follows browser", uiTag("auto", ["ja-JP"]), "ja");
 eq("unknown pref -> browser", uiTag("klingon", ["it"]), "it");
 eq("rtl: fa ar he only", LOCALES.filter(([t]) => isRtl(t)).map(([t]) => t), ["ar", "fa", "he"]);
-eq("27 locales", LOCALES.length, 27);
+eq("28 locales", LOCALES.length, 28);
 
 // ---- Android format ----
 eq("%1$d", format("Chapter %1$d", [BAD ? 4 : 3]), "Chapter 3");
@@ -77,7 +77,7 @@ const src = new URL("src/", web).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 const keys = usedKeys(src);
 const webStrings = readWeb(new URL("strings/", web).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
 const all = build(res, keys, webStrings);
-eq("27 locale files from Android", all.size, 27);
+eq("28 locale files from Android", all.size, 28);
 eq("every tag is a LOCALES tag", [...all.keys()].sort(), LOCALES.map(([t]) => t).sort());
 eq("en has every key", Object.keys(all.get("en") ?? {}).length, keys.length);
 eq("ru nav_settings", all.get("ru")?.nav_settings, "Настройки");
@@ -111,7 +111,7 @@ for (const [tag, o] of webStrings) {
   for (const k of webEn) if (typeof t[k] !== "string" || t[k] === "") gaps.push(tag + ":" + k);
   if (!String(t.w_free).includes("Hexapla")) unlinked.push(tag);
 }
-eq("web strings for all 27 locales", webStrings.size, 27);
+eq("web strings for all 28 locales", webStrings.size, 28);
 eq("every locale has every w_ key", gaps, []);
 eq("every w_free contains «Hexapla»", unlinked, []);
 

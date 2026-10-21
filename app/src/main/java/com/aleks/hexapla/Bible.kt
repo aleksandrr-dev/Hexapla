@@ -93,7 +93,12 @@ object BibleRepo {
         // tools/build_tr_kieffer.py; the site had already re-addressed it onto
         // the KJV grid, the converter moves the five seams the print numbers
         // differently.
-        Translation("kie", "bibles/tr_kieffer.json", "Kitâb-ı Mukaddes — Kieffer, 1827 (TR)", Locale.forLanguageTag("tr"))
+        Translation("kie", "bibles/tr_kieffer.json", "Kitâb-ı Mukaddes — Kieffer, 1827 (TR)", Locale.forLanguageTag("tr")),
+        // Thai, Dr Philip Pope's King James Version, 2026 edition: copyrighted,
+        // used by permission (his e-mail to the owner, 2026-10-21) on condition
+        // the copyright line is shown - it is in sources_text. Built from his
+        // own text file by tools/build_th_kjv.py; exact KJV grid, no versemap.
+        Translation("tkjv", "bibles/th_kjv.json", "พระคัมภีร์ภาษาไทยฉบับคิงเจมส์ — Thai King James Version, 2026 (TH)", Locale.forLanguageTag("th"))
     )
 
     fun translation(id: String): Translation =
@@ -136,6 +141,7 @@ object BibleRepo {
         // Dari and Tajik readers share the classical Persian scripture.
         "fa", "prs", "tg" -> "mrt"
         "tr" -> "kie"
+        "th" -> "tkjv"
         "zh" -> Locale.getDefault().let {
             if (it.script == "Hant" || it.country in setOf("TW", "HK", "MO")) "cuv" else "cus"
         }

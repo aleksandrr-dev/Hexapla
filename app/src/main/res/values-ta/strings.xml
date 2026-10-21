@@ -135,7 +135,7 @@
     <string name="xrefs">இணை வசனங்கள்</string>
     <string name="remove_bookmark">அடையாளக்குறியை நீக்கு</string>
     <string name="sources_title">உரை மூலங்கள்</string>
-    <string name="sources_text">எல்லா வேத உரைகளும் பொதுக் களத்தில் (public domain) உள்ளன. விதிவிலக்குகள்: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Glück 1685/1689 Latvian text © University of Latvia, SENIE/CLARIN-LV corpus, CC BY-SA 4.0. Ali Bey Bobowski\'s 1665 Turkish Apocrypha: Latin-script transliteration © Kadir Akın, used by permission. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Hebrew morphology © Open Scriptures (CC-BY). Cross-references © openbible.info, CC-BY. Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). Classical Armenian and Georgian texts via TITUS, Goethe University Frankfurt (J. Gippert). Background music: Kevin MacLeod (incompetech.com), CC BY 4.0. ஸ்ட்ராங்கின் ரஷ்ய விளக்கங்கள்: BibleQuote தொகுதி (BibleQuote-Modules).</string>
+    <string name="sources_text">எல்லா வேத உரைகளும் பொதுக் களத்தில் (public domain) உள்ளன. விதிவிலக்குகள்: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Glück 1685/1689 Latvian text © University of Latvia, SENIE/CLARIN-LV corpus, CC BY-SA 4.0. Ali Bey Bobowski\'s 1665 Turkish Apocrypha: Latin-script transliteration © Kadir Akın, used by permission. พระคัมภีร์ภาษาไทยฉบับคิงเจมส์ / Thai Bible King James Version © 2026 Philip Pope, used by permission. Strong\'s Concordance (1890/1894) dictionary © Open Scriptures, CC-BY-SA. Hebrew morphology © Open Scriptures (CC-BY). Cross-references © openbible.info, CC-BY. Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). Classical Armenian and Georgian texts via TITUS, Goethe University Frankfurt (J. Gippert). Background music: Kevin MacLeod (incompetech.com), CC BY 4.0. ஸ்ட்ராங்கின் ரஷ்ய விளக்கங்கள்: BibleQuote தொகுதி (BibleQuote-Modules).</string>
     <string name="voice_title">வாசிப்புக் குரல்</string>
     <string name="voice_default">முறைமையின் இயல்பு</string>
     <string name="voice_note">கிடைக்கும் குரல்கள் சாதனத்தில் நிறுவப்பட்ட பேச்சு இயந்திரத்தைப் பொறுத்தது (எ.கா. Google Speech Services, Samsung TTS). கேட்க ஒரு குரலைத் தொடவும்.</string>
@@ -193,7 +193,7 @@
     <string name="plan_psalms_desc">நாளொன்றுக்கு இரண்டு சங்கீதங்களாக முழு சங்கீதப் புத்தகமும்</string>
     <string name="gospel_share">நற்செய்தியைப் பகிருங்கள் →</string>
     <string name="search_all">எல்லா மொழிபெயர்ப்புகளிலும் தேடு</string>
-    <string name="welcome_tagline">முப்பத்திரண்டு மொழிகளில் வேதாகமம் — ஆஃப்லைன், இலவசம், முழுமையானது.</string>
+    <string name="welcome_tagline">முப்பத்து மூன்று மொழிகளில் வேதாகமம் — ஆஃப்லைன், இலவசம், முழுமையானது.</string>
     <string name="welcome_gospel">வேதாகமம் புதிதா? இங்கே தொடங்குங்கள்</string>
     <string name="welcome_plan">தினசரி வாசிப்புப் பழக்கத்தை உருவாக்குங்கள்</string>
     <string name="welcome_read">உடனே வாசிக்கத் தொடங்குங்கள்</string>

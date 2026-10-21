@@ -17,7 +17,7 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 
 | Feature | Where |
 |---|---|
-| 38 translations in 32 languages, counting the Hebrew and Greek originals (see table below) | Settings → Primary translation |
+| 39 translations in 33 languages, counting the Hebrew and Greek originals (see table below) | Settings → Primary translation |
 | Split view, two translations verse-locked | Settings → Split view (side-by-side or stacked) |
 | Verse comparison across all translations at once | Long-press verse → Compare translations (set in Settings) |
 | Strong's numbers with Hebrew/Greek lexicon (KJV) | Settings → Strong's numbers; tap a number in the text |
@@ -39,9 +39,9 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 | UI in 25 languages (follows system; Android 13+ per-app language picker) | `values/` + 24 `values-*/` |
 | Last position (book, chapter, and verse) restored on launch | automatic |
 
-## Included texts (all public domain)
+## Included texts (public domain unless credited below)
 
-**38 translations in 32 languages, counting the Hebrew and Greek originals (the two Chinese Union scripts count once).** Coverage below is derived from the shipped assets, not claimed.
+**39 translations in 33 languages, counting the Hebrew and Greek originals (the two Chinese Union scripts count once).** Coverage below is derived from the shipped assets, not claimed.
 
 ### Original languages
 | Text | Language | Coverage |
@@ -91,6 +91,7 @@ Release signing: put a `keystore.properties` next to `settings.gradle.kts` (see 
 | ბიბლია — Bakar edition, 1743 | Georgian | Full + deuterocanonical |
 | Kitâb-ı Mukaddes — Kieffer, 1827 (OsmKelam transcription) | Turkish | Full + 15 Apocrypha (Ali Bey, 1665) |
 | Þorláksbiblía, 1644 — transcribed for Hexapla from the Landsbókasafn scans | Icelandic | NT |
+| พระคัมภีร์ภาษาไทยฉบับคิงเจมส์ — Thai King James Version, 2026 (Philip Pope, by permission) | Thai | Full |
 | کتاب مقدس — Glen OT 1856 + Martyn NT 1876 | Persian | Full |
 | Новы Запавет і Псальмы — Дзекуць-Малей/Луцкевіч, 1931 | Belarusian | NT + Psalms |
 
@@ -98,7 +99,7 @@ All translations follow the Textus Receptus / Masoretic tradition — deliberate
 
 Translations keep their **authentic native versification** — LXX psalters, Masoretic chapter bounds, title-psalms as their own verse — and `assets/versemap.json` pivots between them so split view, verse comparison, cross-references and red letters stay aligned across editions that number differently.
 
-Strong's concordance data: tagged KJV text (public-domain 1611/1769 text + 1890/1894 numbering) with the Open Scriptures Strong's dictionaries (CC-BY-SA). Original-language interlinear from openscriptures/morphhb (CC-BY) and byztxt (public domain). Cross-references © openbible.info (CC-BY). Tamil IRV © Bridge Connectivity Solutions (CC BY-SA 4.0); Sanskrit NT © SanskritBible.in (CC BY-SA 4.0); Latvian Glück text from the University of Latvia SENIE corpus (CC BY-SA 4.0).
+Strong's concordance data: tagged KJV text (public-domain 1611/1769 text + 1890/1894 numbering) with the Open Scriptures Strong's dictionaries (CC-BY-SA). Original-language interlinear from openscriptures/morphhb (CC-BY) and byztxt (public domain). Cross-references © openbible.info (CC-BY). Tamil IRV © Bridge Connectivity Solutions (CC BY-SA 4.0); Thai King James Version © 2026 Philip Pope, used by permission; Sanskrit NT © SanskritBible.in (CC BY-SA 4.0); Latvian Glück text from the University of Latvia SENIE corpus (CC BY-SA 4.0).
 
 Audio: human narration from LibriVox (public domain) for most KJV books, plus generated narration for the books LibriVox never covered and for other translations, streamed from archive.org and cached for offline use. Anything without recorded audio falls back to device TTS.
 

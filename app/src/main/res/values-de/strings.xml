@@ -128,7 +128,7 @@
     <string name="xrefs">Querverweise</string>
     <string name="remove_bookmark">Lesezeichen entfernen</string>
     <string name="sources_title">Textquellen</string>
-    <string name="sources_text">Alle Bibeltexte sind gemeinfrei, außer: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Glück 1685/1689 Latvian text © University of Latvia, SENIE/CLARIN-LV corpus, CC BY-SA 4.0. Ali Bey Bobowski\'s 1665 Turkish Apocrypha: Latin-script transliteration © Kadir Akın, used by permission. Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Hebräische Morphologie © Open Scriptures (CC-BY). Querverweise © openbible.info, CC-BY. Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). Classical Armenian and Georgian texts via TITUS, Goethe University Frankfurt (J. Gippert). Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0. Russische Strong-Glossen: BibleQuote-Modul (BibleQuote-Modules).</string>
+    <string name="sources_text">Alle Bibeltexte sind gemeinfrei, außer: Tamil Indian Revised Version © Bridge Connectivity Solutions, CC BY-SA 4.0 (eBible.org); Sanskrit NT digitization © SanskritBible.in, CC BY-SA 4.0. Glück 1685/1689 Latvian text © University of Latvia, SENIE/CLARIN-LV corpus, CC BY-SA 4.0. Ali Bey Bobowski\'s 1665 Turkish Apocrypha: Latin-script transliteration © Kadir Akın, used by permission. พระคัมภีร์ภาษาไทยฉบับคิงเจมส์ / Thai Bible King James Version © 2026 Philip Pope, used by permission. Strongs Konkordanz-Wörterbuch (1890/1894) © Open Scriptures, CC-BY-SA. Hebräische Morphologie © Open Scriptures (CC-BY). Querverweise © openbible.info, CC-BY. Latin text: The Clementine Vulgate Project (M. Tweedale et al.), public domain. Church Slavonic psalm titles via the Ponomar Project (ponomar.net). Classical Armenian and Georgian texts via TITUS, Goethe University Frankfurt (J. Gippert). Hintergrundmusik: Kevin MacLeod (incompetech.com), CC BY 4.0. Russische Strong-Glossen: BibleQuote-Modul (BibleQuote-Modules).</string>
     <string name="voice_title">Vorlesestimme</string>
     <string name="voice_default">Systemstandard</string>
     <string name="voice_note">Die verfügbaren Stimmen hängen von der installierten Sprach-Engine ab. Tippe eine Stimme an, um sie zu hören.</string>
@@ -186,7 +186,7 @@
     <string name="plan_psalms_desc">Zwei Psalmen pro Tag durch den ganzen Psalter</string>
     <string name="gospel_share">Die Gute Nachricht teilen →</string>
     <string name="search_all">In allen Übersetzungen suchen</string>
-    <string name="welcome_tagline">Die Bibel in zweiunddreißig Sprachen — offline, kostenlos, vollständig.</string>
+    <string name="welcome_tagline">Die Bibel in dreiunddreißig Sprachen — offline, kostenlos, vollständig.</string>
     <string name="welcome_gospel">Neu in der Bibel? Fang hier an</string>
     <string name="welcome_plan">Tägliche Lesegewohnheit aufbauen</string>
     <string name="welcome_read">Einfach lesen</string>

@@ -7,6 +7,7 @@ chain and is the exit code; nothing downstream runs on a failed check):
 
   1. thorlaks_part_check.py --file <part>        (skipped without --file)
   2. thorlaks_merge_parts.py --book <B>          DRY RUN unless --apply
+     (+ --touched basename(--file); rc 4 = book-only edits it would revert)
   3. thorlaks_part_check.py --book <B>           (only after a real merge)
   4. thorlaks_corpus_audit.py --book <B>
 
@@ -103,6 +104,8 @@ def main():
     margs = ["thorlaks_merge_parts.py", "--book", a.book]
     for p in a.prefix or []:
         margs += ["--prefix", p]
+    if a.file:
+        margs += ["--touched", os.path.basename(a.file)]   # merge guard G1: only this part may change the book
     if a.apply:
         margs.append("--apply")
     rc = step("2 merge_parts --book %s%s" % (a.book, " --apply" if a.apply else " (DRY RUN)"), margs, a.tail, a.full)

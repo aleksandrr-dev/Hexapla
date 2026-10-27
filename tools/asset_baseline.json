@@ -1,7 +1,7 @@
 {
  "_comment": "SHA-256 baseline for scripture and scripture-adjacent assets. Verify with tools/check_asset_integrity.py. A diff you did not intend is damage, not drift — investigate before running --update.",
- "_note": "Re-baseline authorised by the owner 2026-09-22: en_kjv, ja_meiji, sv_karlxii, zh_cuv_s, zh_cuv_t, versemap.json were pre-existing intentional edits from earlier sessions. he_wlc.json is NOT in this set - it was damaged by a --help probe this session and restored from git first (see _work/INCIDENT_2026-09-22_help_probe_ran_tools.md).",
- "_files": 46,
+ "_note": "s67 2026-10-22: fr_martin.json Psalm 69/102/108/140 re-split (owner yes, fix_fr_martin_psalms.py --apply) on top of the 52-verse fix; is_thorlaks/versemap/th_kjv = committed HEAD",
+ "_files": 49,
  "files": {
   "bibles/ar_vandyck.json": {
    "sha256": "7ccb72dddec515d54970dc29ca8b7bfd05c007044beb5fc2f42181ec27261f1f",
@@ -36,16 +36,16 @@
    "bytes": 4284244
   },
   "bibles/en_kjv.json": {
-   "sha256": "9bd8550363110500c9d6f584d4a467a2d6d5a8a3e2198b4e6552d7efb3bd5f90",
-   "bytes": 5290907
+   "sha256": "d55fc5795a7da4eef7f3fe752ca5c49aa3fcee318de6dda4e88fd6b1a5be92be",
+   "bytes": 5290921
   },
   "bibles/en_kjv_strongs.json": {
-   "sha256": "4b5eb38696c6c747306c83c96fe12b3e476d65c0c8b45b24763da0ef70cb16d7",
-   "bytes": 6408073
+   "sha256": "212129ebd4b9ede6c01ec8b0766f7620f64052f2c84363dc9354bf3e12f19389",
+   "bytes": 6440122
   },
   "bibles/en_tyndale.json": {
-   "sha256": "338dadd36648f195d570a0cf905d5c25106122df1087316c1e54fbe333ddf16f",
-   "bytes": 1861347
+   "sha256": "52ae2a3c587811e128689e3e8d8f350bd958e9faa346111014eb1c347ff99b4d",
+   "bytes": 1849328
   },
   "bibles/en_webster.json": {
    "sha256": "7e34cbe9f252424757c2321467a77a304e13c9d9058ee9e444f9e8c468f10e85",
@@ -72,8 +72,8 @@
    "bytes": 4341994
   },
   "bibles/fr_martin.json": {
-   "sha256": "c9052009df82c9c087ac3b9d996806800aa983f5db08de1ba62a42e9be5ceefe",
-   "bytes": 4743619
+   "sha256": "fc93ebf5d7db100eddf1853e875bf6d6e0b0e2a8f05976dff046e0d6c1522380",
+   "bytes": 4739952
   },
   "bibles/grc_byz.json": {
    "sha256": "e567e802b57c3a070230d536c345070f086018f374d4ceeb5051c9a925b13364",
@@ -92,8 +92,12 @@
    "bytes": 1570938
   },
   "bibles/hy_zohrab.json": {
-   "sha256": "bf978ced420ac6690ba974b9c2a622d07eb63516c1c79d55d90496a2e7e16507",
-   "bytes": 5915931
+   "sha256": "b19f6cd138002a60ce821c14de7293ca922f5de74c80ac4062b909cce8f07242",
+   "bytes": 5915954
+  },
+  "bibles/is_thorlaks.json": {
+   "sha256": "302fa0bf3fcd3b626018dc198e5d7204c046b069bd05eafee78c473e0fef8726",
+   "bytes": 1163440
   },
   "bibles/it_diodati.json": {
    "sha256": "bbd840348d03320528cccbed6db75bc42ee4b3bf57e10eff0351a411d727ff03",
@@ -112,8 +116,8 @@
    "bytes": 4148607
   },
   "bibles/lv_gluck.json": {
-   "sha256": "11c0b0cb06e2186c1c3b8066963adcb2f80f11b168d4d9410e000396e0c3fdc3",
-   "bytes": 5422792
+   "sha256": "46659ae7cea5a79f910ffc4a3bd64cd430c1c757b1976592a6609cd81cf833c3",
+   "bytes": 5422803
   },
   "bibles/nl_staten.json": {
    "sha256": "b22923c4964e2fac84552c069acbf57f6c01b6509c618c0cdd178624be710268",
@@ -140,24 +144,32 @@
    "bytes": 3361084
   },
   "bibles/sv_karlxii.json": {
-   "sha256": "e5ad90b6a5d67ff7e30514b6eca98728a83c9d2642d7a1a359f309ff7bf61a03",
-   "bytes": 4614836
+   "sha256": "5a18f741065b2bc0a0041769bcba434d298d3b75c34002e73fdb4dc1939feea5",
+   "bytes": 4615040
   },
   "bibles/ta_irv.json": {
    "sha256": "7c4b9d7b6d48a5fe5d13af9da5eda76e7d94a7c1225fa35f355bb3a4d894a4f2",
    "bytes": 12581788
   },
+  "bibles/th_kjv.json": {
+   "sha256": "e736227feeae3a023096df28ad2da08b7217fae3d12cf2d895ea63fddab9b061",
+   "bytes": 12698179
+  },
+  "bibles/tr_kieffer.json": {
+   "sha256": "4bef6a993602cd84ae1470d5da0fa6b3dde8831501875380aef75853bcfb6492",
+   "bytes": 4832963
+  },
   "bibles/zh_cuv_s.json": {
-   "sha256": "4824617d9df35f79310f41ae3a3576dab8cf966bc3db4833a560e2e8e5448422",
-   "bytes": 3294440
+   "sha256": "2ea2d16e0916ed809ccb6ec9f3007011a19e9bf38b8e0af226028e9513d3be68",
+   "bytes": 3294371
   },
   "bibles/zh_cuv_t.json": {
-   "sha256": "e72be3c8aacc403c73c26c92bbd2570f74cb0b2894c22248848043f7ab9a51c6",
-   "bytes": 3294429
+   "sha256": "274bbf8911b6adecd6ed9c6678c0e6e84e640815bf43ba90fe7c8a537d77a8e7",
+   "bytes": 3294360
   },
   "versemap.json": {
-   "sha256": "3f1b8e0102f67df52641364e27575ccac1ece1e7e7c159721bcaf36b67b3df5e",
-   "bytes": 63064
+   "sha256": "5fdad178cb4c0a4c1bfe390920604fd1066534f0b6d26cf7779c4a22220d45e4",
+   "bytes": 68132
   },
   "red_letters.json": {
    "sha256": "80574581fff03aa736a23a2ba66c3bd7b82844494701bc1bb0e12ce461d05660",

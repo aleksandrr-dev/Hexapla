@@ -774,6 +774,10 @@ TYNDALE_PRON = {
     'daunsed': 'danced',
     'daunsing': 'dancing',
     'deade': 'dead',
+    # Fable ruling 2026-10-03, owner go 2026-10-04: tyn «deed»/«deede» is DEAD
+    # in every occurrence; the noun is «dede»/«dedes». Ear kit Num 19:11.
+    'deed': 'dead',
+    'deede': 'dead',
     'deale': 'deal',
     'deales': 'deals',
     'deall': 'deal',
@@ -786,6 +790,10 @@ TYNDALE_PRON = {
     'ded': 'dead',
     'dede': 'deed',
     'dedes': 'deeds',
+    # Owner ear 2026-10-03, tyn Gen 15:1 «after these dedees». All 6 in the
+    # asset are deeds (Gen 15:1, Deut 11:7, 32:4 ...). NOT `deede`: Gen 34:27
+    # «vpon the deede» is the slain.
+    'deades': 'deeds',
     'dedicacion': 'dedication',
     'dedly': 'deadly',
     'deepth': 'depth',
@@ -1481,6 +1489,10 @@ TYNDALE_PRON = {
     'holowe': 'hollow',
     'holydaye': 'holyday',
     'holye': 'holy',
+    # Exod 38:25, the one glued form (22 others are spaced). Unmapped, the
+    # voice said «holy cycle» and the gate read «cycle» as an append in 3/3
+    # draws, so repair kept the pre-numeral-fix take (owner ear 2026-10-03).
+    'holyesycle': 'holy shekel',
     'holynes': 'holiness',
     'hond': 'hand',
     'honde': 'hand',
@@ -1544,7 +1556,7 @@ TYNDALE_PRON = {
     'ieremy': 'jeremy',
     'iericho': 'jericho',
     'iesse': 'Jesse',
-    'iesu': 'Jesu',
+    'iesu': 'Jesus',
     'iesus': 'Jesus',
     'iethro': 'jethro',
     'iewas': 'was',
@@ -1674,6 +1686,15 @@ TYNDALE_PRON = {
     'kyngedome': 'kingdom',
     'kynred': 'kindred',
     'kynredes': 'kindreds',
+    # Owner ear 2026-10-03, tyn Exod 6: «kin red es». Mirrors the OVERRIDE
+    # rows added to build_tyndale_pron.py the same day.
+    'kinred': 'kindred',
+    'kynrede': 'kindred',
+    'kinredes': 'kindreds',
+    'kinreddes': 'kindreds',
+    'kynreddes': 'kindreds',
+    'kynreddds': 'kindreds',
+    'kynreds': 'kindreds',
     'kynsmen': 'kinsmen',
     'kyssed': 'kissed',
     'laba': 'laban',

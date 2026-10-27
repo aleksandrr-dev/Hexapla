@@ -172,7 +172,8 @@ LEXICON = {
     # ⚠ A long verse was the wrong instrument: the vowel was audible only once
     #   the name sat in a short carrier phrase. Prefer short carriers for vowels.
     "abram":    ("Aebram",    "heard «EYE-bram» with Ay-; ae digraph gives the acorn a",
-                 "owner ear 2026-09-05", ("ylt", "en")),
+                 "owner ear 2026-09-05; tyn Eighbram owner ear 2026-10-03",
+                 ("ylt", "en", "tyn"), {"tyn": "Eighbram"}),
     # ⛔⛔ THE THREE ROWS BELOW ARE PROPOSALS - `validated: None`, so they are
     # INERT (rows_for skips them; tools/test_lexicon_inert.py controls it both
     # ways). They exist to be rendered by `lexicon_test_render.py` and ruled on
@@ -521,6 +522,37 @@ LEXICON = {
     #   it, since the noun is spelled with a c.
     "prophesy": ("prophesigh", "verb read as the noun «prophecy»; want «-sigh»",
                  "owner ear 2026-09-06", ("ylt", "en")),
+    # ⚠ PROPOSAL, not validated. Owner 2026-09-25 heard «rabee» in KJV John 3;
+    # wants «RAB-eye». `eye` for /aɪ/ is a guess; rivals (Rab-eye, Rabbye) go
+    # into the same ear kit via lexicon_test_render --respell. KJV 7 verses,
+    # ylt 16. `Rabboni` (Jn 20:16) is a different word and is not covered.
+    # ✅ Owner ear 2026-09-25, Mt 23:7 before/after: Rabbeye, Rab-eye and
+    #   Rabbye all «correct and the same»; the table keeps Rabbeye.
+    "rabbi":    ("Rabbeye", "heard «rabee»; want «RAB-eye»", "owner ear 2026-09-25", ("ylt", "en")),
+    # Owner ear 2026-09-30, tyn Num 3:32 (`_work/ear_tyn_stillfail_2026-09-30/`
+    # clip 3): heard «El-ee-zer»; the name is «El-ee-AY-zar». tyn ONLY.
+    # ✅ EAR-VALIDATED IN THE REAL VERSE — owner 2026-10-03, tyn Num 3:2
+    #   (`_work/EAR_tyn_eleazar_v7-9.mp3` clip 1 = v7): `Ellie Ayzar` «sounds
+    #   correct». A SPACE, no hyphen. Ruled WRONG on the way: El-ee-ay-zar,
+    #   Ellie-ayzar, Ellie-ay-zar (doubling), Ellee-eh-zar, Ella-AY-zar,
+    #   Eli-AY-zar, Elly-AY-zahr, Ellie Ay-zar («aye eye»: the hyphen splits
+    #   the vowel). Not judged: Ellie Eyzar, Ellie Aezar.
+    # ✅ RE-RULED 2026-10-03 (later), owner ear on tyn Gen 15:2 / Exod 6:23,25:
+    #   `Ellie Ayzar` sounds right but «too big of a pause after Ellie» - the
+    #   SPACE is read as a word break. Kit `_work/EAR_tyn_kit_2026-10-03/`
+    #   (Exod 6:23): Elliayzar, Elleeayzar, **Ellieayzar** -> clip 4,
+    #   `Ellieayzar`, «sounds right». (He also found the shipped `Ellie Ayzar`
+    #   take of 6:23 acceptable; the pause is draw-dependent.)
+    # ⚠ Same ear, tyn Gen 15:1-2: Abram heard «AH-brahm». The `abram` row
+    #   (Aebram) is scoped ylt/en only, so tyn speaks it raw (46 verses / 8
+    #   chapters). ⛔ `Aebram` on tyn heard «EE-brahm» (kit above, Gen 15:1):
+    #   the ae digraph that fixed ylt/en is WRONG on tyn's voice.
+    # ✅ RULED for tyn, owner ear 2026-10-03, kit `EAR_tyn_abram2_gen15v1.mp3`
+    #   (Gen 15:1; Aybram / Eighbram / Eybram): **`Eighbram`** «sounds good».
+    #   Wired as the tyn per-set spelling on the `abram` row.
+    "eleazar":  ("Ellieayzar", "heard «El-ee-zer»; want «El-ee-AY-zar»; "
+                 "`Ellie Ayzar` paused after Ellie",
+                 "owner ear 2026-10-03 (twice)", ("tyn",)),
 }
 
 
@@ -785,7 +817,9 @@ def main():
     a = ap.parse_args()
 
     if a.show:
-        out, hits = apply(a.show)
+        # --lang is honoured: until 2026-09-25 --show always applied ylt's
+        # rows, so «--show Rabbi --lang wbt» looked like a scope leak.
+        out, hits = apply(a.show, set_key=a.lang)
         print(f"in : {a.show}")
         print(f"out: {out}")
         print(f"replaced: {hits or '(nothing)'}")

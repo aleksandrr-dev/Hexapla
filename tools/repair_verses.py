@@ -221,6 +221,47 @@ def speech_rms(a, sr):
     return float(np.sqrt((active ** 2).mean())) if len(active) else float(env.mean())
 
 
+# ⛔⛔ A VERSE MAY NOT BE INSTALLED QUIETER THAN ITS CHAPTER (2026-10-06).
+# The level match above scales the new take to the speech it REPLACES — and an
+# untimed-short verse is repaired precisely BECAUSE the take it replaces has no
+# speech. ▶ MEASURED: kjv 2 Sam 20:22 / John 6:22 (en 9/19, 42/5): old takes
+# -98.6 / -74.8 dB speech RMS, so two clean 15 s draws were turned down to
+# silence and installed; print OK, align, untimed screen and zero_duration all
+# passed them (none measures level). The owner heard it on the ear kit.
+# So: a reference more than QUIET_DB under the chapter's own speech level is
+# not a reference — the chapter level is used instead; and after the encode a
+# repaired verse whose speech sits more than QUIET_DB under the chapter is a
+# refusal, nothing is installed. Control: HEXAPLA_NO_LEVEL_FLOOR=1 restores the
+# old (silencing) match; `tools/verse_loudness_screen.py` fires on the two
+# live files above until they are re-repaired.
+QUIET_DB = 20.0
+
+
+def level_target(old, chapter_ref):
+    t = speech_rms(old, SR)
+    if os.environ.get("HEXAPLA_NO_LEVEL_FLOOR"):
+        return t, False
+    if t < chapter_ref * 10 ** (-QUIET_DB / 20):
+        return chapter_ref, True
+    return t, False
+
+
+def quiet_verses(audio, offsets_ms, verses, ref=None):
+    """[(verse, dB under chapter)] for the given 1-based verses whose speech
+    sits more than QUIET_DB under the chapter's speech level."""
+    ref = ref if ref is not None else speech_rms(audio, SR)
+    bad = []
+    for v in verses:
+        s = int(offsets_ms[v - 1] / 1000 * SR)
+        e = (int(offsets_ms[v] / 1000 * SR) if v < len(offsets_ms) else len(audio))
+        seg = audio[s:e]
+        lvl = speech_rms(seg, SR) if len(seg) else 0.0
+        under = 20 * np.log10(ref / max(lvl, 1e-12))
+        if under > QUIET_DB:
+            bad.append((v, round(float(under), 1)))
+    return bad
+
+
 def _own_process_tree():
     """-> {pid} of this process and every ANCESTOR of it.
 
@@ -318,6 +359,10 @@ def proc_alive(pid):
     """
     if pid is None:
         return None
+    if os.name == "nt":
+        # ⚠ On Windows `os.kill(pid, 0)` is not a probe: a dead pid raised
+        # SystemError (WinError 87) out of it and crashed repair_job_status.
+        return _proc_alive_nt(pid)
     try:
         os.kill(int(pid), 0)
     except ProcessLookupError:
@@ -331,6 +376,36 @@ def proc_alive(pid):
     except (TypeError, ValueError):
         return None
     return True
+
+
+def _proc_alive_nt(pid):
+    """Windows probe: OpenProcess + GetExitCodeProcess. -> True/False/None."""
+    import ctypes
+    from ctypes import wintypes
+    try:
+        pid = int(pid)
+    except (TypeError, ValueError):
+        return None
+    if not 0 < pid < 2 ** 32:
+        return False
+    k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    k32.OpenProcess.restype = wintypes.HANDLE
+    k32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+    h = k32.OpenProcess(0x1000, False, pid)   # PROCESS_QUERY_LIMITED_INFORMATION
+    if not h:
+        err = ctypes.get_last_error()
+        if err == 87:                          # ERROR_INVALID_PARAMETER: no such pid
+            return False
+        if err == 5:                           # ERROR_ACCESS_DENIED: exists
+            return True
+        return None
+    try:
+        code = wintypes.DWORD()
+        if not k32.GetExitCodeProcess(h, ctypes.byref(code)):
+            return None
+        return code.value == 259               # STILL_ACTIVE
+    finally:
+        k32.CloseHandle(h)
 
 
 # ------------------------------------------------------------ the job marker
@@ -497,9 +572,24 @@ def spoken_verses(lang, books, b, c):
     return narrate.apply_overrides(lang, b, c, out)
 
 
+def align_python(set_key):
+    """The interpreter that can align this set. A `uroman` set (is/thl) needs
+    the uroman package, which lives in .kokoro_venv only — the chatterbox venv
+    this tool synthesises under lacks it, and every is repair of 2026-10-22
+    wrote audio, then failed alignment («No module named 'uroman'»)."""
+    if SETS[set_key].get("script") == "uroman":
+        try:
+            import uroman  # noqa: F401
+        except ImportError:
+            kok = HERE / ".kokoro_venv" / "Scripts" / "python.exe"
+            if kok.exists():
+                return str(kok)
+    return sys.executable
+
+
 def align(set_key, b, c):
     """Re-align one chapter. -> (ok, message). `verses ok N` is REQUIRED."""
-    r = subprocess.run([sys.executable, str(HERE / "align_words.py"), "--set", set_key,
+    r = subprocess.run([align_python(set_key), str(HERE / "align_words.py"), "--set", set_key,
                         "--book", str(b), "--chapter", str(c), "--force"],
                        capture_output=True, text=True, encoding="utf-8",
                        errors="replace", creationflags=NO_WINDOW, timeout=1800)
@@ -544,16 +634,67 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
     tmp.mkdir(parents=True, exist_ok=True)
     audio = decode(read_ogg, tmp / "src.wav")
     total_ms = len(audio) / SR * 1000
+    chapter_ref = speech_rms(audio, SR)
 
     def cut(a_ms, b_ms):
         return audio[int(a_ms / 1000 * SR):int(b_ms / 1000 * SR)]
 
     has_header = offsets[0] > 0
     parts = [cut(0, max(0, offsets[0] - GAP_MS))] if has_header else []
+    # ⛔⛔ THE HEADER COMES FROM THE LIVE FILE WHEN IT WAS REWRITTEN SINCE THE
+    # BACKUP (2026-09-24). The backup is taken before a chapter's FIRST repair;
+    # an `apply_announcements.py` run after that date replaced the live header,
+    # and rebuilding from the backup silently put the OLD announcement back.
+    # ▶ MEASURED: kjv Gen 30 / Gen 42 (0/29, 0/41): backups 2026-09-10, header
+    #   rewrite 2026-09-23; live offsets[0] 3080 / 3380 vs backup 3126 / 3058.
+    # A changed offsets[0] is the witness. Verses still come from the backup.
+    # Control: HEXAPLA_NO_LIVE_HEADER=1 restores the old (reverting) behaviour,
+    # and the dry run then prints «header: backup» for these two chapters.
+    hdr_src = "backup"
+    if has_header and read_side != side and not os.environ.get("HEXAPLA_NO_LIVE_HEADER"):
+        live_off0 = json.loads(side.read_text(encoding="utf-8"))["offsets"][0]
+        if live_off0 != offsets[0] and live_off0 > 0:
+            live_audio = decode(ogg, tmp / "live.wav")
+            parts[0] = live_audio[:int(max(0, live_off0 - GAP_MS) / 1000 * SR)]
+            hdr_src = f"LIVE ({live_off0} ms, backup {offsets[0]} ms)"
+    if has_header:
+        print(f"    header: {hdr_src}, {len(parts[0]) / SR * 1000:.0f} ms", flush=True)
     for i in range(len(offsets)):
         end = (offsets[i + 1] - GAP_MS) if i + 1 < len(offsets) else total_ms
         parts.append(cut(offsets[i], end))
     pidx = (1 if has_header else 0)          # parts index of verse 1
+
+    # ⛔⛔ EARLIER REPAIRS COME FROM THE LIVE FILE (2026-09-25). Verses are cut
+    # from the backup taken before the chapter's FIRST repair, so a second run
+    # naming only NEW verses put every earlier repair's defective original back.
+    # The workaround was to re-list every earlier verse in each queue, which
+    # re-drew takes that were already clean (ylt John 11: v26/35 drawn 7 times).
+    # ▶ MEASURED: the «Rabbi» lexicon queue (owner 2026-09-25) touches 7 chapters
+    #   with earlier repairs (en Mt 23 v34; ylt Jn 11 v26/35/51/54, ...).
+    # A verse in the live qa.json's repair history that is NOT a target now is
+    # carried from the live audio at the live offsets. Targets still re-draw.
+    # Control: HEXAPLA_NO_LIVE_PRIOR=1 restores the reverting behaviour, and the
+    # dry run then prints no «carried from LIVE» line.
+    if read_side != side and not os.environ.get("HEXAPLA_NO_LIVE_PRIOR"):
+        _qa = live / f"{c}.qa.json"
+        prior = set()
+        if _qa.exists():
+            for _r in json.loads(_qa.read_text(encoding="utf-8")).get("repairs") or []:
+                if not _r.get("kept_existing_take"):
+                    prior.add(int(_r["verse"]))
+        prior -= set(targets)
+        if prior:
+            live_off = json.loads(side.read_text(encoding="utf-8"))["offsets"]
+            if len(live_off) != len(offsets):
+                return False, (f"live has {len(live_off)} offsets, backup {len(offsets)}"
+                               " — cannot carry earlier repairs; refuse")
+            la = decode(ogg, tmp / "live_prior.wav")
+            la_ms = len(la) / SR * 1000
+            for v in sorted(prior):
+                i = v - 1
+                end = (live_off[i + 1] - GAP_MS) if i + 1 < len(live_off) else la_ms
+                parts[pidx + i] = la[int(live_off[i] / 1000 * SR):int(end / 1000 * SR)]
+            print(f"    carried from LIVE (earlier repairs): v{sorted(prior)}", flush=True)
 
     if not apply:
         for v in targets:
@@ -588,7 +729,11 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
         new = resample(a, sr, SR)
         cur = speech_rms(new, SR)
         if cur > 1e-6:
-            new = np.clip(new * (speech_rms(old, SR) / cur), -1.0, 1.0)
+            target, floored = level_target(old, chapter_ref)
+            if floored:
+                print(f"    v{v:<4} old take is silent ({20 * np.log10(max(speech_rms(old, SR), 1e-12)):.1f} dB)"
+                      f" - levelled to the chapter instead", flush=True)
+            new = np.clip(new * (target / cur), -1.0, 1.0)
         reasons = (info or {}).get("reasons", [])
         atts = (info or {}).get("attempts") or []
 
@@ -696,6 +841,11 @@ def repair_chapter(set_key, lang, books, b, c, targets, apply, tmp_root,
     chk = decode(new_ogg, tmp / "chk.wav")            # prove it decodes
     if len(chk) < len(merged) * 0.95:
         return False, "result is truncated after encode"
+    _quiet = quiet_verses(chk, new_offsets,
+                          [r["verse"] for r in repairs if not r["kept_existing_take"]])
+    if _quiet and not os.environ.get("HEXAPLA_NO_LEVEL_FLOOR"):
+        return False, (f"NOT INSTALLED - repaired verse(s) quieter than the chapter by "
+                       f">{QUIET_DB:.0f} dB: {_quiet}")
 
     shutil.copy2(new_ogg, ogg)
     sidecar["offsets"] = new_offsets

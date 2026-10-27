@@ -180,6 +180,10 @@ KNOWN_DIVERGENCE = {
                       "heading. Same run-on shape as Mark 2:23-28 "
                       "(mark_kit/p40 lines 22-26) "
                       "— mark_verse_count_divergences_2026-09-07.md"),
+    # ("Genesis", 10) removed 2026-10-20 (Fable ruling s44 F4-b / Q2-c): the second printed «17» is filed
+    # BY POSITION as 10:18 with a [printed «17»] marker, so the chapter has 32 verses and no hole.
+    ("Genesis", 49): (32, "print 29 = KJV 29+30, 30 = 31a, 31 = 31b+32, 32 = 33 (genesis_kit1 p62, both reads) - recorded as printed"),
+    ("Hebrews", 9): (27, "no printed 28 or 29 - KJV 28 joined onto v27 (idx 219, three looks; s45 MAIN_RULING_O4_HEB9.md)"),
 }
 
 
@@ -346,7 +350,11 @@ def check(path, book):
         note = []
         if dup:
             note.append(f"DUPES {dup} (page-boundary split?)")
-        if gaps:
+        _pin0 = KNOWN_DIVERGENCE.get((bk, c))
+        # a pinned entry may name its printed hole as a 3rd element; ONLY that
+        # exact gap list is excused (any other gap still reports)
+        if gaps and not (_pin0 and len(_pin0) > 2 and gaps == list(_pin0[2])
+                         and len(vs) == _pin0[0]):
             note.append(f"GAPS {gaps}")
         # ⛔ A chapter may only be called "partial" if it sits at the EDGE of
         # this file. Treating any short chapter as partial is what nearly hid

@@ -351,6 +351,7 @@ def silent_defaults(all_sites):
     ▶ research/_evidence/thorlaks_span_sites_briefed_2026-09-21.md
     """
     out = []
+    hn_off = os.environ.get("HEXAPLA_NO_HNBRIEF") == "1"
     for s in all_sites:
         if s["tag"] == "equal" or adjudicable(s):
             continue
@@ -358,7 +359,63 @@ def silent_defaults(all_sites):
             continue          # the vote decided it; not a silent default
         if len(s["a"].split()) > 1 or len(s["b"].split()) > 1:
             out.append(s)
+        elif not hn_off and hn_content_dispute(s):
+            out.append(s)
     return out
+
+
+def _hn_fold(w):
+    return norm((w or "").replace("[HN]", "\x01")).replace("\x01", "[hn]")
+
+
+def _hn_matches(x, y):
+    """Does bracketed `x` read as `y` once each `[hn]` is allowed to be h, n or
+    absent? (`[HN]u` ~ `Nu` ~ `u`; `[HN]esse` !~ `Þesse`.)"""
+    pat = "(?:h|n)?".join(re.escape(p) for p in x.split("[hn]"))
+    return re.fullmatch(pat, y.replace("[hn]", "")) is not None
+
+
+def hn_content_dispute(s):
+    """F2 (advisor ruling 2026-10-09, `gen_p20_21_rule` §2): a ONE-word site
+    dropped by `adjudicable()` for its `[HN]` whose reads still differ in the
+    OTHER letters - p20 6:4 «[HN]aꝑn»/«[HN]afn», 6:9 «Þesse»/«[HN]esse»; p21
+    7:11 «Þa»/«[HN]a», 8:2, 8:7. All five shipped read B unasked. The bracket
+    itself is folded first, so a pure H/N disagreement is still NOT briefed
+    (the 1584 witness tool owns it). Site keys are unchanged: this only adds
+    the site to the briefed/override list, exactly as the 2026-09-21 spans.
+    ⛔ Known-bad control: `HEXAPLA_NO_HNBRIEF=1`; `tools/test_hn_brief.py`."""
+    if s["notation"]:
+        return False
+    a, b = s["a"] or "", s["b"] or ""
+    if "[HN]" not in a and "[HN]" not in b:
+        return False
+    if "decorative initial" in a or "[OG]" in b:
+        return False
+    fa, fb = _hn_fold(a), _hn_fold(b)
+    return not (_hn_matches(fa, fb) or _hn_matches(fb, fa))
+
+
+def hn_rebracket(src_a, src_b):
+    """F2 (advisor ruling 2026-10-09, `gen_p22_rule` §2): read B's default drops
+    a bracket read A wrote. Where A has `[HN]X` and B committed a CAPITAL H/N + X
+    (p22 8:22 A «[HN]ott» / B «Nott»), the bracket is written - the 1584 tool
+    owns that letter, B's commit was silent. A lowercase B (8:19 «handa» against
+    A «[HN]anda») is a case dispute and is NOT bracketed. Token by token; returns
+    None unless every differing token is of this shape (caller falls back).
+    ⛔ Known-bad control: `HEXAPLA_NO_HNREBRACKET=1`; `tools/test_hn_rebracket.py`."""
+    if os.environ.get("HEXAPLA_NO_HNREBRACKET") == "1":
+        return None
+    ta, tb = src_a.split(), src_b.split()
+    if len(ta) != len(tb) or "[HN]" not in src_a:
+        return None
+    out, hit = [], False
+    for x, y in zip(ta, tb):
+        if "[HN]" in x and "[HN]" not in y and y[:1] in ("H", "N")                 and norm(x) == norm(y[1:]) and x.startswith("[HN]"):
+            out.append(x)
+            hit = True
+        else:
+            out.append(y)
+    return " ".join(out) if hit else None
 
 
 VERDICT_RE = re.compile(
@@ -612,7 +669,7 @@ def main():
     print("sites derived from the two reads : %d" % len(need))
     quiet = silent_defaults(all_sites)
     print("dropped, never briefed           : %d  (of these, %d carry MORE "
-          "THAN ONE WORD)"
+          "THAN ONE WORD or an [HN] word disputed in its other letters)"
           % (len([s for s in all_sites
                   if s["tag"] != "equal" and not adjudicable(s)
                   and s.get("majority") is None]), len(quiet)))
@@ -776,7 +833,8 @@ def main():
                 # the other instrument. If BOTH carry one, nothing is written.
                 src_b = " ".join(wb[s["j1"]:s["j2"]])
                 src_a = " ".join(wa[s["i1"]:s["i2"]])
-                pieces.append(settle(prefer(src_b, src_a)))
+                pieces.append(settle(hn_rebracket(src_a, src_b)
+                                     or prefer(src_b, src_a)))
             else:
                 pieces.append(resolved[id(s)])
         text = " ".join(p for p in pieces if p)

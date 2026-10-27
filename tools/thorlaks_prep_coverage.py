@@ -62,6 +62,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 RESEARCH = Path(r"C:/Projects/Hexapla-releases/research")
 PREP = RESEARCH / "_prep"
+NOT_KITS = {"gt"}
 HERE = Path(__file__).parent
 
 _spec = importlib.util.spec_from_file_location("prep_chunk", HERE / "prep_chunk.py")
@@ -259,6 +260,11 @@ def main():
     skipped = []
     if a.all:
         for d in sorted(PREP.iterdir()):
+            # gt/ is tesstrain_build.py's ground-truth tree (PREP / "gt"), not
+            # a kit. Exempt BY NAME only: a general "no MANIFEST -> ignore"
+            # would re-open the silent pass this skip list exists to stop.
+            if d.name in NOT_KITS:
+                continue
             if d.is_dir() and not run_chunk(d.name, a.dump):
                 skipped.append(d.name)
     elif a.chunk:

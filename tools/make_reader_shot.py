@@ -47,6 +47,8 @@ SHOTS = [
     ("hy", "hy_west1853.json", 42, "Յովհաննէս 1", ["sylfaen.ttf", "segoeui.ttf"], False),
     # Georgian: Sylfaen was designed with Georgian alongside Armenian; Segoe UI
     # is the fallback. Title is the asset's own book name for John.
+    # Icelandic: the Thorlaksbiblia 1644 NT, drawn in the Junicode the app ships for its sorts.
+    ("is", "is_thorlaks.json", 42, "Jóhannesarguðspjall 1", [os.path.join(HERE, "..", "app", "src", "main", "res", "font", "junicode_thl.ttf"), "segoeui.ttf"], False),
     ("ka", "ka_bakar.json", 42, "სახარება იონესი 1", ["sylfaen.ttf", "segoeui.ttf"], False),
     ("lv", "lv_gluck.json", 42, "Jāņa evaņģēlijs 1", ["segoeui.ttf"], False),
     ("nl", "nl_staten.json", 42, "Johannes 1", ["segoeui.ttf"], False),
@@ -137,13 +139,16 @@ def draw_topbar(d, title, tfont):
     d.ellipse((715, y - 26, 755, y + 14), outline=ICON, width=6)
     d.line((752, y + 10, 775, y + 32), fill=ICON, width=7)
     # speaker
-    d.polygon([(845, y - 8), (868, y - 8), (896, y - 32), (896, y + 32),
-               (868, y + 8), (845, y + 8)], fill=ICON)
-    d.arc((900, y - 20, 934, y + 20), -50, 50, fill=ICON, width=5)
+    # speaker: cone + two sound-wave arcs centred on the cone mouth (one
+    # small arc alone read as a stray «)» at store-thumbnail size)
+    d.polygon([(830, y - 10), (850, y - 10), (874, y - 32), (874, y + 32),
+               (850, y + 10), (830, y + 10)], fill=ICON)
+    d.arc((866, y - 18, 902, y + 18), -55, 55, fill=ICON, width=6)
+    d.arc((862, y - 34, 930, y + 34), -55, 55, fill=ICON, width=6)
     # forward arrow
-    d.line((950, y, 1010, y), fill=ICON, width=7)
-    d.line((1010, y, 980, y - 28), fill=ICON, width=7)
-    d.line((1010, y, 980, y + 28), fill=ICON, width=7)
+    d.line((955, y, 1015, y), fill=ICON, width=7)
+    d.line((1015, y, 985, y - 28), fill=ICON, width=7)
+    d.line((1015, y, 985, y + 28), fill=ICON, width=7)
     d.line((0, 232, W, 232), fill=DIVIDER, width=2)
 
 

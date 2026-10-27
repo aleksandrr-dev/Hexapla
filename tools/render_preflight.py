@@ -171,9 +171,14 @@ def cmd_check(a):
         item("output redirected", True, env["HEXAPLA_NARRATION_OUT"], warn=True)
 
     # 4. GPU
+    # A kokoro set is CPU-only (.kokoro_venv torch is +cpu) and is meant to run
+    # beside a GPU render (docs/NARRATION.md), so a holder is only a WARN there.
     holders = gpu_holders()
-    item("GPU not held by another render/repair", not holders,
-         "; ".join(h[:90] for h in holders) if holders else "no narrate/repair process")
+    gpu_engine = cfg["engine"] in ("chatterbox", "cosyvoice3")
+    item("GPU not held by another render/repair", not holders or not gpu_engine,
+         ("; ".join(h[:90] for h in holders) if holders else "no narrate/repair process")
+         + ("" if gpu_engine or not holders else " (CPU engine: no contention)"),
+         warn=bool(holders) and not gpu_engine)
     free, total = gpu_free_mib()
     if free is not None:
         need = 5000 if cfg["engine"] in ("chatterbox", "cosyvoice3") else 0

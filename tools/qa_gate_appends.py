@@ -82,15 +82,20 @@ DATA = r"C:/Projects/Hexapla-releases"
 _BOOKS = None
 
 
-def kjv_text(book, chapter, verse):
+def kjv_text(book, chapter, verse, lang="en"):
     """The printed verse, or None. Reuses qa_text_explained's own loader so
-    there is ONE definition of «the print» in this toolchain."""
+    there is ONE definition of «the print» in this toolchain.
+
+    ⚠ Fixed 2026-10-04: this loaded the KJV for EVERY --lang, so a tyn flag
+    was judged against KJV words (Num 3:32 «holythynges» is Tyndale's, the
+    KJV says «holy things» - the rule could never fire). The set's own asset
+    now; a set qa_text_explained has no asset for is UNAVAILABLE, not KJV."""
     global _BOOKS
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import qa_text_explained as qte
         if _BOOKS is None:
-            _BOOKS = qte.load("kjv")
+            _BOOKS = qte.load("kjv" if lang == "en" else lang)
         return qte.vtext(_BOOKS, book, chapter, verse)
     except Exception:
         return None      # ⛔ None means UNAVAILABLE and prints as such —
@@ -325,7 +330,7 @@ def main():
                             continue
                         seen.add(key)
                         total += 1
-                        printed = kjv_text(b, int(ch), int(v))
+                        printed = kjv_text(b, int(ch), int(v), a.lang)
                         comp = compound_split(tok, printed) if a.compound else None
                         if a.compound:
                             if printed is None:

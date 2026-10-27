@@ -10,7 +10,12 @@ taken out of the middle:
     python tools/wb_run.py _work/BRIEF_x.md [_work/BRIEF_y.md ...]
         [--cwd C:\\Projects\\Hexapla] [--add-dir C:\\Projects\\Hexapla-releases]
         [--mode edit|plan] [--parallel N] [--max-turns N] [--timeout SEC]
-        [--dry-run] [--no-grade]
+        [--dry-run] [--no-grade] [--backend workbuddy|local]
+
+--backend local runs the same brief through the Claude Code CLI (`claude
+--bare -p`) against LM Studio's Anthropic-compatible endpoint on
+localhost:1234 (default model qwen/qwen3.6-35b-a3b, MAX_THINKING_TOKENS=0,
+--parallel forced to 1). Preflight: /v1/models must list the model, else rc 2.
 
 Per brief it
   1. snapshots `git status --porcelain` in --cwd and stamps a marker file;
@@ -76,6 +81,12 @@ MODELS_KNOWN_GOOD = ("deepseek-v4.1-flash", "hy4-preview", "hy3", "gpt-5.6-sol")
 # forces the model's full window instead of the app's 300k default.
 EFFORTS = ("minimal", "low", "medium", "high", "xhigh", "max")
 EFFORT_DEFAULT = "high"
+# --backend local: the Claude Code CLI itself, pointed at LM Studio's
+# Anthropic-compatible /v1/messages (verified 2026-09-23). Thinking is forced
+# off - with it on the 35B reasoned 21k chars and never answered.
+LOCAL_URL = "http://localhost:1234"
+LOCAL_MODEL = "qwen/qwen3.6-35b-a3b"
+LOCAL_CTX = 32768  # the window the owner loads it at (`lms ps`); a reload is his call
 DEFAULT_CWD = Path(r"C:\Projects\Hexapla")
 DEFAULT_ADD = Path(r"C:\Projects\Hexapla-releases")
 DEFAULT_RUNS = DEFAULT_ADD / "_work" / "wb_runs"
@@ -139,6 +150,74 @@ SELFTEST_RE = re.compile(
 KNOWN_BAD_RE = re.compile(r"\b(HEXAPLA_[A-Z0-9_]+)=1\b")
 
 
+def start_local_shim() -> str:
+    """Start a pass-through proxy in front of LM Studio; return its base URL.
+
+    Measured 2026-09-23: Claude Code sends a `role: system` message AFTER the
+    first user message (the date line). Qwen's chat template raises «System
+    message must be at the beginning» -> HTTP 500 on every request. The shim
+    folds any such message into the top-level `system` and forwards the rest
+    byte-for-byte, streaming the response through unchanged."""
+    import http.client
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    from urllib.parse import urlparse
+
+    up = urlparse(LOCAL_URL)
+
+    class H(BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def _fwd(self, method: str):
+            body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+            if method == "POST" and self.path.startswith("/v1/messages") and body:
+                try:
+                    req = json.loads(body)
+                    moved = [m for m in req.get("messages", []) if m.get("role") == "system"]
+                    if moved:
+                        sysv = req.get("system") or []
+                        if isinstance(sysv, str):
+                            sysv = [{"type": "text", "text": sysv}]
+                        for m in moved:
+                            c = m.get("content")
+                            sysv += [{"type": "text", "text": c}] if isinstance(c, str) else list(c or [])
+                        req["system"] = sysv
+                        req["messages"] = [m for m in req["messages"] if m.get("role") != "system"]
+                        body = json.dumps(req).encode("utf-8")
+                except ValueError:
+                    pass
+            hdrs = {k: v for k, v in self.headers.items()
+                    if k.lower() not in ("host", "content-length", "connection", "accept-encoding")}
+            hdrs["Content-Length"] = str(len(body))
+            c = http.client.HTTPConnection(up.hostname, up.port, timeout=3600)
+            c.request(method, self.path, body=body or None, headers=hdrs)
+            r = c.getresponse()
+            self.send_response(r.status)
+            for k, v in r.getheaders():
+                if k.lower() not in ("content-length", "transfer-encoding", "connection"):
+                    self.send_header(k, v)
+            self.send_header("Connection", "close")
+            self.end_headers()
+            while True:
+                chunk = r.read1(65536)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+                self.wfile.flush()
+            c.close()
+
+        def do_POST(self):
+            self._fwd("POST")
+
+        def do_GET(self):
+            self._fwd("GET")
+
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    return f"http://127.0.0.1:{srv.server_address[1]}"
+
+
 def now_stamp() -> str:
     return dt.datetime.now().strftime("%Y-%m-%d_%H%M%S")
 
@@ -184,12 +263,21 @@ def git_status(cwd: Path) -> set[str]:
 
 
 def build_cmd(prompt_file: Path, args, mode: str) -> list[str]:
-    cmd = [
-        str(EXE), str(CLI), "-p", "--model", args.model,
-        "--output-format", "json", "--no-session-persistence",
-        "--autocompact", "1m",  # the app's default window is 300k; force the model's full 1M
-        "--effort", args.effort,  # never leave reasoning effort to the server default
-        "--max-turns", str(args.max_turns),
+    if args.backend == "local":
+        # --bare skips hooks/CLAUDE.md/memory: the local window is 32k, and the
+        # grader below is the fence either way (the docstring's rule).
+        cmd = ["claude", "--bare", "-p", "--model", args.model,
+               "--output-format", "json", "--no-session-persistence",
+               "--max-turns", str(args.max_turns)]
+    else:
+        cmd = [
+            str(EXE), str(CLI), "-p", "--model", args.model,
+            "--output-format", "json", "--no-session-persistence",
+            "--autocompact", "1m",  # the app's default window is 300k; force the model's full 1M
+            "--effort", args.effort,  # never leave reasoning effort to the server default
+            "--max-turns", str(args.max_turns),
+        ]
+    cmd += [
         # plan mode denies Bash and any Read outside the repo in non-interactive
         # runs (measured 2026-09-22: both DIAG briefs stopped on a blocker), so
         # read-only briefs get the same mode with no edit tools; the git delta
@@ -237,6 +325,23 @@ def run_model(brief: Path, args, run_dir: Path, mode: str) -> dict:
         print("  prompt head:\n    " + "\n    ".join(prompt.splitlines()[:6]))
         return {"rc": 0, "dry": True}
     env = dict(os.environ, ELECTRON_RUN_AS_NODE="1", PYTHONIOENCODING="utf-8")
+    if args.backend == "local":
+        env.pop("ANTHROPIC_API_KEY", None)
+        env.update(ANTHROPIC_BASE_URL=args.shim_url, ANTHROPIC_AUTH_TOKEN="lmstudio",
+                   ANTHROPIC_SMALL_FAST_MODEL=args.model,
+                   ANTHROPIC_DEFAULT_HAIKU_MODEL=args.model,
+                   MAX_THINKING_TOKENS="0", NO_PROXY="localhost,127.0.0.1",
+                   # The CLI does not know this model, so it assumes a 200k
+                   # window and never compacts: batch 1 (2026-09-23) died at
+                   # 34,723 > 32,768 on turn 4. Tell it the loaded window, keep
+                   # the output reserve small (a 32k reserve on a 32k window
+                   # leaves nothing), and cap what one tool result may add.
+                   CLAUDE_CODE_AUTO_COMPACT_WINDOW=str(LOCAL_CTX),
+                   # WB_LOCAL_MAX_OUT: a thinking model can spend all 4096 on
+                   # reasoning and stop at max_tokens with no edit (L1b, Q3).
+                   CLAUDE_CODE_MAX_OUTPUT_TOKENS=os.environ.get("WB_LOCAL_MAX_OUT", "4096"),
+                   CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS="4000",
+                   BASH_MAX_OUTPUT_LENGTH="8000")
     t0 = time.time()
     try:
         p = subprocess.run(cmd, cwd=str(args.cwd), env=env, input=prompt.encode("utf-8"),
@@ -246,14 +351,22 @@ def run_model(brief: Path, args, run_dir: Path, mode: str) -> dict:
     raw = (p.stdout or b"").decode("utf-8", "replace")
     (run_dir / "stdout.json").write_text(raw, encoding="utf-8")
     (run_dir / "stderr.txt").write_text((p.stderr or b"").decode("utf-8", "replace"), encoding="utf-8")
-    # stdout carries app log lines before the JSON array; find the array.
-    start = raw.find("[\n")
-    if start < 0:
-        start = raw.find("[")
-    try:
-        msgs = json.loads(raw[start:]) if start >= 0 else []
-    except json.JSONDecodeError as e:
-        return {"rc": 2, "error": f"could not parse CLI JSON: {e}; cli rc={p.returncode}"}
+    if args.backend == "local":
+        # Claude Code prints ONE result object, not an array.
+        start = raw.find("{")
+        try:
+            msgs = [json.loads(raw[start:])] if start >= 0 else []
+        except json.JSONDecodeError as e:
+            return {"rc": 2, "error": f"could not parse CLI JSON: {e}; cli rc={p.returncode}"}
+    else:
+        # stdout carries app log lines before the JSON array; find the array.
+        start = raw.find("[\n")
+        if start < 0:
+            start = raw.find("[")
+        try:
+            msgs = json.loads(raw[start:]) if start >= 0 else []
+        except json.JSONDecodeError as e:
+            return {"rc": 2, "error": f"could not parse CLI JSON: {e}; cli rc={p.returncode}"}
     result = next((m for m in reversed(msgs) if m.get("type") == "result"), None)
     if result is None:
         return {"rc": 2, "error": f"no result message; cli rc={p.returncode}"}
@@ -418,6 +531,9 @@ def main() -> int:
                     help="model id to send the brief to (default: %(default)s). Known good: "
                          + ", ".join(MODELS_KNOWN_GOOD)
                          + ". An unknown id is REFUSED by the server, never silently substituted.")
+    ap.add_argument("--backend", choices=["workbuddy", "local"], default="workbuddy",
+                    help="local = Claude Code CLI against LM Studio at " + LOCAL_URL
+                         + " (default model " + LOCAL_MODEL + ", thinking off, --parallel forced to 1)")
     ap.add_argument("--parallel", type=int, default=1)
     ap.add_argument("--max-turns", type=int, default=80)
     ap.add_argument("--timeout", type=int, default=3600)
@@ -447,7 +563,23 @@ def main() -> int:
     if not args.briefs:
         print("could not run: no briefs given (pass paths or --queue FILE)")
         return 2
-    if not EXE.exists() or not CLI.exists():
+    if args.backend == "local":
+        if args.model == MODEL:
+            args.model = LOCAL_MODEL
+        args.parallel = 1  # one loaded model, 32k context; RAM is contended
+        try:
+            import urllib.request
+            opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+            with opener.open(LOCAL_URL + "/v1/models", timeout=10) as r:
+                ids = [m.get("id") for m in json.load(r).get("data", [])]
+        except Exception as e:
+            print(f"could not run: LM Studio not answering at {LOCAL_URL}: {e}")
+            return 2
+        if args.model not in ids:
+            print(f"could not run: {args.model} not served by LM Studio (has: {', '.join(ids)})")
+            return 2
+        args.shim_url = start_local_shim()
+    elif not EXE.exists() or not CLI.exists():
         print(f"could not run: WorkBuddy CLI not found at {CLI}")
         return 2
     for b in args.briefs:
@@ -477,7 +609,8 @@ def main() -> int:
         (r["run_dir"] / "grade.md").write_text(f"# {verdict}\n\n" + "\n".join(f"- {l}" for l in lines) + "\n", encoding="utf-8")
         u = m.get("usage") or {}
         tok = f"{u.get('input_tokens','?')}/{u.get('output_tokens','?')}"
-        row = f"| {r['run_dir'].name[:17]} | {r['brief'].name} | {args.model} | {args.effort} | {r['mode']} | {m.get('num_turns','?')} | {tok} | {m.get('seconds','?')} | **{verdict}** | {r['run_dir'].name} |\n"
+        eff = args.effort if args.backend == "workbuddy" else "think-off"
+        row = f"| {r['run_dir'].name[:17]} | {r['brief'].name} | {args.model} | {eff} | {r['mode']} | {m.get('num_turns','?')} | {tok} | {m.get('seconds','?')} | **{verdict}** | {r['run_dir'].name} |\n"
         with ledger.open("a", encoding="utf-8") as f:
             f.write(row)
         print(f"\n=== {r['brief'].name}  mode={r['mode']}  turns={m.get('num_turns')}  tokens={tok}  {m.get('seconds')}s  -> {verdict}")

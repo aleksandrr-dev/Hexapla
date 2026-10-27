@@ -87,6 +87,12 @@ PINNED_ALIGNMENT = {
     # The print stops at 42 (= KJV 5:43); the VI heading follows.
     ("mark", 5): lambda v: ([(5, 27), (5, 28)] if v == 27
                             else [(5, v + 1)] if v >= 28 else [(5, v)]),
+    # 2 Cor, 2026-10-08 round 2 (corpus_audit KNOWN_DIVERGENCE (46,1/2/10/11)): printed II opens at KJV 1:23, printed XI at 10:17.
+    ("2 corinthians", 2): lambda v: [(1, 22 + v)] if v <= 2 else [(2, v - 2)],
+    ("2 corinthians", 11): lambda v: [(10, 16 + v)] if v <= 2 else [(11, v - 2)],
+    # Leviticus 18 (Fable s69 ruling O-4, lev_common/s68_looks_owner): printed 25 carries KJV 18:25+26; printed 26 is
+    # the tagged EMPTY slot (conventions row 22, the Mark 3:19 form) - kept in research, never renumbered.
+    ("leviticus", 18): lambda v: [(18, 25), (18, 26)] if v == 25 else [] if v == 26 else [(18, v)],
 }
 
 
@@ -106,8 +112,32 @@ def aligner(book):
     return f
 
 
+def strip_notes(text):
+    """Drop `[...]` and `{...}` notes WITH NESTING; KEEP `(...)`.
+
+    A printed parenthesis is scripture in this print (CONVENTIONS row 12; s61
+    14:15, s64 16:1), and NOTE_RE ate it - Lev 16:1 scored 5 words of 23. It
+    also stopped at the first `]` of a nested note and counted the tail as text
+    (Fable s69 ruling O-9). Each closing bracket becomes a space.
+    ⚠ HEXAPLA_NO_PARENFIX=1 restores the old regex - the known-bad control.
+    """
+    if os.environ.get("HEXAPLA_NO_PARENFIX") == "1":
+        return NOTE_RE.sub(" ", text)
+    out, depth = [], 0
+    for c in text:
+        if c in "[{":
+            depth += 1
+        elif c in "]}" and depth:
+            depth -= 1
+            if not depth:
+                out.append(" ")
+        elif not depth:
+            out.append(c)
+    return "".join(out)
+
+
 def words(text):
-    text = NOTE_RE.sub(" ", text)
+    text = strip_notes(text)
     return [w for w in re.split(r"[\s/|]+", text) if re.search(r"[^\W\d_]", w)]
 
 
@@ -268,7 +298,16 @@ def selftest():
           "%d scored, LOW %s (want []), absent %s (want [(9, 1)], printed in VIII)"
           % ("✅" if ok2 else "⛔", len(rows2), low2, absent2))
 
-    ok = ok1 and ok2
+    # FIXTURES 3/4 (2026-10-23, Fable s69 O-9): nested notes go whole, a printed
+    # parenthesis stays. HEXAPLA_NO_PARENFIX=1 must make BOTH fail.
+    w3 = words("a [b [c] d] e (f g)")
+    ok3 = w3 == ["a", "e", "(f", "g)"]
+    print("  %s nested note -> %s (want ['a', 'e', '(f', 'g)'])" % ("✅" if ok3 else "⛔", w3))
+    w4 = words("Og Drottiñ talade (epter þ þeir tueir Aarons syner) vid Mose")
+    ok4 = len(w4) == 11
+    print("  %s printed parenthesis kept -> %d words (want 11)" % ("✅" if ok4 else "⛔", len(w4)))
+
+    ok = ok1 and ok2 and ok3 and ok4
     print("selftest: %s" % ("OK" if ok else "FAILED"))
     return 0 if ok else 1
 

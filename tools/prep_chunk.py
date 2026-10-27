@@ -208,6 +208,7 @@ def text_block(page, robust=False, full_width=False):
     return fitz.Rect(max(x0, r.x0), r.y0, min(x1, r.x1), r.y1), note
 
 
+MASK_KEEP = 0.70       # --mask-initials: profile the right 70 % of the block
 FRAC_SWEEP = (0.40, 0.45, 0.50, 0.55, 0.60, 0.62, 0.65, 0.68, 0.70, 0.75)
 FRAC_KEEP = 0.85        # >= this share of the plateau max: LINE_FRAC stands
 FRAC_PLATEAU = 0.98     # re-choosing, take the HIGHEST frac still this good
@@ -406,7 +407,7 @@ def page_skew_slope(page, block):
     return drift / float(span), steps, drift
 
 
-def line_rects(page, block, gray=None):
+def line_rects(page, block, gray=None, mask=False):
     """Line rectangles from the row-mean darkness profile.
 
     ⚠ The threshold is chosen per page by choose_frac() — see its docstring
@@ -458,6 +459,13 @@ def line_rects(page, block, gray=None):
     """
     im = _gray(page, PROFILE_ZOOM) if gray is None else gray
     x0 = int((block.x0 - page.rect.x0) * PROFILE_ZOOM)
+    if mask:
+        # --mask-initials (opt-in, per page): a big woodcut initial covering
+        # the block's left ~20-25 % over many rows fills their inter-line gaps,
+        # so the full-width mean has no plateau (Revelation v3 233/234/244,
+        # owner 2026-10-05). The ROWS are found on the right MASK_KEEP of the
+        # block; the crops keep the full block width (out[] below).
+        x0 = int((block.x1 - MASK_KEEP * block.width - page.rect.x0) * PROFILE_ZOOM)
     x1 = int((block.x1 - page.rect.x0) * PROFILE_ZOOM)
     band = im.crop((max(x0, 0), 0, min(x1, im.width), im.height))
     col = band.resize((1, band.height))
@@ -466,8 +474,10 @@ def line_rects(page, block, gray=None):
     runs = _runs(rows, frac, min_len=6)
     runs, splits = split_tall_runs(rows, runs, cliff=bool(cliff_note))
     if splits:
-        print("  ⚠ valley split (cliff page, no threshold separates these): "
-              + ", ".join("y%d-%d +%d" % (a, b, n) for a, b, n in splits))
+        print("  ⚠ valley split (%s): " % (
+            "cliff page, no threshold separates these" if cliff_note
+            else "plateau page, deep valleys >= %.2f only" % VALLEY_DEEP)
+            + ", ".join("y%d-%d +%d" % (a, b, n) for a, b, n in splits))
     out = []
     for a, b in runs:
         y0 = page.rect.y0 + a / PROFILE_ZOOM - PAD_Y
@@ -510,6 +520,23 @@ VALLEY_TALL = 1.5       # x pitch: a run taller than this holds more than one li
 VALLEY_SMOOTH = 3       # half-window in profile rows before looking for maxima
 VALLEY_MIN_SEP = 0.6    # x pitch: two maxima closer than this are one gap
 VALLEY_EDGE = 0.4       # x pitch: a maximum closer than this to an edge IS the edge
+# PLATEAU VALLEY (2026-10-19, Genesis v1 idx 48; measured in
+# research/_evidence/thorlaks_p48_plateau_valley_2026-10-19.md). A PLATEAU page
+# can still carry tall runs: idx 48 (frac 0.65, 44 runs) holds six, 1.6x-3.8x
+# the pitch, nine printed lines welded in pairs and threes, and choose_frac()
+# is right not to move - the page's count IS flat. The valleys inside those
+# runs are DEEP (0.08-0.139 above the run floor); the cliff class the rule
+# above was built for has SHALLOW ones (0.043-0.058 on v3 idx 66, 0.049-0.079
+# on v1 idx 63/64). VALLEY_DEEP sits between the two classes. On a non-cliff
+# page a tall run is cut only at maxima at least that deep; the cliff path is
+# untouched (no depth gate), so idx 66 stays at 49.
+# ⚠ Side effect, stated to the owner: 17 of the 49 plateau pages 16-64 carry
+# 1-2 woodcut / heading rows with the same signature (2-5 printed lines beside
+# a drop cap on one run, addresses void per the heights screen). Those rows
+# are now cut per line on every page prepped AFTER this date; kits already
+# on disk are untouched. Control: HEXAPLA_NO_PLATEAU_VALLEY=1 must put idx 48
+# back to 44 runs (tools/test_plateau_valley.py).
+VALLEY_DEEP = 0.07      # smoothed-profile rise above the run floor, plateau pages only
 
 
 def _run_pitch(runs):
@@ -525,8 +552,11 @@ def split_tall_runs(rows, runs, cliff):
     operator. A plateau page, the control, or a page with too few runs to
     measure a pitch returns its runs untouched.
     """
-    if not cliff or os.environ.get("HEXAPLA_NO_VALLEY") or len(runs) < 4:
+    if os.environ.get("HEXAPLA_NO_VALLEY") or len(runs) < 4:
         return runs, []
+    if not cliff and os.environ.get("HEXAPLA_NO_PLATEAU_VALLEY"):
+        return runs, []   # known-bad control for the plateau rule
+    deep = None if cliff else VALLEY_DEEP   # plateau page: depth-gated cuts only
     pitch = _run_pitch(runs)
     if pitch <= 0:
         return runs, []
@@ -543,6 +573,9 @@ def split_tall_runs(rows, runs, cliff):
                  if s[i] >= s[i - 1] and s[i] >= s[i + 1]
                  and s[i] > s[i - 2] and s[i] > s[i + 2]]
         cands.sort(reverse=True)
+        if deep is not None:
+            floor = min(s[a:b]) if b > a else 0.0
+            cands = [(v, i) for v, i in cands if v - floor >= deep]
         chosen = []
         for _, i in cands:
             if all(abs(i - j) >= sep for j in chosen):
@@ -712,6 +745,10 @@ def _flag_tokens(a):
         t.append("`--robust-block`")
     if getattr(a, "split", False):
         t.append("`--split`")
+    if getattr(a, "widen_right", 0):
+        t.append(f"`--widen-right {a.widen_right:g}`")
+    if getattr(a, "mask_initials", False):
+        t.append("`--mask-initials`")
     return " ".join(t) if t else "\u2014"
 
 
@@ -851,6 +888,18 @@ def main():
                          "intended trade. NOT --robust-block, which does not "
                          "fix this. OPT-IN, per page, and record which pages "
                          "used it.")
+    ap.add_argument("--widen-right", type=float, default=0.0, metavar="PT",
+                    help="move every crop's RIGHT edge out by PT points "
+                         "(clamped to the page) after the rows are found on "
+                         "the detected block. For a right-edge clip "
+                         "(thorlaks_crop_widths SUSPECT, confirmed by eye) on a "
+                         "page where --full-width merges rows. OPT-IN, per page.")
+    ap.add_argument("--mask-initials", action="store_true",
+                    help="find the line ROWS on the right 70 %% of the block "
+                         "only (crops stay full block width): a page whose big "
+                         "woodcut initials fill the left rows' gaps has no "
+                         "threshold plateau (Revelation v3 233/234/244). "
+                         "OPT-IN, per page.")
     ap.add_argument("--clean-stale", action="store_true",
                     help="delete crops already in a page directory that THIS "
                          "run will not rewrite. Without it, such crops make "
@@ -924,11 +973,11 @@ def main():
         # recovered line from a lost one.
         n_plain = None
         if slope:
-            plain = line_rects(page, block)
+            plain = line_rects(page, block, mask=a.mask_initials)
             plain_rec = short_line_rects(page, block, plain)
             n_plain = len(plain) + len(plain_rec)
 
-        lines = line_rects(page, block, gray=gray)
+        lines = line_rects(page, block, gray=gray, mask=a.mask_initials)
         # Recover one-word lines the mean-threshold detector drops, and merge
         # them into reading order. See short_line_rects: on v3:208 this is the
         # difference between having «sins.» and «aptur j Saurnum.» and silently
@@ -936,6 +985,13 @@ def main():
         recovered = short_line_rects(page, block, lines, gray=gray)
         if recovered:
             lines = sorted(lines + recovered, key=lambda r: r.y0)
+        # --widen-right: the ROWS are found on the detected block exactly as
+        # without it; only each crop's right edge moves out. --full-width on a
+        # page with a dense apparatus column merged rows (John v3 idx 98:
+        # 55 -> 54 crops, three bands), because the gloss ink bridges the gaps.
+        if a.widen_right:
+            lines = [fitz.Rect(r.x0, r.y0, min(r.x1 + a.widen_right, page.rect.x1), r.y1)
+                     for r in lines]
         d = out / f"p{idx}"
         will_write = set()
         for i, rect in enumerate(lines):

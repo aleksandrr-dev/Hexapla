@@ -11,6 +11,7 @@ keystore.properties
 __pycache__/
 tools/.tyndale_cache/
 tools/.kokoro_venv/
+tools/.thai_venv/
 tools/.cosyvoice_venv/
 tools/piper_models/
 tools/voice_samples/

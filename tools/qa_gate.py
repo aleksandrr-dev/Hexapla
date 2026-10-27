@@ -45,6 +45,7 @@ requires 6/6.
 import argparse
 import difflib
 import json
+import os
 import random
 import re
 import sys
@@ -63,6 +64,11 @@ NAR = Path("C:/Projects/Hexapla-releases/narration")
 # Middle English and cu is Church Slavonic: no model reads them, and sv is
 # 1703 Swedish (97.5 % of verses mismatch the reference — measured).
 ENGLISH_TEXT_SETS = {"en", "ylt", "tyn", "wbt", "gnv"}
+# Short-take screen: fires when the ASR heard fewer than SHORT_FRAC of the
+# verse's words. Verses under SHORT_MIN_WORDS are not judged (one dropped
+# word is a third of a 3-word verse).
+SHORT_FRAC = 0.5
+SHORT_MIN_WORDS = 6
 
 
 def norm_ref(s):
@@ -106,6 +112,20 @@ def append_tail(want, heard):
                     difflib.SequenceMatcher(None, want[i1 + n], heard[j1 + n]
                                             ).ratio() >= 0.55
                     for n in range(n_want))
+                # ⛔ A COMPOUND THE ASR SPLIT IS NOT AN APPEND (2026-10-06).
+                # ▶ MEASURED: kjv 1 Macc 4:30 ends «his armourbearer»; whisper
+                #   wrote «armour bearer» / «armor bearer», so 6 of 6 COMPLETE
+                #   draws were gated `append:bearer` and the tie rule kept a
+                #   take that stops after «he prayed and said» (owner's ear).
+                # The heard words JOINED spell the wanted word(s) joined -> it
+                # is the same speech, nothing was added. The shaul/shawl SHRI
+                # case above joins to «shawlshri» vs «shaul» and still fires.
+                # Control: HEXAPLA_NO_COMPOUND=1 restores the old behaviour.
+                joined = difflib.SequenceMatcher(
+                    None, "".join(want[i1:i2]), "".join(heard[j1:j2])).ratio()
+                if (aligned_ok and joined >= 0.9
+                        and not os.environ.get("HEXAPLA_NO_COMPOUND")):
+                    return []
                 if aligned_ok:
                     return heard[j1 + n_want:j2]
     return []
@@ -126,6 +146,17 @@ def gate_reasons(heard_text, tokens, want_text, lang,
         extra = append_tail(norm_ref(want_text), norm_ref(heard_text or ""))
         if extra:
             reasons.append("append:" + " ".join(extra))
+        # ⛔ A TAKE THAT STOPS EARLY PASSED EVERY SCREEN ABOVE — they all read
+        # the TAIL. ▶ MEASURED: ylt Matthew 23:8, 2026-09-25 11:56 (Rabbi
+        # repair): 6926 -> 1405 ms, heard «and yay» for a 22-word verse,
+        # reasons [] -> installed as «clean». Coverage is counted on the
+        # normalised words, English-text sets only (norm_ref keeps a-z).
+        # Control: tools/test_gate_short.py (0) and HEXAPLA_NO_SHORT=1 (1).
+        want_n = len(norm_ref(want_text))
+        heard_n = len(norm_ref(heard_text or ""))
+        if (not os.environ.get("HEXAPLA_NO_SHORT") and want_n >= SHORT_MIN_WORDS
+                and heard_n < SHORT_FRAC * want_n):
+            reasons.append(f"short:{heard_n}/{want_n}")
     if tail_peak is not None and tail_peak_limit is not None \
             and tail_peak >= tail_peak_limit:
         reasons.append(f"tailpeak:{tail_peak:.2f}")
@@ -158,7 +189,7 @@ def _judge(lang, items, td, show, prefer_originals=False):
             print(f"  {b}/{ch} v{v}: ASR UNAVAILABLE")
             continue
         reasons = gate_reasons(asr["text"], asr["tokens"], _spoken(lang, b, ch, v), lang)
-        fired = any(r.startswith(("repeat", "append")) for r in reasons)
+        fired = any(r.startswith(("repeat", "append", "short")) for r in reasons)
         hits += fired
         if show or fired:
             print(f"  {b}/{ch} v{v:<3} {'FAIL' if fired else 'pass'} "
@@ -224,7 +255,7 @@ def validate_sv():
     return validate_splice("sv")
 
 
-def validate_splice(set_key, asr_lang=None, books=(0, 18, 39)):
+def validate_splice(set_key, asr_lang=None, books=(0, 18, 39), exclude=()):
     """Synthetic positive control for the SELF-REPEAT screen, on any set.
 
     Splices a word-boundary repeat into verses that are presumed clean and
@@ -257,6 +288,13 @@ def validate_splice(set_key, asr_lang=None, books=(0, 18, 39)):
         for b, ch, v in picks:
             if n_done == 6:
                 break
+            # ⚠ The control PRESUMES its clean side is clean. tyn Mt 23:24
+            # (39/22 v24) is not: the audio says «a camel a camel» on 3/3 ASR
+            # runs, the text once (2026-09-25). A verse ruled defective is
+            # excluded by name, never by relaxing «clean 0/6».
+            if f"{b}/{ch}/{v}" in exclude:
+                print(f"  {b}/{ch} v{v}: EXCLUDED (ruled defective)")
+                continue
             # ⚠ CONTROL-CONSTRUCTION TRAP (handoff §3c, and re-measured
             # 2026-09-03): a naive "last 1.4 s" splice scored 2/6 — it cuts
             # MID-WORD with no gap, so the ASR hears one garbled run, not a
@@ -298,7 +336,9 @@ def validate_splice(set_key, asr_lang=None, books=(0, 18, 39)):
             n_done += 1
             fired_clean += bool(g0)
             fired_spliced += bool(g1)
-            print(f"  {b}/{ch} v{v:<3} clean {g0 or 'pass':<14} spliced {g1 or 'MISS'}"
+            # str(): a non-empty reason list has no format spec (TypeError,
+            # 2026-09-25) — and a non-empty g0 is exactly the line worth reading.
+            print(f"  {b}/{ch} v{v:<3} clean {str(g0 or 'pass'):<14} spliced {g1 or 'MISS'}"
                   f"   ...{' '.join(r1['tokens'][-8:])}")
     print(f"\nSUMMARY  spliced {fired_spliced}/{n_done} fired   clean {fired_clean}/{n_done} fired")
     # ≥ 5/6, not 6/6: measured 2026-09-03, whisper occasionally REWRITES the
@@ -332,13 +372,19 @@ def main():
                          "self-repeat screen without ear-confirmed defects")
     ap.add_argument("--asr-lang", help="override the whisper model language "
                                        "for --validate-splice")
+    ap.add_argument("--exclude", action="append", default=[], metavar="B/CH/V",
+                    help="drop a verse RULED DEFECTIVE from the control's "
+                         "'presumed clean' sample (as printed: book/chapter-stem/"
+                         "verse); the next pick takes its place, the pass rule "
+                         "is unchanged. Each use needs a written ruling.")
     a = ap.parse_args()
     if a.validate:
         return validate()
     if a.validate_sv:
         return validate_sv()
     if a.validate_splice:
-        return validate_splice(a.validate_splice, a.asr_lang)
+        return validate_splice(a.validate_splice, a.asr_lang,
+                               exclude=set(a.exclude))
     ap.print_help()
     # No flag means no check ran - that is not a pass. rc 2 = usage error, so a
     # caller that shells out cannot read this as "gate clean".

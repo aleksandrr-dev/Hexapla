@@ -66,7 +66,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 NARRATION = Path("C:/Projects/Hexapla-releases/narration")
-APP = "https://aleksandrr-dev.github.io/Hexapla/"
+APP = "https://hexaplabible.com/download/"
 
 # Per-set metadata. Keep descriptions factual: what the text is, that the
 # reading is synthetic, and that everything is free.
@@ -257,6 +257,32 @@ SETS = {
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
     },
+    # ★ REINA-VALERA 1909 — PREPARED 2026-10-10, NOT YET UPLOADED.
+    # ⚠ Set key "es" == narration directory; the APP tid is "rv" (Bible.kt:44)
+    #   — that split lives in build_audio_index_gen.py, not here.
+    # ⚠ Same voice as ylt (narrate.py LANG_CONFIG "es": chatterbox
+    #   multilingual, _en_ref_ylt.wav), so the same cloned/watermark
+    #   disclosure. No personal names.
+    # ⚠ Canon 1,189, es_rv.json has no apocrypha slots: no "apocrypha" flag.
+    # ⛔ Upload only after the es self-repeat screen has run (--every 1);
+    #   es is UNSCREENED beyond the render's in-process gate until then.
+    "es": {
+        "asset": "es_rv.json",
+        "identifier": "hexapla-audio-reina-valera-1909",
+        "title": "Reina-Valera (1909) — Biblia completa en audio / "
+                 "complete audio narration",
+        "title_partial": "Reina-Valera (1909) — Biblia en audio / audio "
+                         "narration (in progress)",
+        "translation": "Reina-Valera, 1909",
+        "language": "spa",
+        "voice": "Chatterbox Multilingual (MIT) — synthetic speech cloned "
+                 "from a consented reference recording",
+        "cloned": True,
+        "watermark": True,   # Chatterbox embeds Resemble's Perth watermark
+        "subject": ["bible", "audiobook", "reina-valera", "reina valera 1909",
+                    "biblia", "biblia en audio", "public domain", "scripture",
+                    "christianity", "text to speech", "hexapla", "audio bible"],
+    },
     "ru": {
         "asset": "ru_synodal.json",
         "identifier": "hexapla-audio-synodal-1876",
@@ -269,6 +295,60 @@ SETS = {
         "subject": ["bible", "audiobook", "синодальный перевод", "библия",
                     "public domain", "scripture", "christianity",
                     "text to speech", "hexapla", "audio bible"],
+    },
+    # ★ LUTHER 1545 — NT first (2026-10-13), OT rendering; partial title until
+    #   the canon is complete. Set key "de" == narration directory; the APP tid
+    #   is "lut" (Bible.kt:33) — that split lives in build_audio_index_gen.py.
+    # ⚠ Engine is CosyVoice3 (narrate.py LANG_CONFIG "de") with the ylt
+    #   reference (_en_ref_ylt_15s.wav): cloned, NO watermark (Perth is
+    #   Chatterbox's). Canon only, no apocrypha flag.
+    "de": {
+        "asset": "de_luther.json",
+        "identifier": "hexapla-audio-luther-1545",
+        "title": "Lutherbibel (1545) — vollständige Audiobibel / complete "
+                 "audio narration",
+        "title_partial": "Lutherbibel (1545) — Audiobibel / audio narration "
+                         "(in progress)",
+        "translation": "Luther Bible, 1545",
+        "language": "ger",
+        "voice": "Fun-CosyVoice3 — synthetic speech cloned from a consented "
+                 "reference recording",
+        "cloned": True,      # CosyVoice3 embeds no watermark
+        "subject": ["bible", "audiobook", "lutherbibel", "luther 1545",
+                    "bibel", "hörbibel", "public domain", "scripture",
+                    "christianity", "text to speech", "hexapla", "audio bible"],
+    },
+    # ★ ÞORLÁKSBIBLÍA 1644 — Genesis + NT (2026-10-22, owner: «Islandic sounds
+    #   good, no errors found. Ship it»). Set key "is" == narration directory;
+    #   the APP tid is "thl" — that split lives in build_audio_index_gen.py.
+    #   Partial for as long as the transcription is: the OT is being read off
+    #   the 1644 print book by book, so the partial title stays honest.
+    # ⚠ Engine is piper_vc (narrate.py LANG_CONFIG "is"): Piper is_IS-steinn
+    #   gives the Icelandic pronunciation, ChatterboxVC the timbre of the
+    #   Swedish volunteer's reference — cloned, and Perth-watermarked.
+    # ⚠ Talrómur (CC BY 4.0, repository.clarin.is handle 20.500.12537/104) is
+    #   a REQUIRED credit — it rides in "voice" so it reaches the description.
+    "is": {
+        "asset": "is_thorlaks.json",
+        "in_progress": True,  # the asset is partial; canon count can't see it
+        "identifier": "hexapla-audio-thorlaksbiblia-1644",
+        "title": "Þorláksbiblía (1644) — heildarupplestur / complete audio "
+                 "narration",
+        "title_partial": "Þorláksbiblía (1644) — upplestur / audio narration "
+                         "(in progress)",
+        "translation": "Þorláksbiblía, 1644 (Icelandic)",
+        "language": "ice",
+        "voice": "Piper (voice is_IS-steinn, trained on the Talrómur corpus, "
+                 "CC BY 4.0, repository.clarin.is handle 20.500.12537/104) "
+                 "for the Icelandic pronunciation, voice-converted with "
+                 "Chatterbox (MIT) toward a consented reference recording by "
+                 "a volunteer",
+        "cloned": True,
+        "watermark": True,   # ChatterboxVC embeds Resemble's Perth watermark
+        "subject": ["bible", "audiobook", "þorláksbiblía", "thorlaksbiblia",
+                    "biblía", "íslenska", "icelandic", "public domain",
+                    "scripture", "christianity", "text to speech", "hexapla",
+                    "audio bible"],
     },
 }
 # ⚠ ru UPLOAD GATE: do not upload ru until (a) the ~381-chapter leak
@@ -304,7 +384,7 @@ CANON_BOOKS = 66
 # two names.
 NARRATION_DIR_OF = {"en": "en", "wbt": "wbt", "gnv": "gnv", "wyc": "wyc",
                     "sv": "sv", "cu": "cu", "tyn": "tyn", "ylt": "ylt",
-                    "ru": "ru"}
+                    "ru": "ru", "es": "es", "de": "de", "is": "is"}
 
 # ⚠⚠ SELFTEST-ONLY KNOWN-BAD CONTROL, in the same shape as
 # thorlaks_duplicate_numerals.distinct_only(). True only while selftest() runs,
@@ -659,7 +739,10 @@ def build(set_key, dry_run=False):
     # ⚠ NOT len(oggs) — that counts apocrypha too and can inflate a holed
     # canon past `expected`. See canon_chapters' warning.
     have_canon = canon_ogg_count(src, meta_src["asset"])
-    is_partial = have_canon < expected
+    # ⚠ "in_progress": the ASSET itself is partial (is_thorlaks holds only
+    #   what has been transcribed), so have_canon == expected says nothing
+    #   about the Bible - the set forces the partial title instead.
+    is_partial = have_canon < expected or bool(meta_src.get("in_progress"))
     extra = len(oggs) - have_canon
     if extra:
         # ⚠⚠ THIS NOTE USED TO SAY, FLATLY, "today's index CANNOT reach them".
@@ -883,7 +966,14 @@ def build(set_key, dry_run=False):
     # present with a matching MD5, so a rate-limited run is re-run, not redone.
     res = upload(meta_src["identifier"], files=files, metadata=metadata,
                  retries=6, retries_sleep=20, verbose=True, checksum=True,
-                 queue_derive=False)
+                 queue_derive=False,
+                 # internetarchive's default read timeout is 120 s, and
+                 # s3.us.archive.org stalls at 0 % for exactly that long on a
+                 # busy item (ylt died twice, ru once, 2026-09-25). Wait longer
+                 # before giving up. ⚠ A FLOAT, not a (connect, read) tuple:
+                 # the tuple (30, 600) surfaced as «read timeout=30» (ylt
+                 # cycle 1, 2026-09-25 11:39) - worse than the default.
+                 request_kwargs={"timeout": 600.0})
     bad = [r for r in res if getattr(r, "status_code", 200) not in (200, None)]
     print(f"\nuploaded {len(res) - len(bad)}/{len(res)} requests, {len(bad)} failed")
     if bad:

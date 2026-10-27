@@ -39,7 +39,7 @@ FONTS = {
     "ka": ["sylfaen.ttf", "segoeui.ttf"],
 }
 LATIN = {"es", "fr", "de", "pt", "it", "sv", "da", "cs", "fi", "hu", "lv", "nl",
-         "pl", "sr", "be", "en_in"}
+         "pl", "sr", "be", "en_in", "is"}
 # Scripts PIL cannot shape (Indic reordering, Arabic/Hebrew RTL+shaping) ->
 # WPF family names (render_text.ps1).
 COMPLEX = {"ta": "Nirmala UI", "ar": "Segoe UI", "he": "Segoe UI"}
@@ -79,6 +79,7 @@ TAGLINES = {
     # known by its year). Language names match values-ka/strings.xml usage
     # (ებრაული / ბერძნული). Best-effort — same pending native review as the
     # ka UI locale and the ka-GE listing text.
+    "is": ("Hebreska · Gríska · Þorláksbiblía · KJV", "fornir textar, hlið við hlið"),
     "ka": ("ებრაული · ბერძნული · 1743 · KJV", "ძველი ტექსტები გვერდიგვერდ"),
     # Belarusian (тарашкевіца), best-effort — same pending native review as
     # he/hy and the be listing text (get an orthography check before final).

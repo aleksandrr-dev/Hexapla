@@ -34,6 +34,23 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # (set, book, chapter, verse) -> (synthesis_text, why, validated_by)
 OVERRIDES = {
+    # ★ EAR-CONFIRMED 2026-10-11 (owner): the printed text doubles a word and
+    #   the model said it a THIRD time (Ps «Ea» x3, Jer «Soñé» x3, John «fué
+    #   hecho» x2), failing 3/3 repair draws each. Variant A of each was clean
+    #   in 2/2 draws; Jer B and C, John B repeated.
+    #   Evidence: _work/es_ear_2026-10-11/es_ear_variants_2026-10-11.mp3 + .txt
+    ("es", 18, 39, 15): (
+        "Sean asolados en pago de su afrenta los que me dicen: ¡Ea! ¡Ea!",
+        "«¡Ea, ea!» was said with a third «Ea» in 3/3 draws",
+        "owner ear 2026-10-11"),
+    ("es", 23, 22, 25): (
+        "Yo he oído lo que aquellos profetas dijeron, profetizando mentira en mi nombre, diciendo: Soñé; soñé.",
+        "«Soñé, soñé.» was said with a third «soñé» in 3/3 draws",
+        "owner ear 2026-10-11"),
+    ("es", 42, 0, 3): (
+        "Todas las cosas por él fueron hechas; y sin él nada de lo que es hecho fué hecho.",
+        "the comma before «fué hecho» made the model repeat it in 3/3 draws",
+        "owner ear 2026-10-11"),
     # ★ EAR-CONFIRMED 2026-09-05 (owner, take 2): "2 sounds good. pronunciation
     #   and no repeat." Variant test: the printed form
     # doubled «Zechariah» (12/12 draws); semicolon -> full stop rendered clean,
@@ -111,10 +128,86 @@ OVERRIDES = {
 }
 
 
+# ★ tyn «the» = THEE, per site (owner 2026-09-28: «do thee per verse»).
+#   Tyndale spells the pronoun «the»; the narrator read it as the article.
+#   Sites are DATA, derived by tools/derive_tyn_thee_sites.py (KJV-aligned,
+#   next-word screened, under-correcting) into tools/tyn_thee_sites.json as
+#   [book, chapter(1-based), verse, n] = the n-th whole-word «the» of the ASSET
+#   verse. Same word respelled (rule 1 holds), display untouched (rule 2).
+#   ⚠ If the spoken text no longer holds the same number of «the» as the
+#   asset verse (a normalizer change minted or ate one), the site is SKIPPED
+#   and said so - a shifted ordinal would put «thee» on an article.
+#   Validation: the owner directed the class; the repaired verses go to his
+#   ear as a kit like every other tyn repair.
+_THEE = None
+_THE = __import__("re").compile(r"\bthe\b", __import__("re").I)
+
+
+def _thee_sites():
+    global _THEE
+    if _THEE is None:
+        import json
+        p = Path(__file__).resolve().parent / "tyn_thee_sites.json"
+        _THEE = {}
+        if p.exists():
+            for b, c, v, n in json.loads(p.read_text(encoding="utf-8"))["sites"]:
+                _THEE.setdefault((b, c - 1, v), set()).add(n)
+    return _THEE
+
+
+def _asset_the_count(book, chapter, verse):
+    import json
+    global _TYN_ASSET
+    try:
+        _TYN_ASSET
+    except NameError:
+        p = Path(__file__).resolve().parent.parent / "app/src/main/assets/bibles/en_tyndale.json"
+        _TYN_ASSET = json.loads(p.read_text(encoding="utf-8"))
+    return len(_THE.findall(_TYN_ASSET[book]["chapters"][chapter][verse - 1] or ""))
+
+
+def apply_thee(book, chapter, verse, text):
+    ns = _thee_sites().get((book, chapter, verse))
+    if not ns:
+        return text, False
+    if len(_THE.findall(text)) != _asset_the_count(book, chapter, verse):
+        print(f"    ⚠ thee sites skipped for {book}/{chapter} v{verse}: «the» count changed "
+              "between asset and spoken text", flush=True)
+        return text, False
+    k = iter(range(10 ** 6))
+    return _THE.sub(lambda m: (m.group(0) + "e") if next(k) in ns else m.group(0), text), True
+
+
+# ★ tyn «prophesy» the VERB (owner ear 2026-09-28, Acts 2:17 on the tyn voice:
+#   «all new draws sound fine»). NOT a lexicon scope: Tyndale spells the NOUN
+#   «prophesy» too (Rom 12:6, 1 Tim 4:14, 2 Pet 1:19-20, Rev 1:3, 19:10,
+#   22:7-19 = 10 of the 20 sites), and the noun must stay «prophe-see». The
+#   spelling is read from the lexicon row so it stays the single source.
+#   Keys (book, chapter0, verse), every one read by hand as the verb.
+TYN_PROPHESY_VERB = {
+    (43, 1, 17), (43, 1, 18), (43, 20, 9),                    # Acts 2:17, 2:18, 21:9
+    (45, 12, 2), (45, 13, 1), (45, 13, 24), (45, 13, 31), (45, 13, 39),  # 1 Cor
+    (65, 9, 11), (65, 10, 3),                                 # Rev 10:11, 11:3
+}
+
+
+def apply_tyn(book, chapter, verse, text):
+    text, used = apply_thee(book, chapter, verse, text)
+    if (book, chapter, verse) in TYN_PROPHESY_VERB:
+        import re
+        import pronounce_lexicon
+        sp = pronounce_lexicon.LEXICON["prophesy"][0]
+        t2 = re.sub(r"\bprophesy\b", sp, text)
+        used, text = used or t2 != text, t2
+    return text, used
+
+
 def apply(set_key, book, chapter, verse, text):
     """-> (synthesis_text, override_used). Falls through to `text` unchanged."""
     e = OVERRIDES.get((set_key, book, chapter, verse))
     if not e or not e[2]:          # unvalidated rows are INERT, like the lexicon
+        if set_key == "tyn":
+            return apply_tyn(book, chapter, verse, text)
         return text, False
     return e[0], True
 

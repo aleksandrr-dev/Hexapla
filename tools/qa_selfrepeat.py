@@ -107,6 +107,17 @@ PAIR_JOINED_FLOOR = 0.70   # the span must still look broadly alike overall
 
 ASR_LANG = {"ylt": "en", "tyn": "en", "wbt": "en", "gnv": "en", "wyc": "en",
             "en": "en", "sv": "sv", "ru": "ru",
+            # es = Reina-Valera 1909. Splice control 2026-10-10:
+            #     qa_gate.py --validate-splice es --asr-lang es
+            # spliced 5/6 fired, clean 0/6 -> VALIDATED (recall 5/6).
+            "es": "es",
+            # de = Luther 1545 (2026-10-11). Validate before trusting:
+            #     qa_gate.py --validate-splice de --asr-lang de
+            "de": "de",
+            # is = Thorlaksbiblia 1644 (Piper steinn + VC, 2026-10-21).
+            # Validate before trusting:
+            #     qa_gate.py --validate-splice is --asr-lang is
+            "is": "is",
             # cu = Church Slavonic 1757, screened with the RUSSIAN model.
             # whisper has no Church Slavonic, and it does not need one: this
             # screen asks only whether the transcript's tail repeats the
@@ -397,6 +408,11 @@ def main():
                     help="zero-dependency control on tail_repeat(); no audio, "
                          "no ASR, no venv, no numpy")
     ap.add_argument("--out")
+    # GPU lane (2026-10-08): faster-whisper on CUDA needs cublas64_12/cudnn64_9
+    # on PATH - the chatterbox venv's torch/lib carries them. Default stays the
+    # validated CPU int8; a GPU run must pass --validate first.
+    ap.add_argument("--device", default="cpu")
+    ap.add_argument("--compute", default="int8")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
@@ -406,7 +422,7 @@ def main():
     name = a.model or ("small.en" if asr_lang == "en" else "small")
 
     from faster_whisper import WhisperModel
-    model = WhisperModel(name, device="cpu", compute_type="int8")
+    model = WhisperModel(name, device=a.device, compute_type=a.compute)
     print(f"model {name}, asr language {asr_lang}\n", flush=True)
 
     if a.validate:

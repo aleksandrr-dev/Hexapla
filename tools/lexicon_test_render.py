@@ -60,7 +60,8 @@ SR = 24000
 # The asset is the TEXT the verse is picked from; the same key names the
 # narration set dir the BEFORE clip is sliced out of. Both must exist.
 ASSETS = {"ylt": REPO / "app/src/main/assets/bibles/en_ylt.json",
-          "en":  REPO / "app/src/main/assets/bibles/en_kjv.json"}
+          "en":  REPO / "app/src/main/assets/bibles/en_kjv.json",
+          "tyn": REPO / "app/src/main/assets/bibles/en_tyndale.json"}
 
 
 def load_books(lang):

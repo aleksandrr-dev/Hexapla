@@ -97,7 +97,9 @@ def load_chunks(book, page, series="A"):
         text = io.open(f, encoding="utf-8").read()
         sec = None
         for raw in text.splitlines():
-            m = re.match(r"^##\s*(LINES|NUMERALS|HN|NOTES)\b", raw, re.I)
+            # INITIALS (2026-09-29) is recognised so its `lineNN |` rows are
+            # never read as the previous section's; it is harvested separately.
+            m = re.match(r"^##\s*(LINES|NUMERALS|HN|INITIALS|NOTES)\b", raw, re.I)
             if m:
                 sec = m.group(1).upper()
                 continue

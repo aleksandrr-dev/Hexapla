@@ -65,6 +65,8 @@ REPO = os.path.dirname(HERE)
 RELEASES = os.path.join(os.path.dirname(REPO), "Hexapla-releases")
 
 AUDIO_EXT = ".ogg"
+FILE_TRIES = 5             # per file, backoff 30/60/90/120 s
+MAX_CONSECUTIVE_FAIL = 5   # this many files failing every try = link down
 
 
 def config_for(setname):
@@ -198,19 +200,53 @@ def main():
             print("GAVE UP: max-hours reached, queue never cleared")
             return 2
 
-    from internetarchive import get_item, upload
-    files = {remote: path for path, remote, _why, _r in owed}
-    res = upload(ident, files=files, retries=6, retries_sleep=20,
-                 verbose=True, checksum=True, queue_derive=False)
-    bad = [r for r in res if getattr(r, "status_code", 200) not in (200, None)]
-    print("\nuploaded %d/%d requests, %d failed"
-          % (len(res) - len(bad), len(res), len(bad)))
-    if bad:
-        for r in bad[:10]:
-            print("  FAILED:", getattr(r, "url", "?"), getattr(r, "status_code", "?"))
+    from internetarchive import get_item
+    # One file per request, each retried on its own (2026-10-09). A single
+    # upload(files=<4771>) dies on the FIRST transient SSL EOF / ReadTimeout --
+    # the library's `retries` covers only 503 SlowDown -- so each attempt landed
+    # ~10 files. A file that still fails is reported and skipped; the derive is
+    # withheld until a run delivers everything (exactly one derive, as before).
+    item = get_item(ident)
+    ok, bad, consecutive = 0, [], 0
+    for n, (path, remote, _why, _r) in enumerate(owed, 1):
+        for attempt in range(1, FILE_TRIES + 1):
+            try:
+                res = item.upload({remote: path}, retries=6, retries_sleep=20,
+                                  verbose=False, checksum=True,
+                                  queue_derive=False)
+                codes = [getattr(r, "status_code", 200) for r in res]
+                if all(c in (200, None) for c in codes):
+                    err = None
+                else:
+                    err = "HTTP %s" % codes
+            except Exception as e:
+                err = "%s: %s" % (type(e).__name__, str(e)[:160])
+            if err is None:
+                break
+            print("  [%d/%d] %s try %d/%d: %s"
+                  % (n, len(owed), remote, attempt, FILE_TRIES, err), flush=True)
+            time.sleep(min(30 * attempt, 180))
+        if err is None:
+            ok += 1
+            consecutive = 0
+        else:
+            bad.append((remote, err))
+            consecutive += 1
+            if consecutive >= MAX_CONSECUTIVE_FAIL:
+                print("STOPPING: %d files in a row failed every try -- the "
+                      "link is down, not the files" % consecutive)
+                break
+        if n % 50 == 0:
+            print("[%s] %d/%d sent, %d failed"
+                  % (time.strftime("%H:%M:%S"), ok, len(owed), len(bad)),
+                  flush=True)
+    print("\nuploaded %d/%d files, %d failed" % (ok, len(owed), len(bad)))
+    if bad or ok < len(owed):
+        for remote, err in bad[:10]:
+            print("  FAILED:", remote, err)
+        print("no derive queued: delivery incomplete (re-run to send the rest)")
         return 1
 
-    item = get_item(ident)
     if plan == "full":
         item.derive(remove_derived="*", reduced_priority=True)
         print("derive queued (remove_derived=*)")

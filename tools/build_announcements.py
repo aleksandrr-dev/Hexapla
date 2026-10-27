@@ -142,6 +142,11 @@ SETS = {
         "ordinal_book_prefix": True,
     },
 }
+# tyn (2026-10-04, owner: «do the announcement for all tyn» after the Gen 15
+# ear test - the synthesized head clipped «chapter fiftee-»). Same engine and
+# header shape as ylt («Genesis, Chapter 15»), so the same settings; its OWN
+# library because the voice differs (_en_ref_kjv.wav, not _en_ref_ylt.wav).
+SETS["tyn"] = dict(SETS["ylt"])
 
 SET = "ru"                        # rebound by _configure()
 CFG = SETS["ru"]
@@ -270,7 +275,8 @@ _SPOKEN_VARIANTS_EN = {
     "Hosea":     ["Hozaya", "Hohzaya", "Hozeya"],
 }
 
-_VARIANT_TABLES = {"ru": None, "ylt": _SPOKEN_VARIANTS_EN}
+_VARIANT_TABLES = {"ru": None, "ylt": _SPOKEN_VARIANTS_EN,
+                   "tyn": _SPOKEN_VARIANTS_EN}
 
 
 def _variant_table():

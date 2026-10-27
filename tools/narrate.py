@@ -93,7 +93,8 @@ GATE_ATTEMPTS = 3
 # NOT KOKORO. cu has no whisper model; 'ru' is the nearest, and only the
 # text-free self-repeat screen is meaningful on it.
 ASR_LANG = {"en": "en", "ylt": "en", "tyn": "en", "wbt": "en", "gnv": "en",
-            "wyc": "en", "sv": "sv", "ru": "ru", "cu": "ru"}
+            "wyc": "en", "sv": "sv", "ru": "ru", "cu": "ru", "es": "es",
+            "de": "de", "is": "is", "fr": "fr"}
 
 # ⚠ Do NOT invoke .kokoro_venv's own Scripts/python.exe. On this machine it is
 # a launcher that internally re-execs into a SECOND, separate OS process (the
@@ -458,6 +459,96 @@ LANG_CONFIG = {
         "default_books": None,
         "normalizer": "cu_digits",
     },
+    "es": {
+        "asset": "es_rv.json",
+        "engine": "chatterbox",
+        # Owner 2026-09-25: the six new languages speak in the YLT voice
+        # (chatterbox multilingual, same reference as ylt/en), at the settings
+        # he HEARD in narration/_lang_voice_candidates_2026-09-25/ — cfg_weight
+        # 0.5, exaggeration 0.5. ylt itself runs exaggeration 1.0; do not
+        # "harmonise" this to it, 0.5 is what was approved.
+        # Asset facts (derived 2026-09-25): 66 books, 1189 chapters, 31102
+        # verses, no digits, no braces, no brackets.
+        "voice": str(OUTPUT / "_en_ref_ylt.wav"),
+        "language_id": "es",
+        "cfg_weight": 0.5,
+        "exaggeration": 0.5,
+        "strip_notes": False,
+        "default_books": None,
+        "normalizer": "es_caps",
+    },
+    "de": {
+        "asset": "de_luther.json",
+        "engine": "cosyvoice3",
+        # Same voice and settings as es: the owner's 2026-09-25 voice test
+        # covered six languages including de (de_chatterbox_yltvoice.wav,
+        # whisper de 0.99, sim 0.96), at cfg 0.5 / exaggeration 0.5.
+        # Asset facts (derived 2026-10-11): 66 books; NT 260 chapters, 7956
+        # verses. Its {Anm.: ...} marginal notes carry every digit and brace;
+        # with strip_notes no digit or brace is left. «‘» is an apostrophe
+        # (dir‘s, Ist‘s; 1482 verses) and is left alone so the spoken and
+        # displayed token counts stay equal for align_words.
+        # ★ ENGINE IS COSYVOICE3, NOT CHATTERBOX (owner 2026-10-11). Chatterbox
+        # carried the English reference's R into German («drei» with an English
+        # R) at cfg_weight 0.5, 0.3 and 0.0 and with its built-in voice; the
+        # owner heard all four (_work/de_ear_2026-10-11/de_accent_AB_*.mp3) and
+        # none was right. CosyVoice3 with the same ylt voice got «drei» right
+        # (de_cosyvoice_*.mp3, version E). CosyVoice refuses a reference longer
+        # than 30 s, so the voice is the FIRST 15 s of _en_ref_ylt.wav.
+        # Run under tools\.cosyvoice_venv. The 3 chatterbox trial chapters
+        # (John 1-3) are parked in narration/de_chatterbox_trial_2026-10-11/.
+        "voice": str(OUTPUT / "_en_ref_ylt_15s.wav"),
+        "styles": RU_STYLES,
+        "book_styles": {},
+        "strip_notes": True,
+        "default_books": None,
+        "normalizer": "de_caps",
+    },
+    "is": {
+        "asset": "is_thorlaks.json",
+        "engine": "piper_vc",
+        # ★ Owner 2026-10-21, ear test narration/_is_voice_candidates_2026-10-21
+        # clip 2: «Piper steinn (native Icelandic, male), voice-converted to his
+        # voice». Chatterbox has no Icelandic (sv/no/da only), so the
+        # PRONUNCIATION comes from Piper is_IS-steinn and the TIMBRE from the
+        # Swedish friend's reference via ChatterboxVC - the method in
+        # docs/NARRATION.md «PRONUNCIATION: USE VOICE CONVERSION».
+        # Piper voices: Talromur corpus, CC BY 4.0 (repository.clarin.is
+        # handle 20.500.12537/104) - a REQUIRED credit wherever it ships.
+        # ChatterboxVC embeds the Perth watermark (as sv does).
+        # Text: the asset is DIPLOMATIC 1644; thorlaks_spoken.spoken() expands
+        # the printer's abbreviations, spelling is kept (an ear question).
+        # ⚠ Run under tools\.chatterbox_venv (piper-tts 1.4.2 installed there
+        # 2026-10-21). GPU for the VC stage (CHATTERBOX_DEVICE=cpu to test).
+        "voice": str(Path(__file__).parent / "piper_models"
+                     / "is_IS-steinn-medium.onnx"),
+        "vc_target": str(OUTPUT / "_sv_ref_norm.wav"),
+        "length_scale": 1.11,
+        "strip_notes": False,
+        "default_books": None,
+        "normalizer": "thl_spoken",
+    },
+    "fr": {
+        "asset": "fr_martin.json",
+        "engine": "chatterbox",
+        # ★ Owner 2026-10-22 (s67), ear kit _work/EAR_fr_2026-10-22/: clip C
+        # (chatterbox, ylt voice, cfg 0.5, exaggeration 0.5 - the es settings)
+        # «sounds better than this cozyvoice» (clip E, the de method). So fr
+        # is NOT de: Chatterbox, not CosyVoice3, by ear. App tid "mar"
+        # (Bible Martin 1744); align_words key "mar", narration dir "fr".
+        # Asset facts (derived 2026-10-22): 66 books, 1189 chapters, 31170
+        # verses (4 empty: Ps 69:37, 102:29, 108:14, 140:14 - versification
+        # TAIL, docs/ASSET_DEFECTS.md). U+202F sits before «;:!?» in 27482
+        # places; the spoken text turns it into a plain space (token count
+        # unchanged). All-caps titles («L’ETERNEL», «QUI ES») are title-cased.
+        "voice": str(OUTPUT / "_en_ref_ylt.wav"),
+        "language_id": "fr",
+        "cfg_weight": 0.5,
+        "exaggeration": 0.5,
+        "strip_notes": False,
+        "default_books": None,
+        "normalizer": "fr_caps",
+    },
 }
 
 BOOK_NAMES = [
@@ -568,6 +659,197 @@ def sv_cardinal(n):
     return out + _SV_TENS[tens] + (_SV_ONES[ones] if ones else "")
 
 
+_ES_ONES = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete",
+            "ocho", "nueve", "diez", "once", "doce", "trece", "catorce",
+            "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve",
+            "veinte", "veintiuno", "veintidós", "veintitrés", "veinticuatro",
+            "veinticinco", "veintiséis", "veintisiete", "veintiocho",
+            "veintinueve"]
+_ES_TENS = {30: "treinta", 40: "cuarenta", 50: "cincuenta", 60: "sesenta",
+            70: "setenta", 80: "ochenta", 90: "noventa"}
+
+
+def es_cardinal(n):
+    """Spanish cardinal for 1..199, spelled out (num2words is not in the
+    chatterbox venv, and a digit risks an English reading). «capítulo uno»,
+    not «un»: the number follows the noun. 100 is «cien», 101+ «ciento …»."""
+    if not 1 <= n <= 199:
+        raise ValueError(f"es_cardinal: {n} out of range 1..199")
+    if n == 100:
+        return "cien"
+    head = "ciento " if n > 100 else ""
+    n %= 100
+    if n < 30:
+        return head + _ES_ONES[n]
+    tens, ones = (n // 10) * 10, n % 10
+    return head + _ES_TENS[tens] + (f" y {_ES_ONES[ones]}" if ones else "")
+
+
+# «1 Samuel» -> «Primero de Samuel» (libro, m.) but «1 Corintios» ->
+# «Primera de Corintios» (epístola, f.) — the usual spoken Spanish forms.
+# ⚠ Native review welcome; this is the one judgement call in the headers.
+_ES_EPISTLES = ("Corintios", "Tesalonicenses", "Timoteo", "Pedro", "Juan")
+_ES_ORD_M = {1: "Primero", 2: "Segundo", 3: "Tercero"}
+_ES_ORD_F = {1: "Primera", 2: "Segunda", 3: "Tercera"}
+
+
+def es_book_name_spoken(name):
+    m = re.match(r"^(\d+)\s+(.*)$", name)
+    if not m:
+        return name
+    n, rest = int(m.group(1)), m.group(2)
+    table = _ES_ORD_F if rest in _ES_EPISTLES else _ES_ORD_M
+    if n not in table:
+        raise ValueError(f"no Spanish ordinal for book title {name!r}")
+    return f"{table[n]} de {rest}"
+
+
+# Reina-Valera prints each chapter's first word in capitals («EN el
+# principio», «ACONTECIÓ», «¡OH Jehová») and a few titles throughout
+# («JEHOVÁ», «JAH», «REY DE LOS JUDIOS»). An all-caps word invites the TTS to
+# spell it as an acronym, so every all-caps word of 2+ letters is title-cased.
+# Only case changes: the token count is untouched, so align_words' spoken ->
+# display mapping stays one-to-one.
+_ES_CAPS = re.compile(r"\b[A-ZÁÉÍÓÚÑÜ]{2,}\b")
+
+
+def normalize_es_caps(text):
+    return _ES_CAPS.sub(lambda m: m.group(0).capitalize(), text)
+
+
+# Luther prints the divine names with two capitals («GOtt», «HErr», «JEsus»,
+# «GOttlosen»; 13 forms) and one all-caps «HERR». An initial run of capitals
+# invites the TTS to spell it, so any word opening with 2+ capitals is
+# capitalised normally. Five verses end in a stray «]» (Phil 1:11, 2:11, 3:21,
+# 4:7; 2 Pet 3:14 — an asset defect, not fixed here); it is dropped from the
+# SPOKEN text only. Neither change alters the word count (align_words).
+_DE_CAPS = re.compile(r"\b[A-ZÄÖÜ]{2,}[a-zäöüß]*\b")
+
+
+def normalize_de_caps(text):
+    return _DE_CAPS.sub(lambda m: m.group(0).capitalize(), text).replace("]", "")
+
+
+# Martin prints divine names and inscriptions in capitals («L’ETERNEL»,
+# «QUI ES, QUI ÉTAIS», «MÉNÉ»); title-cased like es so the TTS cannot spell
+# them. U+202F / U+00A0 (French spacing before «;:!?») become plain spaces.
+# Neither change alters the whitespace token count (align_words).
+_FR_CAPS = re.compile(r"\b[A-ZÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒÆ]{2,}\b")
+
+
+def normalize_fr_caps(text):
+    text = text.replace(" ", " ").replace(" ", " ")
+    return _FR_CAPS.sub(lambda m: m.group(0).capitalize(), text)
+
+
+_FR_ONES = ["", "un", "deux", "trois", "quatre", "cinq", "six", "sept",
+            "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze",
+            "quinze", "seize"]
+_FR_TENS = {20: "vingt", 30: "trente", 40: "quarante", 50: "cinquante",
+            60: "soixante"}
+
+
+def fr_cardinal(n):
+    """French cardinal 1..199, spelled out: «chapitre un», «vingt et un»,
+    «soixante et onze», «quatre-vingts», «quatre-vingt-dix-sept», «cent
+    cinquante». The noun comes first, so 1 is «un»."""
+    if not 1 <= n <= 199:
+        raise ValueError(f"fr_cardinal: {n} out of range 1..199")
+    if n >= 100:
+        return "cent" if n == 100 else "cent " + fr_cardinal(n - 100)
+    if n < 17:
+        return _FR_ONES[n]
+    if n < 20:
+        return "dix-" + _FR_ONES[n - 10]
+    if n < 70:
+        tens, ones = (n // 10) * 10, n % 10
+        if ones == 0:
+            return _FR_TENS[tens]
+        return _FR_TENS[tens] + (" et un" if ones == 1 else "-" + _FR_ONES[ones])
+    if n < 80:
+        return "soixante et onze" if n == 71 else "soixante-" + fr_cardinal(n - 60)
+    if n == 80:
+        return "quatre-vingts"
+    return "quatre-vingt-" + fr_cardinal(n - 80)
+
+
+# «1 Samuel» -> «Premier livre de Samuel», «1 Corinthiens» -> «Première épître
+# aux Corinthiens»: the usual spoken French forms. ⚠ Native review welcome.
+_FR_NUMBERED = {"Samuel": ("livre", "de Samuel"), "Rois": ("livre", "des Rois"),
+                "Chroniques": ("livre", "des Chroniques"),
+                "Corinthiens": ("épître", "aux Corinthiens"),
+                "Thessaloniciens": ("épître", "aux Thessaloniciens"),
+                "Timothée": ("épître", "à Timothée"),
+                "Pierre": ("épître", "de Pierre"), "Jean": ("épître", "de Jean")}
+_FR_ORD = {("livre", 1): "Premier", ("épître", 1): "Première", 2: "Deuxième",
+           3: "Troisième"}
+
+
+def fr_book_name_spoken(name):
+    m = re.match(r"^(\d+)\s+(.*)$", name)
+    if not m:
+        return name
+    n, rest = int(m.group(1)), m.group(2)
+    if rest not in _FR_NUMBERED:
+        raise ValueError(f"no French spoken form for book title {name!r}")
+    noun, tail = _FR_NUMBERED[rest]
+    ordinal = _FR_ORD.get((noun, n)) or _FR_ORD.get(n)
+    if not ordinal:
+        raise ValueError(f"no French ordinal for book title {name!r}")
+    return f"{ordinal} {noun} {tail}"
+
+
+_DE_ONES = ["", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben",
+            "acht", "neun", "zehn", "elf", "zwölf", "dreizehn", "vierzehn",
+            "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn"]
+_DE_TENS = {20: "zwanzig", 30: "dreißig", 40: "vierzig", 50: "fünfzig",
+            60: "sechzig", 70: "siebzig", 80: "achtzig", 90: "neunzig"}
+
+
+def de_cardinal(n):
+    """German cardinal 1..199, spelled out: «Kapitel eins», «einundzwanzig»,
+    «hundertfünfzig». The noun comes first, so 1 is «eins», not «ein»."""
+    if not 1 <= n <= 199:
+        raise ValueError(f"de_cardinal: {n} out of range 1..199")
+    head = "hundert" if n >= 100 else ""
+    n %= 100
+    if n == 0:
+        return head
+    if n < 20:
+        return head + _DE_ONES[n]
+    tens, ones = (n // 10) * 10, n % 10
+    unit = ("ein" if ones == 1 else _DE_ONES[ones]) + "und" if ones else ""
+    return head + unit + _DE_TENS[tens]
+
+
+# Spoken German reference forms (owner 2026-10-11: «what a German reader would
+# expect»): «Erstes Buch Mose», «Erstes Buch der Könige», «Römerbrief»,
+# «Erster Korintherbrief», «Psalm dreiundzwanzig». Gospels, Acts and
+# Revelation keep the asset name.
+_DE_ORD_N = {1: "Erstes", 2: "Zweites", 3: "Drittes", 4: "Viertes", 5: "Fünftes"}
+_DE_ORD_M = {1: "Erster", 2: "Zweiter", 3: "Dritter"}
+_DE_OT_BOOKS = {"Mose": "Buch Mose", "Samuel": "Buch Samuel",
+                "Könige": "Buch der Könige", "Chronik": "Buch der Chronik"}
+_DE_EPISTLES = {"Römer", "Korinther", "Galater", "Epheser", "Philipper",
+                "Kolosser", "Thessalonicher", "Timotheus", "Titus", "Philemon",
+                "Hebräer", "Jakobus", "Petrus", "Johannes", "Judas"}
+
+
+def de_book_name_spoken(name, book_idx):
+    m = re.match(r"^(\d+)\.\s*(.*)$", name)
+    n, rest = (int(m.group(1)), m.group(2)) if m else (None, name)
+    if n is not None and rest in _DE_OT_BOOKS:
+        return f"{_DE_ORD_N[n]} {_DE_OT_BOOKS[rest]}"
+    # «Johannes» is the gospel (book 42) unless numbered; the epistles of
+    # John are «1. Johannes» etc.
+    if rest in _DE_EPISTLES and (n is not None or book_idx >= 44):
+        spoken = rest + "brief"
+        return f"{_DE_ORD_M[n]} {spoken}" if n is not None else spoken
+    if n is not None:
+        raise ValueError(f"no German spoken form for book title {name!r}")
+    return name
+
+
 # The sv asset gives its APOCRYPHA books ENGLISH names ("Wisdom of Solomon",
 # "Bel and the Dragon") while its canonical books are Swedish ("1 Mosebok") —
 # so the asset name, correct for books 0-65, would have every apocryphal
@@ -600,6 +882,24 @@ SV_APOC_NAMES = {
 }
 
 
+_IS_ORD = ["", "fyrsti", "annar", "þriðji", "fjórði", "fimmti", "sjötti",
+           "sjöundi", "áttundi", "níundi", "tíundi", "ellefti", "tólfti",
+           "þrettándi", "fjórtándi", "fimmtándi", "sextándi", "sautjándi",
+           "átjándi", "nítjándi"]
+_IS_ORD_TENS = {2: "tuttugasti", 3: "þrítugasti", 4: "fertugasti",
+                5: "fimmtugasti"}
+
+
+def is_ordinal_masc(n):
+    """Icelandic masculine ordinal, 1-59 (Genesis has 50 chapters)."""
+    if 1 <= n < 20:
+        return _IS_ORD[n]
+    t, u = divmod(n, 10)
+    if t not in _IS_ORD_TENS:
+        raise ValueError(f"no Icelandic ordinal for {n}")
+    return _IS_ORD_TENS[t] + ("" if u == 0 else " og " + _IS_ORD[u])
+
+
 def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None):
     """Generate the spoken chapter header, e.g. 'Genesis, Chapter 5'.
 
@@ -621,6 +921,34 @@ def chapter_header_text(lang, book_idx, chapter_idx, n_chapters, book_name=None)
         if n_chapters == 1:
             return book
         return f"{book}, Глава {ru_ordinal_fem(chapter_idx + 1)}"
+    if lang == "es":
+        book = es_book_name_spoken(book_name or f"Libro {book_idx + 1}")
+        if n_chapters == 1:
+            return book
+        if book == "Salmos":
+            return f"Salmo {es_cardinal(chapter_idx + 1)}"
+        return f"{book}, capítulo {es_cardinal(chapter_idx + 1)}"
+    if lang == "de":
+        book = de_book_name_spoken(book_name or f"Buch {book_idx + 1}", book_idx)
+        if n_chapters == 1:
+            return book
+        if book == "Psalmen":
+            return f"Psalm {de_cardinal(chapter_idx + 1)}"
+        return f"{book}, Kapitel {de_cardinal(chapter_idx + 1)}"
+    if lang == "fr":
+        book = fr_book_name_spoken(book_name or f"Livre {book_idx + 1}")
+        if n_chapters == 1:
+            return book
+        if book == "Psaumes":
+            return f"Psaume {fr_cardinal(chapter_idx + 1)}"
+        return f"{book}, chapitre {fr_cardinal(chapter_idx + 1)}"
+    if lang == "is":
+        # Asset names are modern Icelandic («Jóhannesarguðspjall»); the chapter
+        # is read as a masculine ordinal, «Fyrsta Mósebók, fimmti kafli».
+        book = book_name or f"Bók {book_idx + 1}"
+        if n_chapters == 1:
+            return book
+        return f"{book}, {is_ordinal_masc(chapter_idx + 1)} kafli"
     if lang == "sv":
         # Asset names are Swedish («1 Mosebok», «Psaltaren»); numbers are
         # spelled out (sv_cardinal) so Chatterbox cannot read digits the
@@ -808,6 +1136,15 @@ def normalize_text(text, normalizer_name):
         return text
     if normalizer_name == "ru_variants":
         return join_short_lead(strip_ru_variant_numbers(strip_ru_markup(text)))
+    if normalizer_name == "es_caps":
+        return normalize_es_caps(text)
+    if normalizer_name == "de_caps":
+        return normalize_de_caps(text)
+    if normalizer_name == "fr_caps":
+        return normalize_fr_caps(text)
+    if normalizer_name == "thl_spoken":
+        from thorlaks_spoken import spoken as _thl_spoken
+        return _thl_spoken(text)
     if normalizer_name == "cu_digits":
         return join_short_lead(normalize_cu_digits(text))
     if normalizer_name == "ru_stress":
@@ -1022,7 +1359,11 @@ def synthesize_verse_gated(text, lang, temp_dir, verse_idx, book_idx=None):
         return wav, dur, None
     from qa_gate import gate_reasons
     cfg = LANG_CONFIG[lang]
-    max_attempts = 1 if cfg["engine"] == "kokoro" else GATE_ATTEMPTS
+    # piper_vc: Piper is not autoregressive (no appended/looped words to
+    # re-roll away) and Whisper cannot read 1644 spelling (0.45-0.61 on the
+    # ear-test clips), so a redraw would be judged by an instrument that fails
+    # every take. Judged and RECORDED, never re-drawn - like kokoro.
+    max_attempts = 1 if cfg["engine"] in ("kokoro", "piper_vc") else GATE_ATTEMPTS
     base = Path(temp_dir) / f"verse_{verse_idx:04d}.wav"
     history, best = [], None
     for attempt in range(1, max_attempts + 1):
@@ -1080,6 +1421,11 @@ def synthesize_kokoro(text, voice, output_wav, ipa=None):
             print(f"    Kokoro worker failed ({_KOKORO_FAILS}/3): {e}"
                   f"{' — falling back to per-verse processes' if _KOKORO_FAILS >= 3 else ''}",
                   file=sys.stderr, flush=True)
+    if ipa:
+        # The per-verse fallback has no phoneme path; falling back would
+        # silently render modern-G2P text again. Fail the verse loudly.
+        raise RuntimeError("kokoro worker unavailable and the isolated "
+                           "fallback cannot take IPA")
     return _synthesize_kokoro_isolated(text, voice, output_wav)
 
 
@@ -1708,6 +2054,19 @@ def synthesize_chatterbox(text, cfg, output_wav, cut_tail=True):
         )
         import numpy as np
         audio = np.clip(wav.squeeze(0).cpu().numpy(), -1.0, 1.0)
+        # ★ RETURN THE CUDA CACHE BEFORE THE TAIL CUTTER (2026-10-24). Under
+        # WDDM every byte of PyTorch's cached GPU pool is also charged to the
+        # Windows COMMIT limit (write-combined pages, ~6.3 GB on fr), and the
+        # MMS_FA forward in _cut_spoken_tail then adds +3-5 GB of CPU commit on
+        # a long verse. The two peaks stacked and hit the limit: the fr
+        # "segfaults" of 10-23/10-24 each match a Resource-Exhaustion event 2004
+        # naming narrate at 15-20 GB. Emptying the cache here does not touch the
+        # audio (the next generate re-reserves); HEXAPLA_NO_EMPTY_CACHE=1 is the
+        # control.
+        if not os.environ.get("HEXAPLA_NO_EMPTY_CACHE"):
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
         # Cut a hallucinated tail BEFORE trim/fade/pad, so the fade lands on
         # the true final word and the pad is measured from it.
         if cut_tail:
@@ -1747,6 +2106,47 @@ def synthesize_piper(text, model_path, output_wav, length_scale=1.11):
         return True
     except Exception as e:
         print(f"    Piper error: {e}", file=sys.stderr)
+        return False
+
+
+_piper_voices = {}
+_chatterbox_vc = None
+
+
+def synthesize_piper_vc(text, cfg, output_wav):
+    """Piper for the pronunciation, ChatterboxVC for the timbre (the «is» set).
+
+    Both models are loaded once per process, and the VC target is set once
+    (set_target_voice) rather than re-embedded on every verse. Output goes
+    through the same trim/fade/pad as chatterbox, so verse edges match the
+    other cloned sets.
+    """
+    global _chatterbox_vc
+    try:
+        import numpy as np
+        from piper import PiperVoice, SynthesisConfig
+        voice = _piper_voices.get(cfg["voice"])
+        if voice is None:
+            voice = _piper_voices[cfg["voice"]] = PiperVoice.load(cfg["voice"])
+        src = str(output_wav) + ".piper.wav"
+        with wave.open(src, "wb") as wf:
+            voice.synthesize_wav(text, wf, syn_config=SynthesisConfig(
+                length_scale=cfg.get("length_scale", 1.11)))
+        if _chatterbox_vc is None:
+            from chatterbox.vc import ChatterboxVC
+            _chatterbox_vc = ChatterboxVC.from_pretrained(
+                os.environ.get("CHATTERBOX_DEVICE", "cuda"))
+            _chatterbox_vc.set_target_voice(cfg["vc_target"])
+        wav = _chatterbox_vc.generate(src)
+        os.remove(src)
+        audio = np.clip(wav.squeeze(0).cpu().numpy(), -1.0, 1.0)
+        audio = _trim_and_fade(audio, _chatterbox_vc.sr,
+                               lead_ms=LEAD_MS, trail_ms=TRAIL_MS)
+        sf.write(str(output_wav), (audio * 32767).astype(np.int16),
+                 _chatterbox_vc.sr, subtype="PCM_16")
+        return True
+    except Exception as e:
+        print(f"    Piper+VC error: {e}", file=sys.stderr)
         return False
 
 
@@ -2231,6 +2631,8 @@ def synthesize_verse(text, lang, temp_dir, verse_idx, book_idx=None):
         ok = synthesize_cosyvoice3(text, cfg, book_idx, str(wav_path))
     elif cfg["engine"] == "piper":
         ok = synthesize_piper(text, cfg["voice"], str(wav_path))
+    elif cfg["engine"] == "piper_vc":
+        ok = synthesize_piper_vc(text, cfg, str(wav_path))
     elif cfg["engine"] == "chatterbox":
         ok = synthesize_chatterbox(text, cfg, str(wav_path))
     else:

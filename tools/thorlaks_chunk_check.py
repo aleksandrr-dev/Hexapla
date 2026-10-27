@@ -49,6 +49,18 @@ WHAT IT CHECKS
                      a tag family the stitcher KEEPS loses no text and is soft.
   6. STRUCTURE     - the four sections exist and the header declares a range.
                      A section that cannot be located is exit 2, never a pass.
+  7. INITIALS      - (owner 2026-09-29: record the printed initials.) The
+                     `## INITIALS` section exists; every row is
+                     `lineNN | <letter|none> | <lines deep|-> | decorated|plain|-`
+                     on a crop this chunk covers; every inline
+                     `[ornate initial: X]` / `[ornamental initial...]` tag has a
+                     row on ITS line with the same letter; every
+                     `[chapter heading ...]` line has a row on it or on one of
+                     the next two lines (`none` is an answer - silence is not).
+                     A heading on the chunk's last crops whose initial falls
+                     in the NEXT chunk is SOFT. All else HARD.
+                     Before this gate ZERO initials were recorded: readers
+                     tagged them inline and nothing asked for the record.
 
 WHAT IT DOES NOT DO
 -------------------
@@ -78,6 +90,9 @@ KNOWN-BAD CONTROLS (a gate with no control is a rumour)
                                is not checked, which is exactly the hole p65's
                                dropped `4` walked through. --selftest proves the
                                fix in BOTH directions against that control.
+    HEXAPLA_NO_INITCHK=1       skips check 7 (the pre-2026-09-29 behaviour: a
+                               chunk with no initials record passes). The
+                               selftest proves check 7 against it.
 """
 import argparse
 import io
@@ -96,7 +111,16 @@ SEC_RE = {
     "NUMERALS": re.compile(r"^##\s*NUMERALS\s*$", re.M | re.I),
     "HN":       re.compile(r"^##\s*HN\s*$", re.M | re.I),
     "NOTES":    re.compile(r"^##\s*NOTES\s*$", re.M | re.I),
+    "INITIALS": re.compile(r"^##\s*INITIALS\s*$", re.M | re.I),
 }
+
+# Check 7. An inline initial tag as readers write it: `[ornate initial: E]`,
+# `[ornamental initial]`, `[ornate initial, illegible flourish]` (238 of the
+# 259 on disk on 2026-09-29 are the `: X` form).
+INIT_TAG_RE = re.compile(r"\[(?:ornate|ornamental|decorated)\s+initial"
+                         r"(?:[^\]:]*?:\s*([^\]\s]+))?[^\]]*\]", re.I)
+HEADING_RE = re.compile(r"^\s*\[[^\]]*\bchapter heading\b[^\]]*\]", re.I)
+INIT_STYLES = ("decorated", "plain", "-")
 
 # `# Luke idx 65 - CROP READ chunk 2 (line14-line27)`
 # ⚠ A chunk may declare MORE THAN ONE range - a wrap chunk carries the head of
@@ -463,6 +487,62 @@ def check(path, kit_dir=None, first_numeral=None, quiet=False):
                             % (n, m2.group(0).strip()[:44], len(after)))
     say("tags            : %d stitcher-dropped, %d void" % (dropped, voids))
 
+    # ---- 7. INITIALS -------------------------------------------------------
+    if os.environ.get("HEXAPLA_NO_INITCHK") == "1":
+        say("initials        : NOT CHECKED (HEXAPLA_NO_INITCHK=1)")
+    elif not SEC_RE["INITIALS"].search(text):
+        # A HARD finding, not exit 2: every other check above DID run.
+        hard.append("INITIALS: no `## INITIALS` section - the printed "
+                    "initials go unrecorded. Add it (`lineNN | <letter|none> "
+                    "| <lines deep> | decorated|plain`; empty when the chunk "
+                    "has no heading and no initial)")
+    else:
+        irows = {}
+        for n, rest in rows(section(text, "INITIALS")):
+            parts = [p.strip() for p in rest.split("|")]
+            letter = parts[0] if parts else ""
+            if (len(parts) != 3 or not letter
+                    or parts[2].lower() not in INIT_STYLES
+                    or not re.match(r"^(\d{1,2}|-)$", parts[1])):
+                hard.append("INITIALS: line%02d row does not parse - want "
+                            "`lineNN | <letter|none> | <lines deep|-> | "
+                            "decorated|plain|-`: %r" % (n, rest.strip()[:60]))
+                continue
+            if n not in by_line:
+                hard.append("INITIALS: line%02d is not a crop this chunk "
+                            "returns in LINES" % n)
+                continue
+            irows.setdefault(n, []).append(letter)
+        cover = sorted(by_line)
+        for n, t in lrows:
+            for m in INIT_TAG_RE.finditer(t):
+                real = [x for x in irows.get(n, []) if x.lower() != "none"]
+                if not real:
+                    hard.append("INITIALS: line%02d's text carries %r but the "
+                                "INITIALS section has no letter row for "
+                                "line%02d" % (n, m.group(0)[:40], n))
+                elif m.group(1) and m.group(1).strip("?") and \
+                        m.group(1).strip("?").lower() not in \
+                        [x.strip("?").lower() for x in real]:
+                    hard.append("INITIALS: line%02d's inline tag says %r, the "
+                                "INITIALS row says %s - the read contradicts "
+                                "itself; look again" % (n, m.group(1),
+                                                        "/".join(real)))
+            if HEADING_RE.match(t):
+                near = [k for k in (n, n + 1, n + 2) if k in irows]
+                if not near:
+                    if any(k not in by_line for k in (n + 1, n + 2)) and \
+                            n >= cover[-1] - 1:
+                        soft.append("INITIALS: the chapter heading on line%02d "
+                                    "is at the chunk's foot - its initial is "
+                                    "the NEXT chunk's row" % n)
+                    else:
+                        hard.append("INITIALS: line%02d is a chapter heading "
+                                    "but no INITIALS row sits on line%02d-"
+                                    "line%02d - `none` is an answer, silence "
+                                    "is not" % (n, n, n + 2))
+        say("initials        : %d row(s)" % sum(len(v) for v in irows.values()))
+
     say("")
     for f in hard:
         say("[X] %s" % f)
@@ -481,12 +561,15 @@ def check(path, kit_dir=None, first_numeral=None, quiet=False):
 #    cannot demonstrate a failure the tool is supposed to prevent.
 # ---------------------------------------------------------------------------
 FIX_HEAD = u"# Luke idx 99 - CROP READ chunk 1 (line00-line03)\n\n## LINES\n"
-FIX_TAIL = u"\n## HN\n\n## NOTES\n- none\n"
+FIX_TAIL = u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n"
 
 
-def _fixture(tmp, lines, nums, notes=u"- none\n", head=None):
+def _fixture(tmp, lines, nums, notes=u"- none\n", head=None, inits=u""):
     body = ((head or FIX_HEAD) + "".join(lines) + "\n## NUMERALS\n" + "".join(nums)
-            + u"\n## HN\n\n## NOTES\n" + notes)
+            + u"\n## HN\n"
+            # inits=None is the pre-gate shape: no INITIALS section at all
+            + (u"" if inits is None else u"\n## INITIALS\n" + inits)
+            + u"\n## NOTES\n" + notes)
     with io.open(tmp, "w", encoding="utf-8") as fh:
         fh.write(body)
     return tmp
@@ -498,8 +581,8 @@ def selftest():
     ok = True
 
     def run(label, lines, nums, want_hard, kw=None, notes=u"- none\n",
-            head=None):
-        _fixture(tmp, lines, nums, notes, head=head)
+            head=None, inits=u""):
+        _fixture(tmp, lines, nums, notes, head=head, inits=inits)
         hard, _ = check(tmp, quiet=True, **(kw or {}))
         got = bool(hard)
         good = got == want_hard
@@ -642,11 +725,11 @@ def selftest():
         c1 = (u"# Luke idx 98 - CROP READ chunk 1 (line00-line01)\n\n## LINES\n"
               u"line00 | [running head, not body text] S.Lucae\n"
               u"line01 | 52 Ve þr sem\n\n## NUMERALS\nline01 | 52 | Ve\n"
-              u"\n## HN\n\n## NOTES\n- none\n")
+              u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n")
         c2 = (u"# Luke idx 98 - CROP READ chunk 2 (line02-line03)\n\n## LINES\n"
               u"line02 | %d Beitande þr\nline03 | %d Fyrer þui\n\n## NUMERALS\n"
               u"line02 | %d | Beitande\nline03 | %d | Fyrer\n"
-              u"\n## HN\n\n## NOTES\n- none\n"
+              u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n"
               % (second_opens_at, second_opens_at + 1,
                  second_opens_at, second_opens_at + 1))
         for i, body in ((1, c1), (2, c2)):
@@ -681,11 +764,11 @@ def selftest():
     c1 = (u"# Luke idx 99 - CROP READ chunk 1 (line00-line01)\n\n## LINES\n"
           u"line00 | [running head, not body text] S.Lucae\n"
           u"line01 | 52 Ve þr sem\n\n## NUMERALS\nline01 | 52 | Ve\n"
-          u"\n## HN\n\n## NOTES\n- none\n")
+          u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n")
     c2 = (u"# Luke idx 99 - CROP READ chunk 2 (line02-line03)\n\n## LINES\n"
           u"line02 | [HN]n þa hn habde þuilikt til þra talad\n"
           u"line03 | 54 Beitande þr\n\n## NUMERALS\nline03 | 54 | Beitande\n"
-          u"\n## HN\n\n## NOTES\n- none\n")
+          u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n")
     for i, body in ((1, c1), (2, c2)):
         with io.open(os.path.join(seamdir, "luke_p99_CROP_READ_CHUNK%d.md" % i),
                      "w", encoding="utf-8") as fh:
@@ -717,11 +800,11 @@ def selftest():
           u"## LINES\nline00 | [running head, not body text] S.Lucae\n"
           u"line01 | 52 Ve þr sem\nline04 | 7 Enn hañ\nline05 | 8 Nær þu\n\n"
           u"## NUMERALS\nline01 | 52 | Ve\nline04 | 7 | Enn\nline05 | 8 | Nær\n"
-          u"\n## HN\n\n## NOTES\n- none\n")
+          u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n")
     c2 = (u"# Luke idx 97 - CROP READ chunk 2 (line02-line03)\n\n## LINES\n"
           u"line02 | 53 Beitande þr\nline03 | 54 Fyrer þui\n\n## NUMERALS\n"
           u"line02 | 53 | Beitande\nline03 | 54 | Fyrer\n"
-          u"\n## HN\n\n## NOTES\n- none\n")
+          u"\n## HN\n\n## INITIALS\n\n## NOTES\n- none\n")
     for i, body in ((1, c1), (2, c2)):
         with io.open(os.path.join(seamdir, "luke_p97_CROP_READ_CHUNK%d.md" % i),
                      "w", encoding="utf-8") as fh:
@@ -740,6 +823,39 @@ def selftest():
     ok &= good
     for i in (1, 2):
         os.remove(os.path.join(seamdir, "luke_p97_CROP_READ_CHUNK%d.md" % i))
+
+    # ---- check 7: INITIALS, both directions + the control -------------------
+    INIT_L = [u"line00 | [chapter heading: Cap. III]\n",
+              u"line01 | [ornate initial: E]Enn þa Jesus\n",
+              u"line02 | Suefnhufu huifled i AEyra. 2\n",
+              u"line03 | 3 AEn eg vil syna ydur\n"]
+    INIT_N = [u"line02 | 2 | [HN]n\n", u"line03 | 3 | AEn\n"]
+    GOOD_I = u"line01 | E | 2 | decorated\n"
+    ok &= run("an initial WITH its row is clean", INIT_L, INIT_N, False,
+              inits=GOOD_I)
+    ok &= run("an inline initial with NO row is HARD", INIT_L, INIT_N, True,
+              inits=u"")
+    ok &= run("a row whose letter contradicts the tag is HARD", INIT_L,
+              INIT_N, True, inits=u"line01 | F | 2 | decorated\n")
+    ok &= run("an unparseable INITIALS row is HARD", INIT_L, INIT_N, True,
+              inits=GOOD_I + u"line03 | E decorated\n")
+    NOINIT_L = [INIT_L[0], u"line01 | Enn þa Jesus\n"] + INIT_L[2:]
+    ok &= run("a heading with a `none` row is clean", NOINIT_L, INIT_N,
+              False, inits=u"line01 | none | - | -\n")
+    ok &= run("a heading with no row at all is HARD", NOINIT_L, INIT_N,
+              True, inits=u"")
+    FOOT_L = CLEAN[:3] + [u"line03 | [chapter heading: Cap. IV]\n"]
+    ok &= run("a heading at the chunk's foot is not HARD", FOOT_L,
+              CLEAN_N[:2], False, inits=u"")
+    ok &= run("a chunk with NO INITIALS section is HARD", CLEAN, CLEAN_N,
+              True, inits=None)
+    os.environ["HEXAPLA_NO_INITCHK"] = "1"
+    ctl1 = run("  ...HEXAPLA_NO_INITCHK=1 passes no section", CLEAN,
+               CLEAN_N, False, inits=None)
+    ctl2 = run("  ...HEXAPLA_NO_INITCHK=1 passes a missing row", INIT_L,
+               INIT_N, False, inits=u"")
+    del os.environ["HEXAPLA_NO_INITCHK"]
+    ok &= ctl1 and ctl2
 
     # a chunk with no NUMERALS section must REFUSE, not pass
     with io.open(tmp, "w", encoding="utf-8") as fh:

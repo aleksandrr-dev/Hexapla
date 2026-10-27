@@ -105,6 +105,18 @@ SETS = {
     # and as the two render screens and the supervisor's two maps. A set that is
     # not in a table does not fail loudly; it becomes unreachable.
     "ylt":     {"dir": "ylt", "asset": "en_ylt.json",      "lang": "ylt",        "script": "latin"},
+    # Reina-Valera, ylt voice (owner 2026-09-25). Key "rv", directory "es".
+    "rv":      {"dir": "es",  "asset": "es_rv.json",       "lang": "es",         "script": "latin"},
+    # Luther 1545, ylt voice (2026-10-11). Key "lut" (the app tid), dir "de".
+    "lut":     {"dir": "de",  "asset": "de_luther.json",   "lang": "de",         "script": "latin"},
+    # Bible Martin 1744, ylt voice (owner 2026-10-22). Key "mar" (the app
+    # tid), dir "fr". ⚠ «œ» does not decompose: «cœur» folds to «cur».
+    "mar":     {"dir": "fr",  "asset": "fr_martin.json",   "lang": "fr",         "script": "latin"},
+    # Thorlaksbiblia 1644, Piper steinn + VC (2026-10-21). Key "thl" (the app
+    # tid), dir "is". ⚠ script "uroman", NOT "latin": align_key's latin fold
+    # keeps a-z only, so þ/ð/æ would VANISH («þad» -> «ad»); uroman gives
+    # th/d/ae, the input MMS_FA was trained on.
+    "thl":     {"dir": "is",  "asset": "is_thorlaks.json", "lang": "is",         "script": "uroman"},
 }
 
 MARGIN_NOTE = re.compile(r"\{[^{}]*:[^{}]*\}")
@@ -137,7 +149,7 @@ def spoken_text(raw, lang):
 # though it would look simpler and have no dependency.
 _UROMAN = None
 _UROMAN_CACHE = {}
-UROMAN_LCODE = {"ru": "rus", "cu": "chu"}
+UROMAN_LCODE = {"ru": "rus", "cu": "chu", "is": "isl"}
 
 
 def romanize(word, lang):
@@ -204,7 +216,44 @@ def map_tokens(spoken_words, display_words, script="latin", lang=None):
         if op == "equal":
             for k in range(i2 - i1):
                 out[i1 + k] = j1 + k
+        elif op == "replace" and not _NO_REPLACE_MAP:
+            # ⚠ Equal keys only matched EXACT spellings, so a verse whose normalizer
+            # both changed the token count AND modernised spellings lost nearly
+            # every word: tyn «an he goote for a synofferynge» -> «an he goat for a
+            # sin offering» kept 5 of 8, and 13 tyn verses went null on coverage
+            # (found 2026-10-06 among the UNTIMED residue, all heard correct).
+            # Two replace shapes are as safe as the equal-length short-circuit
+            # above, which already trusts position across a whole verse:
+            #   same length on both sides -> position (goote/goat, vncleane/unclean);
+            #   ONE display word          -> every spoken word in the block maps to
+            #                                it (shalbe -> shall be: one highlight).
+            # Any other shape stays None — a guessed range highlights the wrong word.
+            if i2 - i1 == j2 - j1:
+                for k in range(i2 - i1):
+                    out[i1 + k] = j1 + k
+            elif j2 - j1 == 1:
+                for k in range(i1, i2):
+                    out[k] = j1
+            elif lang is not None:
+                # Mixed block («apon shalbe vncleane» -> «upon shall be
+                # unclean»): normalize each printed word ON ITS OWN and count
+                # the spoken tokens it yields; map by position only when the
+                # counts sum to the block exactly, else leave it None.
+                counts = [max(1, len(WORD.findall(spoken_text(w, lang))))
+                          for w in display_words[j1:j2]]
+                if sum(counts) == i2 - i1:
+                    k = i1
+                    for dj, n in zip(range(j1, j2), counts):
+                        for _ in range(n):
+                            out[k] = dj
+                            k += 1
     return out
+
+
+# Known-bad control: HEXAPLA_NO_REPLACE_MAP=1 restores the equal-blocks-only map
+# (the 13 tyn verses go null again; see the replace branch in map_tokens).
+import os as _os
+_NO_REPLACE_MAP = _os.environ.get("HEXAPLA_NO_REPLACE_MAP") == "1"
 
 
 class Aligner:
@@ -368,6 +417,11 @@ def align_chapter(aligner, set_cfg, book_idx, chapter_idx, verses_raw, report=Fa
                 stats["unmapped"] += 1
                 continue
             m = disp_matches[dj]
+            if words and words[-1][2] == m.start():
+                # several spoken words, one printed word (shalbe -> shall be):
+                # one highlight spanning all of them
+                words[-1][1] = we
+                continue
             words.append([ws, we, m.start(), m.end()])
         if broken or not words:
             out.append(None)

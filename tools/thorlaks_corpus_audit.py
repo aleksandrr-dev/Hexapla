@@ -119,6 +119,33 @@ KNOWN_DIVERGENCE = {
     (40, 5): (42, "the print stops at 42 - the VI heading follows, nothing lost"),
     (40, 8): (39, "KJV 9:1 is printed as v39 inside chapter VIII"),
     (40, 9): (49, "printed IX opens at KJV 9:2, so it runs 1-49"),
+    # -- Luke / Acts, 2026-10-08: two independent crop reads each, no numeral at
+    # the KJV verse's opening. Evidence:
+    #   research/_evidence/thorlaks_nt_unnumbered_tails_2026-10-08.md
+    # Ruling: _work/_scratch/nt_audit_rows/ADVISOR_RULING.md Q1-Q4.
+    (41, 20): (46, "KJV 20:47 printed unnumbered, running on inside v46 (idx 74 line27, reads A+B)"),
+    (43, 4): (36, "KJV 4:37 printed unnumbered, running on inside v36 (idx 107 line09, reads A+B)"),
+    (43, 19): (40, "KJV 19:41 printed unnumbered, running on inside v40 (idx 123 line06, reads A+B)"),
+    (43, 28): (30, "KJV 28:31 printed unnumbered, running on inside v30 (idx 132 line06, reads A+B)"),
+    # -- 2026-10-08 blind look round (one read + one agreeing look each). Evidence:
+    #   research/_evidence/thorlaks_nt_count_rows_looks_2026-10-08.md
+    # Ruling: _work/_scratch/nt_audit_rows/ADVISOR_RULING.md Q9, Q14, Q15.
+    (46, 13): (13, "KJV 13:12+13 printed under one numeral (12), so 13 = KJV 13:14 (idx 172)"),
+    # -- 2026-10-08 look round 2 (read + one agreeing look each; heading seen between the same two lines, no numeral
+    # before it, run restarting at 2,3 under it). Evidence: same file, section ROUND 2. Ruling Q5-Q8.
+    (46, 1): (22, "KJV 1:23-24 printed as II:1-2 - the II heading follows v22 (idx 165)"),
+    (46, 2): (19, "printed II opens at KJV 1:23, so it runs 1-19 (=KJV 1:23-2:17)"),
+    (46, 10): (16, "KJV 10:17-18 printed as XI:1-2 - the XI heading follows v16 (idx 170)"),
+    (46, 11): (35, "printed XI opens at KJV 10:17, so it runs 1-35 (=KJV 10:17-11:33)"),
+    (57, 12): (28, "KJV 12:29 printed unnumbered, running on inside v28 (idx 222)"),
+    # Hebrews 4/5 and 2 Thess 3, settled 2026-10-19 (session 35) against the crops:
+    # _work/_scratch/nt_residue/LOOK_RESULT.md (S1, S3) + LOOK2_RESULT.md (Q2).
+    (57, 4): (13, "printed IIII stops at 13; KJV 4:14-16 printed as V:1-3 - the «V·» heading is idx 216 line18"),
+    (57, 5): (17, "printed V opens at KJV 4:14, so it runs 1-17 (=KJV 4:14-5:14) (idx 216 line19)"),
+    (52, 3): (16, "KJV 3:17-18 printed unnumbered, running on inside v16 (idx 193 line08-09, two looks)"),
+    (57, 9): (27, "no printed 28 or 29 - KJV 28 joined onto v27 (idx 219, three looks; s45 MAIN_RULING_O4_HEB9.md)"),
+    (0, 49): (32, "print 29 = KJV 29+30, 30 = 31a, 31 = 31b+32, 32 = 33 (genesis_kit1 p62, both reads)"),
+    (63, 1): (15, "KJV 1:14 printed as two verses, 14 and 15 (idx 213)"),
 }
 
 

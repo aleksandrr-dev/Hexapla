@@ -77,6 +77,12 @@ def is_placeholder(v):
     if os.environ.get("HEXAPLA_NO_PLACEHOLDER") == "1":
         return False
     s = v.strip()
+    # ⚠ A LONE ASCII LETTER is a placeholder too (2026-09-24): zh_cuv_s/t
+    # carried 69 slots of a bare «a» each - the tail of a verse the CUV prints
+    # merged into its predecessor - and read as clean because «a» is a letter.
+    # No verse in any language is one Latin letter; a CJK asset has none at all.
+    if len(s) == 1 and s.isascii() and s.isalpha():
+        return True
     return bool(s) and all(c in PLACEHOLDER or c.isspace() for c in s)
 
 
@@ -147,11 +153,16 @@ def _selftest_fixture():
                 "Thus the heavens and the earth were finished.",
                 "",
             ],
+            [
+                "And Moses spake unto the people.",
+                "a",
+                "And it came to pass.",
+            ],
         ],
     }]
     # Counted by hand from the literal above - an independent number so a
     # census() that silently drops slots cannot agree with it by accident.
-    return asset, 9
+    return asset, 12
 
 
 def _selftest():
@@ -193,11 +204,12 @@ def _selftest():
         A_DASH = u"Fixture 1:5  <—>"
 
         # --- the total and the flagged-set size -----------------------------
-        check("total verse count == 9 (every slot counted, incl. empty + tails)",
+        check("total verse count == 12 (every slot counted, incl. empty + tails)",
               total == expect_total)
-        check("census flags exactly the 5 planted defects, no more",
-              len(empties) == 5 and flagged == {
-                  A_ELLIPSIS, A_DOT, A_DASH, A_MID, A_TAIL})
+        A_LETTER = u"Fixture 3:2  <a>"
+        check("census flags exactly the 6 planted defects, no more",
+              len(empties) == 6 and flagged == {
+                  A_ELLIPSIS, A_DOT, A_DASH, A_LETTER, A_MID, A_TAIL})
 
         # --- 1. the false-positive control, stated first ---------------------
         # If any assertion in this file is worth keeping, it is this one.
@@ -221,9 +233,11 @@ def _selftest():
               by_addr.get(A_DOT) == "PLACE")
         check(u"slot that is only U+2014 '—' -> PLACE   (Fixture 1:5)",
               by_addr.get(A_DASH) == "PLACE")
-        check("the three bare-punctuation slots are the ONLY PLACE findings",
+        check(u"slot that is only a lone Latin 'a' -> PLACE   (Fixture 3:2, the zh_cuv class)",
+              by_addr.get(A_LETTER) == "PLACE")
+        check("the four placeholder slots are the ONLY PLACE findings",
               sorted(a for a, k in empties if k == "PLACE") ==
-              sorted([A_ELLIPSIS, A_DOT, A_DASH]))
+              sorted([A_ELLIPSIS, A_DOT, A_DASH, A_LETTER]))
 
         # --- 7. ordinary multi-word verses: unflagged, but still counted -----
         check(u'"In the beginning God created the heaven and the earth." is NOT flagged',
@@ -237,7 +251,7 @@ def _selftest():
         # outright, so a future edit that quietly stops testing PLACE is
         # caught here rather than passing green forever.
         check("the suite depends on PLACE detection (known-bad control armed)",
-              len([1 for _, k in empties if k == "PLACE"]) == 3)
+              len([1 for _, k in empties if k == "PLACE"]) == 4)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 

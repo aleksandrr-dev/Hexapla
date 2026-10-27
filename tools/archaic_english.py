@@ -171,7 +171,33 @@ _TYNDALE_DICT = {
     "willynge": "willing",
     "knowlege": "knowledge",
     "iudge": "judge", "iudgement": "judgement",
+    # ★ owner ear 2026-09-30 (ear_tyn_stillfail): silent -e/-es voiced as a
+    #   syllable - «head-es», «standar-tays», «meen-tee». KJV parallels: Acts
+    #   3:17 rulers(heads), Num 2:17/2:31 standards, Luke 15:26 meant.
+    "heddes": "heads", "standertes": "standards", "meante": "meant",
+    # owner 2026-09-30 «yes fix agenste and bulles too» (found by the scan, not heard);
+    # agene = again, Gen 43:21 KJV «brought it again» - same silent-e class, 1 site.
+    "agenste": "against", "bulles": "bulls", "agene": "again",
 }
+
+# prefix (3+ letters, glued) + off(e)r + y/i + ng + optional e + optional s
+_TYN_OFFERING = re.compile(r"\b([A-Za-z]{3,}?)?(off?e?r[yi]ng)e?(s)?\b", re.I)
+# compound first halves no dict row covers, measured over the asset: only
+# ever seen glued to «offering», so mapped HERE, never as bare words
+# («heve» alone is also the barless «hēve» = heven).
+_TYN_OFFERING_PREFIX = {"drynk": "drink", "heve": "heave", "heue": "heave", "pease": "peace",
+                        "syn": "sin", "thanck": "thank", "frewil": "freewill"}
+
+
+def _tyn_offering(m):
+    pre, core, plural = m.group(1), m.group(2), m.group(3)
+    word = "offering" + ("s" if plural else "")
+    if not pre:
+        return (word[0].upper() + word[1:]) if core[0].isupper() else word
+    p = _TYN_OFFERING_PREFIX.get(pre.lower(), pre)
+    if pre[0].isupper():
+        p = p[0].upper() + p[1:]
+    return p + " " + word
 
 _TYNDALE_RULES = [
     # ⚠ "gedder" NEVER means "gather". Every one of its 39 occurrences is the
@@ -182,6 +208,14 @@ _TYNDALE_RULES = [
     (re.compile(r'\bto\s+gedder\b', re.I), 'together'),
     (re.compile(r'\byf\b', re.I), 'if'),
     (re.compile(r'(\w)ynne\b', re.I), r'\1in'),
+    # ★ THE -ynges / -inges PLURAL (owner ear 2026-09-28, Rom 10:15 «tydynges»
+    #   heard «tye-din-ges»; Heb 10:6 «offerings» cleared). The singular rule
+    #   below never matched the plural, so ~250 tokens reached the voice raw.
+    #   tydynges needs its vowel too: «tydings» would still be «tie-dings».
+    (re.compile(r'\b([Tt])[yi]d[yi]nges\b'), r'\1idings'),
+    # (the glued «burntofferynges» compounds are split BEFORE the dict stage,
+    #  see _TYN_OFFERING in normalize, so their first half is still normalized)
+    (re.compile(r'(\w)[yi]nges\b', re.I), r'\1ings'),
     (re.compile(r'(\w)ynge\b', re.I), r'\1ing'),
     (re.compile(r'(\w)ynge\b', re.I), r'\1ing'),
     (re.compile(r'(\w)yng\b', re.I), r'\1ing'),
@@ -429,6 +463,131 @@ def _roman_value(s):
     return total or None
 
 
+# ★ TYNDALE'S MULTIPLIED NUMERALS (2026-09-28). «.v.M.» is 5 thousand,
+#   «.iiii.C.» 4 hundred, «xii.M.» 12 thousand, «.M.iic.» / «M.ii.C» a thousand
+#   two hundred. _expand_roman read the small numeral and left the multiplier:
+#   Matt 14:21 was said «5 M. men», Rev 7:6 «xii 1000», Rev 11:3 «1000 jic.».
+#   20 verses, every one listed by the scan in the 2026-09-28 session. The
+#   multiplier is an UPPERCASE C/M after a lowercase numeral - case-sensitive
+#   on purpose, so no word can match.
+_TYN_THOUSAND_HUNDREDS = re.compile(r"(?:\ba\s+|(?<![A-Za-z]))\.?M\.\s*([ivxj]+)\.?\s*[cC](?![A-Za-z])\.?")
+_TYN_MULT = re.compile(r"(?<![A-Za-z])\.?([ivxlcj]+)\.?\s*([CM])(?![A-Za-z])(\.?)")
+_TYN_AND_ROMAN = re.compile(r"(\d+ and )\.?([ivxlc]+)\.(?=\s)")
+
+
+def _tyn_multiplied(text):
+    def keep_stop(m, s):
+        after = text[m.end():].lstrip()
+        return s + ("." if after[:1].isupper() or not after else "")
+
+    def th(m):
+        v = _roman_value(m.group(1))
+        return keep_stop(m, f"{1000 + 100 * v}") if v else m.group(0)
+
+    text = _TYN_THOUSAND_HUNDREDS.sub(th, text)
+
+    def mult(m):
+        v = _roman_value(m.group(1)) if _TYN_ROMAN_OK.match(m.group(1).replace("j", "i")) else None
+        if not v:
+            return m.group(0)
+        n = v * (100 if m.group(2) == "C" else 1000)
+        return " " + (keep_stop(m, str(n)) if m.group(3) else str(n))
+
+    text = _TYN_MULT.sub(mult, text)
+    return _TYN_AND_ROMAN.sub(lambda m: m.group(1) + str(_roman_value(m.group(2)) or m.group(2)), text)
+
+
+# ★ owner ear 2026-09-30: «lvij. thousande» (Num 2:31) has NO leading stop, so
+#   _ROMAN_RE never saw it and the voice spelled «ell vay». The same shape is
+#   in ~146 verses («vij. lambs», «ij. brethren», «the .vij year»): a numeral
+#   with only ONE of its two stops. A token is taken only if it is a
+#   WELL-FORMED roman numeral (_TYN_ROMAN_OK), so «ill», «civil», «did», «mix»
+#   never match; a lone letter (i/v/x/l/c) additionally needs a number-ish
+#   neighbour - a following lowercase word or the verse end - and never «i».
+#   Every match over the whole asset was listed and read, 2026-09-30.
+_TYN_ROMAN_OK = re.compile(r"^(?:cd|d?c{0,4}|cm)(?:xc|xl|l?x{0,4})(?:ix|iv|v?i{0,5})$")
+_TYN_TRAIL_ROMAN = re.compile(r"(?<![A-Za-z.])([ivxlcj]+)\.(?=\s|$)")
+_TYN_LEAD_ROMAN = re.compile(r"(?<![A-Za-z])\.([ivxlcj]+)(?=\s)")
+_TYN_NOSTOP_ROMAN = re.compile(r"(?<![A-Za-z])([ivxlcj]+)(?![A-Za-z])")
+_TYN_LONE_C = re.compile(r"(?<![A-Za-z.])(an\s+)?C\.(?=\s+and\s)")
+
+
+def _tyn_roman_ok(tok):
+    t = tok.replace("j", "i")
+    return tok != "i" and bool(_TYN_ROMAN_OK.match(t)) and _roman_value(t) is not None
+
+
+def _tyn_bare_roman(text):
+    def trail(m):
+        tok = m.group(1)
+        if not _tyn_roman_ok(tok):
+            return m.group(0)
+        after = text[m.end():].lstrip()
+        if len(tok) == 1 and after and not after[:1].islower():
+            return m.group(0)
+        v = str(_roman_value(tok))
+        return v + ("." if not after or after[:1].isupper() else "")
+
+    text = _TYN_TRAIL_ROMAN.sub(trail, text)
+
+    def lead(m):
+        tok = m.group(1)
+        if not _tyn_roman_ok(tok):
+            return m.group(0)
+        return " " + str(_roman_value(tok))
+
+    text = _TYN_LEAD_ROMAN.sub(lead, text)
+
+    # ★ 2026-09-30, found by the repair dry run (Rev 21:12 «had xii gates»):
+    #   a numeral with NO stops at all, 19 sites. Same validator; a lone
+    #   letter needs a stop before it or a lowercase word after it.
+    def bare(m):
+        tok = m.group(1)
+        if not _tyn_roman_ok(tok):
+            return m.group(0)
+        if len(tok) == 1:
+            before = text[:m.start()].rstrip()[-1:]
+            after = text[m.end():]
+            if before != "." and not re.match(r"\s+[a-z]", after):
+                return m.group(0)
+        return str(_roman_value(tok))
+
+    text = _TYN_NOSTOP_ROMAN.sub(bare, text)
+    # «an C. and xliiii. M.» (Rev 7:4), «C. and xliiii. thousande» (Rev 14:1):
+    # an uppercase C alone is «hundred». The only two sites in the asset.
+    return _TYN_LONE_C.sub(lambda m: (m.group(1) or "one ") + "hundred", text)
+
+
+# ★ owner ear 2026-09-30: Chatterbox reads DIGITS unreliably - Rev 7:6 «12000.»
+#   was heard «twelve hundred twelven», Mark 8:20 «4000.» garbled - so every
+#   number the roman stages mint is spoken as WORDS. Digits never reach tyn's
+#   voice (control: tools/test_tyn_ear_2026_09_30.py).
+_EN_ONES = ("zero one two three four five six seven eight nine ten eleven twelve thirteen "
+            "fourteen fifteen sixteen seventeen eighteen nineteen").split()
+_EN_TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def en_cardinal(n):
+    if n < 20:
+        return _EN_ONES[n]
+    if n < 100:
+        return _EN_TENS[n // 10] + ("-" + _EN_ONES[n % 10] if n % 10 else "")
+    if n < 1000:
+        r = n % 100
+        return _EN_ONES[n // 100] + " hundred" + (" and " + en_cardinal(r) if r else "")
+    if n < 1000000:
+        r = n % 1000
+        head = en_cardinal(n // 1000) + " thousand"
+        if not r:
+            return head
+        return head + (" and " if r < 100 else " ") + en_cardinal(r)
+    return str(n)
+
+
+def _digits_to_words(text):
+    return re.sub(r"\d+", lambda m: en_cardinal(int(m.group(0))), text)
+
+
 def _expand_roman(text):
     def sub(m):
         v = _roman_value(m.group(1))
@@ -539,12 +698,22 @@ def normalize(text, dialect, use_generated=True):
     if dialect == "wycliffe":
         text = text.replace("`", "")
     word_dict, rules = _NORMALIZERS[dialect]
+    if dialect == "tyndale":
+        # ★ 2026-09-28: every spelling of OFFERING (offerynge, offringe,
+        #   offrynges, offeringes ...) -> offering(s), and a glued compound
+        #   split off it FIRST («drynkofferynges» -> «drynk offerings») so the
+        #   dict stage below still sees «drynk», «heve», «synne». Split after
+        #   the dict (the first attempt) and those halves reached the voice raw;
+        #   «offrings» alone would be said «off-rings».
+        text = _TYN_OFFERING.sub(_tyn_offering, text)
     if dialect == "tyndale" and use_generated:
         # Roman numerals first (they are delimited by the full stops that later
         # stages would disturb), then the generated silent-e map, and finally
         # the hand-curated dict so a curated entry always overrides a derived
         # one.
+        text = _tyn_multiplied(text)
         text = _expand_roman(text)
+        text = _tyn_bare_roman(text)
         text = _apply_dict(text, TYNDALE_PRON)
     if dialect in _GENERATED and use_generated:
         text = _apply_dict(text, _GENERATED[dialect])
@@ -573,4 +742,7 @@ def normalize(text, dialect, use_generated=True):
     if dialect in ("geneva", "tyndale", "wycliffe"):
         text = _JOIN_HYPHEN.sub(lambda m: m.group(1) + m.group(2), text)
         text = re.sub(r"[A-Za-z]+", lambda m: early_modern(m.group(0)), text)
+    if dialect == "tyndale" and use_generated:
+        # LAST, after the hyphen join, so «fifty-seven» is not glued.
+        text = _digits_to_words(text)
     return text

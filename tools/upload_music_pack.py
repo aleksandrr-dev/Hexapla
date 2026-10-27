@@ -33,7 +33,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 PACK = Path("C:/Projects/Hexapla-releases/music_pack")
 INDEX = Path(__file__).resolve().parent.parent / "app/src/main/assets/music_index.json"
 IDENTIFIER = "hexapla-music-pack"
-APP = "https://aleksandrr-dev.github.io/Hexapla/"
+APP = "https://hexaplabible.com/download/"
 
 DESCRIPTION = """<p>Background music used by <a href="{app}">Hexapla</a>, a free
 and offline parallel Bible app for Android. These are <b>application assets</b>,

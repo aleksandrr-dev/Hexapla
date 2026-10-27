@@ -90,7 +90,7 @@ O_MARKS = {u"\u00f8": u"o", u"\u00d8": u"O",    # ø Ø -> o O (Luke only)
            u"\u00f6": u"o", u"\u00d6": u"O"}    # ö Ö -> o O (Luke only)
 
 ROW_RE = re.compile(r"^\s*line(\d{2})\s*\|")
-SEC_RE = re.compile(r"^##\s*(LINES|NUMERALS|HN|NOTES)\b", re.I)
+SEC_RE = re.compile(r"^##\s*(LINES|NUMERALS|HN|INITIALS|NOTES)\b", re.I)
 # ⛔ Only these two sections hold returned TEXT. HN and NOTES are apparatus.
 TEXT_SECTIONS = ("LINES", "NUMERALS")
 

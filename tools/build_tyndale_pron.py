@@ -91,7 +91,10 @@ OVERRIDE = {
     "evyll": "evil", "congregacion": "congregation",
     "congregacions": "congregations", "ys": "is", "oyle": "oil",
     "wyse": "wise", "hoste": "host", "oxe": "ox",
-    "iesus": "Jesus", "iesu": "Jesu", "iesse": "Jesse",
+    "iesus": "Jesus",
+    # Owner 2026-10-04: «Jesu» was voiced «Jezu» (Eph 1:1, Phm 1:1); he chose
+    # «Jesus», the KJV word in the same verses. 130 verses / 81 chapters.
+    "iesu": "Jesus", "iesse": "Jesse",
     "moises": "Moses", "moses": "Moses",
     # ⚠ Owner-reported by ear, and each missed for a DIFFERENT reason —
     # which is why the derived table alone is not enough:
@@ -132,6 +135,21 @@ OVERRIDE = {
     "drynke": "drink", "dedes": "deeds", "syghte": "sight", "prayse": "praise",
     "devyll": "devil", "preastes": "priests", "feldes": "fields",
     "slayne": "slain", "ordinaunces": "ordinances", "kynredes": "kindreds",
+    # Owner ear 2026-10-03, tyn Exod 6 (v15/17/19/24/25): «kin red es».
+    # Only `kynred`/`kynredes` were mapped; the doubled-d forms reached the
+    # voice raw. Every spelling in the asset is listed (grep -oi k[iy]nred*).
+    "kinred": "kindred", "kynrede": "kindred", "kinredes": "kindreds",
+    "kinreddes": "kindreds", "kynreddes": "kindreds",
+    "kynreddds": "kindreds", "kynreds": "kindreds",
+    # Exod 38:25, hand-added to tyndale_pron.py 2026-10-03; kept here so a
+    # regeneration does not drop it.
+    "holyesycle": "holy shekel",
+    # Owner ear 2026-10-03, tyn Gen 15:1 «dedees»; all 6 occurrences = deeds.
+    "deades": "deeds",
+    # Fable ruling 2026-10-03, ear kit Num 19:11 pending: tyn «deed»/«deede»
+    # is DEAD in every occurrence (~150, grep \bdeede?\b over the asset);
+    # Tyndale spells the noun «dede»/«dedes». The voice read «deed».
+    "deed": "dead", "deede": "dead",
     "uncleane": "unclean", "unclene": "unclean", "untyll": "until",
     "untill": "until", "moreouer": "moreover", "habitacion": "habitation",
     "stonde": "stand", "fre": "free", "ioye": "joy", "iuda": "Judah",

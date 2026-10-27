@@ -38,7 +38,8 @@ HERE = Path(__file__).parent
 # Signatures of a dropped/refused socket rather than a refusal by archive.org.
 TRANSIENT = ("ConnectionError", "ProtocolError", "ConnectionResetError",
              "ReadTimeout", "ConnectTimeout", "RemoteDisconnected",
-             "IncompleteRead", "ChunkedEncodingError")
+             "IncompleteRead", "ChunkedEncodingError",
+             "SSLError", "SSLEOFError", "UNEXPECTED_EOF")
 
 # ⚠ ARCHIVE.ORG RATIONS AT (AT LEAST) TWO LEVELS, WITH DIFFERENT WORDING.
 # 2026-08-08: this watcher died on

@@ -72,6 +72,14 @@ IDS = {
     # well as Martyn's NT. Points at the staging file until the OT is merged
     # The OT was merged into fa_martyn.json on 2026-08-09.
     "mrt": "fa_martyn",
+    # Added 2026-09-25 after verse_embed_screen.py's shift control failed on
+    # both (67 %/68 %, every top run in Psalms at v2..): neither was mapped.
+    "kxii": "sv_karlxii",
+    "dzm": "be_dzekuc",
+    "kie": "tr_kieffer",
+    # Added 2026-10-07: Thorlaksbiblia 1644 NT (Icelandic). The printed verse
+    # division is never changed in the asset; alignment is these runs only.
+    "thl": "is_thorlaks",
 }
 
 # Curated non-mechanical alignments, verified against verse text.
@@ -124,6 +132,54 @@ EXTRA = {
                                           #   which put the split at v13; the
                                           #   duplicate «(۱۳)» glyph actually
                                           #   falls mid-v12.
+    },
+    # ── Thorlaksbiblia 1644 NT (thl; added 2026-10-07) ────────────────────
+    # 21 chapters of the NT print divide the verses differently from the KJV.
+    # The asset keeps the print's own division (owner rule); each seam below
+    # was read verse by verse (Early Modern Icelandic against the KJV) and is
+    # a MERGE (the print runs two KJV verses under one numeral) or a chapter
+    # boundary that sits at a different verse. Books listed here PRE-EMPT the
+    # engines, so each book carries every run it needs.
+    # Gal 5:25-26 / Phil 2:30 are printed unnumbered; the builder joins them to
+    # the adjacent numbered verse of the printed chapter (thl 6:1 head / thl
+    # 2:29 tail), mapped as blocks below. Empty slots Mark 3:19 / Luke 17:36 /
+    # Heb 9:28 / 1 Pet 1:2 stay "" (Mark 3 and Heb 9 sit inside a block below).
+    ("thl",): {
+        # Genesis 49 (Fable ruling s44 F3, 2026-10-20): print 29 = KJV 29+30, 30 = KJV 31a, 31 = KJV 31b+32, 32 = KJV 33 (s46 ruling corrects s44 F3)
+        # (genesis_kit1 p62, both reads); 32 slots, pinned in thorlaks_part_check.py, never renumbered
+        0: [(49, 29, 30, 49, 29, 29), (49, 31, 32, 49, 30, 31), (49, 33, 33, 49, 32, 32)],
+        # Leviticus 18 (Fable s69 ruling O-4, lev_common/s68_looks_owner): print 25 carries KJV 25+26, print 26 is the
+        # tagged empty slot (conventions row 22) - kept, never renumbered; the run spans the block as ruled
+        2: [(18, 25, 26, 18, 25, 26)],
+        40: [(3, 18, 19, 3, 18, 18),     # Mark 3: Judas Iscariot ends thl 18; 19 is an empty slot
+             (3, 20, 20, 3, 19, 20),      #   thl 20 = "they went into an house" (KJV 19b) + 20
+             (3, 34, 34, 3, 34, 35),      #   KJV 34 split: "looked round" / "and said, Behold my mother"
+             (3, 35, 35, 3, 36, 36),
+             (5, 27, 28, 5, 27, 27),      # Mark 5: "heard of Jesus" + "For she said" under one numeral
+             (5, 29, 43, 5, 28, 42),
+             (9, 1, 1, 8, 39, 39),        # Mark 8/9: thl 8:39 "Verily... some stand here" = KJV 9:1
+             (9, 2, 50, 9, 1, 49)],
+        41: [(20, 46, 47, 20, 46, 46)],   # Luke 20: "Beware of the scribes" + "which devour widows' houses"
+        43: [(4, 36, 37, 4, 36, 36),      # Acts 4: Joses/Barnabas + "having land, sold it"
+             (19, 40, 41, 19, 40, 40),    # Acts 19: "in danger" + "he dismissed the assembly"
+             (28, 30, 31, 28, 30, 30)],   # Acts 28: "dwelt two years" + "Preaching the kingdom"
+        47: [(6, 1, 1, 6, 1, 1),          # Gal 6: thl 6:1 carries KJV 5:25-26 at its head, then KJV 6:1
+             (5, 25, 26, 6, 1, 1)],
+        49: [(2, 29, 30, 2, 29, 29)],     # Phil 2: thl 2:29 carries KJV 2:30 at its tail
+        46: [(1, 23, 24, 2, 1, 2),        # 2 Cor 1/2: KJV 1:23-24 stand at thl 2:1-2
+             (2, 1, 17, 2, 3, 19),
+             (10, 17, 18, 11, 1, 2),      # 2 Cor 10/11: KJV 10:17-18 stand at thl 11:1-2
+             (11, 1, 33, 11, 3, 35),
+             (13, 12, 13, 13, 12, 12),    # 2 Cor 13: "Greet one another" + "All the saints"
+             (13, 14, 14, 13, 13, 13)],
+        # 2 Thess 3: no printed 17/18 - thl 3:16 carries KJV 16-18 (2026-10-19 residue fix; Fable ruling
+        # s44 F3 2026-10-20, Heb 12:28-29 precedent)
+        52: [(3, 16, 18, 3, 16, 16)],
+        57: [(4, 14, 16, 5, 1, 3),        # Heb 4/5: KJV 4:14-16 stand at thl 5:1-3
+             (5, 1, 14, 5, 4, 17),
+             (9, 27, 28, 9, 27, 27),      # Heb 9: no numeral 28 or 29 (idx 219, three looks, s45): KJV 28 joined onto thl 27
+             (12, 28, 29, 12, 28, 28)],   # Heb 12: "receiving a kingdom" + "consuming fire"
+        63: [(1, 14, 14, 1, 14, 15)],     # 3 John: "see thee shortly" + "Peace be to thee..."
     },
     # ── Georgian Bakar 1743 (added 2026-08-04) ────────────────────────────
     # Esther, read seam by seam against the KJV with the Georgian quoted in
@@ -232,6 +288,14 @@ EXTRA = {
         63: [(1, 14, 14, 1, 14, 15)],
         65: [(13, 1, 1, 12, 18, 18), (13, 1, 1, 13, 1, 1)],
     },
+    # Belarusian NT + Psalms 1931: the continental 2 Cor 13 and 3 John shapes,
+    # read 2026-09-25 - be 13:12 = KJV 12+13 (holy kiss + all the saints),
+    # be 13:13 = KJV 14 (the grace); be 3 John 1:14-15 = KJV 14 split at «Мір
+    # табе́!». Its psalter (title verses) goes through psalm_title_runs.
+    ("dzm",): {
+        46: [(13, 12, 13, 13, 12, 12), (13, 14, 14, 13, 13, 13)],
+        63: [(1, 14, 14, 1, 14, 15)],
+    },
     # Wycliffe follows the Vulgate: mostly single-verse merges (two KJV
     # verses in one), plus the Vulgate Daniel arrangement (Song of the
     # Three at 3:24-90, so KJV 3:24-30 sit at 3:91-97; Susanna/Bel in
@@ -308,7 +372,7 @@ EXTRA = {
         64: [(1, 24, 25, 1, 24, 24)],
         65: [(18, 17, 18, 18, 17, 17)],
     },
-    ("gen1599", "alm", "cus", "cuv"): {b: runs for b, runs in STD_TAIL},
+    ("gen1599", "alm", "cus", "cuv", "kie"): {b: runs for b, runs in STD_TAIL},
     # Sanskrit 1851 NT: continental 3 John split only. The source's
     # Rev 12:18 is a bare "[]" placeholder (content sits in 13:1,
     # KJV-style) — dropped by convert_sanskrit_nt.py, so Revelation
@@ -596,10 +660,13 @@ EXTRA = {
 #     frumenti", vul 9-10 split KJV 8) — kept as one block.
 #   Ps 16: title inside vul 15:1; KJV 16:10-11 merged in vul 15:10
 #     ("...videre corruptionem. Notas mihi fecisti vias vitæ...").
+#     ⚠ KJV 16:1-9 = vul 15:1-9 MUST be listed too (the override replaces
+#     the whole psalm; until 2026-09-24 it held only 10-11, so vul 15:1-9
+#     fell back to identity = KJV Ps 15 and no KJV verse reached them).
 VUL_PSALTER = {
     2: [(2, 12, 12, 2, 12, 13)],
     4: [(4, 1, 1, 4, 1, 2), (4, 2, 4, 4, 3, 5), (4, 5, 8, 4, 6, 10)],
-    16: [(16, 10, 11, 15, 10, 10)],
+    16: [(16, 1, 9, 15, 1, 9), (16, 10, 11, 15, 10, 10)],
 }
 
 # Zohrab's psalter is the Vulgate's EXCEPT at four LXX psalms (58, 71, 83,
@@ -646,6 +713,24 @@ def repartition_runs(tc_counts, kc_counts):
                 ci_t += 1
                 v_t = 1
     return runs
+
+
+# Psalms whose extra verses are NOT leading title verses, so the count rule in
+# psalm_title_runs mis-maps them (or, at equal counts, never sees them).
+# Each read against the KJV 2026-09-25, after the embedding screen left a run
+# in exactly these psalms.
+PSALM_FIX = {
+    "dzm": {
+        # title alone in be 1; be 6 carries KJV 5+6 (counts equal, 6 = 6)
+        13: [(13, 1, 1, 13, 1, 2), (13, 2, 4, 13, 3, 5), (13, 5, 6, 13, 6, 6)],
+        # ONE title verse; the second extra is KJV 6 split over be 7-8
+        # («...сетку наставілі» / «...ды самі ў яе ўваліліся. (Зэля)»)
+        57: [(57, 1, 1, 57, 1, 2), (57, 2, 5, 57, 3, 6), (57, 6, 6, 57, 7, 8),
+             (57, 7, 11, 57, 9, 13)],
+        # title and KJV 1 share be 1; KJV 5 is split over be 5-6
+        127: [(127, 5, 5, 127, 5, 6)],
+    },
+}
 
 
 def psalm_title_runs(ci, tn, kn):
@@ -856,8 +941,11 @@ def main():
                 continue
             if bi == 18:
                 runs = []
+                fix = PSALM_FIX.get(tid, {})
                 for ci, (tn, kn) in enumerate(zip(tcounts, kcounts)):
-                    if tn != kn:
+                    if ci + 1 in fix:
+                        runs.extend(fix[ci + 1])
+                    elif tn != kn:
                         runs.extend(psalm_title_runs(ci, tn, kn))
                 books[bi] = runs
                 continue
@@ -1038,7 +1126,7 @@ def main():
 
     # ---- eyeball report: first verse of every curated/seam run ----
     print("\n--- sample pairings for review ---")
-    for tid in ("syn", "lut", "wlc", "mar", "mei", "grc"):
+    for tid in ("syn", "lut", "wlc", "mar", "mei", "grc", "thl"):
         trans = load(IDS[tid])
         shown = 0
         for b, runs in out[tid].items():

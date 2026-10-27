@@ -123,7 +123,7 @@ EXTRA = json.loads((ROOT / "tools/music_tracks.json").read_text(encoding="utf-8"
 # urllib/curl user agent. Not a block on us — it refuses the UA, not the
 # request — but a fetch without this looks like a dead link.
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Hexapla-music-pack/1.0 "
-      "(+https://aleksandrr-dev.github.io/Hexapla/)")
+      "(+https://hexaplabible.com/download/)")
 
 
 def slug(title):

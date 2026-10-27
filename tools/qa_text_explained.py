@@ -50,7 +50,18 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 ASSETS = {
     "ylt": "C:/Projects/Hexapla/app/src/main/assets/bibles/en_ylt.json",
     "kjv": "C:/Projects/Hexapla/app/src/main/assets/bibles/en_kjv.json",
+    "wyc": "C:/Projects/Hexapla/app/src/main/assets/bibles/enm_wycliffe.json",
+    "tyn": "C:/Projects/Hexapla/app/src/main/assets/bibles/en_tyndale.json",
+    # Luther 1545 (narration dir "de"). German letters are kept by words().
+    "lut": "C:/Projects/Hexapla/app/src/main/assets/bibles/de_luther.json",
+    # Þorláksbiblía 1644 (narration dir "is"). The asset is DIPLOMATIC, so a
+    # verse is screened in the SPOKEN form narrate.py synthesised
+    # (thorlaks_spoken.spoken: abbreviations expanded) and tokenised on every
+    # Unicode letter (þ æ ð ö á …), which [a-zäöüß] would shred.
+    "thl": "C:/Projects/Hexapla/app/src/main/assets/bibles/is_thorlaks.json",
 }
+WORD_RE = r"[a-zäöüß']+"
+SPOKEN = None    # set for "thl" in main()
 NMAX = 8
 
 
@@ -68,12 +79,13 @@ def vtext(books, bi, ci, v):
     b = books[bi]
     chs = b["chapters"] if isinstance(b, dict) else b
     ch = chs[ci]
-    return ch[v - 1] if 0 <= v - 1 < len(ch) else ""
+    t = ch[v - 1] if 0 <= v - 1 < len(ch) else ""
+    return SPOKEN(t) if SPOKEN and t else t
 
 
 def words(text):
     # ⛔ Drop apostrophe-only tokens — see the bug note in the docstring.
-    return [w for w in re.findall(r"[a-z']+", text.lower()) if w.strip("'")]
+    return [w for w in re.findall(WORD_RE, text.lower()) if w.strip("'")]
 
 
 # Words too weak to make a doubling meaningful on their own. Kept deliberately
@@ -84,7 +96,9 @@ WEAK = {"the", "and", "of", "to", "a", "in", "is", "it", "he", "his", "her",
         "not", "but", "as", "be", "are", "was", "who", "all", "i", "my",
         "thy", "thee", "thou", "you", "your", "we", "us", "so", "up", "out"}
 # Connectors thin enough that «X <c> X» still reads as one doubled phrase.
-JOINERS = {"and", "or", "of", "to", "a", "the", "even", "unto"}
+JOINERS = {"and", "or", "of", "to", "a", "the", "even", "unto",
+           # German (lut): «von Ewigkeit zu Ewigkeit», «Geschlecht und Geschlecht»
+           "zu", "und", "oder"}
 
 
 def local_tail_double(w):
@@ -240,7 +254,28 @@ def main():
     a = ap.parse_args()
     if a.selftest:
         sys.exit(selftest())
+    global WORD_RE, SPOKEN
+    if a.set == "thl":
+        sys.path.insert(0, str(Path(__file__).parent))
+        from thorlaks_spoken import spoken
+        WORD_RE, SPOKEN = r"[^\W\d_]+", spoken
     books = load(a.set)
+
+    if a.validate and a.set == "thl":
+        # Book names are Icelandic, so the controls go by index. Rev 21:13 ends
+        # «…af Vestre þriu Port» after three «þriu Port» (printed); Gen 1:1 and
+        # 1:3 are the same ordinary-prose negatives as the English list.
+        ctl = [((65, 20, 13), True), ((0, 0, 1), False), ((0, 0, 3), False)]
+        ok = True
+        for (bi, ci, v), want in ctl:
+            got = analyse(vtext(books, bi, ci, v))[0]
+            print(f"CONTROL {bi}/{ci} v{v}  tail-repeat={got}  expected={want}  "
+                  f"{'ok' if got == want else '⛔ MISMATCH'}")
+            ok &= got == want
+        if not ok:
+            sys.exit("⛔ controls failed — do not use this screen's verdicts.")
+        print("✅ controls pass")
+        return
 
     if a.validate:
         names = {bname(books, i): i for i in range(len(books))}

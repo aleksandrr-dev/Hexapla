@@ -23,6 +23,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 NARRATION = Path("C:/Projects/Hexapla-releases/narration")
 ASSETS = Path(__file__).parent.parent / "app" / "src" / "main" / "assets"
 OUT = ASSETS / "audio_index_gen.json"
+KOKORO_PY = Path(__file__).parent / ".kokoro_venv" / "Scripts" / "python.exe"
 
 # Each generated set. `tid` = the app translation id (the index is keyed by
 # it; ReadingService looks up AudioRepo.generated(translationId)); `dir` = the
@@ -224,6 +225,36 @@ SETS = [
     {"tid": "wyc", "dir": "wyc", "asset": "enm_wycliffe.json",
      "item": "hexapla-audio-wycliffe-1395", "partial": False,
      "apocrypha": True},
+    # ★ REINA-VALERA 1909 — PREPARED 2026-10-10, DELIBERATELY COMMENTED OUT.
+    #   tid "rv" (Bible.kt:44) != dir "es"; canon 1189, no apocrypha, standard
+    #   <book>/<chapter>.ogg layout.
+    # ⛔ DO NOT UNCOMMENT until upload_narration.py es has landed AND the live
+    #   item has been re-read with a real chapter FETCHED (the tyn/ylt rule):
+    #   an entry for a missing item 404s every chapter and the app silently
+    #   falls back to TTS.
+    # ✅ WIRED 2026-10-11: upload COMPLETE 1189/1189 and the live item
+    #   re-read - 0/0.ogg and 65/21.ogg FETCHED 200, byte-identical to local.
+    {"tid": "rv", "dir": "es", "asset": "es_rv.json",
+     "item": "hexapla-audio-reina-valera-1909", "partial": False},
+    # ★ LUTHER 1545 — NT wired 2026-10-13 (tid "lut", Bible.kt:33; dir "de").
+    #   The OT is still rendering into the same dir, so partial: True AND
+    #   "books" pins the index to the uploaded NT (39-65). When the OT is
+    #   uploaded and the live item re-read: drop "books", set partial False.
+    #   ✅ 2026-10-21 (s57): OT uploaded (dry run outstanding 0 of 3568), live
+    #   item re-read - 0/0.ogg and 38/2.ogg FETCHED, byte-identical to local.
+    {"tid": "lut", "dir": "de", "asset": "de_luther.json",
+     "item": "hexapla-audio-luther-1545", "partial": False},
+    # ★ ÞORLÁKSBIBLÍA 1644 — PREPARED 2026-10-22 (tid "thl", dir "is"). Audio
+    #   exists for Genesis + the NT only (310 chapters); the OT is still being
+    #   transcribed, so partial: True AND "books" pins the index to exactly the
+    #   books that are rendered — the asset holds more text than audio, and an
+    #   unpinned partial would index nothing wrong today but would pick up a
+    #   chapter the moment one is rendered and not yet uploaded.
+    #   ✅ 2026-10-22 (s69): upload landed (dry run outstanding 0 of 931), live
+    #   item re-read - 0/0.ogg and 42/0.ogg FETCHED, byte-identical to local.
+    {"tid": "thl", "dir": "is", "asset": "is_thorlaks.json",
+     "item": "hexapla-audio-thorlaksbiblia-1644", "partial": True,
+     "books": [0] + list(range(39, 66))},
     {"tid": "kjv", "dir": "en", "asset": "en_kjv.json",
      "item": "hexapla-audio-en", "partial": False,
      "apocrypha": True, "flat": "kjv_{b}_{c}.ogg"},
@@ -312,6 +343,11 @@ def build_set(s, errors):
     entry = {}
     total = 0
     for bi, live_ch in enumerate(live):
+        # Optional "books": a partial set indexes ONLY what has been uploaded,
+        # never what merely exists locally (a render in progress writes
+        # chapters the item does not have yet -> 404 -> silent TTS fallback).
+        if s.get("books") is not None and bi not in s["books"]:
+            continue
         chapters = {}
         for ci in live_ch:
             ogg = src / str(bi) / f"{ci}.ogg"   # local layout is always <book>/<ch>
@@ -360,11 +396,45 @@ def build_set(s, errors):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--hold", default="",
+                    help="comma-separated tids to leave OUT of the index "
+                         "(a set whose QA screen is not yet ruled, e.g. tyn,wyc)")
+    ap.add_argument("--announce-waive", default="",
+                    help="comma-separated tids wired DESPITE a failed announcement "
+                         "gate (an already-shipped set whose defect is reported, "
+                         "not fixed yet). Never for a set being newly wired.")
     a = ap.parse_args()
+    hold = {t for t in a.hold.split(",") if t}
+    waive = {t for t in a.announce_waive.split(",") if t}
+    unknown = hold - {s["tid"] for s in SETS}
+    if unknown:
+        sys.exit(f"--hold names no set: {sorted(unknown)}")
 
     errors = []
     out = {}
     for s in SETS:
+        if s["tid"] in hold:
+            print(f"HELD: {s['tid']}")
+            continue
+        # ⛔ ANNOUNCEMENT GATE (owner, 2026-09-25): a set with an announce
+        # library is wired only when EVERY chapter carries the library head.
+        # ylt went live with 1,137 synthesized heads («chapter sixtee-») because
+        # the re-splice lived only in a handoff note. See announce_splice_proof.
+        if (NARRATION / f"{s['dir']}_announce_lib").is_dir():
+            import subprocess
+            r = subprocess.run([str(KOKORO_PY), str(Path(__file__).parent / "announce_splice_proof.py"),
+                                "--set", s["dir"]], capture_output=True, text=True,
+                               encoding="utf-8", errors="replace")
+            last = (r.stdout.strip().splitlines() or ["(no output)"])
+            print(f"announce gate {s['dir']}: rc={r.returncode}  " +
+                  next((l for l in last if "spliced" in l or "COULD NOT" in l), last[-1]))
+            if r.returncode != 0 and s["tid"] in waive:
+                print(f"   ⚠ WAIVED by --announce-waive {s['tid']}: wired with its "
+                      "unspliced chapters - an open defect, not a pass")
+            elif r.returncode != 0:
+                errors.append(f"{s['tid']}: announcement splice gate rc={r.returncode} - "
+                              f"run apply_announcements.py --set {s['dir']}, then re-upload")
+                continue
         e = build_set(s, errors)
         if e:
             out[s["tid"]] = e

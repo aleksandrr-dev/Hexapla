@@ -49,6 +49,12 @@ bracket is never silently stripped. After the transform, any `[`, `]`, `{`,
      -> joined to the open verse of the same printed chapter (chapter-head
      prelude -> prepended to its first numbered verse); never dropped; the
      dry run lists every site (Fable, 2026-10-07).
+  m  the verse-end cross «+» (EXTRA, Fable s13a 2026-11-05, owner-delegated O-2; research keeps every token as read):
+     «.+», «.+[?]», «.[+?]»            -> «.»   (the stop stands, the cross is absorbed)
+     «word+», «word +», «word+[?]»     -> «.»   (a cross with no stop IS the stop position)
+     «/+», «/ +» (after other punct.)  -> «»    (the punctuation stands)
+     a cross LEADING the verse body    -> «»    (the printed numeral's own mark: Josh 13:11, 18:28)
+     A «+» left in a verse after the transform ABORTS (residue).
 """
 import argparse
 import collections
@@ -99,6 +105,11 @@ NT_ORDER = list(FILES.values())          # KJV order, slots 39..65
 # book (Exodus: "exodus": "Exodus") needs this row plus an IS_OT_NAMES name.
 OT_FILES = {
     "genesis": "Genesis",
+    "exodus": "Exodus",          # owner yes 2026-10-26 (owner_queue_s78 Q-1)
+    "leviticus": "Leviticus",
+    "numbers": "Numbers",        # owner 2026-11-04: «ship numbers, deutoronomy, and joshua»
+    "deuteronomy": "Deuteronomy",
+    "joshua": "Joshua",          # partial: unread pages leave chapters short
 }
 
 # >>> OT BOOK NAMES -- the ONE place they live. Ruled (s44 Q3, 2026-10-20):
@@ -106,6 +117,14 @@ OT_FILES = {
 GENESIS_NAME = "Fyrsta Mósebók"
 IS_OT_NAMES = {
     "Genesis": GENESIS_NAME,
+    # 2026-10-26: the biblian.is Gudbrandsbiblia chapter titles (research/_witness/gudbrandsbiblia,
+    # «Önnur Mósebók 1. kafli», «Þriðja Mósebók 1. kafli»); owner yes (owner_queue_s78 Q-1a)
+    "Exodus": "Önnur Mósebók",
+    "Leviticus": "Þriðja Mósebók",
+    # 2026-11-04: same witness titles («Fjórða Mósebók 1. kafli», «Fimmta Mósebók 1. kafli», «Jósúabók 1. kafli»)
+    "Numbers": "Fjórða Mósebók",
+    "Deuteronomy": "Fimmta Mósebók",
+    "Joshua": "Jósúabók",
 }
 # <<<
 
@@ -133,17 +152,16 @@ IS_NAMES = [
 # margin gloss / next verses spilled into a line, an English colophon note).
 # `old` must occur exactly once or the build dies.
 SITE_FIXES = [
-    ("Luke", 15, 12, "[ornate initial: ", ""),            # unclosed bracket
+    # Luke 15:12 "[ornate initial: " retired 2026-10-26: fixed in research s72 (SETTLED 2026-10-24, luke_15_12 ruling)
     # Luke 19:29 "[ornate initial: [illegible]" retired 2026-10-13: in-word I106 T0114 joined it to Oliuestí/ in research
     ("Luke", 6, 1, "{a} ", ""),                            # footnote anchor in braces
     ("Matthew", 24, 1, "marginal heading: XXIIII 1 ", ""),
-    ("Matthew", 28, 20, " **Closing colophon (idx 31, foot of page, NOT transcribed as a verse):** "
-     "\"Ender S. Matthei Gudspialla\" \u2014 \"[Here] ends St Matthew's Gospel.\"", ""),
+    # Matthew 28:20 colophon note retired 2026-10-27: moved out of the verse row in research (owner Q-7 D-5)
     ("Romans", 1, 11, None, " 12 (\u00fe er)"),           # None: truncate at `new`
     ("John", 14, 31, None, " 16 (Huggara)"),               # margin gloss spill
     ("2 Corinthians", 8, 13, "jafnt.14", "jafnt."),        # next numeral glued on
-    ("Acts", 1, 8, " a (Bipalning)", ""),                  # anchor + margin gloss
-    ("Acts", 3, 26, " c (Illsku)", ""),
+    # Acts 1:8 " a (Bipalning)" and 3:26 " c (Illsku)" retired 2026-11-04: the glosses were removed in research s111
+    # (2026-10-31; diff vs thorlaks_acts.md.bak-s111), so the anchors no longer occur
     ("John", 4, 38, " c (Adrer)", ""),
     # rule l seams (2026-10-07): a word the print broke across lines/pages
     ("1 Corinthians", 1, 14, "Gu [continued] de", "Gude"),
@@ -274,6 +292,9 @@ def classify(c, at_start, joined):
 # the Tironian et, combining overline = the combining macron
 SORT_CANON = (("β", "ꝑ"), ("⊃", "⁊"), ("̅", "̄"))
 BRACKET = re.compile(r"\[([^\[\]]*)\]")
+# EXTRA m (Fable s13a 2026-11-05): the hedged cross forms consume their bracket BEFORE the bracket
+# pass - the [?] hedges a punctuation mark, not a letter (U+00B7 would claim a missing letter).
+CROSS_HEDGE = re.compile(r"\.\s*\+\[\?\]|\.\[\+\?\]|(?<=\S)\s*\+\[\?\]")
 QUOTE = re.compile(r'(?<=[A-Za-z\u00fe\u00f0\u00e6\u00de\u00d0\u00c6])"(?=[ /,.;:?!)]|$)')
 
 
@@ -287,6 +308,8 @@ def transform(text, where, unclaimed):
     # EXTRA: English parenthetical notes and printed anchor letters
     text, n = PAREN_NOTE.subn("", text); COUNTS["paren-note+"] += n
     text, n = PAREN_ANCHOR.subn("", text); COUNTS["paren-anchor+"] += n
+    # m1: hedged cross forms -> the stop (EXTRA m)
+    text, n = CROSS_HEDGE.subn(".", text); COUNTS["m-hedge+"] += n
     # b-i: brackets
     empty = False
     out, pos = [], 0
@@ -308,6 +331,11 @@ def transform(text, where, unclaimed):
     text = "".join(out)
     if empty:
         return "", True
+    # m2: the bare cross (EXTRA m)
+    text, n = re.subn(r"^\s*\+\s*", "", text); COUNTS["m-lead+"] += n          # leads the body: the numeral's mark
+    text, n = re.subn(r"\.\s*\+", ".", text); COUNTS["m-stop+"] += n            # «.+» -> «.»
+    text, n = re.subn(r"(?<=[/,;:!?])\s*\+", "", text); COUNTS["m-punct+"] += n # after other punctuation: dropped
+    text, n = re.subn(r"(?<=\S)\s*\+", ".", text); COUNTS["m-word+"] += n       # after a word: the stop position
     # g: closing-quote abbreviation mark
     text, n = QUOTE.subn(APOS, text); COUNTS["g"] += n
     # k: virgule and whitespace
@@ -410,7 +438,7 @@ def residue_hit(out):
     """Post-transform ABORT set. U+2019 (F4-a, Fable ruling s44 2026-10-20): a reader's curly hook;
     conventions row 65 writes the raised hook `'` - the NT ships none, Genesis research had 10."""
     s = out.replace(HN_OUT, "") if HN_MODE == "literal" else out
-    return bool(re.search(r'[\[\]{}"’]|\*\*', s) or ENGLISH.search(s))
+    return bool(re.search(r'[\[\]{}"’+]|\*\*', s) or ENGLISH.search(s))
 
 
 def hn_ornate(text):
@@ -625,6 +653,15 @@ def selftest():
         ("c+", "Guds vors [Frelsara] z [Ver?]kamadureñ [Eske \u2014 see Open sites] er", "Guds vors Frelsara z Verkamadureñ Eske er"),
         ("paren", "Enda. (inline footnote-marker \"a\" not transcribed) Og (b) sia (sagde hñ)", "Enda. Og sia (sagde hñ)"),
         ("paren", "(cont) sie hñ Truñe lijkur. Hefur nockur Embætte", "sie hñ Truñe lijkur. Hefur nockur Embætte"),
+        ("m", "Borgena.+ Vered", "Borgena. Vered"),
+        ("m", "tuffugu Gera.+[?]", "tuffugu Gera."),
+        ("m", "reidubwner.[+?]", "reidubwner."),
+        ("m", "þangad+[?] Og", "þangad. Og"),
+        ("m", "haßa lastad+", "haßa lastad."),
+        ("m", "af Reykelse +", "af Reykelse."),
+        ("m", "so Dryckiaroffrenu/ +", "so Dryckiaroffrenu,"),
+        ("m", "+ Zela/ Eleph", "Zela, Eleph"),
+        ("m", "[unnumbered — reads A+B declared] Eñ x", "Eñ x"),
     ]
     COUNTS.clear()
     fails = 0
@@ -672,6 +709,10 @@ def selftest():
     ok = residue_hit(got) and not residue_hit("Gud' sagde")
     fails += not ok
     print("%s abort    U+2019 left in a verse -> residue (build aborts): %r" % ("ok  " if ok else "FAIL", got))
+    # EXTRA m (Fable s13a): a cross left in a verse aborts the build (the Luke 14:1 shipped form)
+    ok = residue_hit("vord a hm̄+ z") and not residue_hit("vord a hm̄. z")
+    fails += not ok
+    print("%s abort    a cross left in a verse -> residue (build aborts)" % ("ok  " if ok else "FAIL"))
     # F2: a PINNED row of the witness table resolves like WITNESS/CORPUS
     import os
     import tempfile

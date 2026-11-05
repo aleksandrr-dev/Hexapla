@@ -70,8 +70,9 @@ BOOKS = [("Matthew", "matthew"), ("Mark", "mark"), ("Luke", "luke"), ("John", "j
          ("3 John", "3john"), ("Jude", "jude"), ("Revelation", "revelation")]
 # OT books join when their thorlaks_<slug>.md exists (Genesis from p16, 2026-10-07); the witness diff's CHAPTER_MAP
 # covers the 1584 chapter cuts. A missing file is skipped, never an error.
-# F5 (Fable ruling s44, 2026-10-20): Exodus joins the same way (exists-guarded).
-BOOKS += [(b, s) for b, s in [("Genesis", "genesis"), ("Exodus", "exodus")]
+# F5 (Fable ruling s44, 2026-10-20): Exodus joins the same way (exists-guarded); Numbers by Fable s80 F5 (2026-10-26).
+BOOKS += [(b, s) for b, s in [("Genesis", "genesis"), ("Exodus", "exodus"), ("Leviticus", "leviticus"),
+                                ("Numbers", "numbers"), ("Deuteronomy", "deuteronomy"), ("Joshua", "joshua")]
           if os.path.exists(os.path.join(RES, "thorlaks_%s.md" % s))]
 L = r"[^\W\d_]"
 SITE = re.compile(r"((?:%s|\[\?\])*)\[HN\]((?:%s|\[\?\])*)" % (L, L), re.U)

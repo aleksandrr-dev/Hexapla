@@ -213,8 +213,12 @@ object BibleRepo {
 
     private val osmKelam = ColumnCredit(
         short = "©",
+        // The last two sentences point readers at OsmKelam's own word notes:
+        // their e-mail of 2026-11-20 asked that readers be sent to them.
         text = "Osmanlıca metinlerin Latin harfli transkripsiyonu: © Osmanlıca Kelâm. " +
-            "Orijinal metinler aşağıdaki bağlantıda karşılaştırılabilir.",
+            "Orijinal metinler aşağıdaki bağlantıda karşılaştırılabilir. " +
+            "Günümüz Türkçesinde anlamı değişmiş sözcüklerin açıklama notları da oradadır: " +
+            "örneğin Osmanlıcada «heykel» yontu değil, mabet demektir.",
         url = "https://osmanlicakelam.net/osm/metinler"
     )
 

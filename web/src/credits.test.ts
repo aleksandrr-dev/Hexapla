@@ -17,5 +17,7 @@ eq("kie Revelation (last canon book)", columnCredit("kie", 65)?.short, "©");
 eq("kie 1 Esdras (first apocrypha slot)", columnCredit("kie", 66), undefined);
 eq("kie Bel and the Dragon", columnCredit("kie", 81), undefined);
 eq("kjv has no column credit", columnCredit("kjv", 0), undefined);
+// OsmKelam (2026-11-20) asked that readers be sent to their word notes.
+eq("kie credit points to the notes", columnCredit("kie", 0)?.text.includes("açıklama notları"), true);
 
 process.exit(bad ? 1 : 0);
